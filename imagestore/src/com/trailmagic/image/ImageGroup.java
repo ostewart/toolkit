@@ -17,7 +17,7 @@ public class ImageGroup {
     private User m_owner;
 
     public static final String ROLL_TYPE = "roll";
-    public static final String ALBUM_TYPE = "sequence";
+    public static final String ALBUM_TYPE = "album";
 
     public ImageGroup() {
     }
