@@ -17,7 +17,7 @@
              Image: <c:out value="${image.name}"/></title>
     </head>
     <body>
-      <h1><c:out value="${operation}" Image:</h1>
+      <h1><c:out value="${operation}"/> Image:</h1>
       <form method="POST">
         <table>
           <tr>
