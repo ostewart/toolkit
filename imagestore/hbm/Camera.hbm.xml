@@ -23,15 +23,15 @@
     </id>
 
     <property name="name" type="string">
-      <column name="name"/>
+      <column name="name" not-null="true"/>
     </property>
 
     <property name="manufacturer" type="string">
-      <column name="manufacturer"/>
+      <column name="manufacturer" not-null="true"/>
     </property>
 
     <property name="format" type="string">
-      <column name="format"/>
+      <column name="format" not-null="true"/>
     </property>
 
   </class>

@@ -23,23 +23,23 @@
     </id>
 
     <property name="name" type="string">
-      <column name="name"/>
+      <column name="name" not-null="true"/>
     </property>
 
     <property name="manufacturer" type="string">
-      <column name="manufacturer"/>
+      <column name="manufacturer" not-null="true"/>
     </property>
 
     <property name="focalLength" type="int">
-      <column name="focal_length"/>
+      <column name="focal_length" not-null="true"/>
     </property>
 
     <property name="minAperature" type="int">
-      <column name="min_aperature"/>
+      <column name="min_aperature" not-null="true"/>
     </property>
 
     <property name="maxAperature" type="int">
-      <column name="max_aperature"/>
+      <column name="max_aperature" not-null="true"/>
     </property>
 
   </class>
