@@ -4,26 +4,29 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="tm" uri="http://trailmagic.com/taglibs/image" %>
 
-View for Album Frame display.  Displays a single ImageFrame of an
-Album.
+View for ImageGroup Frame display.  Displays a single ImageFrame of an
+ImageGroup.
 
 Model Requirements:
 user: currently logged in user
-album: the current album (ImageGroup of type album)
+imageGroup: the current imageGroup
 frame: the current ImageFrame
 prev: the previous ImageFrame, or null
 next: the next ImageFrame, or null
+groupType: the type of ImageGroup
+groupTypeDisplay: the (singular) display name of the type
+
 
 
 -->
 <html>
   <head>
-    <title><c:out value="${album.displayName}"/> :
+    <title><c:out value="${imageGroup.displayName}"/> :
         <c:out value="${frame.image.name}"/></title>
   </head>
 
   <body>
-    <h1><c:out value="${album.displayName}" /> :
+    <h1><c:out value="${imageGroup.displayName}" /> :
         <c:out value="${frame.image.name}" /></h1>
 
     <div class="navlinks">

@@ -7,7 +7,8 @@
     class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">            
     <property name="mappings">
       <props>
-        <prop key="/albums/**">albumController</prop>
+        <prop key="/albums/**">imageGroupController</prop>
+        <prop key="/rolls/**">imageGroupController</prop>
         <prop key="/images/**">imageController</prop>
         <prop key="/import">imageImportController</prop>
         <prop key="/mf/**">imageManifestationController</prop>
@@ -33,11 +34,8 @@
     </property>
   </bean>
 
-  <bean id="albumController"
-    class="com.trailmagic.image.ui.AlbumController">
-    <property name="controllerPath">
-      <value>/albums</value>
-    </property>
+  <bean id="imageGroupController"
+    class="com.trailmagic.image.ui.ImageGroupController">
   </bean>
 
   <bean id="imageController"

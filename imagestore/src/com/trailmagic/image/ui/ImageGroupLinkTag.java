@@ -10,11 +10,12 @@ import javax.servlet.http.HttpServletRequest;
 import com.trailmagic.user.*;
 import com.trailmagic.image.*;
 
-public class AlbumLinkTag extends TagSupport {
+public class ImageGroupLinkTag extends TagSupport {
     private ImageFrame m_frame = null;
     private User m_owner = null;
-    private ImageGroup m_album = null;
+    private ImageGroup m_imageGroup = null;
     private Long m_image = null;
+    private String m_groupType = null;
 
     public void setOwner(User owner) {
         m_owner = owner;
@@ -24,12 +25,20 @@ public class AlbumLinkTag extends TagSupport {
         return m_owner;
     }
 
-    public void setAlbum(ImageGroup album) {
-        m_album = album;
+    public void setImageGroup(ImageGroup imageGroup) {
+        m_imageGroup = imageGroup;
     }
 
-    public ImageGroup getAlbum() {
-        return m_album;
+    public ImageGroup getImageGroup() {
+        return m_imageGroup;
+    }
+
+    public void setGroupType(String groupType) {
+        m_groupType = groupType;
+    }
+
+    public String getGroupType() {
+        return m_groupType;
     }
 
     public void setImage(Long image) {
@@ -58,13 +67,13 @@ public class AlbumLinkTag extends TagSupport {
             helper.setRequest((HttpServletRequest)pageContext.getRequest());
 
             if ( m_image != null ) {
-                html.append(helper.getAlbumFrameUrl(m_album, m_image));
-            } else if ( m_album != null ) {
-                html.append(helper.getAlbumUrl(m_album));
+                html.append(helper.getImageGroupFrameUrl(m_imageGroup, m_image));
+            } else if ( m_imageGroup != null ) {
+                html.append(helper.getImageGroupUrl(m_imageGroup));
             } else if ( m_owner != null ) {
-                html.append(helper.getAlbumsUrl(m_owner));
+                html.append(helper.getImageGroupsUrl(m_groupType, m_owner));
             } else {
-                html.append(helper.getAlbumsRootUrl());
+                html.append(helper.getImageGroupsRootUrl(m_groupType));
             }
             html.append("\">");
             pageContext.getOut().write(html.toString());

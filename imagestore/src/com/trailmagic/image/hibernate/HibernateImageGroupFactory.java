@@ -23,8 +23,17 @@ public class HibernateImageGroupFactory implements ImageGroupFactory {
         "rollsByOwnerScreenName";
     private static final String ROLL_OWNERS_QRY =
         "rollOwners";
+    private static final String GROUP_OWNERS_QRY =
+        "groupOwnersByType";
+    private static final String GROUPS_BY_OWNER_NAME_QRY =
+        "groupsByOwnerScreenNameAndType"; 
+    private static final String GROUP_BY_OWNER_NAME_TYPE_QRY =
+        "groupByOwnerGroupNameAndType";
     private static final String ROLL_BY_OWNER_AND_NAME_QRY =
         "rollByOwnerAndName";
+    private static final String GROUPS_BY_IMAGE_QRY =
+        "groupsByImage";
+
     private SessionFactory m_sessionFactory;
         
     public SessionFactory getSessionFactory() {
@@ -39,13 +48,13 @@ public class HibernateImageGroupFactory implements ImageGroupFactory {
         return new ImageGroup();
     }
 
-    public ImageGroup getAlbumByOwnerAndName(User owner, String name) {
+    public ImageGroup getAlbumByOwnerAndName(User owner, String albumName) {
         try {
             Session session =
                 SessionFactoryUtils.getSession(m_sessionFactory, false);
             Query qry = session.getNamedQuery(ALBUM_BY_OWNER_AND_NAME_QRY);
             qry.setEntity("owner", owner);
-            qry.setString("albumName", name);
+            qry.setString("albumName", albumName);
             return (ImageGroup)qry.uniqueResult();
         } catch (HibernateException e) {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
@@ -53,13 +62,13 @@ public class HibernateImageGroupFactory implements ImageGroupFactory {
     }
 
 
-    public ImageGroup getRollByOwnerAndName(User owner, String name) {
+    public ImageGroup getRollByOwnerAndName(User owner, String rollName) {
         try {
             Session session =
                 SessionFactoryUtils.getSession(m_sessionFactory, false);
             Query qry = session.getNamedQuery(ROLL_BY_OWNER_AND_NAME_QRY);
             qry.setEntity("owner", owner);
-            qry.setString("rollName", name);
+            qry.setString("rollName", rollName);
             return (ImageGroup)qry.uniqueResult();
         } catch (HibernateException e) {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
@@ -80,12 +89,12 @@ public class HibernateImageGroupFactory implements ImageGroupFactory {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
         }
     }
-    public List getAlbumsByOwnerScreenName(String name) {
+    public List getAlbumsByOwnerScreenName(String screenName) {
         try {
             Session session =
                 SessionFactoryUtils.getSession(m_sessionFactory, false);
             Query qry = session.getNamedQuery(ALBUMS_BY_OWNER_NAME_QRY);
-            qry.setString("screenName", name);
+            qry.setString("screenName", screenName);
             return qry.list();
         } catch (HibernateException e) {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
@@ -102,12 +111,12 @@ public class HibernateImageGroupFactory implements ImageGroupFactory {
         }
     }
 
-    public List getRollsByOwnerScreenName(String name) {
+    public List getRollsByOwnerScreenName(String screenName) {
         try {
             Session session =
                 SessionFactoryUtils.getSession(m_sessionFactory, false);
             Query qry = session.getNamedQuery(ROLLS_BY_OWNER_NAME_QRY);
-            qry.setString("screenName", name);
+            qry.setString("screenName", screenName);
             return qry.list();
         } catch (HibernateException e) {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
@@ -118,6 +127,59 @@ public class HibernateImageGroupFactory implements ImageGroupFactory {
             Session session =
                 SessionFactoryUtils.getSession(m_sessionFactory, false);
             Query qry = session.getNamedQuery(ROLL_OWNERS_QRY);
+            return qry.list();
+        } catch (HibernateException e) {
+            throw SessionFactoryUtils.convertHibernateAccessException(e);
+        }
+    }
+
+    public List getOwnersByType(String groupType) {
+        try {
+            Session session =
+                SessionFactoryUtils.getSession(m_sessionFactory, false);
+            Query qry = session.getNamedQuery(GROUP_OWNERS_QRY);
+            qry.setString("groupType", groupType);
+            return qry.list();
+        } catch (HibernateException e) {
+            throw SessionFactoryUtils.convertHibernateAccessException(e);
+        }
+    }
+
+    public List getByOwnerScreenNameAndType(String screenName,
+                                            String groupType) {
+        try {
+            Session session =
+                SessionFactoryUtils.getSession(m_sessionFactory, false);
+            Query qry = session.getNamedQuery(GROUPS_BY_OWNER_NAME_QRY);
+            qry.setString("screenName", screenName);
+            qry.setString("groupType", groupType);
+            return qry.list();
+        } catch (HibernateException e) {
+            throw SessionFactoryUtils.convertHibernateAccessException(e);
+        }
+    }
+
+    public ImageGroup getByOwnerNameAndType(User owner, String groupName,
+                                            String groupType) {
+        try {
+            Session session =
+                SessionFactoryUtils.getSession(m_sessionFactory, false);
+            Query qry = session.getNamedQuery(GROUP_BY_OWNER_NAME_TYPE_QRY);
+            qry.setEntity("owner", owner);
+            qry.setString("groupName", groupName);
+            qry.setString("groupType", groupType);
+            return (ImageGroup)qry.uniqueResult();
+        } catch (HibernateException e) {
+            throw SessionFactoryUtils.convertHibernateAccessException(e);
+        }
+    }
+
+    public List getByImage(Image image) {
+        try {
+            Session session =
+                SessionFactoryUtils.getSession(m_sessionFactory, false);
+            Query qry = session.getNamedQuery(GROUPS_BY_IMAGE_QRY);
+            qry.setEntity("image", image);
             return qry.list();
         } catch (HibernateException e) {
             throw SessionFactoryUtils.convertHibernateAccessException(e);

@@ -9,21 +9,25 @@ Album.
 
 Model Requirements:
 user: currently logged in user
-owners: list of Users who own albums
+owners: list of Users who own image groups of groupType
+groupType: the type of ImageGroup
+groupTypeDisplay: the (singular) display name of the type
+
 
 -->
 <html>
   <head>
-    <title>Album Owners</title>
+    <title><c:out value="${groupTypeDisplay}"/> Owners</title>
   </head>
 
   <body>
-    <h1>Album Owners:</h1>
+    <h1><c:out value="${groupTypeDisplay}"/> Owners:</h1>
 
     <ul>
       <c:forEach var="owner" items="${owners}">
         <li>
-          <tm:albumLink owner="${owner}">${owner.screenName}</tm:albumLink>
+          <tm:imageGroupLink owner="${owner}"
+             groupType="${groupType}">${owner.screenName}</tm:imageGroupLink>
         </li>
       </c:forEach>
     </ul>

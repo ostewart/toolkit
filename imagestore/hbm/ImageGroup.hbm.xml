@@ -104,11 +104,25 @@
     AND owner.screenName = :screenName
   </query>
 
+  <query name="groupsByOwnerScreenNameAndType">
+    SELECT grp FROM com.trailmagic.image.ImageGroup
+    AS grp INNER JOIN grp.owner AS owner
+    WHERE grp.type = :groupType
+    AND owner.screenName = :screenName
+  </query>
+
   <query name="albumOwners">
     SELECT DISTINCT album.owner
     FROM com.trailmagic.image.ImageGroup
     AS album INNER JOIN album.owner
     WHERE album.type = 'album'
+  </query>
+
+  <query name="groupOwnersByType">
+    SELECT DISTINCT grp.owner
+    FROM com.trailmagic.image.ImageGroup
+    AS grp INNER JOIN grp.owner
+    WHERE grp.type = :groupType
   </query>
 
   <query name="albumByOwnerAndName">
@@ -125,10 +139,23 @@
     AND grp.type = 'roll'
   </query>
 
+  <query name="groupByOwnerGroupNameAndType">
+    SELECT FROM com.trailmagic.image.ImageGroup
+    AS grp WHERE grp.owner = :owner
+    AND grp.name = :groupName
+    AND grp.type = :groupType
+  </query>
+
   <query name="imageFrameByImageGroupAndImageId">
     SELECT 
     FROM com.trailmagic.image.ImageFrame frame
     WHERE frame.imageGroup = :imageGroup
     AND frame.image.id = :imageId
+  </query>
+
+  <query name="groupsByImage">
+    SELECT frame.imageGroup FROM com.trailmagic.image.ImageFrame
+    AS frame INNER JOIN frame.imageGroup
+    WHERE frame.image = :image
   </query>
 </hibernate-mapping>

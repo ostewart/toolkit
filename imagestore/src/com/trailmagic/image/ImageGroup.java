@@ -113,7 +113,8 @@ public class ImageGroup {
     public boolean equals(Object obj) {
         return (obj instanceof ImageGroup) &&
             (this.getName().equals(((ImageGroup)obj).getName())) &&
-            (this.getOwner().equals(((ImageGroup)obj).getOwner()));
+            (this.getOwner().equals(((ImageGroup)obj).getOwner())) &&
+            (this.getType().equals(((ImageGroup)obj).getType()));
     }
 
 }

@@ -34,7 +34,7 @@ public class ImageFrameLinkTag extends TagSupport {
             helper.setRequest((HttpServletRequest)pageContext.getRequest());
                 //                new LinkHelper((HttpServletRequest)pageContext.getRequest());
 
-            html.append(helper.getAlbumFrameUrl(m_frame));
+            html.append(helper.getImageGroupFrameUrl(m_frame));
             html.append("\">");
             pageContext.getOut().write(html.toString());
             return EVAL_BODY_INCLUDE;

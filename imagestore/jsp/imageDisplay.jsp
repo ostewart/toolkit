@@ -12,18 +12,19 @@ user: currently logged in user
 image: Image to display
 
 Optional Attributes:
-album: ImageGroup
+imageGroup: ImageGroup
 frame: current ImageFrame
 nextFrame: ImageFrame
 prevFrame: ImageFrame
 nextImage: Image
 prevImage: Image
+groupsContainingImage: ImageGroups that contain frame.image
 
 -->
 <html>
   <head>
-    <title><c:out value="${album.displayName}"/><c:if test="${!empty
-    album}"> : </c:if><c:out value="${image.displayName}"/></title>
+    <title><c:out value="${imageGroup.displayName}"/><c:if test="${!empty
+    imageGroup}"> : </c:if><c:out value="${image.displayName}"/></title>
   </head>
 
   <body>
@@ -59,8 +60,8 @@ prevImage: Image
     </div>
 
     <div style="clear: both; float: none; text-align: center">
-      <h1><tm:albumLink album="${album}"><c:out value="${album.displayName}"/></tm:albumLink><c:if test="${!empty
-            album}"> : </c:if><c:out
+      <h1><tm:imageGroupLink imageGroup="${imageGroup}"><c:out value="${imageGroup.displayName}"/></tm:imageGroupLink><c:if test="${!empty
+            imageGroup}"> : </c:if><c:out
             value="${image.displayName}"/></h1>
       <c:choose>
       <c:when test="${!empty image}">
@@ -83,7 +84,7 @@ prevImage: Image
       <c:out value="${image.caption}"/><br>
       <c:out value="${image.copyright}"/>
       <c:out value="${image.creator}"/><br>
-      Owned by <tm:albumLink owner="${image.owner}">${image.owner.screenName}</tm:albumLink><br/>
+      Owned by <tm:imageGroupLink owner="${image.owner}">${image.owner.screenName}</tm:imageGroupLink><br/>
     </div>
 
     <!-- Photo properties -->
@@ -99,13 +100,22 @@ prevImage: Image
      </div>
   </c:if>
 
-<br>
+<br/>
         Set default image size: 
         <a href="?defaultLabel=thumbnail">thumbnail</a> |
         <a href="?defaultLabel=small">small</a> |
         <a href="?defaultLabel=medium">medium</a> |
         <a href="?defaultLabel=large">large</a> |
         <a href="?defaultLabel=huge">huge</a>
+
+    <c:if test="${!empty groupsContainingImage}">
+<br/>
+    This image is also in: 
+    <c:forEach var="group" items="${groupsContainingImage}">
+    <tm:imageGroupLink imageGroup="${group}"><c:out
+    value="${group.name} (${group.type})"/></tm:imageGroupLink>
+    </c:forEach>
+    </c:if>
 
     <div style="clear: both">
       <div style="float: left">

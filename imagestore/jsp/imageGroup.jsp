@@ -4,22 +4,24 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="tm" uri="http://trailmagic.com/taglibs/image" %>
 
-View for Album display.
+View for ImageGroup display.
 
 Model Requirements:
 user: currently logged in user
-album: the current album (ImageGroup of type album)
+imageGroup: the current ImageGroup
+groupType: the type of ImageGroup
+groupTypeDisplay: the (singular) display name of the type
 owner: the current album's owner
-frames: List of ImageFrames for this Album
+frames: List of ImageFrames for this group
 
 -->
 <html>
   <head>
-    <title><c:out value="${album.displayName}"/></title>
+    <title><c:out value="${imageGroup.displayName}"/></title>
   </head>
 
   <body>
-    <h1><c:out value="${album.displayName}" /></h1>
+    <h1><c:out value="${imageGroup.displayName}" /></h1>
 <center>
 <!--    <ul>-->
       <c:forEach var="frame" items="${frames}">

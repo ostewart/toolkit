@@ -42,9 +42,9 @@
   </tag>
 
   <tag>
-    <description>Output a link to an Album</description>
-    <name>albumLink</name>
-    <tag-class>com.trailmagic.image.ui.AlbumLinkTag</tag-class>
+    <description>Output a link to an ImageGroup</description>
+    <name>imageGroupLink</name>
+    <tag-class>com.trailmagic.image.ui.ImageGroupLinkTag</tag-class>
     <body-content>JSP</body-content>
     <attribute>
       <name>owner</name>
@@ -53,7 +53,7 @@
       <type>com.trailmagic.user.User</type>
     </attribute>
     <attribute>
-      <name>album</name>
+      <name>imageGroup</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
       <type>com.trailmagic.image.ImageGroup</type>
@@ -64,6 +64,13 @@
       <rtexprvalue>true</rtexprvalue>
       <type>java.lang.Long</type>
     </attribute>
+    <attribute>
+      <name>groupType</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+
   </tag>
 
 </taglib>

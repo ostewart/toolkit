@@ -8,19 +8,21 @@ View to list Albums.
 
 Model Requirements:
 user: currently logged in user
-albums: List of albums (ImageGroups of type album)
+imageGroups: List of ImageGroups
+groupType: the type of ImageGroup
+groupTypeDisplay: the (singular) display name of the type
 owner: the current albums' owner
 
 -->
 <html>
   <head>
-    <title>Albums for User: <c:out value="${owner.screenName}"/></title>
+    <title><c:out value="${groupTypeDisplay}"/>s for User: <c:out value="${owner.screenName}"/></title>
   </head>
 
   <body>
-    <h1>Albums for User: <c:out value="${owner.screenName}"/></h1>
+    <h1><c:out value="${groupTypeDisplay}"/>s for User: <c:out value="${owner.screenName}"/></h1>
     <ul>
-      <c:forEach var="snapper" items="${albums}">
+      <c:forEach var="snapper" items="${imageGroups}">
         <li><a href="./<c:out value="${snapper.name}"/>"><c:out value="${snapper.displayName}"/></a></li>
       </c:forEach>
     </ul>

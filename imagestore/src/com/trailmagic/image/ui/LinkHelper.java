@@ -45,10 +45,22 @@ public class LinkHelper {
             frame.getImageGroup().getName() + "/" + frame.getImage().getId();
     }
 
+    public String getImageGroupFrameUrl(ImageFrame frame) {
+        return getImageGroupsRootUrl(frame.getImageGroup().getType()) +
+            frame.getImage().getOwner().getScreenName() + "/" +
+            frame.getImageGroup().getName() + "/" + frame.getImage().getId();
+    }
+
     public String getAlbumFrameUrl(ImageGroup album, Long imageId) {
         return getAlbumsRootUrl() +
             album.getOwner().getScreenName() + "/" +
             album.getName() + "/" + imageId;
+    }
+
+    public String getImageGroupFrameUrl(ImageGroup imageGroup, Long imageId) {
+        return getImageGroupsRootUrl(imageGroup.getType()) +
+            imageGroup.getOwner().getScreenName() + "/" +
+            imageGroup.getName() + "/" + imageId;
     }
 
     public String getAlbumUrl(ImageGroup album) {
@@ -57,14 +69,28 @@ public class LinkHelper {
             album.getName() + "/";
     }
 
+    public String getImageGroupUrl(ImageGroup imageGroup) {
+        return getImageGroupsRootUrl(imageGroup.getType()) +
+            imageGroup.getOwner().getScreenName() + "/" +
+            imageGroup.getName() + "/";
+    }
+
     public String getAlbumsUrl(User owner) {
         return getAlbumsRootUrl() + owner.getScreenName() + "/";
+    }
+
+    public String getImageGroupsUrl(String groupType, User owner) {
+        return getImageGroupsRootUrl(groupType) +
+            owner.getScreenName() + "/";
     }
 
     public String getAlbumsRootUrl() {
         return m_request.getContextPath() + m_albumServletPath;
     }
-    
+
+    public String getImageGroupsRootUrl(String groupType) {
+        return m_request.getContextPath() + "/" + groupType + "s/";
+    }
 
     public String getImageDisplayUrl(Image image) {
         return m_request.getContextPath() + "/images/by-id/" + image.getId();
