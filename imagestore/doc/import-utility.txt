@@ -1,0 +1,63 @@
+What Data Do We Need?
+
+User
+Roll:
+group id;
+supergroup id
+name
+display_name
+type = roll
+description
+owner
+
+Image:
+id
+name
+display name
+caption
+copyright
+creator
+owner
+cd
+
+Photo:
+image
+notes
+capture date (from exif)
+lens
+camera
+(roll)
+
+
+Manifestation:
+image
+name
+height
+width
+format
+original?
+data
+
+CD:
+number
+description
+
+
+Prompt:
+
+Screen Name of Owner:
+New or old roll?
+New Roll:
+Short Name:
+Display Name:
+Description:
+196 Images Found:
+For All Images:
+Creator:
+Copyright (e.g. "Copyright 2004"):
+dsc_01452.jpg:
+Short Name:
+Display Name:
+Caption:
+Notes:
+Capture Date (YYYY-MM-DD):

@@ -1,0 +1,8 @@
+Gather roll information, common information
+select image files
+resize images
+generate XML descriptor
+
+configuration information:
+where does the XML file go?
+where do the images go?
