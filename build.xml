@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE project PUBLIC "-//ANT//DTD project//EN"
-  "file:///home/oliver/devel/project.dtd">
+  "file:///home/oliver/devel/doc/project.dtd">
 <!--<!DOCTYPE project>-->
 
 <project name="trailmagic-toolkit" default="build" basedir=".">

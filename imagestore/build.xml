@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE project PUBLIC "-//ANT//DTD project//EN"
-  "file:///home/oliver/devel/project.dtd">
+  "file:///home/oliver/devel/doc/project.dtd">
 <!--<!DOCTYPE project>-->
 
 <project name="trailmagic-image" default="build" basedir=".">
@@ -176,6 +176,14 @@
       <fileset dir="${build.dir}"/>
       <fileset dir="${resources.dir}"/>
     </copy>
+
+    <mkdir dir="${deploy.dir}/META-INF"/>
+    <copy todir="${deploy.dir}/META-INF">
+      <fileset dir="${resources.dir}">
+        <include name="context.xml"/>
+      </fileset>
+    </copy>
+    
     <copy todir="${deploy.dir}/WEB-INF/lib">
       <!-- make sure we have a copy of the user jar -->
       <fileset file="${trailmagic-user.jar}"/>

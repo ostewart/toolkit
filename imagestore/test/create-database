@@ -1,0 +1,4 @@
+#!/bin/sh
+
+createuser -e -P -h localhost trailmagic
+createdb -e -h localhost -O trailmagic trailmagic "trailmagic.com database"

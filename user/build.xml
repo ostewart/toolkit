@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE project PUBLIC "-//ANT//DTD project//EN"
-  "file:///home/oliver/devel/project.dtd">
+  "file:///home/oliver/devel/doc/project.dtd">
 <!--<!DOCTYPE project>-->
 
 <project name="trailmagic-user" default="build" basedir=".">
@@ -35,6 +35,7 @@
   <property name="javac.debug" value="on"/>
   <property name="javac.optimize" value="off"/>
   <property name="deploy.dir" value="deploy"/>
+  <property name="deploy.conf.dir" value="${deploy.root}/conf"/>
 
 
   <path id="build.classpath">
@@ -166,6 +167,11 @@
       </fileset>
       <fileset dir="${lib.dir}"/>
       <fileset dir="${dep.lib.dir}"/>
+    </copy>
+    <copy todir="${deploy.conf.dir}">
+      <fileset dir="${resources.dir}">
+        <include name="jaas.config"/>
+      </fileset>
     </copy>
   </target>
 

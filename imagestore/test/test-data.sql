@@ -14,7 +14,7 @@ INSERT INTO image_groups (group_id, supergroup_id, name, display_name,
 VALUES (nextval('id_sequence'), currval('id_sequence'), 'test', 'Test Roll', 'roll', '',
         (select user_id from users where screen_name = 'oliver'));
 
-INSERT INTO images (image_id, name, displayName, caption, copyright,
+INSERT INTO images (image_id, name, display_name, caption, copyright,
                     creator, owner_id, cd_id)
 VALUES (nextval('id_sequence'), 'bug-love', 'Bug Love', 'Tender Bug Love',
         'Copyright 2004', 'Oliver Stewart',
@@ -46,7 +46,7 @@ VALUES (nextval('id_sequence'),
 
 
 
-INSERT INTO images (image_id, name, displayName, caption, copyright,
+INSERT INTO images (image_id, name, display_name, caption, copyright,
                     creator, owner_id, cd_id)
 VALUES (nextval('id_sequence'), 'oliver-suit', 'Fancy', 'Spiffy, Eh?',
         'Copyright 2004', 'Oliver Stewart',
