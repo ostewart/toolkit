@@ -38,7 +38,7 @@ imageImportBean is empty
 imageImportBean.imagesData is empty
 </c:if>
 
-    <form method="POST" action="/images/import" enctype="multipart/form-data">
+    <form method="POST" action="." enctype="multipart/form-data">
       <label for="imagesData">Images Data File:</label>
       <input name="imagesData" type="file"/>
       <input name="submit" type="submit"/>

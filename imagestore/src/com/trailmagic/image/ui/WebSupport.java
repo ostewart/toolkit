@@ -8,8 +8,8 @@ import com.trailmagic.user.*;
 
 public class WebSupport {
     public static ImageManifestation getDefaultMF(User user, Image image) {
-        // default is medium (768x512), so find the closest
-        return getMFBySize(image, 768*512);
+        // default is small (384x256), so find the closest
+        return getMFBySize(image, 384*256);
     }
 
     public static ImageManifestation getMFByLabel(Image image,

@@ -321,3 +321,32 @@ default action is display, with a keyword, it's that keyword
 /images/by-id/6/edit
 /images/by-id/6?action=edit
 /images/by-id/6?action=remove
+
+
+-----
+1/04
+I've been using the Image ID as the album frame selector.  I think
+this is a bad idea, as it doesn't allow multiple instances of an image
+in an album, among other things.  I think the appropriate thing is
+really to use the frame id, as seems to be hinted at above.
+It should look like this:
+/albums : controller
+              /oliver : user
+                     /germany-2001 : album name
+                                  /22 : ImageFrame number
+
+This is redundant, because the ImageFrame ID already specifies an
+album, so you could end up trying to point to a frame in a different
+album.  I don't think this is a big problem.
+Ref by image id is nice because if someone bookmarks an image it won't
+matter where the image moves, it'll still be able to find it.
+We can track the image in the album with the same image frame, though,
+and if the image is taken out of the album it's probably okay not to
+find it.  OTOH, if you want to bookmark an image, it's probably best
+to do so by image ID.  Argh.
+Spec by frame allows us to not join, maybe, if we don't care about
+validation.
+Fuck it.  It's by image id.  Images only once per album isn't so bad,
+and it's not the end of the world to change it.  It sort of makes
+more sense to make the image id visible than to make the frame id
+visible.

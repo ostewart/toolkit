@@ -73,10 +73,10 @@ prevImage: Image
       </c:otherwise>
       </c:choose>
       <div class="image-sizes">
-        |<c:forEach var="imf" items="${image.manifestations}">
+        | <c:forEach var="imf" items="${image.manifestations}">
           <a href="?size=<c:out value="${imf.area}"/>">
         <c:out value="${imf.width}"/>x<c:out
-          value="${imf.height}"/></a>|
+          value="${imf.height}"/></a> |
         </c:forEach>
       </div>
       <div>
@@ -98,6 +98,14 @@ prevImage: Image
         </c:if>
      </div>
   </c:if>
+
+<br>
+        Set default image size: 
+        <a href="?defaultLabel=thumbnail">thumbnail</a> |
+        <a href="?defaultLabel=small">small</a> |
+        <a href="?defaultLabel=medium">medium</a> |
+        <a href="?defaultLabel=large">large</a> |
+        <a href="?defaultLabel=huge">huge</a>
 
     <div style="clear: both">
       <div style="float: left">

@@ -1,9 +1,10 @@
 package com.trailmagic.image.ui;
 
-import javax.servlet.jsp.tagext.TagSupport;
-import javax.servlet.jsp.JspException;
 import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.TagSupport;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 /*
@@ -18,6 +19,9 @@ public class ImageTag extends TagSupport {
     private String m_sizeLabel;
 
     private static final String USER_ATTR = "user";
+    private static final String DEFAULT_LABEL_ATTR = "defaultLabel";
+    private static final String SIZE_ATTR = "size";
+    private static final String LABEL_ATTR = "label";
 
     public int doStartTag() throws JspException {
         StringBuffer html = new StringBuffer();
@@ -27,13 +31,27 @@ public class ImageTag extends TagSupport {
             HttpServletRequest req =
                 (HttpServletRequest)pageContext.getRequest();
             // XXX: maybe this should be a parameter of the tag instead?
-            String size = req.getParameter("size");
+
+            // XXX: this is sort of a kludge for setting a default label
+            String defaultLabel = req.getParameter(DEFAULT_LABEL_ATTR);
+            HttpSession session = req.getSession();
+            if ( defaultLabel != null ) {
+                session.setAttribute(DEFAULT_LABEL_ATTR, defaultLabel);
+            }
+
+            // XXX: end kludge
+
+            String size = req.getParameter(SIZE_ATTR);
             if (size != null) {
                 mf = WebSupport.getMFBySize(m_image, Integer.parseInt(size));
             } else {
-                String label = req.getParameter("label");
+                // get label by precedence: req param, tag spec, sess attr
+                String label = req.getParameter(LABEL_ATTR);
                 if ( label == null ) {
                     label = m_sizeLabel;
+                }
+                if ( label == null ) {
+                    label = (String)session.getAttribute(DEFAULT_LABEL_ATTR);
                 }
                 if (label != null) {
                     mf = WebSupport.getMFByLabel(m_image, label);
@@ -45,6 +63,10 @@ public class ImageTag extends TagSupport {
             }
 
             if ( mf != null ) {
+                // XXX: resume kludge
+                pageContext.setAttribute("currentLabel", getLabel(mf));
+            // XXX: end kludge
+                // XXX: end kludge 
                 html.append("<img src=\"");
                 
                 //XXX: yeek?
@@ -93,5 +115,38 @@ public class ImageTag extends TagSupport {
 
     public String getSizeLabel() {
         return m_sizeLabel;
+    }
+
+    private String getLabel(ImageManifestation mf) {
+        int area = mf.getArea();
+        int distance = Integer.MAX_VALUE;
+        int newDistance;
+        String label = "small";
+        
+        newDistance = Math.abs(area - 192*128);
+        if ( newDistance < distance ) {
+            label = "thumbnail";
+            distance = newDistance;
+        }
+        newDistance = Math.abs(area - 384*256);
+        if ( newDistance  < distance ) {
+            label = "small";
+            distance = newDistance;
+        }
+        newDistance = Math.abs(area - 768*512);
+        if ( newDistance < distance ) {
+            label = "medium";
+            distance = newDistance;
+        }
+        newDistance = Math.abs(area - 1536*1024);
+        if (newDistance < distance ) {
+            label = "large";
+            distance = newDistance;
+        }
+        newDistance = Math.abs(area - 3072*2048);
+        if ( newDistance < distance ) {
+            label = "huge";
+        }
+        return label;
     }
 }
