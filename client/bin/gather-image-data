@@ -118,7 +118,7 @@ if ( /^y$/ ) {
     my $frameNum = 1;
     print "sorting...images has @{[scalar @images]} entries\n";
     my @sortedImages =
-        sort {$b->{"number"} <=> $a->{"number"}} @images;
+        sort {$a->{"number"} <=> $b->{"number"}} @images;
 #    my @sortedImages = @images;
     
     
