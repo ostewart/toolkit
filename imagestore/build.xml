@@ -215,7 +215,7 @@
         <include name="**/*"/>
       </fileset>
     </copy>
-  </targe>
+  </target>
 
   <target name="force-deploy" depends="deploy">
     <touch file="${deploy.dir}/WEB-INF/web.xml"/>
