@@ -109,9 +109,10 @@ SSDClassNode 5
 	{ Annotation "" }
 	{ Parent 0 }
 	{ Index "" }
-	{ Attributes 2 }
+	{ Attributes 3 }
 	{ Attribute "group_id" }
 	{ Attribute "name" }
+	{ Attribute "type" }
 	{ Operations 0 }
 	{ Stereotype "<< - >>" }
 	{ Properties "{ - }" }
@@ -177,6 +178,22 @@ SSDClassNode 20
 	{ Attribute "width" }
 	{ Attribute "format" }
 	{ Attribute "originalp" }
+	{ Operations 0 }
+	{ Stereotype "<< - >>" }
+	{ Properties "{ - }" }
+}
+
+SSDClassNode 22
+{
+	{ Name "image_frames" }
+	{ Annotation "" }
+	{ Parent 0 }
+	{ Index "" }
+	{ Attributes 4 }
+	{ Attribute "group_id" }
+	{ Attribute "image_id" }
+	{ Attribute "position" }
+	{ Attribute "caption" }
 	{ Operations 0 }
 	{ Stereotype "<< - >>" }
 	{ Properties "{ - }" }
@@ -309,7 +326,7 @@ SSDDoubleClassBox 16
 	{ View 10 }
 	{ Subject 5 }
 	{ Position 440 210 }
-	{ Size 76 60 }
+	{ Size 82 72 }
 	{ Color "black" }
 	{ LineWidth 1 }
 	{ LineStyle Solid }
@@ -390,6 +407,26 @@ SSDDoubleClassBox 21
 	{ Subject 20 }
 	{ Position 210 320 }
 	{ Size 130 108 }
+	{ Color "black" }
+	{ LineWidth 1 }
+	{ LineStyle Solid }
+	{ FillStyle Unfilled }
+	{ FillColor "white" }
+	{ FixedName False }
+	{ Font "-*-courier-medium-r-normal--10*" }
+	{ TextAlignment Center }
+	{ TextColor "black" }
+	{ NameUnderlined False }
+	{ ShowStereotype False }
+	{ ShowProperties False }
+}
+
+SSDDoubleClassBox 23
+{
+	{ View 10 }
+	{ Subject 22 }
+	{ Position 390 300 }
+	{ Size 82 84 }
 	{ Color "black" }
 	{ LineWidth 1 }
 	{ LineStyle Solid }

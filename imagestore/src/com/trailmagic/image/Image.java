@@ -91,4 +91,11 @@ public class Image {
         query.setLong("id", id);
         return (Image)query.uniqueResult();
     }
+
+    public boolean equals(Object obj) {
+        if ( obj == null || !(obj instanceof Image) ) {
+            return false;
+        }
+        return this.m_id == ((Image)obj).m_id;
+    }
 }

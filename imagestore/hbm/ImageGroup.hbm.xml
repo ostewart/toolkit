@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping
+    PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd">
+
+<hibernate-mapping
+  package="com.trailmagic.image">
+  
+  <class
+    name="com.trailmagic.image.ImageGroup"
+    table="image_groups">
+
+    <id
+      name="id"
+      type="long"
+      column="group_id"
+      unsaved-value="0"
+      access="property">
+      <generator class="sequence">
+        <param name="sequence">id_sequence</param>
+      </generator>
+    </id>
+
+    <many-to-one name="supergroup" column="supergroup_id"
+      not-null="true"/>
+
+    <set name="subgroups" inverse="true" cascade="all">
+      <key column="parent_id"/>
+      <one-to-many class="ImageGroup"/>
+    </set>
+    
+
+    <property name="name">
+      <column name="name" sql-type="varchar(1024)" not-null="true"/>
+    </property>
+
+    <property name="type">
+      <column name="type" sql-type="varchar(100)" not-null="true"/>
+    </property>
+    
+    <set
+      name="frames"
+      table="image_frames"
+      cascade="all-delete-orphan"
+      sort="natural"
+      lazy="true"
+      inverse="true">
+      <key>
+        <column name="group_id" unique-key="frames_group_position"/>
+      </key>
+<!--      <index column="position"/>-->
+      <composite-element class="ImageFrame">
+        <property name="position">
+          <column name="position" unique-key="frames_group_position"/>
+        </property>
+        <property name="caption">
+          <column name="caption" sql-type="varchar(4000)"/>
+        </property>
+        <many-to-one name="image" column="image_id" class="Image"
+          cascade="none"/>
+      </composite-element>
+    </set>
+  </class>
+    
+</hibernate-mapping>
