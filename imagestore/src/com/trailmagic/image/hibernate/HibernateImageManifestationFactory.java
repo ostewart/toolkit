@@ -9,8 +9,11 @@ import java.util.List;
 
 import com.trailmagic.image.*;
 
-public class HibernateImageFactory implements ImageFactory {
-    private static final String ALL_IMAGES_QUERY_NAME = "allImages";
+public class HibernateImageManifestationFactory
+    implements ImageManifestationFactory {
+
+    private static final String ALL_FOR_IMAGE_ID_QUERY_NAME =
+        "allImageManifestationsForImageId";
     private SessionFactory m_sessionFactory;
         
     public SessionFactory getSessionFactory() {
@@ -21,17 +24,18 @@ public class HibernateImageFactory implements ImageFactory {
         m_sessionFactory = sf;
     }
         
-    public Image newInstance() {
-        return new Image();
+    public ImageManifestation newInstance() {
+        return new ImageManifestation();
     }
 
-    public Image getById(long id) {
+    public ImageManifestation getById(long id) {
         try {
             // XXX: should we allow creation here?
             Session session =
                 SessionFactoryUtils.getSession(m_sessionFactory, false);
 
-            return (Image)session.get(Image.class, new Long(id));
+            return (ImageManifestation)session.get(ImageManifestation.class,
+                                                   new Long(id));
             
         } catch (HibernateException e) {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
@@ -39,15 +43,15 @@ public class HibernateImageFactory implements ImageFactory {
         
     }
 
-    public List getAll() {
+    public List getAllForImageId(long imageId) {
         try {
             Session session =
                 SessionFactoryUtils.getSession(m_sessionFactory, false);
-            Query query = session.getNamedQuery(ALL_IMAGES_QUERY_NAME);
-            return query.list();
+            Query qry = session.getNamedQuery(ALL_FOR_IMAGE_ID_QUERY_NAME);
+            qry.setLong("imageId", imageId);
+            return qry.list();
         } catch (HibernateException e) {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
         }
     }
-
 }

@@ -3,15 +3,10 @@ package com.trailmagic.image.ui;
 import org.springframework.web.servlet.mvc.Controller;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.UrlPathHelper;
-import org.springframework.orm.hibernate.SessionFactoryUtils;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
-import net.sf.hibernate.Session;
 import java.util.StringTokenizer;
-import net.sf.hibernate.HibernateException;
-import net.sf.hibernate.Query;
-import net.sf.hibernate.SessionFactory;
 import java.util.SortedSet;
 import java.util.List;
 import java.util.Collection;
@@ -28,18 +23,22 @@ import com.trailmagic.user.*;
 public class AlbumController implements Controller, ApplicationContextAware {
     private static final String USER_FACTORY_BEAN = "userFactory";
     private static final String IMG_GROUP_FACTORY_BEAN = "imageGroupFactory";
+    private static final String ALBUM_LIST_VIEW = "albumList";
+    private static final String ALBUM_USERS_VIEW = "albumUsers";
+    private static final String IMAGE_DISPLAY_VIEW = "imageDisplay";
+    private static final String ALBUM_VIEW = "album";
     
-    private SessionFactory m_sessionFactory;
     private ApplicationContext m_appContext;
+    private String m_controllerPath;
 
-    public SessionFactory getSessionFactory() {
-        return m_sessionFactory;
+    public String getControllerPath() {
+        return m_controllerPath;
     }
 
-    public void setSessionFactory(SessionFactory sf) {
-        m_sessionFactory = sf;
+    public void setControllerPath(String path) {
+        m_controllerPath = path;
     }
-
+        
     public void setApplicationContext(ApplicationContext appContext)
         throws BeansException {
 
@@ -57,39 +56,41 @@ public class AlbumController implements Controller, ApplicationContextAware {
          * prev: the previous ImageFrame, or null
          * next: the next ImageFrame, or null
          */
-        Session session = SessionFactoryUtils.getSession(m_sessionFactory,
-                                                         false);
         ImageGroupFactory imgGroupFactory =
             (ImageGroupFactory)m_appContext.getBean(IMG_GROUP_FACTORY_BEAN);
         UserFactory userFactory =
             (UserFactory)m_appContext.getBean(USER_FACTORY_BEAN);
         
         UrlPathHelper pathHelper = new UrlPathHelper();
-        String myPath = pathHelper.getPathWithinServletMapping(req);
+        String myPath = pathHelper.getLookupPathForRequest(req);
+        System.err.println("Path within servlet mapping: " + myPath);
+        System.err.println("Lookup path: " +
+                           pathHelper.getLookupPathForRequest(req));
+        // cut off the controller part of the URL
+        myPath = myPath.substring(m_controllerPath.length());
         StringTokenizer pathTokens = new StringTokenizer(myPath, "/");
-        String appName = pathTokens.nextToken();
+        //        String appName = pathTokens.nextToken();
         
         Map model = new HashMap();
 
         // got no args: show users        
         if ( !pathTokens.hasMoreTokens() ) {
             // List users with albums
-            //            model.put("owners", getUsersWithAlbums(session));
             model.put("owners", imgGroupFactory.getAlbumOwners());
-            return new ModelAndView("/album-users.jsp", model);
+            return new ModelAndView(ALBUM_USERS_VIEW, model);
         }
 
         // process first (owner) arg
         String ownerName = pathTokens.nextToken();
         User owner = userFactory.getByScreenName(ownerName);
+        // check for null!
         model.put("owner", owner);
 
         // got user arg: show his/her albums
         if ( !pathTokens.hasMoreTokens() ) {
-            //            model.put("albums", getAlbumsForUser(session, ownerName));
             model.put("albums",
                       imgGroupFactory.getAlbumsByOwnerScreenName(ownerName));
-            return new ModelAndView("/album-list.jsp", model);
+            return new ModelAndView(ALBUM_LIST_VIEW, model);
         }
 
         // process second (album name) arg
@@ -110,7 +111,7 @@ public class AlbumController implements Controller, ApplicationContextAware {
 
         // got user and album args: show one album
         if (!pathTokens.hasMoreTokens()) {
-            return new ModelAndView("/album.jsp", model);
+            return new ModelAndView(ALBUM_VIEW, model);
         }
 
         // process third (frame number) arg
@@ -149,118 +150,9 @@ public class AlbumController implements Controller, ApplicationContextAware {
             }
         
             // got user, album, and frame number: show that frame
-            return new ModelAndView("/image-display.jsp", model);
+            return new ModelAndView(IMAGE_DISPLAY_VIEW, model);
         } catch (NumberFormatException e) {
             throw new JspException("Invalid frame number.");
         }
     }
-    /*
-    private List getUsersWithAlbums(Session session) {
-        try {
-            Query query =
-
-//                 session.createQuery("SELECT user " +
-//                                     "FROM com.trailmagic.user.User " +
-//                                     "AS user " +
-//                                     "inner join " +
-//                                     "com.trailmagic.image.ImageFrame " +
-//                                     " AS album WHERE album.type = 'album' ");
-//                                     //                                    "AND album.owner = user");
-
-                session.createQuery("select distinct album.owner " +
-                                    "from com.trailmagic.image.ImageGroup " +
-                                    "as album inner join album.owner " +
-                                    "where album.type = 'album'");
-
-            return query.list();
-        } catch (HibernateException e) {
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
-        }
-    }
-
-    private List getAlbumsForUser(Session session, String screenName) {
-        try {
-            Query query =
-                session.createQuery("select album from com.trailmagic.image.ImageGroup" +
-                                    " as album inner join album.owner as owner " +
-                                    "where album.type = 'album' " +
-                                    "and owner.screenName = :screenName");
-            query.setString("screenName", screenName);
-            return query.list();
-        } catch (HibernateException e) {
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
-        }
-    }
-
-    private User getUserByScreenName(Session session, String screenName) {
-        try {
-            Query query =
-                session.createQuery("select from com.trailmagic.user.User " +
-                                    "as user " +
-                                    "where user.screenName = :screenName");
-            query.setString("screenName", screenName);
-
-            return (User)query.uniqueResult();
-
-        } catch (HibernateException e) {
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
-        }
-
-    }
-
-    //select elements(grp.frames) from com.trailmagic.image.ImageGroup grp join grp.frames frame where grp.owner.screenName = 'oliver' AND grp.name = 'test-album' AND frame.image.id = 3
-
-    private ImageFrame getImageFrameByAlbumAndImageId(Session session,
-                                                      ImageGroup album,
-                                                      long imageId) {
-
-        try {
-
-//             Query query =
-//                 session.createQuery("select elements(grp.frames) " +
-//                                     "from com.trailmagic.image.ImageGroup grp"+
-//                                     " join grp.frames frame " +
-//                                     "where grp = :album " +
-//                                     "AND frame.image.id = :imageId");
-//             query.setEntity("album", album);
-//             query.setLong("imageId", imageId);
-//             return (ImageFrame)query.uniqueResult();
-
-
-            
-            Collection frames =
-                session.filter(album.getFrames(),
-                               "where this.image.id = ?",
-                               new Long(imageId),
-                               new net.sf.hibernate.type.LongType());
-            // XXX: is this really the right way to do this?
-            Iterator iter = frames.iterator();
-            if (iter.hasNext()) {
-                return (ImageFrame)iter.next();
-            } else {
-                return null;
-            }
-        } catch (HibernateException e) {
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
-        }
-    }
-
-    private ImageGroup getAlbumByOwnerAndName(Session session,
-                                              User owner,
-                                              String albumName) {
-
-        try {
-            Query query =
-                session.createQuery("select from com.trailmagic.image.ImageGroup " +
-                                    "AS grp where grp.owner = :owner AND " +
-                                    "grp.name = :albumName " +
-                                    "AND grp.type = 'album'");
-            query.setEntity("owner", owner);
-            query.setString("albumName", albumName);
-            return (ImageGroup)query.uniqueResult();
-        } catch (HibernateException e) {
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
-        }
-    }
-    */
 }

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!ELEMENT images (roll* image*)>
+<!ELEMENT image (id, name, display-name, caption, copyright, creator,
+                 owner, cd*, photo-data? image-manifestation*)>
+
+<!ELEMENT name (#PCDATA)>
+<!ELEMENT display-name (#PCDATA)>
+<!ELEMENT caption (#PCDATA)>
+<!ELEMENT copyright (#PCDATA)>
+<!ELEMENT creator (#PCDATA)>
+
+<!ELEMENT photo-data (notes, capture-date, roll)>
+
+<!ELEMENT image-manifestation (name, height?, width?, format?,
+          original, filename)>
+
+<!ELEMENT notes (#PCDATA)>
+<!ELEMENT capture-date (#PCDATA)>
+<!ELEMENT roll (name, display-name, description, owner)>
+<!ELEMENT description (#PCDATA)>
+
+
+<!ELEMENT name (#PCDATA)>
+<!ELEMENT height (#PCDATA)>
+<!ELEMENT width (#PCDATA)>
+<!ELEMENT original (#PCDATA)>
+<!ELEMENT filename (#PCDATA)>

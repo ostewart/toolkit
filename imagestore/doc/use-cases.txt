@@ -24,3 +24,9 @@ might be a bad idea, from a security perspective)
 
 users can reorder albums by their preferences
 highly rated photos first
+
+
+bookmark an image, want to change that image, but have the bookmark
+reference the new image
+e.g.
+/trailmagic.com/weekly-photo

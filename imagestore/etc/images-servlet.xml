@@ -9,22 +9,39 @@
       <props>
         <prop key="/albums/**">albumController</prop>
         <prop key="/images/**">imageController</prop>
+        <prop key="/import">imageImportController</prop>
+        <prop key="/mf/**">imageManifestationController</prop>
       </props>
+    </property>
+  </bean>
+
+  <bean id="viewResolver"
+    class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+    <property name="prefix"><value>/WEB-INF/jsp/</value></property>
+    <property name="suffix"><value>.jsp</value></property>
+    <property name="viewClass">
+      <value>org.springframework.web.servlet.view.JstlView</value>
+    </property>
+  </bean>
+
+  <bean id="multipartResolver" 
+    class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+    
+    <!-- one of the properties available; the maximum file size in bytes -->
+    <property name="maxUploadSize">
+      <value>10000000</value>
     </property>
   </bean>
 
   <bean id="albumController"
     class="com.trailmagic.image.ui.AlbumController">
-    <property name="sessionFactory">
-      <ref bean="sessionFactory"/>
+    <property name="controllerPath">
+      <value>/albums</value>
     </property>
   </bean>
 
   <bean id="imageController"
     class="com.trailmagic.image.ui.ImageController">
-    <property name="sessionFactory">
-      <ref bean="sessionFactory"/>
-    </property>
     <property name="supportedMethods">
       <value>GET</value>
     </property>
@@ -36,6 +53,35 @@
     </property>
     <property name="controllerPath">
       <value>/images</value>
+    </property>
+  </bean>
+
+  <bean id="imageManifestationController"
+    class="com.trailmagic.image.ui.ImageManifestationController">
+    <property name="supportedMethods">
+      <value>GET</value>
+    </property>
+    <property name="requireSession">
+      <value>false</value>
+    </property>
+    <property name="cacheSeconds">
+      <value>-1</value>
+    </property>
+    <property name="controllerPath">
+      <value>/mf</value>
+    </property>
+  </bean>
+
+  <bean id="imageImportController"
+    class="com.trailmagic.image.ui.ImageImportController">
+    <property name="commandClass">
+      <value>com.trailmagic.image.ui.ImageImportBean</value>
+    </property>
+    <property name="formView">
+      <value>imageImportForm</value>
+    </property>
+    <property name="successView">
+      <value>imageImportSuccess</value>
     </property>
   </bean>
 

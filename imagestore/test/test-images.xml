@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE images PUBLIC "-//SPRING//DTD BEAN//EN"
+ "http://www.trailmagic.com/dtd/images.dtd">
+
+<images>
+  <image>
+    <name>oliver-suit-1</name>
+    <display-name>Me in a suit</display-name>
+    <caption>lookin' snazzy</caption>
+    <copyright>Copyright 2004</copyright>
+    <creator>Oliver Stewart</creator>
+    <owner>oliver</owner>
+    <photo-data>
+      <notes></notes>
+      <capture-date>2004-06-12</capture-date>
+      <roll>vanity</roll>
+    </photo-data>
+  </image>
+</images>

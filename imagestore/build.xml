@@ -34,6 +34,8 @@
   <property name="javac.debug" value="on"/>
   <property name="javac.optimize" value="off"/>
   <property name="deploy.dir" value="deploy"/>
+  <property name="jsp.dir" value="jsp"/>
+  <property name="jsp.deploy.dir" value="${deploy.dir}/WEB-INF/jsp"/>
   <property name="trailmagic-user.dir" value="../user"/>
   <property name="trailmagic-user.jar"
     value="${trailmagic-user.dir}/build/trailmagic-user.jar"/>
@@ -179,6 +181,10 @@
       <fileset dir="${global.lib.dir}"/>
 <!--      <fileset dir="${dep.lib.dir}"/>-->
     </copy>
+    <mkdir dir="${jsp.deploy.dir}"/>
+    <copy todir="${jsp.deploy.dir}">
+      <fileset dir="${jsp.dir}"/>
+    </copy>
   </target>
 
   <target name="force-deploy" depends="deploy">
@@ -218,6 +224,16 @@
         <fileset dir="hibern8ide">
           <include name="**/*.jar"/>
         </fileset>
+      </classpath>
+    </java>
+  </target>
+
+  <target name="run" depends="build">
+    <java classname="${run.class}" fork="true">
+      <arg line="${run.args}"/>
+      <classpath>
+        <path refid="build.classpath"/>
+        <pathelement location="etc"/>
       </classpath>
     </java>
   </target>

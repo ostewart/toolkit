@@ -28,7 +28,7 @@
   <bean id="linkHelper"
     class="com.trailmagic.image.ui.LinkHelper">
     <property name="albumServletPath">
-      <value>/spring/albums/</value>
+      <value>/albums/</value>
     </property>
   </bean>
 
@@ -42,11 +42,25 @@
     <property name="sessionFactory"><ref
         local="sessionFactory"/></property>
   </bean>
-    
+
+  <bean id="imageManifestationFactory"
+    class="com.trailmagic.image.hibernate.HibernateImageManifestationFactory">
+    <property name="sessionFactory">
+      <ref local="sessionFactory"/>
+    </property>
+  </bean>
+
   <bean id="userFactory"
     class="com.trailmagic.user.hibernate.HibernateUserFactory">
     <property name="sessionFactory"><ref
         local="sessionFactory"/></property>
+  </bean>
+
+  <bean id="imagesParser"
+    class="com.trailmagic.image.util.ImagesParser">
+    <property name="sessionFactory">
+      <ref local="sessionFactory"/>
+    </property>
   </bean>
 
 <!--

@@ -3,14 +3,9 @@ package com.trailmagic.image.ui;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 import org.springframework.web.util.UrlPathHelper;
-import org.springframework.orm.hibernate.SessionFactoryUtils;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
-import net.sf.hibernate.Session;
-import net.sf.hibernate.Query;
-import net.sf.hibernate.SessionFactory;
-import net.sf.hibernate.HibernateException;
 import java.util.StringTokenizer;
 import java.util.Map;
 import java.util.HashMap;
@@ -20,16 +15,10 @@ import com.trailmagic.image.*;
 import com.trailmagic.user.*;
 
 public class ImageController extends AbstractController {
-    private SessionFactory m_sessionFactory;
+    private static final String IMAGE_FACTORY_BEAN = "imageFactory";
+    private static final String IMAGE_USERS_VIEW = "imageUsers";
+    private static final String IMAGE_DISPLAY_VIEW = "imageDisplay";
     private String m_controllerPath;
-
-    public SessionFactory getSessionFactory() {
-        return m_sessionFactory;
-    }
-
-    public void setSessionFactory(SessionFactory sf) {
-        m_sessionFactory = sf;
-    }
 
     public String getControllerPath() {
         return m_controllerPath;
@@ -43,30 +32,35 @@ public class ImageController extends AbstractController {
                                               HttpServletResponse res)
         throws Exception {
 
-        Session session =
-            SessionFactoryUtils.getSession(m_sessionFactory, false);
         UrlPathHelper pathHelper = new UrlPathHelper();
-        String myPath = pathHelper.getPathWithinServletMapping(req);
+        String myPath = pathHelper.getLookupPathForRequest(req);
+        System.err.println("Path within servlet mapping: " + myPath);
+        System.err.println("Lookup path: " +
+                           pathHelper.getLookupPathForRequest(req));
+        System.err.println("Path within application: " +
+                           pathHelper.getPathWithinApplication(req));
         System.err.println("Controller Path: " + m_controllerPath);
         myPath = myPath.substring(m_controllerPath.length());
         StringTokenizer pathTokens = new StringTokenizer(myPath, "/");
         int numTokens = pathTokens.countTokens();
         
         Map model = new HashMap();
+        ImageFactory imageFactory = 
+            (ImageFactory)getApplicationContext().getBean(IMAGE_FACTORY_BEAN);
 
         // got no args: show random images
         if ( !pathTokens.hasMoreTokens() ) {
             // List users with albums
-            model.put("images", getAllImages(session));
-            return new ModelAndView("/image-users.jsp", model);
+            model.put("images", imageFactory.getAll());
+            return new ModelAndView(IMAGE_USERS_VIEW, model);
         }
 
         String selector = pathTokens.nextToken();
         System.err.println("Selector: " + selector);
         if ( "by-id".equals(selector.trim()) ) {
             long imageId = Long.parseLong(pathTokens.nextToken());
-            model.put("image", getImageById(session, imageId));
-            return new ModelAndView("/image-display.jsp", model);
+            model.put("image", imageFactory.getById(imageId));
+            return new ModelAndView(IMAGE_DISPLAY_VIEW, model);
         }
         // redirect to the top if it's an invalid request
         // I guess this should really be a 404
@@ -76,7 +70,7 @@ public class ImageController extends AbstractController {
                          getControllerPath());
         return null;
     }
-
+    /*
     public List getAllImages(Session session) {
         try {
             Query query =
@@ -98,4 +92,5 @@ public class ImageController extends AbstractController {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
         }
     }
+    */
 }

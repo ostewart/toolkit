@@ -67,7 +67,7 @@ public class LinkHelper {
     
 
     public String getImageDisplayUrl(Image image) {
-        return m_request.getContextPath() + "/display/by-id/" + image.getId();
+        return m_request.getContextPath() + "/images/by-id/" + image.getId();
     }
 
     public String getImageMFUrl(ImageManifestation imf) {

@@ -36,7 +36,7 @@ public class HibernateImageGroupFactory implements ImageGroupFactory {
     public ImageGroup getAlbumByOwnerAndName(User owner, String name) {
         try {
             Session session =
-                SessionFactoryUtils.getSession(m_sessionFactory, true);
+                SessionFactoryUtils.getSession(m_sessionFactory, false);
             Query qry = session.getNamedQuery(ALBUM_BY_OWNER_AND_NAME_QRY);
             qry.setEntity("owner", owner);
             qry.setString("albumName", name);
@@ -49,7 +49,7 @@ public class HibernateImageGroupFactory implements ImageGroupFactory {
                                                           long imageId) {
         try {
             Session session =
-                SessionFactoryUtils.getSession(m_sessionFactory, true);
+                SessionFactoryUtils.getSession(m_sessionFactory, false);
             Query qry =
                 session.getNamedQuery(IMGFRAME_BY_IMG_GROUP_AND_IMAGE_QRY);
             qry.setEntity("imageGroup", group);
@@ -62,7 +62,7 @@ public class HibernateImageGroupFactory implements ImageGroupFactory {
     public List getAlbumsByOwnerScreenName(String name) {
         try {
             Session session =
-                SessionFactoryUtils.getSession(m_sessionFactory, true);
+                SessionFactoryUtils.getSession(m_sessionFactory, false);
             Query qry = session.getNamedQuery(ALBUMS_BY_OWNER_NAME_QRY);
             qry.setString("screenName", name);
             return qry.list();
@@ -73,7 +73,7 @@ public class HibernateImageGroupFactory implements ImageGroupFactory {
     public List getAlbumOwners() {
         try {
             Session session =
-                SessionFactoryUtils.getSession(m_sessionFactory, true);
+                SessionFactoryUtils.getSession(m_sessionFactory, false);
             Query qry = session.getNamedQuery(ALBUM_OWNERS_QRY);
             return qry.list();
         } catch (HibernateException e) {
