@@ -83,7 +83,8 @@ foreach my $file (@fileList) {
 
     if ( $file =~ /\.tiff?(\.gz)?$/ ) {
         $srcFile = $tempFile;
-        $cmd = "convert -background black -fuzz 15000 -crop 0x0 -normalize "
+# 10000 is too big; 6500 seems to be minimum that'll work on a difficult image
+        $cmd = "convert -background black -fuzz 6500 -crop 0x0 -normalize "
             . "$croppedFile\[0\] $srcFile";
         system "echo Cropping TIFF file.";
         system "echo $cmd";
@@ -94,23 +95,25 @@ foreach my $file (@fileList) {
 
     foreach my $size (keys %geometries) {
         $newFile = "$prefix$number-$size.jpg";
-        if ( $area < $areas{$size} ) {
-            # we should only get here for jpegs
-            $cmd = "cp $baseDir/$file $resizeDir/$newFile";
-        } else {
+# this stuff is too big
+#        if ( $area < $areas{$size} ) {
+#            # we should only get here for jpegs
+#            $cmd = "cp $baseDir/$file $resizeDir/$newFile";
+#        } else {
             # always use the first image if there are multiple ([0])
             $cmd = "convert -size $geometries{$size} -quality $quality "
                 . "-resize \'$geometries{$size}\>\' $srcFile "
                 . "$resizeDir/$newFile";
-        }
+#        }
         system "echo $cmd";
         system "$cmd";
     }
+}
 
-    if ($file =~ /\.jpe?g$/) {
-        print "Rotating images from exif data...\n";
-        system "exiftran -ai @fileList";
-    }
+if ($fileList[0] =~ /\.jpe?g$/) {
+    print "Rotating images from exif data...\n";
+    system "chmod 644 $resizeDir/*.jpg";
+    system "exiftran -ai $resizeDir/*.jpg";
 }
 
 if (-f $tempFile) {

@@ -35,7 +35,7 @@ if ( -f "$baseDir/file-list" ) {
     $suffix = ".$1";
     $resizeDir = $baseDir;
 } else {
-    @files = "ls $baseDir/*.jpg";
+    @files = `ls $baseDir/*.jpg`;
     if ( $files[0] =~ /-(thumbnail|small|medium|large|huge)\.jpg$/ ) {
         die "resize dir given as image-dir and no file-list exists!";
     }
@@ -45,6 +45,8 @@ if ( -f "$baseDir/file-list" ) {
         @files = "ls $baseDir/*.tif";
         if (@files > 0) {
             $suffix = ".tif";
+        } else {
+            die "no images found!";
         }
     }
 }
@@ -100,7 +102,7 @@ foreach my $file (@files) {
     my $baseFile = `basename $file`;
     chomp $baseFile;
     if ( $suffix eq ".jpg" ) {
-        $baseFile =~ /dsc_(\d+)$suffix/
+        $baseFile =~ /dsc_(\d+)-?(thumbnail|small|medium|large|huge)?$suffix/
             || die "Couldn't get number from name for $baseFile";
         $images[$i]{"number"} = $1;
     } elsif ( $suffix eq ".tif" ) {

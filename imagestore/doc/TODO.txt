@@ -1,3 +1,4 @@
+Rolls link to individual rolls doesn't work with no trailing slash!
 ImageGroupLinkTag needs to support all combinations of options!
 Implement Roll display page/controller
 Put resin.conf into svn
