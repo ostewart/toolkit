@@ -45,21 +45,24 @@ prevImage: Image
       <c:out value="${image.caption}"/><br>
       <c:out value="${image.copyright}"/>
       <c:out value="${image.creator}"/><br>
-              Owned by <c:out value="${image.owner.screenName}"/>
+              Owned by <c:out value="${image.owner.screenName}"/><br/>
     </div>
 
     <!-- Photo properties -->
     <c:if test="${image.class.name == \"com.trailmagic.image.Photo\"}">
     <div style="clear: both; text-align: center">
       <c:if test="${!empty image.notes}">
-        Image Notes: <c:out value="${image.notes}"/>
+        Image Notes: <c:out value="${image.notes}"/><br/>
         </c:if>
         <c:if test="${!empty image.captureDate}">
         Capture Date: <fmt:formatDate value="${image.captureDate}"
             pattern="${datePattern}"/>
         </c:if>
      </div>
-      </c:if>
+  </c:if>
+
+    <div style="clear: both">
+      <div style="float: left">
       <!-- Previous Image/Frame Link
       <c:if test="${!empty prevImage}">
         <c:set var="prev" value="${prevFrame}"/>
@@ -71,7 +74,9 @@ prevImage: Image
       <c:if test="${!empty prev}">
         <tm:imageFrameLink frame="${prev}">&lt;--
         Previous</tm:imageFrameLink>
-      </c:if>
+        </c:if>
+      </div>
+      <div style="float: right">
 
       <!-- Next Image/Frame Link
       <c:if test="${!empty nextImage}">
@@ -83,6 +88,8 @@ prevImage: Image
       -->
       <c:if test="${!empty next}">
         <tm:imageFrameLink frame="${next}">Next --&gt;</tm:imageFrameLink>
-      </c:if>
+        </c:if>
+      </div>
+    </div>
   </body>
 </html>

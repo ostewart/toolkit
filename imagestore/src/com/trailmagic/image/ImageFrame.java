@@ -1,13 +1,24 @@
 package com.trailmagic.image;
 
-public class ImageFrame/* implements Comparable*/ {
+public class ImageFrame implements Comparable {
+    private long m_id;
     private ImageGroup m_imageGroup;
-    //    private int m_position;
+    private int m_position;
     private Image m_image;
     private String m_caption;
 
     public ImageFrame() {
     }
+
+    public long getId() {
+        return m_id;
+    }
+
+    public void setId(long id) {
+        m_id = id;
+    }
+
+
 
     public ImageGroup getImageGroup() {
         return m_imageGroup;
@@ -16,7 +27,7 @@ public class ImageFrame/* implements Comparable*/ {
     public void setImageGroup(ImageGroup group) {
         m_imageGroup = group;
     }
-    /* get it from the List
+
     public int getPosition() {
         return m_position;
     }
@@ -24,7 +35,7 @@ public class ImageFrame/* implements Comparable*/ {
     public void setPosition(int pos) {
         m_position = pos;
     }
-    */
+
     public Image getImage() {
         return m_image;
     }
@@ -42,11 +53,10 @@ public class ImageFrame/* implements Comparable*/ {
     }
 
     public boolean equals(Object obj) {
-        /*
         return (obj instanceof ImageFrame) &&
             (this.getImageGroup().equals(((ImageFrame)obj).getImageGroup())) &&
             (this.getImage().equals(((ImageFrame)obj).getImage()));
-        */
+        /*
         if ( !(obj instanceof ImageFrame) ) {return false;}
         ImageGroup mine = getImageGroup();
         ImageGroup yours = ((ImageFrame)obj).getImageGroup();
@@ -59,26 +69,18 @@ public class ImageFrame/* implements Comparable*/ {
             return false;
         }
         return false;
+        */
     }
 
-    /*
+
     public int compareTo(Object obj) throws ClassCastException {
         ImageFrame other = (ImageFrame) obj;
-
+        // XXX: need to add something to this to make it consistent with equals
         return (this.m_position - other.m_position);
-    }
-
-    public boolean equals(Object obj) {
-        if ( !(obj instanceof ImageFrame) ) {
-            return false;
-        }
-
-        return this.m_image.equals(((ImageFrame)obj).m_image) &&
-            (this.m_position == ((ImageFrame)obj).m_position);
     }
 
     public int hashCode() {
         return m_position;
     }
-    */
+
 }

@@ -10,12 +10,36 @@ import javax.servlet.http.HttpServletRequest;
 import com.trailmagic.user.*;
 import com.trailmagic.image.*;
 
-public class ImageFrameLinkTag extends TagSupport {
-    private ImageFrame m_frame;
+public class AlbumLinkTag extends TagSupport {
+    private ImageFrame m_frame = null;
+    private User m_owner = null;
+    private ImageGroup m_album = null;
+    private Long m_image = null;
+
+    public void setOwner(User owner) {
+        m_owner = owner;
+    }
+
+    public User getOwner() {
+        return m_owner;
+    }
+
+    public void setAlbum(ImageGroup album) {
+        m_album = album;
+    }
+
+    public ImageGroup getAlbum() {
+        return m_album;
+    }
+
+    public void setImage(Long image) {
+        m_image = image;
+    }
+
+    public Long getImage() {
+        return m_image;
+    }
     
-
-    private static final String USER_ATTR = "user";
-
     public int doStartTag() throws JspException {
         StringBuffer html = new StringBuffer();
 
@@ -32,9 +56,16 @@ public class ImageFrameLinkTag extends TagSupport {
             // XXX: check for null bean
             // XXX: evil cast?
             helper.setRequest((HttpServletRequest)pageContext.getRequest());
-                //                new LinkHelper((HttpServletRequest)pageContext.getRequest());
 
-            html.append(helper.getAlbumFrameUrl(m_frame));
+            if ( m_image != null ) {
+                html.append(helper.getAlbumFrameUrl(m_album, m_image));
+            } else if ( m_album != null ) {
+                html.append(helper.getAlbumUrl(m_album));
+            } else if ( m_owner != null ) {
+                html.append(helper.getAlbumsUrl(m_owner));
+            } else {
+                html.append(helper.getAlbumsRootUrl());
+            }
             html.append("\">");
             pageContext.getOut().write(html.toString());
             return EVAL_BODY_INCLUDE;

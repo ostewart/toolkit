@@ -12,7 +12,9 @@ import java.util.StringTokenizer;
 import net.sf.hibernate.HibernateException;
 import net.sf.hibernate.Query;
 import net.sf.hibernate.SessionFactory;
+import java.util.SortedSet;
 import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -75,7 +77,7 @@ public class AlbumController implements Controller {
         ImageGroup album = getAlbumByOwnerAndName(session, owner, albumName);
         model.put("album", album);
 
-        List frames = album.getFrames();
+        SortedSet frames = album.getFrames();
         model.put("frames", frames);
         /*
         // XXX: This should be fixed
@@ -102,17 +104,25 @@ public class AlbumController implements Controller {
             model.put("frame", frame);
             model.put("image", frame.getImage());
 
-            int index = frames.indexOf(frame);
-            System.err.println("index: " + index + ", size: " + frames.size());
-            if ( index == -1 ) {
-                throw new JspException("No such frame exists.");
+            SortedSet tmpSet = frames.headSet(frame);
+            /*
+            Iterator iter = tmpSet.iterator();
+            iter.next();
+            if ( iter.hasNext() ) {
+                ImageFrame prevFrame = (ImageFrame)iter.next();
             }
-            if ( index > 0 ) {
-                ImageFrame prevFrame = (ImageFrame)frames.get(index-1);
+            */
+
+            if ( !tmpSet.isEmpty() ) {
+                ImageFrame prevFrame = (ImageFrame)tmpSet.last();
                 model.put("prevFrame", prevFrame);
             }
-            if ( index < (frames.size() - 1) ) {
-                ImageFrame nextFrame = (ImageFrame)frames.get(index+1);
+
+            tmpSet = frames.tailSet(frame);
+            Iterator iter = tmpSet.iterator();
+            iter.next();
+            if ( iter.hasNext() ) {
+                ImageFrame nextFrame = (ImageFrame)iter.next();
                 model.put("nextFrame", nextFrame);
             }
         
@@ -195,12 +205,19 @@ select elements(grp.frames) from com.trailmagic.image.ImageGroup grp join grp.fr
             return (ImageFrame)query.uniqueResult();
             */
 
-            List frames = album.getFrames();
-            frames =
-                (List)session.filter(frames, "where this.image.id = ?",
-                                     new Long(imageId),
-                                     new net.sf.hibernate.type.LongType());
-            return (ImageFrame)frames.get(0);
+            
+            Collection frames =
+                session.filter(album.getFrames(),
+                               "where this.image.id = ?",
+                               new Long(imageId),
+                               new net.sf.hibernate.type.LongType());
+            // XXX: is this really the right way to do this?
+            Iterator iter = frames.iterator();
+            if (iter.hasNext()) {
+                return (ImageFrame)iter.next();
+            } else {
+                return null;
+            }
         } catch (HibernateException e) {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
         }

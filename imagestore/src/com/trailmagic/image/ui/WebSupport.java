@@ -9,6 +9,9 @@ public class WebSupport {
     public static ImageManifestation getDefaultMF(User user, Image image) {
         // XXX: need to handle null
         SortedSet mfs = image.getManifestations();
+        if ( mfs.isEmpty() ) {
+            return null;
+        }
         return (ImageManifestation)mfs.first();
     }
 }

@@ -12,7 +12,7 @@
       </props>
     </property>
   </bean>
-    
+
   <bean id="albumController"
     class="com.trailmagic.image.ui.AlbumController">
     <property name="sessionFactory">

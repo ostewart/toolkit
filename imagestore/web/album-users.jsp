@@ -22,7 +22,9 @@ owners: list of Users who own albums
 
     <ul>
       <c:forEach var="owner" items="${owners}">
-        <li><c:out value="${owner.screenName}"/></li>
+        <li>
+          <tm:albumLink owner="${owner}">${owner.screenName}</tm:albumLink>
+        </li>
       </c:forEach>
     </ul>
   </body>

@@ -40,4 +40,30 @@
       <type>com.trailmagic.image.ImageFrame</type>
     </attribute>
   </tag>
+
+  <tag>
+    <name>albumLink</name>
+    <tag-class>com.trailmagic.image.ui.AlbumLinkTag</tag-class>
+    <body-content>JSP</body-content>
+    <description>Output a link to an Album</description>
+    <attribute>
+      <name>owner</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>com.trailmagic.user.User</type>
+    </attribute>
+    <attribute>
+      <name>album</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>com.trailmagic.image.ImageGroup</type>
+    </attribute>
+    <attribute>
+      <name>frame</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.Long</type>
+    </attribute>
+  </tag>
+
 </taglib>

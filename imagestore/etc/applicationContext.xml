@@ -24,6 +24,15 @@
     <property name="dataSource"><ref local="dataSource"/></property>
     <property name="sessionFactory"><ref local="sessionFactory"/></property>
   </bean>
+
+  <bean id="linkHelper"
+    class="com.trailmagic.image.ui.LinkHelper">
+    <property name="albumServletPath">
+      <value>/spring/albums/</value>
+    </property>
+  </bean>
+    
+
 <!--
   <bean id="hibernateInterceptor"
     class="org.springframework.orm.hibernate.HibernateInterceptor">

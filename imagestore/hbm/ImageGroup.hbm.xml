@@ -56,30 +56,46 @@
     </many-to-one>
 
     
-    <list
+    <set
       name="frames"
       table="image_frames"
       cascade="all-delete-orphan"
-      lazy="false"
+      lazy="true"
+      sort="natural"
       inverse="true">
       <key>
         <column name="group_id" unique-key="frames_group_position"/>
       </key>
-      <index>
-        <column name="position" unique-key="frames_group_position"
-          not-null="true"/>
-      </index>
+      <!-- this should be a composite-element but that's not working
+           so well -->
+      <one-to-many class="ImageFrame"/>
+    </set>
+  </class>
 
-      <composite-element class="ImageFrame">
-        <parent name="imageGroup"/>
-        <property name="caption">
-          <column name="caption" sql-type="varchar(4000)"/>
-        </property>
-        <many-to-one name="image" class="Image" cascade="none">
-          <column name="image_id" not-null="true"/>
-        </many-to-one>
-      </composite-element>
-    </list>
+  <class name="ImageFrame" table="image_frames">
+    <id
+      name="id"
+      type="long"
+      column="frame_id"
+      unsaved-value="0"
+      access="property">
+      <generator class="sequence">
+        <param name="sequence">id_sequence</param>
+      </generator>
+    </id>
+    <many-to-one name="imageGroup" class="ImageGroup" cascade="none">
+      <column name="group_id" not-null="true"/>
+    </many-to-one>
+    <property name="position">
+      <column name="position" unique-key="frames_group_position"
+        not-null="true"/>
+    </property>
+    <property name="caption">
+      <column name="caption" sql-type="varchar(4000)"/>
+    </property>
+    <many-to-one name="image" class="Image" cascade="none">
+      <column name="image_id" not-null="true"/>
+    </many-to-one>
   </class>
 <!-- This never worked
   <class name="ImageFrame">
