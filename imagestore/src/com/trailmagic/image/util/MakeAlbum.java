@@ -134,7 +134,7 @@ public class MakeAlbum implements ApplicationContextAware {
                 name = keepers.readLine();
             }
 
-            m_session.save(album);
+            m_session.saveOrUpdate(album);
             m_transaction.commit();
             SessionFactoryUtils.closeSessionIfNecessary(m_session,
                                                         m_sessionFactory);
