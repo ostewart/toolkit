@@ -42,6 +42,7 @@
                 pattern="${datePattern}"/></td>
         </tr>
         </c:if>
-      </table>
+    </table>
+    <p>Back to the <a href="<c:url value="/"/>">list</a> of images.</p>
     </body>
   </html>

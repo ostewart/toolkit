@@ -60,6 +60,9 @@
           </tr>
           </c:if>
         </table>
+        <c:if test="${!empty image}">
+        <input type="hidden" name="id" value="${image.id}"/>
+        </c:if>
         <input type="submit" value="Submit"/>
       </form>
     </body>

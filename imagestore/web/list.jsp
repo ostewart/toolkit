@@ -46,7 +46,18 @@
                 pattern="${datePattern}"/></td>
         </tr>
         </c:if>
+        <tr>
+          <td><a href="<c:url value="/edit">
+            <c:param name="id" value="${image.id}"/>
+            </c:url>">edit</a></td>
+            <td><a href="<c:url value="/delete">
+                           <c:param name="id" value="${image.id}"/>
+                         </c:url>">delete</a></td>
+          <td><a href="<c:url
+            value="/display/by-id/${image.id}"/>">display</a></td>
+          </tr>
       </table>
       </c:forEach>
+      <p><a href="<c:url value="/edit"/>">Create</a> a new Image.</p>
     </body>
   </html>

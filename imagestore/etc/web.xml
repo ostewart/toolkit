@@ -21,15 +21,32 @@
     <servlet-class>com.trailmagic.image.ui.EditAddServlet</servlet-class>
   </servlet>
   
+  <servlet>
+    <servlet-name>delete</servlet-name>
+    <display-name>delete</display-name>
+    <servlet-class>com.trailmagic.image.ui.DeleteServlet</servlet-class>
+  </servlet>
+
   <servlet-mapping>
     <servlet-name>display</servlet-name>
     <url-pattern>/display/*</url-pattern>
   </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>delete</servlet-name>
+    <url-pattern>/delete</url-pattern>
+  </servlet-mapping>
   
   <servlet-mapping>
     <servlet-name>edit-add</servlet-name>
-    <url-pattern>/edit/*</url-pattern>
+    <url-pattern>/edit</url-pattern>
   </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>display</servlet-name>
+    <url-pattern>/</url-pattern>
+  </servlet-mapping>
+  
   
   <resource-ref>
     <description>DB Connection</description>
