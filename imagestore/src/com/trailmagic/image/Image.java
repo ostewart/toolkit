@@ -1,6 +1,9 @@
 package com.trailmagic.image;
 
 import java.util.SortedSet;
+import net.sf.hibernate.Query;
+import net.sf.hibernate.Session;
+import net.sf.hibernate.HibernateException;
 
 public class Image {
     private long m_id;
@@ -73,5 +76,14 @@ public class Image {
 
     public void setManifestations(SortedSet manifestations) {
         m_manifestations = manifestations;
+    }
+
+    public static Image findById(long id) throws HibernateException {
+        Session sess = HibernateUtil.currentSession();
+        Query query =
+            sess.createQuery("select from com.trailmagic.image.Image " +
+                             "as image where image.id = :id");
+        query.setLong("id", id);
+        return (Image)query.uniqueResult();
     }
 }
