@@ -14,6 +14,9 @@ public class Image {
         m_id = id;
     }
 
+    public Image() {
+    }
+
     public long getId() {
         return m_id;
     }

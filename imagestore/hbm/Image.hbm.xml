@@ -44,9 +44,10 @@
       <column name="creator" sql-type="varchar(1024)"/>
     </property>
 
-    <subclass
+    <joined-subclass
       name="Photo"
-      discriminator-value="photo">
+      table="photos">
+      <key column="image_id"/>
       <property name="notes" type="text">
         <column name="notes"/>
       </property>
@@ -61,7 +62,7 @@
         name="camera"
         cascade="none"
         column="camera_id"/>
-    </subclass>
+    </joined-subclass>
   </class>
     
 </hibernate-mapping>

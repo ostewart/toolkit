@@ -12,6 +12,9 @@ public class Photo extends Image {
         super(id);
     }
 
+    public Photo() {
+    }
+
     public Lens getLens() {
         return m_lens;
     }

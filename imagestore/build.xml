@@ -61,7 +61,12 @@
 
   <target name="clean-all">
     <antcall target="clean-doc"/>
+    <antcall target="clean-deploy-dir"/>
     <antcall target="clean"/>
+  </target>
+
+  <target name="clean-deploy-dir">
+    <delete dir="${deploy.dir}"/>
   </target>
 
   <target name="distclean" depends="clean">
@@ -129,22 +134,22 @@
   </target>
 
   <target name="deploy" depends="compile">
-    <mkdir dir="${dist.dir}"/>
-    <copy todir="${dist.dir}">
+    <mkdir dir="${deploy.dir}"/>
+    <copy todir="${deploy.dir}">
       <fileset dir="${web.dir}"/>
     </copy>
-    <mkdir dir="${dist.dir}/WEB-INF"/>
-    <copy todir="${dist.dir}/WEB-INF">
+    <mkdir dir="${deploy.dir}/WEB-INF"/>
+    <copy todir="${deploy.dir}/WEB-INF">
       <fileset dir="${build.dir}"/>
       <fileset dir="${resources.dir}"/>
     </copy>
-    <copy todir="${dist.dir}/WEB-INF/lib">
+    <copy todir="${deploy.dir}/WEB-INF/lib">
       <fileset dir="lib"/>
     </copy>
   </target>
 
   <target name="force-deploy" depends="deploy">
-    <touch file="${dist.dir}/WEB-INF/web.xml"/>
+    <touch file="${deploy.dir}/WEB-INF/web.xml"/>
   </target>
 
   <target name="schemaexport" depends="compile">

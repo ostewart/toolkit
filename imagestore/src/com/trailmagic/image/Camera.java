@@ -10,6 +10,9 @@ public class Camera {
         m_id = id;
     }
 
+    public Camera() {
+    }
+
     public long getId() {
         return m_id;
     }

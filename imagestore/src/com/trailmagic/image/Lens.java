@@ -12,6 +12,9 @@ public class Lens {
         m_id = id;
     }
 
+    public Lens() {
+    }
+
     public long getId() {
         return m_id;
     }
