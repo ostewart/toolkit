@@ -35,7 +35,6 @@ public class ImagesParser extends DefaultHandler
 
     private String m_inElement;
     private String m_inSubElement;
-    private Stack m_context;
     private Image m_image;
     private ImageGroup m_roll;
     private ImageManifestation m_manifestation;
@@ -47,6 +46,7 @@ public class ImagesParser extends DefaultHandler
     private boolean m_inManifestation;
     private boolean m_closeSession;
     private File m_baseDir;
+    private StringBuffer m_characterData;
 
     private ApplicationContext m_appContext;
 
@@ -55,7 +55,6 @@ public class ImagesParser extends DefaultHandler
     }
 
     public ImagesParser(boolean closeSession) {
-        m_context = new Stack();
         m_closeSession = closeSession;
     }
 
@@ -124,8 +123,8 @@ public class ImagesParser extends DefaultHandler
     public void startElement(String uri, String localName, String qName,
                              Attributes attributes) {
         String eltName = qName;
-        m_context.push(eltName);
 
+        m_characterData = new StringBuffer();
 
         if ("image".equals(eltName)) {
             startImage();
@@ -137,8 +136,9 @@ public class ImagesParser extends DefaultHandler
     }
 
     public void endElement(String uri, String localName, String qName) {
-        m_context.pop();
         String eltName = qName;
+
+        processCharacterData(m_characterData.toString(), eltName);
 
         if ("image".equals(eltName)) {
             endImage();
@@ -216,59 +216,56 @@ public class ImagesParser extends DefaultHandler
     }
 
     public void characters(char ch[], int start, int length) {
-        String currentElt = (String)m_context.peek();
+        m_characterData.append(ch, start, length);
+    }
+
+    private void processCharacterData(String characterData,
+                                      String currentElt) {
         if (m_inImage) {
             if (!m_inManifestation) {
                 if ( "name".equals(currentElt) ) {
-                    m_image.setName(new String(ch, start, length));
+                    m_image.setName(characterData);
                 } else if ( "display-name".equals(currentElt) ) {
-                    m_image.setDisplayName(new String(ch, start, length));
+                    m_image.setDisplayName(characterData);
                 } else if ( "caption".equals(currentElt) ) {
-                    m_image.setCaption(new String(ch, start, length));
+                    m_image.setCaption(characterData);
                 } else if ( "copyright".equals(currentElt) ) {
-                    m_image.setCopyright(new String(ch, start, length));
+                    m_image.setCopyright(characterData);
                 } else if ( "creator".equals(currentElt) ) {
-                    m_image.setCreator(new String(ch, start, length));
+                    m_image.setCreator(characterData);
                 } else if ( "owner".equals(currentElt) ) {
-                    String ownerName = new String(ch, start, length);
+                    String ownerName = characterData;
                     UserFactory uf =
                         (UserFactory)m_appContext.getBean(USER_FACTORY_BEAN);
                     m_image.setOwner(uf.getByScreenName(ownerName));
                 } else if ( "number".equals(currentElt) ) {
-                    m_image.setNumber(new Integer(new String(ch, start,
-                                                             length)));
+                    m_image.setNumber(new Integer(characterData));
                 }
             } else {
                 if ("name".equals(currentElt)) {
-                    m_manifestation.setName(new String(ch, start, length));
+                    m_manifestation.setName(characterData);
                 } else if ("height".equals(currentElt)) {
                     m_manifestation.setHeight(Integer
-                                              .parseInt(new String(ch,
-                                                                   start,
-                                                                   length)));
+                                              .parseInt(characterData));
                 } else if ("width".equals(currentElt)) {
                     m_manifestation.setWidth(Integer
-                                             .parseInt(new String(ch,
-                                                                  start,
-                                                                  length)));
+                                             .parseInt(characterData));
                 } else if ("format".equals(currentElt)) {
-                    m_manifestation.setFormat(new String(ch, start, length));
+                    m_manifestation.setFormat(characterData);
                 } else if ("original".equals(currentElt)) {
-                    m_manifestation.setOriginal(new Boolean(new String(ch,
-                                                                       start,
-                                                                       length))
+                    m_manifestation.setOriginal(new Boolean(characterData)
                                                 .booleanValue());
                 }
             }
         } else if (m_inRoll) {
             if ( "name".equals(currentElt) ) {
-                m_roll.setName(new String(ch, start, length));
+                m_roll.setName(characterData);
             } else if ( "display-name".equals(currentElt) ) {
-                m_roll.setDisplayName(new String(ch, start, length));
+                m_roll.setDisplayName(characterData);
             } else if ( "description".equals(currentElt) ) {
-                m_roll.setDescription(new String(ch, start, length));
+                m_roll.setDescription(characterData);
             } else if ( "owner".equals(currentElt) ) {
-                String ownerName = new String(ch, start, length);
+                String ownerName = characterData;
                 UserFactory uf =
                     (UserFactory)m_appContext.getBean(USER_FACTORY_BEAN);
                 m_roll.setOwner(uf.getByScreenName(ownerName));
