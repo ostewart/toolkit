@@ -21,8 +21,7 @@
       </generator>
     </id>
 
-    <many-to-one name="supergroup" column="supergroup_id"
-      not-null="true"/>
+    <many-to-one name="supergroup" column="supergroup_id"/>
 
     <set name="subgroups" inverse="true" cascade="all">
       <key column="supergroup_id"/>

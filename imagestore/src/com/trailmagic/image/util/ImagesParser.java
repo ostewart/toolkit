@@ -38,6 +38,10 @@ public class ImagesParser extends DefaultHandler
 
     private ApplicationContext m_appContext;
 
+    public ImagesParser() {
+        m_context = new Stack();
+    }
+
 
     public SessionFactory getSessionFactory() {
         return m_sessionFactory;
@@ -65,6 +69,7 @@ public class ImagesParser extends DefaultHandler
     public void endDocument() {
         try {
             m_transaction.commit();
+            System.err.println("ImagesParser: committed transaction.");
             m_session.close();
         } catch (HibernateException e) {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
@@ -89,8 +94,10 @@ public class ImagesParser extends DefaultHandler
 
     public void startElement(String uri, String localName, String qName,
                              Attributes attributes) {
+        System.err.println("uri: " + uri + "; localName: " + localName +
+                           "; qName: " + qName );
         String eltName = qName;
-        m_context.push(qName);
+        m_context.push(eltName);
 
 
         if ("image".equals(eltName)) {
@@ -135,9 +142,9 @@ public class ImagesParser extends DefaultHandler
         */
     }
 
-    public void endElement(String uri, String localName, String qName,
-                           Attributes attributes) {
-        
+    public void endElement(String uri, String localName, String qName) {
+        System.err.println("endElement() called, qName: " + qName +
+                           "; localName: " + localName + "; uri: " + uri);
         m_context.pop();
         String eltName = qName;
 
@@ -155,7 +162,9 @@ public class ImagesParser extends DefaultHandler
 
     public void endImage() {
         try {
+            System.out.println("endImage() called");
             m_session.save(m_image);
+            System.out.println("Image saved: " + m_image.getName());
         } catch (HibernateException e) {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
         }
@@ -165,13 +174,16 @@ public class ImagesParser extends DefaultHandler
 
     public void startRoll() {
         m_roll = new ImageGroup();
+        m_roll.setType(ImageGroup.ROLL_TYPE);
         m_inRoll = true;
     }
 
 
     public void endRoll() {
         try {
+            System.out.println("endRoll() called");
             m_session.save(m_roll);
+            System.out.println("Roll saved: " + m_roll.getName());
         } catch (HibernateException e) {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
         }

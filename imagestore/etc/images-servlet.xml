@@ -74,6 +74,9 @@
 
   <bean id="imageImportController"
     class="com.trailmagic.image.ui.ImageImportController">
+    <property name="commandName">
+      <value>imageImportBean</value>
+    </property>
     <property name="commandClass">
       <value>com.trailmagic.image.ui.ImageImportBean</value>
     </property>
@@ -82,6 +85,9 @@
     </property>
     <property name="successView">
       <value>imageImportSuccess</value>
+    </property>
+    <property name="validateOnBinding">
+      <value>false</value>
     </property>
   </bean>
 

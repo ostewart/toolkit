@@ -3,6 +3,12 @@
  "http://www.trailmagic.com/dtd/images.dtd">
 
 <images>
+  <roll>
+    <name>import-roll</name>
+    <display-name>Import Roll</display-name>
+    <description>A roll created for testing.</description>
+    <owner>oliver</owner>
+  </roll>
   <image>
     <name>oliver-suit-1</name>
     <display-name>Me in a suit</display-name>
@@ -13,7 +19,8 @@
     <photo-data>
       <notes></notes>
       <capture-date>2004-06-12</capture-date>
-      <roll>vanity</roll>
+      <roll-name>vanity</roll-name>
+      <frame-number>1</frame-number>
     </photo-data>
   </image>
 </images>

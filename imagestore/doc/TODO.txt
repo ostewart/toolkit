@@ -4,6 +4,17 @@ implement sorting by area
 implement upload UI (don't forget height/width detection)
 
 implement Roll, roll UI
+IMPORTANT: how does the frame number get stored?
+with roll in the photos table, no ImageFrame
+abandon roll_id in images or add frame_no in images?
+doing the latter seems that it would make the idea of an ImageGroup
+sort of silly
+maybe the two should be split up
+in java space, could have two different objects descendent from
+ImageGroup
+slightly different semantics
+
+
 refactor user, group to descend from Party
 
 DONE: implement Album

@@ -1,8 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<!DOCTYPE images PUBLIC "-//SPRING//DTD BEAN//EN"
+ "http://www.trailmagic.com/dtd/images.dtd">
+-->
 
-<!ELEMENT images (roll* image*)>
-<!ELEMENT image (id, name, display-name, caption, copyright, creator,
-                 owner, cd*, photo-data? image-manifestation*)>
+<!ELEMENT images (roll+, image+)>
+<!ELEMENT image (name, display-name, caption, copyright, creator,
+                 owner, cd*, photo-data?, image-manifestation*)>
 
 <!ELEMENT name (#PCDATA)>
 <!ELEMENT display-name (#PCDATA)>
@@ -10,7 +13,8 @@
 <!ELEMENT copyright (#PCDATA)>
 <!ELEMENT creator (#PCDATA)>
 
-<!ELEMENT photo-data (notes, capture-date, roll)>
+<!ELEMENT photo-data (notes, capture-date, roll-name, frame-number)>
+<!ELEMENT roll-name (#PCDATA)>
 
 <!ELEMENT image-manifestation (name, height?, width?, format?,
           original, filename)>
@@ -21,8 +25,13 @@
 <!ELEMENT description (#PCDATA)>
 
 
-<!ELEMENT name (#PCDATA)>
 <!ELEMENT height (#PCDATA)>
 <!ELEMENT width (#PCDATA)>
 <!ELEMENT original (#PCDATA)>
 <!ELEMENT filename (#PCDATA)>
+<!ELEMENT format (#PCDATA)>
+<!ELEMENT owner (#PCDATA)>
+<!ELEMENT frame-number (#PCDATA)>
+<!-- maybe this should be an attribute with #IMPLIED -->
+
+<!ELEMENT cd (#PCDATA)>

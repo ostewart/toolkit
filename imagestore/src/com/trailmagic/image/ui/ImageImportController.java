@@ -33,19 +33,24 @@ import com.trailmagic.image.*;
 public class ImageImportController extends SimpleFormController {
     private static final String IMAGES_PARSER_BEAN = "imagesParser";
 
+    public ImageImportController() {
+    }
+
     protected ModelAndView onSubmit(HttpServletRequest req,
                                     HttpServletResponse res,
                                     Object command,
                                     BindException errors)
         throws Exception {
-
+        try {
+            System.err.println("onSubmit called.");
         ImageImportBean bean = (ImageImportBean)command;
 
         if ( bean == null ) {
-            // huh?
+            throw new Exception("null command in ImageImportController");
         }
 
         byte[] data = bean.getImagesData();
+        System.err.println("imagesData: " + data);
         ByteArrayInputStream bis = new ByteArrayInputStream(data);
         ImagesParser handler =
             (ImagesParser)getApplicationContext().getBean(IMAGES_PARSER_BEAN);
@@ -55,6 +60,10 @@ public class ImageImportController extends SimpleFormController {
         factory.setValidating(true);
         SAXParser parser = factory.newSAXParser();
         parser.parse(bis, handler);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
         
         return super.onSubmit(req, res, command, errors);
     }
@@ -70,5 +79,7 @@ public class ImageImportController extends SimpleFormController {
         binder.registerCustomEditor(byte[].class,
                                     new ByteArrayMultipartFileEditor());
         // now Spring knows how to handle multipart object and convert them
+
+        binder.setRequiredFields(new String[] {"imagesData"});
     }
 }
