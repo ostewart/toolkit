@@ -9,7 +9,9 @@
 
     <property name="connection.datasource">java:comp/env/jdbc/trailmagic</property>
     <property name="show_sql">false</property>
-    <property name="dialect">net.sf.hibernate.dialect.PostgreSQLDialect</property>
+    <property
+    name="dialect">net.sf.hibernate.dialect.PostgreSQLDialect</property>
+<!--    <property name="jdbc.use_streams_for_binary">true</property>-->
 
         <!-- Mapping files -->
     <mapping resource="Image.hbm.xml"/>

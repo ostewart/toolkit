@@ -1,6 +1,7 @@
 package com.trailmagic.image;
 
 import java.sql.Blob;
+import java.util.SortedSet;
 
 public class ImageManifestation implements Comparable {
     private long m_id;
@@ -10,7 +11,8 @@ public class ImageManifestation implements Comparable {
     private int m_width;
     private String m_format;
     private boolean m_original;
-    private Blob m_data;
+    //    private Blob m_data;
+    private byte[] m_data;
     
     public ImageManifestation() {
     }
@@ -37,6 +39,8 @@ public class ImageManifestation implements Comparable {
 
     public void setImage(Image image) {
         m_image = image;
+        //        SortedSet mfs = image.getManifestations();
+        //        mfs.add(this);
     }
 
     public int getHeight() {
@@ -71,6 +75,7 @@ public class ImageManifestation implements Comparable {
         m_original = original;
     }
 
+    /*
     public Blob getData() {
         return m_data;
     }
@@ -78,7 +83,15 @@ public class ImageManifestation implements Comparable {
     public void setData(Blob data) {
         m_data = data;
     }
-    
+    */
+    public byte[] getData() {
+        return m_data;
+    }
+
+    public void setData(byte[] data) {
+        m_data = data;
+    }
+
     private int getArea() {
         return m_height * m_width;
     }

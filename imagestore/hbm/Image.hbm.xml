@@ -16,7 +16,7 @@
       name="id"
       type="long"
       column="image_id"
-      unsaved-value="null"
+      unsaved-value="0"
       access="property">
       <generator class="sequence">
         <param name="sequence">id_sequence</param>
@@ -46,9 +46,10 @@
 
     <set
       name="manifestations"
+      cascade="all-delete-orphan"
       sort="natural"
-      inverse="true"
-      lazy="true">
+      lazy="true"
+      inverse="true">
       <key column="image_id"/>
       <one-to-many class="ImageManifestation"/>
     </set>

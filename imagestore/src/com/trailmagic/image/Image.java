@@ -78,6 +78,11 @@ public class Image {
         m_manifestations = manifestations;
     }
 
+    public void addManifestation(ImageManifestation im) {
+        im.setImage(this);
+        m_manifestations.add(im);
+    }
+
     public static Image findById(long id) throws HibernateException {
         Session sess = HibernateUtil.currentSession();
         Query query =

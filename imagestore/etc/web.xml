@@ -27,9 +27,26 @@
     <servlet-class>com.trailmagic.image.ui.DeleteServlet</servlet-class>
   </servlet>
 
+  <servlet>
+    <servlet-name>mfDisplay</servlet-name>
+    <display-name>mfDisplay</display-name>
+    <servlet-class>com.trailmagic.image.ui.ImageMFDisplayServlet</servlet-class>
+  </servlet>
+
+  <servlet>
+    <servlet-name>manifestation</servlet-name>
+    <display-name>manifestation</display-name>
+    <servlet-class>com.trailmagic.image.ui.ImageMFServlet</servlet-class>
+  </servlet>
+
   <servlet-mapping>
     <servlet-name>display</servlet-name>
     <url-pattern>/display/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>mfDisplay</servlet-name>
+    <url-pattern>/mf/*</url-pattern>
   </servlet-mapping>
 
   <servlet-mapping>
@@ -43,9 +60,16 @@
   </servlet-mapping>
 
   <servlet-mapping>
+    <servlet-name>manifestation</servlet-name>
+    <url-pattern>/manifestation/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
     <servlet-name>display</servlet-name>
     <url-pattern>/</url-pattern>
   </servlet-mapping>
+
+
   
   
   <resource-ref>

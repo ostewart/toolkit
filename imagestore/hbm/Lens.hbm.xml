@@ -15,7 +15,7 @@
       name="id"
       type="long"
       column="lens_id"
-      unsaved-value="null"
+      unsaved-value="0"
       access="property">
       <generator class="sequence">
         <param name="sequence">id_sequence</param>

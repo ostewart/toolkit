@@ -46,6 +46,38 @@
                 pattern="${datePattern}"/></td>
         </tr>
         </c:if>
+        <c:choose>
+        <c:when test="${empty image.manifestations}">
+        <p>No image manifestations.</p>
+        </c:when>
+        <c:otherwise>
+        <c:forEach var="mf" items="${image.manifestations}">
+        <tr>
+          <th>Image Manifestation: <a href="<c:url
+            value="/mf/by-id/${mf.id}"/>">(edit)</a></th>
+        </tr>
+        <tr>
+          <td>Name:</td>
+          <td><c:out value="${mf.name}"/></td>
+        </tr>
+
+        <tr>
+          <td>Format:</td>
+          <td><c:out value="${mf.format}"/></td>
+        </tr>
+        <tr>
+          <td>Original:</td>
+          <td><c:out value="${mf.original}"/></td>
+        </tr>
+
+        </c:forEach>
+        </c:otherwise>
+        </c:choose>
+        <tr>
+          <td><a href="<c:url value="/manifestation">
+          <c:param name="image_id" value="${image.id}"/>
+          </c:url>">Add manifestation</a></td>
+        </tr>
         <tr>
           <td><a href="<c:url value="/edit">
             <c:param name="id" value="${image.id}"/>
