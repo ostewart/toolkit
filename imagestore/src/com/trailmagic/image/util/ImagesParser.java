@@ -99,7 +99,8 @@ public class ImagesParser extends DefaultHandler
         try {
             s_logger.debug("beginning parse");
 
-            m_session = m_sessionFactory.openSession();
+            m_session =
+                SessionFactoryUtils.getSession(m_sessionFactory, false);
             m_transaction = m_session.beginTransaction();
             m_inImage = false;
             m_inRoll = false;
@@ -118,7 +119,8 @@ public class ImagesParser extends DefaultHandler
             m_transaction.commit();
             s_logger.debug("ImagesParser: committed transaction.");
             if ( m_closeSession ) {
-                m_session.close();
+                SessionFactoryUtils.closeSessionIfNecessary(m_session,
+                                                            m_sessionFactory);
             }
         } catch (HibernateException e) {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
@@ -131,7 +133,8 @@ public class ImagesParser extends DefaultHandler
         try {
             m_transaction.rollback();
             if (m_closeSession) {
-                m_session.close();
+                SessionFactoryUtils.closeSessionIfNecessary(m_session,
+                                                            m_sessionFactory);
             }
         } catch (HibernateException e) {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
@@ -239,6 +242,21 @@ public class ImagesParser extends DefaultHandler
             m_session.save(m_roll);
             s_logger.debug("Roll saved: " + m_roll.getName() + " ("
                            + m_roll.getId() + ")");
+            // XXX: debug. remove
+            m_session.flush();
+            ImageGroupFactory gf =
+                (ImageGroupFactory)
+                m_appContext.getBean(IMAGE_GROUP_FACTORY_BEAN);
+            ImageGroup theRoll =
+                gf.getRollByOwnerAndName(m_roll.getOwner(),
+                                         m_roll.getName());
+            if ( theRoll == null ) {
+                s_logger.error("Roll saved but select doesn't return it.");
+            } else {
+                s_logger.debug("Select returned roll \"" + theRoll.getName()
+                               + "\" with owner "
+                               + theRoll.getOwner().getScreenName());
+            }
         } catch (HibernateException e) {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
         }
@@ -311,6 +329,14 @@ public class ImagesParser extends DefaultHandler
                         (ImageGroupFactory)
                         m_appContext.getBean(IMAGE_GROUP_FACTORY_BEAN);
                     // XXX: borked if we don't have owner yet
+                    // XXX: we're not getting the roll back
+                    // this might be a hibernate bug
+                    try {
+                        m_session.flush();
+                        s_logger.debug("Successfully flushed session.");
+                    } catch (HibernateException e) {
+                        s_logger.error("Exception flushing session!", e);
+                    }
                     m_photoRoll =
                         gf.getRollByOwnerAndName(m_image.getOwner(),
                                                  characterData);
