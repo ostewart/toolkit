@@ -24,9 +24,17 @@ public class ImageTag extends TagSupport {
         ImageManifestation mf;
 
         try {
-            mf = WebSupport.getDefaultMF((User)pageContext
-                                         .findAttribute(USER_ATTR),
-                                         m_image);
+            HttpServletRequest req =
+                (HttpServletRequest)pageContext.getRequest();
+            String size = req.getParameter("size");
+            if ( size == null ) {
+                mf = WebSupport.getDefaultMF((User)pageContext
+                                             .findAttribute(USER_ATTR),
+                                             m_image);
+            } else {
+                mf = WebSupport.getMFByLabel(m_image, size);
+            }
+
             if ( mf != null ) {
                 html.append("<img src=\"");
                 

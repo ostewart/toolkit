@@ -97,12 +97,32 @@
       <column name="image_id" not-null="true"/>
     </many-to-one>
   </class>
-<!-- This never worked
-  <class name="ImageFrame">
-    <property name="imageGroup"/>
-    <property name="position"/>
-    <property name="caption"/>
-    <property name="image"/>
-  </class>
-    -->
+
+  <query name="albumsByOwnerScreenName">
+    SELECT album FROM com.trailmagic.image.ImageGroup
+    AS album INNER JOIN album.owner AS owner
+    WHERE album.type = 'album'
+    AND owner.screenName = :screenName
+  </query>
+
+  <query name="albumOwners">
+    SELECT DISTINCT album.owner
+    FROM com.trailmagic.image.ImageGroup
+    AS album INNER JOIN album.owner
+    WHERE album.type = 'album'
+  </query>
+
+  <query name="albumByOwnerAndName">
+    SELECT FROM com.trailmagic.image.ImageGroup
+    AS grp WHERE grp.owner = :owner AND
+    grp.name = :albumName
+    AND grp.type = 'album'
+  </query>
+
+  <query name="imageFrameByImageGroupAndImageId">
+    SELECT 
+    FROM com.trailmagic.image.ImageFrame frame
+    WHERE frame.imageGroup = :imageGroup
+    AND frame.image.id = :imageId
+  </query>
 </hibernate-mapping>

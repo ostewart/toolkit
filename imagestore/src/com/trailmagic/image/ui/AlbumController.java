@@ -18,12 +18,19 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationContext;
+import org.springframework.beans.BeansException;
 
 import com.trailmagic.image.*;
 import com.trailmagic.user.*;
 
-public class AlbumController implements Controller {
+public class AlbumController implements Controller, ApplicationContextAware {
+    private static final String USER_FACTORY_BEAN = "userFactory";
+    private static final String IMG_GROUP_FACTORY_BEAN = "imageGroupFactory";
+    
     private SessionFactory m_sessionFactory;
+    private ApplicationContext m_appContext;
 
     public SessionFactory getSessionFactory() {
         return m_sessionFactory;
@@ -31,6 +38,12 @@ public class AlbumController implements Controller {
 
     public void setSessionFactory(SessionFactory sf) {
         m_sessionFactory = sf;
+    }
+
+    public void setApplicationContext(ApplicationContext appContext)
+        throws BeansException {
+
+        m_appContext = appContext;
     }
         
     public ModelAndView handleRequest(HttpServletRequest req,
@@ -46,6 +59,10 @@ public class AlbumController implements Controller {
          */
         Session session = SessionFactoryUtils.getSession(m_sessionFactory,
                                                          false);
+        ImageGroupFactory imgGroupFactory =
+            (ImageGroupFactory)m_appContext.getBean(IMG_GROUP_FACTORY_BEAN);
+        UserFactory userFactory =
+            (UserFactory)m_appContext.getBean(USER_FACTORY_BEAN);
         
         UrlPathHelper pathHelper = new UrlPathHelper();
         String myPath = pathHelper.getPathWithinServletMapping(req);
@@ -57,24 +74,28 @@ public class AlbumController implements Controller {
         // got no args: show users        
         if ( !pathTokens.hasMoreTokens() ) {
             // List users with albums
-            model.put("owners", getUsersWithAlbums(session));
+            //            model.put("owners", getUsersWithAlbums(session));
+            model.put("owners", imgGroupFactory.getAlbumOwners());
             return new ModelAndView("/album-users.jsp", model);
         }
 
         // process first (owner) arg
         String ownerName = pathTokens.nextToken();
-        User owner = getUserByScreenName(session, ownerName);
+        User owner = userFactory.getByScreenName(ownerName);
         model.put("owner", owner);
 
         // got user arg: show his/her albums
         if ( !pathTokens.hasMoreTokens() ) {
-            model.put("albums", getAlbumsForUser(session, ownerName));
+            //            model.put("albums", getAlbumsForUser(session, ownerName));
+            model.put("albums",
+                      imgGroupFactory.getAlbumsByOwnerScreenName(ownerName));
             return new ModelAndView("/album-list.jsp", model);
         }
 
         // process second (album name) arg
         String albumName = pathTokens.nextToken();
-        ImageGroup album = getAlbumByOwnerAndName(session, owner, albumName);
+        ImageGroup album =
+            imgGroupFactory.getAlbumByOwnerAndName(owner, albumName);
         model.put("album", album);
 
         SortedSet frames = album.getFrames();
@@ -95,8 +116,9 @@ public class AlbumController implements Controller {
         // process third (frame number) arg
         try {
             long frameId = Long.parseLong(pathTokens.nextToken().trim());
-            ImageFrame frame = getImageFrameByAlbumAndImageId(session, album,
-                                                              frameId);
+            ImageFrame frame =
+                imgGroupFactory.getImageFrameByImageGroupAndImageId(album,
+                                                                    frameId);
             if ( frame == null ) {
                 // XXX: pure eeeeeevil
                 throw new NumberFormatException("No image found.");
@@ -105,13 +127,13 @@ public class AlbumController implements Controller {
             model.put("image", frame.getImage());
 
             SortedSet tmpSet = frames.headSet(frame);
-            /*
-            Iterator iter = tmpSet.iterator();
-            iter.next();
-            if ( iter.hasNext() ) {
-                ImageFrame prevFrame = (ImageFrame)iter.next();
-            }
-            */
+
+//             Iterator iter = tmpSet.iterator();
+//             iter.next();
+//             if ( iter.hasNext() ) {
+//                 ImageFrame prevFrame = (ImageFrame)iter.next();
+//             }
+
 
             if ( !tmpSet.isEmpty() ) {
                 ImageFrame prevFrame = (ImageFrame)tmpSet.last();
@@ -132,19 +154,19 @@ public class AlbumController implements Controller {
             throw new JspException("Invalid frame number.");
         }
     }
-
+    /*
     private List getUsersWithAlbums(Session session) {
         try {
             Query query =
-                /*
-                session.createQuery("SELECT user " +
-                                    "FROM com.trailmagic.user.User " +
-                                    "AS user " +
-                                    "inner join " +
-                                    "com.trailmagic.image.ImageFrame " +
-                                    " AS album WHERE album.type = 'album' ");
-                                    //                                    "AND album.owner = user");
-                                    */
+
+//                 session.createQuery("SELECT user " +
+//                                     "FROM com.trailmagic.user.User " +
+//                                     "AS user " +
+//                                     "inner join " +
+//                                     "com.trailmagic.image.ImageFrame " +
+//                                     " AS album WHERE album.type = 'album' ");
+//                                     //                                    "AND album.owner = user");
+
                 session.createQuery("select distinct album.owner " +
                                     "from com.trailmagic.image.ImageGroup " +
                                     "as album inner join album.owner " +
@@ -185,25 +207,25 @@ public class AlbumController implements Controller {
         }
 
     }
-    /*
-select elements(grp.frames) from com.trailmagic.image.ImageGroup grp join grp.frames frame where grp.owner.screenName = 'oliver' AND grp.name = 'test-album' AND frame.image.id = 3
-    */
+
+    //select elements(grp.frames) from com.trailmagic.image.ImageGroup grp join grp.frames frame where grp.owner.screenName = 'oliver' AND grp.name = 'test-album' AND frame.image.id = 3
+
     private ImageFrame getImageFrameByAlbumAndImageId(Session session,
                                                       ImageGroup album,
                                                       long imageId) {
 
         try {
-            /*
-            Query query =
-                session.createQuery("select elements(grp.frames) " +
-                                    "from com.trailmagic.image.ImageGroup grp"+
-                                    " join grp.frames frame " +
-                                    "where grp = :album " +
-                                    "AND frame.image.id = :imageId");
-            query.setEntity("album", album);
-            query.setLong("imageId", imageId);
-            return (ImageFrame)query.uniqueResult();
-            */
+
+//             Query query =
+//                 session.createQuery("select elements(grp.frames) " +
+//                                     "from com.trailmagic.image.ImageGroup grp"+
+//                                     " join grp.frames frame " +
+//                                     "where grp = :album " +
+//                                     "AND frame.image.id = :imageId");
+//             query.setEntity("album", album);
+//             query.setLong("imageId", imageId);
+//             return (ImageFrame)query.uniqueResult();
+
 
             
             Collection frames =
@@ -240,4 +262,5 @@ select elements(grp.frames) from com.trailmagic.image.ImageGroup grp join grp.fr
             throw SessionFactoryUtils.convertHibernateAccessException(e);
         }
     }
+    */
 }

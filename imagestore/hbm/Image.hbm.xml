@@ -32,7 +32,7 @@
     </property>
 
     <property name="displayName">
-      <column name="displayName" sql-type="varchar(1024)" not-null="true"/>
+      <column name="display_name" sql-type="varchar(1024)" not-null="true"/>
     </property>
     <property name="caption">
       <column name="caption" sql-type="varchar(4000)"/>
@@ -42,6 +42,9 @@
     </property>
     <property name="creator">
       <column name="creator" sql-type="varchar(1024)"/>
+    </property>
+    <property name="number">
+      <column name="number"/>
     </property>
 
     <many-to-one name="owner"
@@ -91,5 +94,9 @@
         column="image_group_id"/>
     </joined-subclass>
   </class>
+
+  <query name="allImages">
+    SELECT FROM com.trailmagic.image.Image
+  </query>
     
 </hibernate-mapping>

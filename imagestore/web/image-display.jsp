@@ -40,12 +40,18 @@ prevImage: Image
           <tm:image image="${frame.image}"/>
         </c:if>
       </c:otherwise>
-        </c:choose>
+      </c:choose>
+      <div class="image-sizes">
+        |<c:forEach var="imf" items="${image.manifestations}">
+          <c:out value="${imf.width}"/>x<c:out
+          value="${imf.height}"/>|
+        </c:forEach>
+      </div>
       <div>
       <c:out value="${image.caption}"/><br>
       <c:out value="${image.copyright}"/>
       <c:out value="${image.creator}"/><br>
-              Owned by <c:out value="${image.owner.screenName}"/><br/>
+      Owned by <tm:albumLink owner="${image.owner}">${image.owner.screenName}</tm:albumLink><br/>
     </div>
 
     <!-- Photo properties -->

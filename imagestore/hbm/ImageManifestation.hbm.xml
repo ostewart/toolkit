@@ -24,11 +24,6 @@
 
     <many-to-one name="image" class="Image" column="image_id" not-null="true"/>
 
-
-    <property name="name">
-      <column name="name" sql-type="varchar(1024)" not-null="true"/>
-    </property>
-
     <property name="height">
       <column name="height" not-null="true"/>
     </property>
@@ -36,13 +31,16 @@
       <column name="width" not-null="true"/>
     </property>
     <property name="format">
-      <column name="format" sql-type="varchar(100)" not-null="true"/>
+      <column name="format" sql-type="varchar(1024)" not-null="true"/>
     </property>
     <property name="original">
       <column name="originalp" not-null="true"/>
     </property>
     <property name="data" type="binary">
       <column name="image_data"  not-null="true"/>
+    </property>
+    <property name="name">
+      <column name="name" sql-type="varchar(1024)"/>
     </property>
   </class>
 </hibernate-mapping>

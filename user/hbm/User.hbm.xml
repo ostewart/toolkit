@@ -46,4 +46,10 @@
       <column name="password" not-null="true" sql-type="char(32)"/>
     </property>
   </class>
+
+  <query name="userByScreenName">
+    SELECT FROM com.trailmagic.user.User
+    AS user
+    WHERE user.screenName = :screenName
+  </query>
 </hibernate-mapping>

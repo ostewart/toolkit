@@ -1,8 +1,11 @@
-implement Album
-implement Roll
-implement ImageCD
+implement imf selection by area
+write queries as named queries
+implement sorting by area
+implement upload UI (don't forget height/width detection)
 
-implement UI for the above, particularly Album display, Roll entry,
-individual image display
-
+implement Roll, roll UI
 refactor user, group to descend from Party
+
+DONE: implement Album
+DONE: implement ImageCD
+DONE: implement UI: Album display, Roll entry, individual image display

@@ -26,6 +26,7 @@
   <property name="dist.dir" value="dist"/>
   <property name="web.dir" value="web"/>
   <property name="lib.dir" value="lib"/>
+  <property name="dep.lib.dir" value="../lib-dep"/>
   <property name="build.lib.dir" value="lib-build" />
   <property name="global.build.lib.dir" value="../lib-build" />
   <property name="global.lib.dir" value="../lib" />
@@ -36,13 +37,17 @@
   <property name="trailmagic-user.dir" value="../user"/>
   <property name="trailmagic-user.jar"
     value="${trailmagic-user.dir}/build/trailmagic-user.jar"/>
-  <property name="dep.lib.dir" value="../lib-dep"/>
 
 
   <path id="build.classpath">
     <fileset dir="${lib.dir}">
       <include name="**/*.jar"/>
     </fileset>
+
+    <fileset dir="${build.lib.dir}">
+      <include name="**/*.jar"/>
+    </fileset>
+
     <fileset dir="${global.build.lib.dir}">
       <include name="**/*.jar"/>
     </fileset>
@@ -56,11 +61,6 @@
       <include name="**/*.jar"/>
     </fileset>
 
-
-    <fileset dir="${build.lib.dir}">
-      <include name="**/*.jar"/>
-    </fileset>
-  
     <pathelement path="${build.output.dir}"/>
     <pathelement path="${java.class.path}"/>
     <pathelement path="${trailmagic-user.jar}"/>

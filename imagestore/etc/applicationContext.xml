@@ -31,7 +31,23 @@
       <value>/spring/albums/</value>
     </property>
   </bean>
+
+  <bean id="imageFactory"
+    class="com.trailmagic.image.hibernate.HibernateImageFactory">
+    <property name="sessionFactory"><ref local="sessionFactory"/></property>
+  </bean>
+
+  <bean id="imageGroupFactory"
+    class="com.trailmagic.image.hibernate.HibernateImageGroupFactory">
+    <property name="sessionFactory"><ref
+        local="sessionFactory"/></property>
+  </bean>
     
+  <bean id="userFactory"
+    class="com.trailmagic.user.hibernate.HibernateUserFactory">
+    <property name="sessionFactory"><ref
+        local="sessionFactory"/></property>
+  </bean>
 
 <!--
   <bean id="hibernateInterceptor"

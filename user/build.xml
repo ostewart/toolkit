@@ -28,7 +28,8 @@
   <property name="lib.dir" value="lib"/>
   <property name="dep.lib.dir" value="../lib-dep"/>
   <property name="build.lib.dir" value="lib-build" />
-  <property name="common.build.lib.dir" value="../lib-build" />
+  <property name="global.build.lib.dir" value="../lib-build" />
+  <property name="global.lib.dir" value="../lib" />
   <property name="hibernate.conf.dir" value="hbm"/>
   <property name="hibernate.private.conf.dir" value="hbm-cfg"/>
   <property name="javac.debug" value="on"/>
@@ -45,7 +46,11 @@
       <include name="**/*.jar"/>
     </fileset>
 
-    <fileset dir="${common.build.lib.dir}">
+    <fileset dir="${global.build.lib.dir}">
+      <include name="**/*.jar"/>
+    </fileset>
+
+    <fileset dir="${global.lib.dir}">
       <include name="**/*.jar"/>
     </fileset>
 

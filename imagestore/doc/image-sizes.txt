@@ -1,0 +1,48 @@
+Photo CD sizes:
+2048 x 3072	Base*16
+1024 x 1536	Base*4 (same resolution as HDTV)
+512 x 768	Base (same resolution as TV)
+256 x 384	Base/4 (Thumbnail)
+128 x 192	Base/16 (Small Thumbnail)
+
+
+D70 native image size:
+3008x2000
+
+I think we should have system-wide identifiers to select a size range:
+thumbnail
+small
+medium
+large
+huge
+
+5 seems like enough
+we can always add ginormous if necessary
+
+soo...what corresponds to those labels?
+under PhotoCD:
+
+huge: 3072x2048
+large: 1536x1024
+medium: 768x512
+small: 384x256
+thumbnail: 192x128
+
+
+
+medium fills my browser screen, but in portrait it would be too big
+different prefs for each
+small is a bit too small to set for portrait
+
+we'll go with this, for now
+
+
+Default?  medium
+selection? mf servlet param, album frame param
+size=small
+size=medium
+size=thumbnail
+
+select by area or by label?
+if by label, then images without that label won't show up
+if by size, we'll get the next closest

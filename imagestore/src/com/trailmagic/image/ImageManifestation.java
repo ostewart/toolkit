@@ -6,11 +6,11 @@ import java.util.SortedSet;
 public class ImageManifestation implements Comparable {
     private long m_id;
     private Image m_image;
-    private String m_name;
     private int m_height;
     private int m_width;
     private String m_format;
     private boolean m_original;
+    private String m_name;
     //    private Blob m_data;
     private byte[] m_data;
     
@@ -23,14 +23,6 @@ public class ImageManifestation implements Comparable {
 
     public void setId(long id) {
         m_id = id;
-    }
-
-    public String getName() {
-        return m_name;
-    }
-
-    public void setName(String name) {
-        m_name = name;
     }
 
     public Image getImage() {
@@ -73,6 +65,14 @@ public class ImageManifestation implements Comparable {
 
     public void setOriginal(boolean original) {
         m_original = original;
+    }
+
+    public String getName() {
+        return m_name;
+    }
+
+    public void setName(String name) {
+        m_name = name;
     }
 
     /*

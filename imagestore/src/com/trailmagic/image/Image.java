@@ -17,6 +17,7 @@ public class Image {
     private SortedSet m_manifestations;
     private User m_owner;
     private ImageCD m_imageCD;
+    private Integer m_number;
 
     public Image(long id) {
         // nothing for now
@@ -101,6 +102,14 @@ public class Image {
     public void addManifestation(ImageManifestation im) {
         im.setImage(this);
         m_manifestations.add(im);
+    }
+
+    public Integer getNumber() {
+        return m_number;
+    }
+
+    public void setNumber(Integer number) {
+        m_number = number;
     }
 
     public static Image findById(long id) throws HibernateException {
