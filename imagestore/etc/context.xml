@@ -38,5 +38,10 @@
       <name>maxActive</name>
       <value>10</value>
     </parameter>
-  </ResourceParams>
+    </ResourceParams>
+
+    <Realm className="org.apache.catalina.realm.JAASRealm"
+      appName="ImageStore"
+      userClassNames="com.trailmagic.user.UserPrincipal"
+      roleClassNames="com.trailmagic.user.GroupPrincipal"/>
 </Context>

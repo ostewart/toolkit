@@ -12,7 +12,12 @@ public class HibernateUtil {
 
     static {
         try {
-            sessionFactory = new Configuration().configure().buildSessionFactory();
+            // load the config file from this class's classloader, to
+            // avoid multiple classloader issues in Tomcat
+            sessionFactory = new Configuration()
+                .configure(HibernateUtil.class
+                           .getResource("/trailmagic-image.cfg.xml"))
+                .buildSessionFactory();
         } catch (HibernateException ex) {
             throw new RuntimeException("Exception building SessionFactory: " + ex.getMessage(), ex);
         }

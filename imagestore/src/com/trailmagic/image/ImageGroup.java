@@ -7,9 +7,13 @@ public class ImageGroup {
     private long m_id;
     private String m_type;
     private String m_name;
+    private String m_description;
     private SortedSet m_frames;
     private Collection m_subgroups;
     private ImageGroup m_supergroup;
+
+    public static final String ROLL_TYPE = "roll";
+    public static final String SEQ_TYPE = "sequence";
 
     public ImageGroup() {
     }
@@ -28,6 +32,14 @@ public class ImageGroup {
 
     public void setName(String name) {
         m_name = name;
+    }
+
+    public String getDescription() {
+        return m_description;
+    }
+
+    public void setDescription(String desc) {
+        m_description = desc;
     }
 
     public String getType() {

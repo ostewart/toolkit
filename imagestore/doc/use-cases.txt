@@ -1,0 +1,16 @@
+user's database of photos, uncategorized, unorganized
+user has albums which represent arbitrary groupings of photos
+any photo can be in 0..* albums
+user can organize a slideshow, which is a sequenced grouping of photos
+(is there any point in making a distinction between this and an album?
+- I probably don't want to assign any particular order to an album, although this could just use the order in which the photos were added, possibly to be reorganized later)
+
+user wants to add photos to database that shouldn't be available on the web
+user wants to make photos/albums available only to his friends
+
+user should be able to administer his own groups - friends, etc.
+add/remove arbitrary user to any group the modifying user owns
+create/delete groups - what happens to the referenced photos? pessimistic permissioning/access
+
+
+

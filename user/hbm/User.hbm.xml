@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping
+    PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd">
+
+<hibernate-mapping
+  default-cascade="all"
+  package="com.trailmagic.user">
+
+  <class
+    name="User"
+    table="users">
+
+    <id
+      name="id"
+      type="long"
+      column="user_id"
+      unsaved-value="0"
+      access="property">
+      <generator class="sequence">
+        <param name="sequence">id_sequence</param>
+      </generator>
+    </id>
+
+    <property name="screenName">
+      <column name="screen_name" sql-type="varchar(32)"
+      not-null="true" unique-key="user_screen_name"/>
+    </property>
+
+    <property name="primaryEmail">
+      <column name="primary_email" sql-type="varchar(1024)"
+      not-null="true"/>
+    </property>
+
+    <property name="firstName">
+      <column name="first_name" sql-type="varchar(256)"
+      not-null="true"/>
+    </property>
+
+    <property name="lastName">
+      <column name="last_name" sql-type="varchar(256)"
+      not-null="true"/>
+    </property>
+
+    <property name="password">
+      <column name="password" not-null="true" sql-type="char(32)"/>
+    </property>
+  </class>
+</hibernate-mapping>

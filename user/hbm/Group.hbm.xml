@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping
+    PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd">
+
+<hibernate-mapping
+  default-cascade="all"
+  package="com.trailmagic.user">
+
+  <class
+    name="com.trailmagic.user.Group"
+    table="groups">
+
+    <id
+      name="id"
+      type="long"
+      column="group_id"
+      unsaved-value="0"
+      access="property">
+      <generator class="sequence">
+        <param name="sequence">id_sequence</param>
+      </generator>
+    </id>
+
+    <property name="name">
+      <column name="name" sql-type="varchar(256)"
+      not-null="true" unique="true"/>
+    </property>
+
+    <many-to-one name="owner"
+      column="owner_id"
+      class="User"
+      cascade="none"/>
+
+    <bag name="users" table="groups_users" cascade="none">
+      <key column="group_id"/>
+      <many-to-many column="user_id"
+        class="com.trailmagic.user.User"/>
+      <!-- hmm...we could put a permission type in here -->
+    </bag>
+
+  </class>
+</hibernate-mapping>

@@ -1,0 +1,50 @@
+Albums - flat list per user, no hierarchy for now
+special type of imagegroup?
+Albums are collections of presentable photos - the best
+have links to the roll that each photo was from to see the unedited
+shots
+
+how to integrate site with albums? embed into other places?
+custom tags would be good for that
+
+
+collect images together to burn a CD
+make another ImageGroup...then export the originals or some selection
+of derivatives.
+this could be used to make burning backup CDs easier - have an
+autoselection based on size
+add backed_up flag to database, to keep track of redundant storage
+add CDs table or CD field, referencing which CD an image is on
+
+
+
+groups scheme:
+roles are like unix groups
+each user can create up to 5 groups, add/remove any number of users
+grant access to objects to any/all of those 5 groups, and also all
+members, everyone, or no one (private)
+
+roles being returned by JAASLoginModule, so all groups user is a
+member of will be added to Subject...but how many groups will any
+single user be a member of?
+
+how could this be optimized later if a user becomes a member of, say,
+hundreds of groups?
+even if this is the case, a Set shouldn't perform too badly, right?
+
+To Setup UserLoginModule:
+add realm to server.xml
+add jaas.config to conf/
+add UserLoginModule ... to tomcat classpath
+
+http://www.hibernate.org/140.html
+
+
+oliver@slim:~/devel/imagestore$ cp build/imagestore.jar ../tomcat/common/lib/
+oliver@slim:~/devel/imagestore$ cp lib/hibernate2.jar ../tomcat/common/lib
+oliver@slim:~/devel/imagestore$ cp lib/cglib2.jar ../tomcat/common/lib
+oliver@slim:~/devel/imagestore$ cp lib/dom4j.jar  ../tomcat/common/lib
+oliver@slim:~/devel/imagestore$ cp lib/odmg.jar   ../tomcat/common/lib
+oliver@slim:~/devel/imagestore$ cp lib/xalan.jar   ../tomcat/common/lib
+oliver@slim:~/devel/imagestore$ cp lib/ehcache.jar ../tomcat/common/lib
+oliver@slim:~/devel/imagestore$ cp lib/jta.jar  ../tomcat/common/lib

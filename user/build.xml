@@ -3,9 +3,9 @@
   "file:///home/oliver/devel/project.dtd">
 <!--<!DOCTYPE project>-->
 
-<project name="trailmagic-image" default="build" basedir=".">
+<project name="trailmagic-user" default="build" basedir=".">
   <!-- REMEMBER TO EDIT THIS AND ABOVE -->
-  <property name="project.name" value="trailmagic-image"/>
+  <property name="project.name" value="trailmagic-user"/>
   
   <!-- potentially override what's in here -->
   <property file="ant.properties"/>
@@ -26,31 +26,36 @@
   <property name="dist.dir" value="dist"/>
   <property name="web.dir" value="web"/>
   <property name="lib.dir" value="lib"/>
+  <property name="dep.lib.dir" value="lib-dep"/>
   <property name="build.lib.dir" value="lib-build" />
-  <property name="global.build.lib.dir" value="../lib-build" />
+  <property name="common.build.lib.dir" value="../lib-build" />
   <property name="hibernate.conf.dir" value="hbm"/>
+  <property name="hibernate.private.conf.dir" value="hbm-cfg"/>
   <property name="javac.debug" value="on"/>
   <property name="javac.optimize" value="off"/>
   <property name="deploy.dir" value="deploy"/>
-  <property name="trailmagic-user.jar"
-    value="../user/build/trailmagic-user.jar"/>
 
 
   <path id="build.classpath">
     <fileset dir="${lib.dir}">
       <include name="**/*.jar"/>
     </fileset>
-    <fileset dir="${global.build.lib.dir}">
-      <include name="**/*.jar"/>
-    </fileset>
 
     <fileset dir="${build.lib.dir}">
       <include name="**/*.jar"/>
     </fileset>
-  
+
+    <fileset dir="${common.build.lib.dir}">
+      <include name="**/*.jar"/>
+    </fileset>
+
+    <!-- needed only for the schema tool tasks -->
+    <fileset dir="${dep.lib.dir}">
+      <include name="**/*.jar"/>
+    </fileset>
+
     <pathelement path="${build.output.dir}"/>
     <pathelement path="${java.class.path}"/>
-    <pathelement path="${trailmagic-user.jar}"/>
   </path>
 
   <path id="hbm.classpath">
@@ -73,10 +78,12 @@
     <antcall target="clean"/>
   </target>
 
+  <!--
   <target name="clean-deploy-dir">
     <delete dir="${deploy.dir}"/>
   </target>
-
+  -->
+  
   <target name="distclean" depends="clean">
     <delete dir="${dist.dir}"/>
   </target>
@@ -105,7 +112,6 @@
   </target>
 
   <target name="build" depends="compile">
-    <ant dir="../user" target="build" inheritAll="false"/>
     <jar destfile="${build.dir}/${jarname}">
 <!--      <fileset dir="${build.resources.dir}"/>-->
       <fileset dir="${build.output.dir}"/>
@@ -147,23 +153,15 @@
     </junit>
   </target>
 
-  <target name="deploy" depends="compile">
+  <target name="deploy" depends="build">
     <mkdir dir="${deploy.dir}"/>
     <copy todir="${deploy.dir}">
-      <fileset dir="${web.dir}"/>
+      <fileset dir="${build.dir}">
+        <include name="${jarname}"/>
+      </fileset>
+      <fileset dir="${lib.dir}"/>
+      <fileset dir="${dep.lib.dir}"/>
     </copy>
-    <mkdir dir="${deploy.dir}/WEB-INF"/>
-    <copy todir="${deploy.dir}/WEB-INF">
-      <fileset dir="${build.dir}"/>
-      <fileset dir="${resources.dir}"/>
-    </copy>
-    <copy todir="${deploy.dir}/WEB-INF/lib">
-      <fileset dir="lib"/>
-    </copy>
-  </target>
-
-  <target name="force-deploy" depends="deploy">
-    <touch file="${deploy.dir}/WEB-INF/web.xml"/>
   </target>
 
   <target name="schemaexport" depends="compile">

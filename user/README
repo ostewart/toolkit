@@ -1,0 +1,10 @@
+In order for this to work, you need to copy jaas.config somewhere and
+tell the JVM running Tomcat where to find it, e.g.:
+
+cp jaas.config $CATALINA_HOME/conf/jaas.config
+JAVA_OPTS=-Djava.security.auth.login.config=$CATALINA_HOME/conf/jaas.config
+export JAVA_OPTS
+
+Otherwise, you'll get an exception like:
+java.lang.SecurityException: Unable to locate a login configuration
+

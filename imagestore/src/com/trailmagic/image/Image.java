@@ -5,6 +5,8 @@ import net.sf.hibernate.Query;
 import net.sf.hibernate.Session;
 import net.sf.hibernate.HibernateException;
 
+import com.trailmagic.user.User;
+
 public class Image {
     private long m_id;
     private String m_name;
@@ -13,6 +15,7 @@ public class Image {
     private String m_copyright;
     private String m_creator;
     private SortedSet m_manifestations;
+    private User m_owner;
 
     public Image(long id) {
         // nothing for now
@@ -68,6 +71,14 @@ public class Image {
 
     public void setCreator(String creator) {
         m_creator = creator;
+    }
+
+    public User getOwner() {
+        return m_owner;
+    }
+    
+    public void setOwner(User owner) {
+        m_owner = owner;
     }
 
     public SortedSet getManifestations() {

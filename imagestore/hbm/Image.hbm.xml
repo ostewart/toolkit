@@ -44,6 +44,12 @@
       <column name="creator" sql-type="varchar(1024)"/>
     </property>
 
+    <many-to-one name="owner"
+      column="owner_id"
+      class="com.trailmagic.user.User"
+      cascade="none"/>
+
+
     <set
       name="manifestations"
       cascade="all-delete-orphan"

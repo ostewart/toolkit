@@ -37,6 +37,10 @@
     <property name="type">
       <column name="type" sql-type="varchar(100)" not-null="true"/>
     </property>
+
+    <property name="description">
+      <column name="description" sql-type="varchar(2048)"/>
+    </property>
     
     <set
       name="frames"
