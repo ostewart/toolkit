@@ -46,17 +46,17 @@ public class ImageMFDisplayServlet extends HttpServlet {
                 Transaction tx= session.beginTransaction();
                 
                 Query query =
-                    session.createQuery("select from com.trailmagic.image.ImageManifestation as imf where imf.id = :id");
+                    session.createQuery("select from com.trailmagic.image.HeavyImageManifestation as imf where imf.id = :id");
                 query.setLong("id", Long.parseLong(args.nextToken()));
                 
-                ImageManifestation imf =
-                    (ImageManifestation)query.uniqueResult();
+                HeavyImageManifestation imf =
+                    (HeavyImageManifestation)query.uniqueResult();
                 if ( imf != null ) {
                     res.setContentType(imf.getFormat());
-                    //                    Blob data = imf.getData();
-                    //                    InputStream img = data.getBinaryStream();
-                    /*
-                    java.io.FileInputStream img = new java.io.FileInputStream("/tmp/tiger.jpg");
+                    Blob data = imf.getData();
+                    InputStream img = data.getBinaryStream();
+
+                    //                    java.io.FileInputStream img = new java.io.FileInputStream("/tmp/tiger.jpg");
                     byte[] bytes = new byte[1024];
                     int len = 0;
                     OutputStream out = res.getOutputStream();
@@ -64,11 +64,11 @@ public class ImageMFDisplayServlet extends HttpServlet {
                           len = img.read(bytes) ) {
                         out.write(bytes, 0, len);
                     }
-                    */
+
                     if ( false ) { throw new SQLException("hi"); }
 
-                    OutputStream out = res.getOutputStream();
-                    out.write(imf.getData());
+                    //                    OutputStream out = res.getOutputStream();
+                    //                    out.write(imf.getData());
                     HibernateUtil.closeSession();
                     return;
                 }

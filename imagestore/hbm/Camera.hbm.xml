@@ -17,7 +17,7 @@
       column="camera_id"
       unsaved-value="0"
       access="property">
-      <generator class="sequence">
+      <generator class="native">
         <param name="sequence">id_sequence</param>
       </generator>
     </id>

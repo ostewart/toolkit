@@ -6,10 +6,10 @@
   <bean id="dataSource"
     class="org.springframework.jdbc.datasource.DriverManagerDataSource">
     <property name="driverClassName">
-      <value>org.postgresql.Driver</value>
+      <value>com.mysql.jdbc.Driver</value>
     </property>
     <property name="url">
-      <value>jdbc:postgresql://localhost/trailmagic</value>
+      <value>jdbc:mysql://localhost/trailmagic</value>
     </property>
     <property name="username">
       <value>trailmagic</value>

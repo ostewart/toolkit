@@ -43,6 +43,21 @@ public class HibernateImageManifestationFactory
         
     }
 
+    public HeavyImageManifestation getHeavyById(long id) {
+        try {
+            // XXX: should we allow creation here?
+            Session session =
+                SessionFactoryUtils.getSession(m_sessionFactory, false);
+
+            return (HeavyImageManifestation)
+                session.get(HeavyImageManifestation.class, new Long(id));
+            
+        } catch (HibernateException e) {
+            throw SessionFactoryUtils.convertHibernateAccessException(e);
+        }
+        
+    }
+
     public List getAllForImageId(long imageId) {
         try {
             Session session =

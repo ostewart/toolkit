@@ -219,9 +219,9 @@ public class ImageMFServlet extends HttpServlet {
     private ImageManifestation processFile(FileItem item)
         throws IOException, SQLException {
 
-        ImageManifestation im = new ImageManifestation();
-        //        im.setData(Hibernate.createBlob(item.getInputStream()));
-        im.setData(item.get());
+        HeavyImageManifestation im = new HeavyImageManifestation();
+        im.setData(Hibernate.createBlob(item.getInputStream()));
+        //        im.setData(item.get());
         im.setName(item.getName());
         im.setFormat(item.getContentType());
         return im;

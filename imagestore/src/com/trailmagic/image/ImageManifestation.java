@@ -1,8 +1,11 @@
 package com.trailmagic.image;
 
-import java.sql.Blob;
 import java.util.SortedSet;
 
+/**
+ * This class maps the metadata of the manifestation, while its subclass,
+ * the <code>HeavyImageManifestation</code> also maps the data.
+ **/
 public class ImageManifestation implements Comparable {
     private long m_id;
     private Image m_image;
@@ -11,8 +14,6 @@ public class ImageManifestation implements Comparable {
     private String m_format;
     private boolean m_original;
     private String m_name;
-    //    private Blob m_data;
-    private byte[] m_data;
     
     public ImageManifestation() {
     }
@@ -73,23 +74,6 @@ public class ImageManifestation implements Comparable {
 
     public void setName(String name) {
         m_name = name;
-    }
-
-    /*
-    public Blob getData() {
-        return m_data;
-    }
-
-    public void setData(Blob data) {
-        m_data = data;
-    }
-    */
-    public byte[] getData() {
-        return m_data;
-    }
-
-    public void setData(byte[] data) {
-        m_data = data;
     }
 
     public int getArea() {

@@ -16,14 +16,14 @@
       column="group_id"
       unsaved-value="0"
       access="property">
-      <generator class="sequence">
+      <generator class="native">
         <param name="sequence">id_sequence</param>
       </generator>
     </id>
 
     <many-to-one name="supergroup" column="supergroup_id"/>
 
-    <set name="subgroups" inverse="true" cascade="all">
+    <set name="subgroups" inverse="true" cascade="all" lazy="true">
       <key column="supergroup_id"/>
       <one-to-many class="ImageGroup"/>
     </set>
@@ -78,7 +78,7 @@
       column="frame_id"
       unsaved-value="0"
       access="property">
-      <generator class="sequence">
+      <generator class="native">
         <param name="sequence">id_sequence</param>
       </generator>
     </id>

@@ -59,7 +59,7 @@ prevImage: Image
     </div>
 
     <div style="clear: both; float: none; text-align: center">
-      <h1><c:out value="${album.displayName}"/><c:if test="${!empty
+      <h1><tm:albumLink album="${album}"><c:out value="${album.displayName}"/></tm:albumLink><c:if test="${!empty
             album}"> : </c:if><c:out
             value="${image.displayName}"/></h1>
       <c:choose>

@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Stack;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import net.sf.hibernate.Hibernate;
 import net.sf.hibernate.HibernateException;
 import net.sf.hibernate.Session;
 import net.sf.hibernate.SessionFactory;
@@ -45,7 +46,7 @@ public class ImagesParser extends DefaultHandler
     private String m_inSubElement;
     private Image m_image;
     private ImageGroup m_roll;
-    private ImageManifestation m_manifestation;
+    private HeavyImageManifestation m_manifestation;
     private Session m_session;
     private SessionFactory m_sessionFactory;
     private Transaction m_transaction;
@@ -207,7 +208,7 @@ public class ImagesParser extends DefaultHandler
     }
 
     public void startManifestation() {
-        m_manifestation = new ImageManifestation();
+        m_manifestation = new HeavyImageManifestation();
         m_manifestation.setImage(m_image);
         m_inManifestation = true;
     }
@@ -222,15 +223,6 @@ public class ImagesParser extends DefaultHandler
                            + "original: " + m_manifestation.isOriginal());
             
             importManifestation();
-            m_session.save(m_manifestation);
-            s_logger.info("ImageManifestation saved: "
-                          + m_manifestation.getName()
-                          + " (" + m_manifestation.getId() + ")"
-                          + "...flushing session and evicting manifestation.");
-            synchronized (m_session) {
-                m_session.flush();
-                m_session.evict(m_manifestation);
-            }
             m_manifestation = null;
             m_inManifestation = false;
         } catch (HibernateException e) {
@@ -427,7 +419,7 @@ public class ImagesParser extends DefaultHandler
     }
     */
 
-    private void importManifestation() {
+    private void importManifestation() throws HibernateException {
         try {
             File srcFile = new File(m_baseDir, m_manifestation.getName());
             s_logger.info("Importing " + srcFile.getPath());
@@ -436,12 +428,21 @@ public class ImagesParser extends DefaultHandler
                               + srcFile.getPath());
                 return;
             }
-            byte[] data = new byte[(int)srcFile.length()];
             FileInputStream fis = new FileInputStream(srcFile);
-            fis.read(data);
-            m_manifestation.setData(data);
+            m_manifestation.setData(Hibernate.createBlob(fis));
+            m_session.save(m_manifestation);
+
+            s_logger.info("ImageManifestation saved: "
+                          + m_manifestation.getName()
+                          + " (" + m_manifestation.getId() + ")"
+                          + "...flushing session and evicting manifestation.");
+
+            synchronized (m_session) {
+                m_session.flush();
+                m_session.evict(m_manifestation);
+            }
+            
             fis.close();
-            data = null;
             s_logger.info("Finished importing " + srcFile.getPath());
         } catch (IOException e) {
             s_logger.error("Error: " + e.getMessage());

@@ -20,15 +20,17 @@ frames: List of ImageFrames for this Album
 
   <body>
     <h1><c:out value="${album.displayName}" /></h1>
-    <ul>
+<center>
+<!--    <ul>-->
       <c:forEach var="frame" items="${frames}">
-        <li>
+<!--        <li>-->
           <tm:imageFrameLink frame="${frame}">
              <tm:image image="${frame.image}" sizeLabel="thumbnail"/>
-             ${frame.image.displayName}
+<!--             ${frame.image.displayName}-->
           </tm:imageFrameLink>
-        </li>
+<!--        </li>-->
       </c:forEach>
-    </ul>
+<!--    </ul>-->
+</center>
   </body>
 </html>
