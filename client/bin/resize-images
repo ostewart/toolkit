@@ -13,16 +13,37 @@
      "large" => "1024x1536",
      "huge" => "2048x3072");
 
-foreach $file ($filelist) {
-    ($newfile = $file) =~ s/^(\D+)(\d+)\.(.+)$/$1$2-thumbnail.$3/;
+%areas =
+    ("thumbnail" => (128 * 192),
+     "small" => (256 * 384),
+     "medium" => (512 * 768),
+     "large" => (1024 * 1536),
+     "huge" => (2048 * 3072));
+
+if ( ! -d $ARGV[0] ) {
+    die "First argument must be a directory of images.";
+}
+
+$baseDir = $ARGV[0];
+@filelist = `find $baseDir -name '*.jpg'|xargs -n 1 basename`;
+$resizeDir = "$baseDir/resized-images";
+mkdir $resizeDir;
+$quality = 80;
+
+
+foreach $file (@filelist) {
+    chomp $file;
+
+    ($newFile = $file) =~ /^(\D+)(\d+)\.(.+)$/; # $1$2-thumbnail.$3/;
     $prefix = $1;
     $number = $2;
     $suffix = $3;
 
-    $geometry = `identify $i|awk '{print $3;}'`;
-    $geometry =~ /^(\d+)x(\d+)$/;
+    $geometry = `identify $baseDir/$file | awk '{print \$3;}'`;
+    $geometry =~ /^(\d+)x(\d+)$/ || die "identify didn't give a geometry for $baseDir/$file.  (geometry was $geometry)";
     $width = $1;
     $height = $2;
+    $area = $width * $height;
     if ( $width > $height ) {
         %geometries = %landscapeGeometries;
     } else {
@@ -30,7 +51,15 @@ foreach $file ($filelist) {
     }
     
     foreach $size (keys %geometries) {
-        system "echo convert $baseDir/$file $resizeDir/$newfile "
-            . "-quality $quality -geometry $geometries{$size}";
+        $newFile = "$prefix$number-$size.$suffix";
+        if ( $area < $areas{$size} ) {
+            $cmd = "cp $baseDir/$file $resizeDir/$newFile";
+        } else {
+            $cmd = "convert -size $geometries{$size} -quality $quality "
+                . "-resize \'$geometries{$size}\>\' $baseDir/$file "
+                . "$resizeDir/$newFile";
+        }
+        system "echo $cmd";
+        system "$cmd";
     }
 }
