@@ -84,7 +84,7 @@ groupsContainingImage: ImageGroups that contain frame.image
       <c:out value="${image.caption}"/><br>
       <c:out value="${image.copyright}"/>
       <c:out value="${image.creator}"/><br>
-      Owned by <tm:imageGroupLink owner="${image.owner}">${image.owner.screenName}</tm:imageGroupLink><br/>
+      Owned by <tm:imageGroupLink owner="${image.owner}" groupType="${imageGroup.type}">${image.owner.screenName}</tm:imageGroupLink><br/>
     </div>
 
     <!-- Photo properties -->

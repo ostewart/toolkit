@@ -1,3 +1,4 @@
+ImageGroupLinkTag needs to support all combinations of options!
 Implement Roll display page/controller
 Put resin.conf into svn
 Add preview images to album list page
