@@ -13,6 +13,7 @@
 
         <!-- Mapping files -->
     <mapping resource="Image.hbm.xml"/>
+    <mapping resource="ImageManifestation.hbm.xml"/>
     <mapping resource="Camera.hbm.xml"/>
     <mapping resource="Lens.hbm.xml"/>
 
