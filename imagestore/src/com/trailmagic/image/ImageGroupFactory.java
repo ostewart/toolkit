@@ -14,4 +14,6 @@ public interface ImageGroupFactory {
                                                           long imageId);
     public List getAlbumsByOwnerScreenName(String name);
     public List getAlbumOwners();
+    public List getRollsByOwnerScreenName(String name);
+    public List getRollOwners();
 }

@@ -192,8 +192,13 @@ public class ImagesParser extends DefaultHandler
         try {
             s_logger.debug("endImage() called");
             m_session.save(m_image);
+            synchronized (m_session) {
+                m_session.flush();
+                m_session.clear();
+            }
             s_logger.debug("Image saved: " + m_image.getName() + " ("
-                           + m_image.getId() + ")");
+                           + m_image.getId() + ")  Session cleared.");
+            System.gc();
         } catch (HibernateException e) {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
         }
@@ -218,9 +223,14 @@ public class ImagesParser extends DefaultHandler
             
             importManifestation();
             m_session.save(m_manifestation);
-            s_logger.debug("ImageManifestation saved: "
-                           + m_manifestation.getName()
-                           + " (" + m_manifestation.getId() + ")");
+            s_logger.info("ImageManifestation saved: "
+                          + m_manifestation.getName()
+                          + " (" + m_manifestation.getId() + ")"
+                          + "...flushing session and evicting manifestation.");
+            synchronized (m_session) {
+                m_session.flush();
+                m_session.evict(m_manifestation);
+            }
             m_manifestation = null;
             m_inManifestation = false;
         } catch (HibernateException e) {
@@ -242,21 +252,6 @@ public class ImagesParser extends DefaultHandler
             m_session.save(m_roll);
             s_logger.debug("Roll saved: " + m_roll.getName() + " ("
                            + m_roll.getId() + ")");
-            // XXX: debug. remove
-            m_session.flush();
-            ImageGroupFactory gf =
-                (ImageGroupFactory)
-                m_appContext.getBean(IMAGE_GROUP_FACTORY_BEAN);
-            ImageGroup theRoll =
-                gf.getRollByOwnerAndName(m_roll.getOwner(),
-                                         m_roll.getName());
-            if ( theRoll == null ) {
-                s_logger.error("Roll saved but select doesn't return it.");
-            } else {
-                s_logger.debug("Select returned roll \"" + theRoll.getName()
-                               + "\" with owner "
-                               + theRoll.getOwner().getScreenName());
-            }
         } catch (HibernateException e) {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
         }
@@ -285,6 +280,10 @@ public class ImagesParser extends DefaultHandler
             // XXX: have to save the image first
             m_session.save(m_image);
             m_session.save(frame);
+            synchronized (m_session) {
+                m_session.flush();
+                m_session.evict(frame);
+            }
         } catch (HibernateException e) {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
         }
@@ -329,13 +328,13 @@ public class ImagesParser extends DefaultHandler
                         (ImageGroupFactory)
                         m_appContext.getBean(IMAGE_GROUP_FACTORY_BEAN);
                     // XXX: borked if we don't have owner yet
-                    // XXX: we're not getting the roll back
-                    // this might be a hibernate bug
                     try {
-                        m_session.flush();
-                        s_logger.debug("Successfully flushed session.");
+                        synchronized (m_session) {
+                            m_session.flush();
+                        }
                     } catch (HibernateException e) {
-                        s_logger.error("Exception flushing session!", e);
+                        s_logger.error("Error flushing session before "
+                                       + "roll query.", e);
                     }
                     m_photoRoll =
                         gf.getRollByOwnerAndName(m_image.getOwner(),
@@ -442,6 +441,7 @@ public class ImagesParser extends DefaultHandler
             fis.read(data);
             m_manifestation.setData(data);
             fis.close();
+            data = null;
             s_logger.info("Finished importing " + srcFile.getPath());
         } catch (IOException e) {
             s_logger.error("Error: " + e.getMessage());

@@ -19,6 +19,10 @@ public class HibernateImageGroupFactory implements ImageGroupFactory {
         "albumsByOwnerScreenName";
     private static final String ALBUM_OWNERS_QRY =
         "albumOwners";
+    private static final String ROLLS_BY_OWNER_NAME_QRY =
+        "rollsByOwnerScreenName";
+    private static final String ROLL_OWNERS_QRY =
+        "rollOwners";
     private static final String ROLL_BY_OWNER_AND_NAME_QRY =
         "rollByOwnerAndName";
     private SessionFactory m_sessionFactory;
@@ -98,4 +102,25 @@ public class HibernateImageGroupFactory implements ImageGroupFactory {
         }
     }
 
+    public List getRollsByOwnerScreenName(String name) {
+        try {
+            Session session =
+                SessionFactoryUtils.getSession(m_sessionFactory, false);
+            Query qry = session.getNamedQuery(ROLLS_BY_OWNER_NAME_QRY);
+            qry.setString("screenName", name);
+            return qry.list();
+        } catch (HibernateException e) {
+            throw SessionFactoryUtils.convertHibernateAccessException(e);
+        }
+    }
+    public List getRollOwners() {
+        try {
+            Session session =
+                SessionFactoryUtils.getSession(m_sessionFactory, false);
+            Query qry = session.getNamedQuery(ROLL_OWNERS_QRY);
+            return qry.list();
+        } catch (HibernateException e) {
+            throw SessionFactoryUtils.convertHibernateAccessException(e);
+        }
+    }
 }

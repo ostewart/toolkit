@@ -27,6 +27,37 @@ prevImage: Image
   </head>
 
   <body>
+    <div style="clear: both">
+      <div style="float: left">
+      <!-- Previous Image/Frame Link
+      <c:if test="${!empty prevImage}">
+        <c:set var="prev" value="${prevFrame}"/>
+      </c:if>
+      <c:if test="${!empty prevFrame}">
+        <c:set var="prev" value="${prevFrame}"/>
+      </c:if>
+      -->
+      <c:if test="${!empty prev}">
+        <tm:imageFrameLink frame="${prev}">&lt;--
+        Previous</tm:imageFrameLink>
+        </c:if>
+      </div>
+      <div style="float: right">
+
+      <!-- Next Image/Frame Link
+      <c:if test="${!empty nextImage}">
+        <c:set var="next" value="${nextFrame}"/>
+      </c:if>
+      <c:if test="${!empty nextFrame}">
+        <c:set var="next" value="${nextFrame}"/>
+      </c:if>
+      -->
+      <c:if test="${!empty next}">
+        <tm:imageFrameLink frame="${next}">Next --&gt;</tm:imageFrameLink>
+        </c:if>
+      </div>
+    </div>
+
     <div style="clear: both; float: none; text-align: center">
       <h1><c:out value="${album.displayName}"/><c:if test="${!empty
             album}"> : </c:if><c:out

@@ -32,7 +32,10 @@ public class ImageTag extends TagSupport {
                 mf = WebSupport.getMFBySize(m_image, Integer.parseInt(size));
             } else {
                 String label = req.getParameter("label");
-                if ( label != null ) {
+                if ( label == null ) {
+                    label = m_sizeLabel;
+                }
+                if (label != null) {
                     mf = WebSupport.getMFByLabel(m_image, label);
                 } else {
                     mf = WebSupport.getDefaultMF((User)pageContext

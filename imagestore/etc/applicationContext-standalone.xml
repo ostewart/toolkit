@@ -73,20 +73,30 @@
     </property>
   </bean>
 
-  <!- local thing for testing...not checking in
-  <bean id="testPoly"
-    class="com.trailmagic.image.util.TestPoly">
-    <property name="sessionFactory">
-      <ref local="sessionFactory"/>
-    </property>
-  </bean>
-  -->
-<!--
   <bean id="hibernateInterceptor"
     class="org.springframework.orm.hibernate.HibernateInterceptor">
     <property name="sessionFactory">
       <ref local="sessionFactory"/>
     </property>
   </bean>
--->
+
+  <!-- Wrap the MakeAlbumFromRoll with a session -->
+  <bean id="makeAlbumFromRoll"
+    class="org.springframework.aop.framework.ProxyFactoryBean">
+<!--    <property name="proxyTargetClass"><value>true</value></property>-->
+    <property name="target">
+      <bean
+        class="com.trailmagic.image.util.MakeAlbumFromRoll">
+        <property name="sessionFactory">
+          <ref local="sessionFactory"/>
+        </property>
+      </bean>
+    </property>
+    <property name="interceptorNames">
+      <list>
+        <value>hibernateInterceptor</value>
+      </list>
+    </property>
+  </bean>
+
 </beans>

@@ -23,8 +23,10 @@ frames: List of ImageFrames for this Album
     <ul>
       <c:forEach var="frame" items="${frames}">
         <li>
-          <tm:imageFrameLink frame="${frame}">${frame.caption}</tm:imageFrameLink>
-          <tm:image image="${frame.image}"/>
+          <tm:imageFrameLink frame="${frame}">
+             <tm:image image="${frame.image}" sizeLabel="thumbnail"/>
+             ${frame.image.displayName}
+          </tm:imageFrameLink>
         </li>
       </c:forEach>
     </ul>
