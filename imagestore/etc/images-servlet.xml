@@ -89,6 +89,31 @@
     </property>
   </bean>
 
+  <bean id="imageGroupAddForm"
+    class="com.trailmagic.image.ui.ImageGroupAddForm">
+    <property name="commandName">
+      <value>imageGroup</value>
+    </property>
+    <property name="commandClass">
+      <value>com.trailmagic.image.ImageGroup</value>
+    </property>
+    <property name="formView">
+      <value>imageGroupAdd</value>
+    </property>
+    <property name="successView">
+      <value>imageGroupAddSuccess</value>
+    </property>
+    <property name="validateOnBinding">
+      <value>false</value>
+    </property>
+    <property name="sessionFactory">
+      <ref local="sessionFactory"/>
+    </property>
+    <property name="userFactory">
+      <ref local="userFactory"/>
+    </property>
+  </bean>
+
   <bean id="transactionInterceptor" 
     class="org.springframework.transaction.interceptor.TransactionInterceptor">
     <property name="transactionManager">
