@@ -164,6 +164,24 @@ SSDClassNode 8
 	{ Properties "{ - }" }
 }
 
+SSDClassNode 20
+{
+	{ Name "image_manifestations" }
+	{ Annotation "" }
+	{ Parent 0 }
+	{ Index "" }
+	{ Attributes 6 }
+	{ Attribute "manifestation_id" }
+	{ Attribute "image_id" }
+	{ Attribute "height" }
+	{ Attribute "width" }
+	{ Attribute "format" }
+	{ Attribute "originalp" }
+	{ Operations 0 }
+	{ Stereotype "<< - >>" }
+	{ Properties "{ - }" }
+}
+
 # GRAPH EDGES
 
 SSDGeneralizationEdge 9
@@ -352,6 +370,26 @@ SSDDoubleClassBox 19
 	{ Subject 8 }
 	{ Position 230 210 }
 	{ Size 82 84 }
+	{ Color "black" }
+	{ LineWidth 1 }
+	{ LineStyle Solid }
+	{ FillStyle Unfilled }
+	{ FillColor "white" }
+	{ FixedName False }
+	{ Font "-*-courier-medium-r-normal--10*" }
+	{ TextAlignment Center }
+	{ TextColor "black" }
+	{ NameUnderlined False }
+	{ ShowStereotype False }
+	{ ShowProperties False }
+}
+
+SSDDoubleClassBox 21
+{
+	{ View 10 }
+	{ Subject 20 }
+	{ Position 210 320 }
+	{ Size 130 108 }
 	{ Color "black" }
 	{ LineWidth 1 }
 	{ LineStyle Solid }
