@@ -68,6 +68,7 @@
     <pathelement path="${build.output.dir}"/>
     <pathelement path="${java.class.path}"/>
     <pathelement path="${trailmagic-user.jar}"/>
+    <pathelement path="${prebuilt.dir}"/>
   </path>
 
   <path id="hbm.classpath">

@@ -31,7 +31,7 @@
 
     <property name="name">
       <column name="name" sql-type="varchar(100)" not-null="true"
-        unique-key="image_groups_name_owner"/>
+        unique-key="image_groups_name_owner_type"/>
     </property>
 
     <property name="displayName">
@@ -40,7 +40,8 @@
     </property>
 
     <property name="type">
-      <column name="type" sql-type="varchar(100)" not-null="true"/>
+      <column name="type" sql-type="varchar(100)" not-null="true"
+        unique-key="image_groups_name_owner_type"/>
     </property>
 
     <property name="description">
@@ -51,7 +52,7 @@
       class="com.trailmagic.user.User"
       cascade="none">
       <column name="owner_id" not-null="true"
-        unique-key="image_groups_name_owner"/>
+        unique-key="image_groups_name_owner_type"/>
     </many-to-one>
 
     

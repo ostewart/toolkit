@@ -192,7 +192,7 @@ public class ImagesParser extends DefaultHandler
     public void endImage() {
         try {
             s_logger.debug("endImage() called");
-            m_session.save(m_image);
+            m_session.saveOrUpdate(m_image);
             synchronized (m_session) {
                 m_session.flush();
                 m_session.clear();
@@ -241,7 +241,7 @@ public class ImagesParser extends DefaultHandler
     public void endRoll() {
         try {
             s_logger.debug("endRoll() called");
-            m_session.save(m_roll);
+            m_session.saveOrUpdate(m_roll);
             s_logger.debug("Roll saved: " + m_roll.getName() + " ("
                            + m_roll.getId() + ")");
         } catch (HibernateException e) {
@@ -270,8 +270,8 @@ public class ImagesParser extends DefaultHandler
 
         try {
             // XXX: have to save the image first
-            m_session.save(m_image);
-            m_session.save(frame);
+            m_session.saveOrUpdate(m_image);
+            m_session.saveOrUpdate(frame);
             synchronized (m_session) {
                 m_session.flush();
                 m_session.evict(frame);
@@ -430,7 +430,7 @@ public class ImagesParser extends DefaultHandler
             }
             FileInputStream fis = new FileInputStream(srcFile);
             m_manifestation.setData(Hibernate.createBlob(fis));
-            m_session.save(m_manifestation);
+            m_session.saveOrUpdate(m_manifestation);
 
             s_logger.info("ImageManifestation saved: "
                           + m_manifestation.getName()
@@ -470,8 +470,15 @@ public class ImagesParser extends DefaultHandler
         ImagesParser handler =
             (ImagesParser)appContext.getBean("imagesParser");
         //        handler.setApplicationContext(appContext);
-        handler.setBaseDir(baseDir);
         try {
+            // make sure there's a session bound to the thread
+            Session session =
+                SessionFactoryUtils.getSession(handler.getSessionFactory(),
+                                               true);
+            assert (session != null);
+
+            handler.setBaseDir(baseDir);
+
             SAXParserFactory factory = SAXParserFactory.newInstance();
             factory.setValidating(true);
             SAXParser parser = factory.newSAXParser();

@@ -98,5 +98,10 @@
   <query name="allImages">
     SELECT FROM com.trailmagic.image.Image
   </query>
+
+  <query name="imagesByName">
+    SELECT FROM com.trailmagic.image.Image
+    WHERE name = :name
+  </query>
     
 </hibernate-mapping>
