@@ -125,15 +125,29 @@ if ( /^y$/ ) {
     foreach my $image (@sortedImages) {
         my %photoData;
 
+
         # for now, assume there's only one roll
         $photoData{"roll-name"} = $roll{"name"};
 
         $photoData{"frame-number"} = $frameNum;
+        print "image keys: @{[keys %{$image}]}\n";
+        print qq/adding frame $frameNum/;
+        print qq/to $image->{"name"}\n/;
+
         $frameNum++;
 
-        $image{"photo-data"} = \%photoData;
+        $image->{"photo-data"} = \%photoData;
     }
 }
+
+
+# apply roll owner to images
+foreach my $image (@images) {
+    if (!defined $image->{"owner"}) {
+        $image->{"owner"} = $roll{"owner"};
+    }
+}
+
 
 
 # ask before overwritng output file
@@ -194,7 +208,7 @@ foreach $image (@images) {
                     printManifestation($writer, %binkie);
                 }
             } elsif ($key =~ /photo-data/) {
-                printPhotoData($writer, %{$image{"photo-data"}});
+                printPhotoData($writer, %{$image->{"photo-data"}});
             } else {
                 printHashValue($writer, %{$image}, $key);
 #                $writer->dataElement($key, $image->{$key});

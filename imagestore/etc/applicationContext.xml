@@ -62,6 +62,9 @@
     <property name="sessionFactory">
       <ref local="sessionFactory"/>
     </property>
+    <property name="baseDir">
+      <value>/photo/import</value>
+    </property>
   </bean>
 
 <!--
