@@ -7,6 +7,11 @@ shots
 how to integrate site with albums? embed into other places?
 custom tags would be good for that
 
+handle the non-logged in folks by creating a fake User object (storing
+it either in the session or in the database) and handing it to the app
+code, such that the app code doesn't know the different unless it asks
+that makes the handling code simpler (no nulls)
+have the container code deal with whether or not the user is real
 
 collect images together to burn a CD
 make another ImageGroup...then export the originals or some selection

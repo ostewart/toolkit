@@ -3,14 +3,18 @@ package com.trailmagic.image;
 import java.util.SortedSet;
 import java.util.Collection;
 
+import com.trailmagic.user.User;
+
 public class ImageGroup {
     private long m_id;
     private String m_type;
     private String m_name;
+    private String m_displayName;
     private String m_description;
     private SortedSet m_frames;
     private Collection m_subgroups;
     private ImageGroup m_supergroup;
+    private User m_owner;
 
     public static final String ROLL_TYPE = "roll";
     public static final String SEQ_TYPE = "sequence";
@@ -26,12 +30,22 @@ public class ImageGroup {
         m_id = id;
     }
 
+    /** URL worthy name **/
     public String getName() {
         return m_name;
     }
 
     public void setName(String name) {
         m_name = name;
+    }
+
+    /** name to be displayed to the user **/
+    public String getDisplayName() {
+        return m_displayName;
+    }
+
+    public void setDisplayName(String name) {
+        m_displayName = name;
     }
 
     public String getDescription() {
@@ -81,5 +95,13 @@ public class ImageGroup {
 
     public void setSubgroups(Collection subgroups) {
         m_subgroups = subgroups;
+    }
+
+    public User getOwner() {
+        return m_owner;
+    }
+    
+    public void setOwner(User owner) {
+        m_owner = owner;
     }
 }

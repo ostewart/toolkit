@@ -1,11 +1,20 @@
 package com.trailmagic.image;
 
 public class ImageFrame implements Comparable {
+    private ImageGroup m_imageGroup;
     private int m_position;
     private Image m_image;
     private String m_caption;
 
     public ImageFrame() {
+    }
+
+    public ImageGroup getImageGroup() {
+        return m_imageGroup;
+    }
+
+    public void setImageGroup(ImageGroup group) {
+        m_imageGroup = group;
     }
 
     public int getPosition() {

@@ -31,8 +31,8 @@
       <column name="name" sql-type="varchar(100)" not-null="true"/>
     </property>
 
-    <property name="title">
-      <column name="title" sql-type="varchar(1024)" not-null="true"/>
+    <property name="displayName">
+      <column name="displayName" sql-type="varchar(1024)" not-null="true"/>
     </property>
     <property name="caption">
       <column name="caption" sql-type="varchar(4000)"/>
@@ -45,9 +45,16 @@
     </property>
 
     <many-to-one name="owner"
-      column="owner_id"
       class="com.trailmagic.user.User"
-      cascade="none"/>
+      cascade="none">
+      <column name="owner_id" not-null="true"/>
+    </many-to-one>
+
+    <many-to-one name="imageCD"
+      class="com.trailmagic.image.ImageCD"
+      cascade="none">
+      <column name="cd_id" not-null="false"/>
+    </many-to-one>
 
 
     <set
@@ -78,6 +85,10 @@
         name="camera"
         cascade="none"
         column="camera_id"/>
+      <many-to-one
+        name="imageGroup"
+        cascade="none"
+        column="image_group_id"/>
     </joined-subclass>
   </class>
     

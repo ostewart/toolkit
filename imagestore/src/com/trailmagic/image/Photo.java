@@ -7,6 +7,7 @@ public class Photo extends Image {
     private Camera m_camera;
     private String m_notes;
     private Date m_captureDate;
+    private ImageGroup m_imageGroup;
 
     public Photo(long id) {
         super(id);
@@ -47,4 +48,11 @@ public class Photo extends Image {
         m_captureDate = date;
     }
 
+    public ImageGroup getImageGroup() {
+        return m_imageGroup;
+    }
+
+    public void setImageGroup(ImageGroup group) {
+        m_imageGroup = group;
+    }
 }

@@ -14,3 +14,10 @@ create/delete groups - what happens to the referenced photos? pessimistic permis
 
 
 
+grant access to an entire album
+grant access to an album, but restrict access to individual images -
+the album should display only those images that the user has access
+to, showing the count based on only those images
+(maybe have an option to show placeholder stuff for the others? - that
+might be a bad idea, from a security perspective)
+

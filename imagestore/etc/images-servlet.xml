@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN"
+ "http://www.springframework.org/dtd/spring-beans.dtd">
+    
+<beans>
+  <bean id="handlerMapping" 
+    class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">            
+    <property name="mappings">
+      <props>
+        <prop key="/**">albumController</prop>
+      </props>
+    </property>
+  </bean>
+    
+  <bean id="albumController"
+    class="com.trailmagic.image.ui.AlbumController">
+    <property name="sessionFactory">
+      <ref bean="sessionFactory"/>
+    </property>
+  </bean>
+
+  <bean id="transactionInterceptor" 
+    class="org.springframework.transaction.interceptor.TransactionInterceptor">
+    <property name="transactionManager">
+      <ref bean="transactionManager"/>
+    </property>
+    <property name="transactionAttributeSource">
+      <value>
+        com.trailmagic.image.ui.AlbumController.handleRequest=PROPAGATION_REQUIRED
+      </value>
+    </property>
+  </bean>
+  <!--
+  <bean id="albumController"
+    class="org.springframework.aop.framework.ProxyFactoryBean">
+    <property name="target">
+      <ref local="albumControllerTarget"/>
+    </property>
+    <property name="interceptorNames">
+      <list>
+        <value>hibernateInterceptor</value>
+      </list>
+    </property>
+  </bean>
+-->
+</beans>

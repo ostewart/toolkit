@@ -7,7 +7,7 @@
   package="com.trailmagic.image">
   
   <class
-    name="com.trailmagic.image.ImageGroup"
+    name="ImageGroup"
     table="image_groups">
 
     <id
@@ -25,13 +25,19 @@
       not-null="true"/>
 
     <set name="subgroups" inverse="true" cascade="all">
-      <key column="parent_id"/>
+      <key column="supergroup_id"/>
       <one-to-many class="ImageGroup"/>
     </set>
     
 
     <property name="name">
-      <column name="name" sql-type="varchar(1024)" not-null="true"/>
+      <column name="name" sql-type="varchar(100)" not-null="true"
+        unique-key="image_groups_name_owner"/>
+    </property>
+
+    <property name="displayName">
+      <column name="display_name" sql-type="varchar(1024)"
+      not-null="true"/>
     </property>
 
     <property name="type">
@@ -41,29 +47,47 @@
     <property name="description">
       <column name="description" sql-type="varchar(2048)"/>
     </property>
+
+    <many-to-one name="owner"
+      class="com.trailmagic.user.User"
+      cascade="none">
+      <column name="owner_id" not-null="true"
+        unique-key="image_groups_name_owner"/>
+    </many-to-one>
+
     
     <set
       name="frames"
       table="image_frames"
       cascade="all-delete-orphan"
       sort="natural"
-      lazy="true"
+      lazy="false"
       inverse="true">
       <key>
         <column name="group_id" unique-key="frames_group_position"/>
       </key>
 <!--      <index column="position"/>-->
       <composite-element class="ImageFrame">
+        <parent name="imageGroup"/>
         <property name="position">
-          <column name="position" unique-key="frames_group_position"/>
+          <column name="position" unique-key="frames_group_position"
+            not-null="true"/>
         </property>
         <property name="caption">
           <column name="caption" sql-type="varchar(4000)"/>
         </property>
-        <many-to-one name="image" column="image_id" class="Image"
-          cascade="none"/>
+        <many-to-one name="image" class="Image" cascade="none">
+          <column name="image_id" not-null="true"/>
+        </many-to-one>
       </composite-element>
     </set>
   </class>
-    
+<!-- This never worked
+  <class name="ImageFrame">
+    <property name="imageGroup"/>
+    <property name="position"/>
+    <property name="caption"/>
+    <property name="image"/>
+  </class>
+    -->
 </hibernate-mapping>

@@ -21,12 +21,12 @@
       <h2>Image:</h2>
       <table>
         <tr>
-          <td>Image Name:</td>
+          <td>Name:</td>
           <td><c:out value="${image.name}"/></td>
         </tr>
         <tr>
-          <td>Image Title:</td>
-          <td><c:out value="${image.title}"/></td>
+          <td>Display Name:</td>
+          <td><c:out value="${image.displayName}"/></td>
         </tr>
       </table>
 

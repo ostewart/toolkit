@@ -31,6 +31,18 @@ public class GroupServlet extends HttpServlet {
                 Query query =
                     sess.createQuery("from com.trailmagic.image.ImageGroup");
                 Collection groups = query.list();
+                // XXX: testing
+                java.util.Iterator iter = groups.iterator();
+                ImageGroup myGroup = (ImageGroup)iter.next();
+                Collection frames = myGroup.getFrames();
+                iter = frames.iterator();
+                ImageFrame frame;
+                while (iter.hasNext()) {
+                    frame = (ImageFrame)iter.next();
+                    System.err.println("ImageFrame: " +
+                                       frame.getCaption());
+                }
+                // XXX: end testing
                 
                 req.setAttribute("groups", groups);
                 req.getRequestDispatcher("/groups.jsp").include(req, res);

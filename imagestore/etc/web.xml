@@ -9,6 +9,33 @@
 <web-app>
   <display-name>ImageStore</display-name>
 
+  <!-- Specify Spring config locations, used by ContextLoaderListener -->
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>/WEB-INF/applicationContext.xml</param-value>
+  </context-param>
+  
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+
+  <filter>
+    <filter-name>Session Request Binder</filter-name>
+    <filter-class>org.springframework.orm.hibernate.support.OpenSessionInViewFilter</filter-class>
+  </filter>
+
+  <filter-mapping>
+    <filter-name>Session Request Binder</filter-name>
+    <!--    <url-pattern>/*</url-pattern>-->
+    <servlet-name>images</servlet-name>
+  </filter-mapping>
+
+  <servlet>
+    <servlet-name>images</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
   <servlet>
     <servlet-name>login</servlet-name>
     <display-name>login</display-name>
@@ -51,6 +78,14 @@
     <servlet-class>com.trailmagic.image.ui.ImageMFServlet</servlet-class>
   </servlet>
 
+  
+  <!-- Servlet Mappings -->
+
+  <servlet-mapping>
+    <servlet-name>images</servlet-name>
+    <url-pattern>/spring/*</url-pattern>
+  </servlet-mapping>
+  
   <servlet-mapping>
     <servlet-name>display</servlet-name>
     <url-pattern>/display/*</url-pattern>

@@ -117,7 +117,7 @@ public class ImageProcessor {
             try {
                 Image image = Image.findById(id);
                 System.out.println("Name: " + image.getName());
-                System.out.println("Title: " + image.getTitle());
+                System.out.println("Display Name: " + image.getDisplayName());
                 HibernateUtil.closeSession();
             } catch (HibernateException e) {
                 System.err.println(e.getMessage());

@@ -26,9 +26,9 @@
                        value="<c:out value="${image.name}"/>"/></td>
           </tr>
           <tr>
-            <td>Title:</td>
-            <td><input type="text" name="title"
-                       value="<c:out value="${image.title}"/>"/></td>
+            <td>Display Name:</td>
+            <td><input type="text" name="display_name"
+                       value="<c:out value="${image.displayName}"/>"/></td>
           </tr>
           <tr>
             <td>Caption:</td>

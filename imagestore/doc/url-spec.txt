@@ -1,0 +1,122 @@
+/context/action/select-method/selection-parameters
+
+/images/display/by-id/562
+/images/albums/by-name/bug-love/12
+/images/rolls/by-id/46/36
+
+
+pros:
+- easy parsing
+- clear URLS
+- no extension (can change output format?)
+ - specify type by content-type rather than extension
+ - is there a header or something for filename?
+
+cons:
+- bad filenames
+ - we could have a download link which gets the image by filename and
+   id, placing the filename at the end to save properly
+ - or we could use the name as the end of the URL
+- no extension (although we could just add that)
+
+
+- selecting by id is not a very human friendly method of URL
+  specification
+ - it would be better (in terms of URL) to specify by name
+ - but that means that you have to specify a unique name for every
+  photo, maybe categorized in a hierarchy...that's tricky
+ - uniqueness within an album doesn't really help, because all images
+  are (and should be, i think) fundamentally in a flat organization
+
+
+variations:
+
+alternate parameter and value
+/images/display/id/562
+/images/albums/name/bug-love/position/12
+/images/rolls/id/46/position/36
+
+this makes it a little bit more user-friendly
+
+
+user?
+
+/images/album/oliver/germany-2001/13
+/images/album/oliver/burning-man-2003/22
+
+/images/album : controller
+              /oliver : user
+                     /germany-2001 : album name
+                                  /22 : frame number
+
+
+
+select from users where user.name = 'oliver';
+select from images, image_groups where images.owner_id
+
+we can always have a different action name to select by parameter
+
+
+argh
+now we have two different actions:
+if there's an ID at the end, show the individual frame
+if there's not, show the album contents
+
+there's probably a different view for standalone image display
+vs. imageframe display, so maybe that's a good thing
+controller just has to choose between two views
+
+how to deal with album pagination?
+query-string?
+
+force trailing / on album name, user name, but not on image?
+
+/images/album/oliver/?start=11
+/images/album/oliver/germany-2001/
+/images/album/oliver/germany-2001/?start=51
+/images/album/oliver/germany-2001/1093
+
+
+implementation:
+use a command controller - the command object wraps the user, album
+name, frame number combo
+
+then just have to implement a way to create that object
+
+
+user bookmarks album frame, then album changes - frame points to a
+different image
+
+/images/albums/oliver/germany-2001/bach-haus-1
+/images/albums/oliver/germany-2001/wartburg-3
+
+could make image name unique within its roll
+then images have to be specified by roll and name
+then we have 2 image groups in one url
+
+/images/albums/oliver/germany-2001/germany-3/wartburg-3
+
+blech.
+
+could give an additional name to the ImageFrame
+blech. - too much data entry
+could default from the image name, then ask if there are conflicts
+
+could specify by image id
+
+/images/albums/oliver/germany-2001/100320
+/images/albums/oliver/germany-2001/2003
+/images/albums/oliver/germany-2001/1
+/images/albums/oliver/germany-2001/30204
+/images/albums/oliver/germany-2001/by-id/30204
+/images/albums/oliver/germany-2001/image-id/30204
+
+
+URL should be specified by Image, not ImageManifestation
+that way, different MFs can be substituted according to user prefs
+
+what if the album wants to specify a particular size? URL param?
+that could be set in the ImageFrame if needed
+should the URL specify an ImageFrame or an Image?
+perhaps an ImageFrame tied to an Image
+associate/identify ImageFrames with/by Image rather than position

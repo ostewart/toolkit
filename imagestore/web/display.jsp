@@ -16,8 +16,8 @@
           <td><c:out value="${image.name}"/></td>
         </tr>
         <tr>
-          <td>Title:</td>
-          <td><c:out value="${image.title}"/></td>
+          <td>Display Name:</td>
+          <td><c:out value="${image.displayName}"/></td>
         </tr>
         <tr>
           <td>Caption:</td>

@@ -1,0 +1,8 @@
+implement Album
+implement Roll
+implement ImageCD
+
+implement UI for the above, particularly Album display, Roll entry,
+individual image display
+
+refactor user, group to descend from Party

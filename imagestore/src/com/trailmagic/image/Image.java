@@ -10,12 +10,13 @@ import com.trailmagic.user.User;
 public class Image {
     private long m_id;
     private String m_name;
-    private String m_title;
+    private String m_displayName;
     private String m_caption;
     private String m_copyright;
     private String m_creator;
     private SortedSet m_manifestations;
     private User m_owner;
+    private ImageCD m_imageCD;
 
     public Image(long id) {
         // nothing for now
@@ -41,12 +42,12 @@ public class Image {
         m_name = name;
     }
 
-    public String getTitle() {
-        return m_title;
+    public String getDisplayName() {
+        return m_displayName;
     }
 
-    public void setTitle(String title) {
-        m_title = title;
+    public void setDisplayName(String name) {
+        m_displayName = name;
     }
 
     public String getCaption() {
@@ -79,6 +80,14 @@ public class Image {
     
     public void setOwner(User owner) {
         m_owner = owner;
+    }
+
+    public ImageCD getImageCD() {
+        return m_imageCD;
+    }
+
+    public void setImageCD(ImageCD cd) {
+        m_imageCD = cd;
     }
 
     public SortedSet getManifestations() {

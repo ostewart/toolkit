@@ -152,7 +152,7 @@ public class UserLoginModule implements LoginModule {
         
             //            user = (User)query.uniqueResult();
             Object obj = query.uniqueResult();
-            System.err.println("uniqueResult returned a " + obj.getClass());
+            //            System.err.println("uniqueResult returned a " + obj.getClass());
             user = (User)obj;
             if ( user == null ) {
                 return false;
@@ -169,6 +169,7 @@ public class UserLoginModule implements LoginModule {
                 String digest =
                     HexUtils.convert(md.digest((new String(password)).getBytes()));
                 valid = storedPass.equals(digest);
+                System.err.println("digest = " + digest);
             }
             
             if (valid) {

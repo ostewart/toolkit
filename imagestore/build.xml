@@ -28,12 +28,15 @@
   <property name="lib.dir" value="lib"/>
   <property name="build.lib.dir" value="lib-build" />
   <property name="global.build.lib.dir" value="../lib-build" />
+  <property name="global.lib.dir" value="../lib" />
   <property name="hibernate.conf.dir" value="hbm"/>
   <property name="javac.debug" value="on"/>
   <property name="javac.optimize" value="off"/>
   <property name="deploy.dir" value="deploy"/>
+  <property name="trailmagic-user.dir" value="../user"/>
   <property name="trailmagic-user.jar"
-    value="../user/build/trailmagic-user.jar"/>
+    value="${trailmagic-user.dir}/build/trailmagic-user.jar"/>
+  <property name="dep.lib.dir" value="../lib-dep"/>
 
 
   <path id="build.classpath">
@@ -43,6 +46,16 @@
     <fileset dir="${global.build.lib.dir}">
       <include name="**/*.jar"/>
     </fileset>
+
+    <fileset dir="${global.lib.dir}">
+      <include name="**/*.jar"/>
+    </fileset>
+
+    <!-- needed only for the schema tool tasks -->
+    <fileset dir="${dep.lib.dir}">
+      <include name="**/*.jar"/>
+    </fileset>
+
 
     <fileset dir="${build.lib.dir}">
       <include name="**/*.jar"/>
@@ -88,6 +101,7 @@
   <!-- enable this for ejbdoclet support -->
   <!--  <target name="compile" depends="ejbdoclet">-->
   <target name="compile" depends="init">
+    <ant dir="${trailmagic-user.dir}" target="build" inheritAll="false"/>
     <mkdir dir="${build.output.dir}"/>
     <javac destdir="${build.output.dir}" debug="${javac.debug}"
            optimize="${javac.debug}">
@@ -148,6 +162,9 @@
   </target>
 
   <target name="deploy" depends="compile">
+    <!-- make sure most recent user module is deployed -->
+    <ant dir="../user" target="deploy" inheritAll="false"/>
+    
     <mkdir dir="${deploy.dir}"/>
     <copy todir="${deploy.dir}">
       <fileset dir="${web.dir}"/>
@@ -158,7 +175,9 @@
       <fileset dir="${resources.dir}"/>
     </copy>
     <copy todir="${deploy.dir}/WEB-INF/lib">
-      <fileset dir="lib"/>
+      <fileset dir="${lib.dir}"/>
+      <fileset dir="${global.lib.dir}"/>
+<!--      <fileset dir="${dep.lib.dir}"/>-->
     </copy>
   </target>
 
@@ -172,16 +191,12 @@
       classpathref="hbm.classpath"/>
 
     <schemaexport
-      properties="${hibernate.conf.dir}/hibernate.properties"
+      config="${hibernate.conf.dir}/trailmagic-image.cfg.xml"
         quiet="no"
         text="yes"
         drop="no"
         delimiter=";"
-        output="${build.dir}/schema-export.sql">
-      <fileset dir="${hibernate.conf.dir}">
-        <include name="**/*.hbm.xml"/>
-      </fileset>
-    </schemaexport>
+      output="${build.dir}/schema-export.sql"/>
   </target>
 
   <target name="schemaupdate" depends="compile">
@@ -190,12 +205,21 @@
       classpathref="build.classpath"/>
     
     <schemaupdate
+      config="${hibernate.conf.dir}/trailmagic-image.cfg.xml"
       properties="${hibernate.conf.dir}/hibernate.properties"
-      quiet="no">
-      <fileset dir="${hibernate.conf.dir}">
-        <include name="**/*.hbm.xml"/>
-      </fileset>
-    </schemaupdate>
+      quiet="no"/>
+
+  </target>
+
+  <target name="hibern8ide" depends="build">
+    <java jar="${build.lib.dir}/hibern8ide.jar" fork="true">
+      <classpath>
+        <path refid="build.classpath"/>
+        <fileset dir="hibern8ide">
+          <include name="**/*.jar"/>
+        </fileset>
+      </classpath>
+    </java>
   </target>
   
 </project>

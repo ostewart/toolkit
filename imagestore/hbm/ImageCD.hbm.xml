@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping
+    PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd">
+
+<hibernate-mapping
+  default-cascade="all"
+  package="com.trailmagic.image">
+  
+  <class
+    name="com.trailmagic.image.ImageCD"
+    table="image_cds">
+
+    <id
+      name="id"
+      type="long"
+      column="cd_id"
+      unsaved-value="0"
+      access="property">
+      <generator class="sequence">
+        <param name="sequence">id_sequence</param>
+      </generator>
+    </id>
+
+    <property name="number">
+      <column name="number" unique="true" not-null="true"/>
+    </property>
+
+    <property name="description">
+      <column name="description" sql-type="varchar(4000)" not-null="true"/>
+    </property>
+
+
+  </class>
+    
+</hibernate-mapping>

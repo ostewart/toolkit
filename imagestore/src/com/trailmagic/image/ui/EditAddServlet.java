@@ -57,7 +57,7 @@ public class EditAddServlet extends HttpServlet {
         Transaction tx = null;
 
         String name = req.getParameter("name");
-        String title = req.getParameter("title");
+        String displayName = req.getParameter("display_name");
         String caption = req.getParameter("caption");
         String creator = req.getParameter("creator");
         String copyright = req.getParameter("copyright");
@@ -76,7 +76,7 @@ public class EditAddServlet extends HttpServlet {
             tx = sess.beginTransaction();
             
             image.setName(name);
-            image.setTitle(title);
+            image.setDisplayName(displayName);
             image.setCaption(caption);
             image.setCreator(creator);
             image.setCopyright(copyright);
@@ -105,7 +105,7 @@ public class EditAddServlet extends HttpServlet {
                 }
             }
             req.setAttribute("name", name);
-            req.setAttribute("title", title);
+            req.setAttribute("display_name", displayName);
             req.setAttribute("caption", caption);
             req.setAttribute("creator", creator);
             req.setAttribute("copyright", copyright);

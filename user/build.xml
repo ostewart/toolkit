@@ -26,7 +26,7 @@
   <property name="dist.dir" value="dist"/>
   <property name="web.dir" value="web"/>
   <property name="lib.dir" value="lib"/>
-  <property name="dep.lib.dir" value="lib-dep"/>
+  <property name="dep.lib.dir" value="../lib-dep"/>
   <property name="build.lib.dir" value="lib-build" />
   <property name="common.build.lib.dir" value="../lib-build" />
   <property name="hibernate.conf.dir" value="hbm"/>
@@ -170,16 +170,12 @@
       classpathref="hbm.classpath"/>
 
     <schemaexport
-      properties="${hibernate.conf.dir}/hibernate.properties"
+      config="/trailmagic-image.cfg.xml"
         quiet="no"
         text="yes"
         drop="no"
         delimiter=";"
-        output="${build.dir}/schema-export.sql">
-      <fileset dir="${hibernate.conf.dir}">
-        <include name="**/*.hbm.xml"/>
-      </fileset>
-    </schemaexport>
+      output="${build.dir}/schema-export.sql"/>
   </target>
 
   <target name="schemaupdate" depends="compile">
@@ -188,12 +184,8 @@
       classpathref="build.classpath"/>
     
     <schemaupdate
-      properties="${hibernate.conf.dir}/hibernate.properties"
-      quiet="no">
-      <fileset dir="${hibernate.conf.dir}">
-        <include name="**/*.hbm.xml"/>
-      </fileset>
-    </schemaupdate>
+      config="/trailmagic-image.cfg.xml"
+      quiet="no"/>
   </target>
   
 </project>
