@@ -1,5 +1,10 @@
 #!/usr/bin/perl -w
 
+use strict;
+
+my (%landscapeGeometries, %portraitGeometries, %areas, @fileList,
+    $baseDir, $resizeDir, $quality, $tempFile, $gzTemp);
+
 %landscapeGeometries =
     ("thumbnail" => "192x128",
      "small" => "384x256",
@@ -25,21 +30,38 @@ if ( ! -d $ARGV[0] ) {
 }
 
 $baseDir = $ARGV[0];
-@filelist = `ls $baseDir/*.jpg|xargs -n 1 basename`;
-$resizeDir = "$baseDir/resized-images";
-mkdir $resizeDir;
+# for now, support either jpgs or tifs, not both
+@fileList = `ls $baseDir/|grep '.jpg\$'|xargs --no-run-if-empty -n 1 basename`;
+if (@fileList == 0) {
+    @fileList = `ls $baseDir/|egrep '.tiff?(.gz)?\$'|xargs --no-run-if-empty -n 1 basename`;
+}
+
+if (@ARGV > 1) {
+    $resizeDir = "$ARGV[1]";
+
+} else {
+    $resizeDir = "$baseDir/resized-images";
+}
+if ( ! -d $resizeDir ) {
+    mkdir $resizeDir;
+}
 $quality = 80;
+$tempFile = "/tmp/resize-images-temp.tif";
+$gzTemp = "/tmp/resize-images-gztemp.tif";
 
-
-foreach $file (@filelist) {
+foreach my $file (@fileList) {
+    my ($width, $height, $area, $geometry, %geometries, $newFile, $srcFile,
+        $cmd, $prefix, $number);
     chomp $file;
 
-    ($newFile = $file) =~ /^(\D+)(\d+)\.(.+)$/; # $1$2-thumbnail.$3/;
+    ($newFile = $file) =~ /^(\D*)\d*?-?(\d+)\.(.+?)(.gz)?$/; # $1$2-thumbnail.$3/;
     $prefix = $1;
     $number = $2;
-    $suffix = $3;
+#    $suffix = $3;
 
-    $geometry = `identify $baseDir/$file | awk '{print \$3;}'`;
+    # only get the first line for tifs with multiple images
+    # this probably won't work all the time
+    $geometry = `identify $baseDir/$file | head -1 |awk '{print \$3;}'`;
     $geometry =~ /^(\d+)x(\d+)$/ || die "identify didn't give a geometry for $baseDir/$file.  (geometry was $geometry)";
     $width = $1;
     $height = $2;
@@ -50,19 +72,55 @@ foreach $file (@filelist) {
         %geometries = %portraitGeometries;
     }
     
-    foreach $size (keys %geometries) {
-        $newFile = "$prefix$number-$size.$suffix";
+    #crop tiffs first
+    my $croppedFile;
+    if ( $file =~ /\.gz$/ ) {
+        system "gzip -dc $baseDir/$file > $gzTemp";
+        $croppedFile = $gzTemp;
+    } else {
+        $croppedFile = "$baseDir/$file";
+    }
+
+    if ( $file =~ /\.tiff?(\.gz)?$/ ) {
+        $srcFile = $tempFile;
+        $cmd = "convert -background black -fuzz 15000 -crop 0x0 -normalize "
+            . "$croppedFile\[0\] $srcFile";
+        system "echo Cropping TIFF file.";
+        system "echo $cmd";
+        system "$cmd";
+    } else {
+        $srcFile = "$croppedFile\[0\]";
+    }
+
+    foreach my $size (keys %geometries) {
+        $newFile = "$prefix$number-$size.jpg";
         if ( $area < $areas{$size} ) {
+            # we should only get here for jpegs
             $cmd = "cp $baseDir/$file $resizeDir/$newFile";
         } else {
+            # always use the first image if there are multiple ([0])
             $cmd = "convert -size $geometries{$size} -quality $quality "
-                . "-resize \'$geometries{$size}\>\' $baseDir/$file "
+                . "-resize \'$geometries{$size}\>\' $srcFile "
                 . "$resizeDir/$newFile";
         }
         system "echo $cmd";
         system "$cmd";
     }
 
-    print "Rotating images from exif data...\n";
-    system "exiftran -ai @filelist";
+    if ($file =~ /\.jpe?g$/) {
+        print "Rotating images from exif data...\n";
+        system "exiftran -ai @fileList";
+    }
+}
+
+if (-f $tempFile) {
+    system "rm $tempFile";
+}
+if ( -f $gzTemp ) {
+    system "rm $gzTemp";
+}
+
+if ( $baseDir =~ /^\/cdrom/ ) {
+    system "echo All done.  Ejecting CD...";
+    system "eject";
 }

@@ -2,6 +2,9 @@ Implement Roll display page/controller
 Put resin.conf into svn
 Add preview images to album list page
 Use CSS instead of <center>
+handle images where the max size is less than large by not making a
+huge copy in gather-images
+make links to albums directory links
 
 
 implement upload UI (don't forget height/width detection)

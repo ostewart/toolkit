@@ -1,0 +1,12 @@
+#!/bin/sh
+
+#make a list of the files in a preprocessed directory of resized images
+
+if [ -z "$1" ]; then
+    echo "Usage: make-file-list <directory>";
+    exit 1;
+fi
+
+rolldir=$1
+ls $rolldir/*-huge.jpg|sed 's/-huge//'|sed 's/jpg/tif/'|xargs -n 1 basename \
+    > $rolldir/file-list

@@ -23,16 +23,11 @@ frames: List of ImageFrames for this group
   <body>
     <h1><c:out value="${imageGroup.displayName}" /></h1>
 <center>
-<!--    <ul>-->
       <c:forEach var="frame" items="${frames}">
-<!--        <li>-->
           <tm:imageFrameLink frame="${frame}">
              <tm:image image="${frame.image}" sizeLabel="thumbnail"/>
-<!--             ${frame.image.displayName}-->
           </tm:imageFrameLink>
-<!--        </li>-->
       </c:forEach>
-<!--    </ul>-->
 </center>
   </body>
 </html>

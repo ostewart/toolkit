@@ -4,6 +4,8 @@ use Term::ReadLine;
 use XML::Writer;
 use IO::File;
 
+use strict;
+
 sub printManifestation($\%);
 sub makeMFHashRef($);
 sub printTag($$$);
@@ -14,14 +16,44 @@ my $term = new Term::ReadLine 'Image Import';
 my $prompt;
 my %roll;
 my @images;
-
+my (%globals);
 if ( @ARGV < 1 ) {
     print "Usage: gather-image-data <image-dir>\n";
     exit(1);
 }
 my $baseDir = $ARGV[0];
 chomp $baseDir;
-$resizeDir = "$baseDir/resized-images";
+my $resizeDir = "$baseDir/resized-images";
+
+my $i = 0;
+my @files;
+my $suffix;
+if ( -f "$baseDir/file-list" ) {
+    @files = `cat $baseDir/file-list`;
+    $files[0] =~ /\.(tif|jpg)$/
+        || die "Unknown suffix in file-list::$files[0]";
+    $suffix = ".$1";
+    $resizeDir = $baseDir;
+} else {
+    @files = "ls $baseDir/*.jpg";
+    if ( $files[0] =~ /-(thumbnail|small|medium|large|huge)\.jpg$/ ) {
+        die "resize dir given as image-dir and no file-list exists!";
+    }
+    if (@files > 0) {
+        $suffix = ".jpg";
+    } else {
+        @files = "ls $baseDir/*.tif";
+        if (@files > 0) {
+            $suffix = ".tif";
+        }
+    }
+}
+
+if ( !defined $suffix ) {
+    die "No files found that I can process (looked for $baseDir/*.jpg and "
+        . "$baseDir/*.tif";
+}
+
 
 $prompt = "Input global data? (y/n): ";
 $_ = $term->readline($prompt);
@@ -55,21 +87,29 @@ if (/^y$/) {
     $askDetails = 1;
 }
 
-my $i = 0;
-foreach $file (`ls $baseDir/*.jpg`) {
+foreach my $file (@files) {
     $file = `basename $file`;
     chomp $file;
 
     # add the global data to the image
-    foreach $key (keys %globals) {
+    foreach my $key (keys %globals) {
         $images[$i]{$key} = $globals{$key};
     }
 
     # get the number from the file name
-    $baseFile = `basename $file`;
+    my $baseFile = `basename $file`;
     chomp $baseFile;
-    $baseFile =~ /dsc_(\d+).jpg/;
-    $images[$i]{"number"} = $1;
+    if ( $suffix eq ".jpg" ) {
+        $baseFile =~ /dsc_(\d+)$suffix/
+            || die "Couldn't get number from name for $baseFile";
+        $images[$i]{"number"} = $1;
+    } elsif ( $suffix eq ".tif" ) {
+        $baseFile =~ /^(\d+)$suffix$/
+            || die "Couldn't get number from name for $baseFile";
+        $images[$i]{"number"} = $1;
+    } else {
+        die "Unknown suffix: $suffix";
+    }
 
     # maybe add details for the image
     if ($askDetails) {
@@ -94,24 +134,29 @@ foreach $file (`ls $baseDir/*.jpg`) {
     }
 
     # add image manifestations
-    ($baseName = $file) =~ s/\.jpg$//;
+    my $baseName;
+    ($baseName = $file) =~ s/$suffix$//;
     if ( -x $resizeDir ) {
-        @manifestations = `ls $resizeDir/${baseName}*.jpg`;
+        my @manifestations = `ls $resizeDir/${baseName}-*.jpg`;
         print "Found manifestations: @manifestations\n";
         my @mfList;
 
-        foreach $manifestation (@manifestations) {
+        foreach my $manifestation (@manifestations) {
             push @mfList, makeMFHashRef($manifestation);
         }
 
         $images[$i]{manifestations} = \@mfList;
+    } else {
+        die "Resized images directory not found or not +x: $resizeDir";
     }
     $i++;
 }
 
 # number the frames
 $prompt = "Enter photo data? (y/n): ";
-$_ = $term->readline($prompt);
+#$_ = $term->readline($prompt);
+# I'm sick of answering this question
+$_ = "y";
 if ( /^y$/ ) {
     # sort the frames by number and then give them numbers
     # starting from 1
@@ -164,7 +209,7 @@ if ( -f $outfile ) {
     if ( /^y$/ ) {
         unlink $outfile;
     } else {
-        $ext = 0;
+        my $ext = 0;
         
         while ( -f "${outfile}.${ext}" ) {
             $ext++;
@@ -194,16 +239,16 @@ if ( (keys %roll) > 0 ) {
     
 
 # output the images
-foreach $image (@images) {
+foreach my $image (@images) {
     if ( (keys %{$image}) > 0 ) {
         $writer->startTag("image");
-        foreach $key ("name", "display-name", , "owner", "caption",
+        foreach my $key ("name", "display-name", , "owner", "caption",
                       "copyright", "creator", "number", "cd", "photo-data",
                       "manifestations") {
             if ($key =~ /manifestations/) {
                 print "@{[scalar @{$image->{manifestations}}]} mfs found.\n";
                 
-                foreach $mf (@{$image->{manifestations}}) {
+                foreach my $mf (@{$image->{manifestations}}) {
                     my %binkie = %{$mf};
                     printManifestation($writer, %binkie);
                 }
@@ -286,12 +331,12 @@ sub makeMFHashRef($) {
     my ($manifestation) = shift;
     my %mfData;
 
-    $baseName = `basename $manifestation`;
+    my $baseName = `basename $manifestation`;
     chomp $baseName;
 #    $baseName =~ /dsc_(\d+\D*).jpg/;
 #    $mfData{name} = $1;
     $mfData{name} = $baseName;
-   @identData = split(" ", `identify $manifestation`);
+    my @identData = split(" ", `identify $manifestation`);
 #    print "@identData \n";
 
     $identData[2] =~ /(\d+)x(\d+)/;
