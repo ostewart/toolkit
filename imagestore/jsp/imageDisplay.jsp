@@ -109,6 +109,9 @@ groupsContainingImage: ImageGroups that contain frame.image
         <a href="?defaultLabel=huge">huge</a>
 
     <c:if test="${!empty groupsContainingImage}">
+        </c:if>
+    <!-- put this back when we have permissions -->
+    <c:if test="${false}">
 <br/>
     This image is also in: 
     <c:forEach var="group" items="${groupsContainingImage}">
