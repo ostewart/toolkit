@@ -1,5 +1,6 @@
 package com.trailmagic.image;
 
+import java.util.SortedSet;
 
 public class Image {
     private long m_id;
@@ -8,6 +9,7 @@ public class Image {
     private String m_caption;
     private String m_copyright;
     private String m_creator;
+    private SortedSet m_manifestations;
 
     public Image(long id) {
         // nothing for now
@@ -63,5 +65,13 @@ public class Image {
 
     public void setCreator(String creator) {
         m_creator = creator;
+    }
+
+    public SortedSet getManifestations() {
+        return m_manifestations;
+    }
+
+    public void setManifestations(SortedSet manifestations) {
+        m_manifestations = manifestations;
     }
 }

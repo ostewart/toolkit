@@ -44,6 +44,15 @@
       <column name="creator" sql-type="varchar(1024)"/>
     </property>
 
+    <set
+      name="manifestations"
+      sort="natural"
+      inverse="true"
+      lazy="true">
+      <key column="image_id"/>
+      <one-to-many class="ImageManifestation"/>
+    </set>
+
     <joined-subclass
       name="Photo"
       table="photos">
