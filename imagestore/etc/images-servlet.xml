@@ -96,7 +96,7 @@
     </property>
     <property name="transactionAttributeSource">
       <value>
-        com.trailmagic.image.ui.AlbumController.handleRequest=PROPAGATION_REQUIRED
+        com.trailmagic.image.ui.ImageGroupController.handleRequest=PROPAGATION_REQUIRED
       </value>
     </property>
   </bean>
