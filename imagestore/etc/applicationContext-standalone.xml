@@ -4,9 +4,18 @@
 
 <beans>
   <bean id="dataSource"
-    class="org.springframework.jndi.JndiObjectFactoryBean">
-    <property name="jndiName">
-      <value>java:comp/env/jdbc/trailmagic</value>
+    class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+    <property name="driverClassName">
+      <value>org.postgresql.Driver</value>
+    </property>
+    <property name="url">
+      <value>jdbc:postgresql://localhost/trailmagic</value>
+    </property>
+    <property name="username">
+      <value>trailmagic</value>
+    </property>
+    <property name="password">
+      <value>password</value>
     </property>
   </bean>
 

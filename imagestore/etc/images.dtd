@@ -4,20 +4,21 @@
 -->
 
 <!ELEMENT images (roll+, image+)>
-<!ELEMENT image (name, display-name, caption, copyright, creator,
-                 owner, cd*, photo-data?, image-manifestation*)>
+<!ELEMENT image (name, display-name, owner, caption?, copyright?, creator?,
+                 number?, cd*, photo-data?, image-manifestation*)>
 
 <!ELEMENT name (#PCDATA)>
 <!ELEMENT display-name (#PCDATA)>
 <!ELEMENT caption (#PCDATA)>
 <!ELEMENT copyright (#PCDATA)>
 <!ELEMENT creator (#PCDATA)>
+<!ELEMENT number (#PCDATA)>
 
-<!ELEMENT photo-data (notes, capture-date, roll-name, frame-number)>
+<!ELEMENT photo-data (roll-name, frame-number, notes?, capture-date?)>
 <!ELEMENT roll-name (#PCDATA)>
 
 <!ELEMENT image-manifestation (name, height?, width?, format?,
-          original, filename)>
+          original)>
 
 <!ELEMENT notes (#PCDATA)>
 <!ELEMENT capture-date (#PCDATA)>
@@ -28,7 +29,6 @@
 <!ELEMENT height (#PCDATA)>
 <!ELEMENT width (#PCDATA)>
 <!ELEMENT original (#PCDATA)>
-<!ELEMENT filename (#PCDATA)>
 <!ELEMENT format (#PCDATA)>
 <!ELEMENT owner (#PCDATA)>
 <!ELEMENT frame-number (#PCDATA)>

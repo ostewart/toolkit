@@ -79,7 +79,7 @@
 
   <target name="clean-all">
     <antcall target="clean-doc"/>
-    <antcall target="clean-deploy-dir"/>
+<!--    <antcall target="clean-deploy-dir"/>-->
     <antcall target="clean"/>
   </target>
 

@@ -1,0 +1,36 @@
+#!/usr/bin/perl -w
+
+%landscapeGeometries =
+    ("thumbnail" => "192x128",
+     "small" => "384x256",
+     "medium" => "768x512",
+     "large" => "1536x1024",
+     "huge" => "3072x2048");
+%portraitGeometries =
+    ("thumbnail" => "128x192",
+     "small" => "256x384",
+     "medium" => "512x768",
+     "large" => "1024x1536",
+     "huge" => "2048x3072");
+
+foreach $file ($filelist) {
+    ($newfile = $file) =~ s/^(\D+)(\d+)\.(.+)$/$1$2-thumbnail.$3/;
+    $prefix = $1;
+    $number = $2;
+    $suffix = $3;
+
+    $geometry = `identify $i|awk '{print $3;}'`;
+    $geometry =~ /^(\d+)x(\d+)$/;
+    $width = $1;
+    $height = $2;
+    if ( $width > $height ) {
+        %geometries = %landscapeGeometries;
+    } else {
+        %geometries = %portraitGeometries;
+    }
+    
+    foreach $size (keys %geometries) {
+        system "echo convert $baseDir/$file $resizeDir/$newfile "
+            . "-quality $quality -geometry $geometries{$size}";
+    }
+}

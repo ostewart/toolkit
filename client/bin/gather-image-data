@@ -1,0 +1,292 @@
+#!/usr/bin/perl -w
+
+use Term::ReadLine;
+use XML::Writer;
+use IO::File;
+
+sub printManifestation($\%);
+sub makeMFHashRef($);
+sub printTag($$$);
+sub printHashValue($\%$);
+sub printPhotoData($\%);
+
+my $term = new Term::ReadLine 'Image Import';
+my $prompt;
+my %roll;
+my @images;
+
+if ( @ARGV < 1 ) {
+    print "Usage: gather-image-data <image-dir>\n";
+    exit(1);
+}
+my $baseDir = $ARGV[0];
+chomp $baseDir;
+$resizeDir = "$baseDir/resized-images";
+
+$prompt = "Input global data? (y/n): ";
+$_ = $term->readline($prompt);
+if ( /^y$/ ) {
+    $prompt = "Owner screen name: ";
+    $globals{"owner"} = $term->readline($prompt);
+    $prompt = "Creator: ";
+    $globals{"creator"} = $term->readline($prompt);
+    $prompt = "Copyright: ";
+    $globals{"copyright"} = $term->readline($prompt);
+}
+
+print "ROLL:\n";
+$prompt = "Short name: ";
+$roll{"name"} = $term->readline($prompt);
+$prompt = "Display name: ";
+$roll{"display-name"} = $term->readline($prompt);
+$prompt = "Description: ";
+$roll{"description"} = $term->readline($prompt);
+if ( exists $globals{"owner"} ) {
+    $roll{"owner"} = $globals{"owner"};
+} else {
+    $prompt = "Owner: ";
+    $roll{"owner"} = $term->readline($prompt);
+}
+
+$prompt = "Input image data? (y/n): ";
+$_ = $term->readline($prompt);
+my $askDetails;
+if (/^y$/) {
+    $askDetails = 1;
+}
+
+my $i = 0;
+foreach $file (`ls $baseDir/*.jpg`) {
+    $file = `basename $file`;
+    chomp $file;
+
+    # add the global data to the image
+    foreach $key (keys %globals) {
+        $images[$i]{$key} = $globals{$key};
+    }
+
+    # get the number from the file name
+    $baseFile = `basename $file`;
+    chomp $baseFile;
+    $baseFile =~ /dsc_(\d+).jpg/;
+    $images[$i]{"number"} = $1;
+
+    # maybe add details for the image
+    if ($askDetails) {
+        print "IMAGE $file:\n";
+        $prompt = "Short name: ";
+        $images[$i]{"name"} = $term->readline($prompt);
+        $prompt = "Display name: ";
+        $images[$i]{"display-name"} = $term->readline($prompt);
+        $prompt = "Caption: ";
+        $images[$i]{"caption"} = $term->readline($prompt);
+        $prompt = "Input photo data? (y/n): ";
+        $_ = $term->readline($prompt);
+        if ( /^y$/ ) {
+            $prompt = "Notes: ";
+            $images[$i]{"notes"} = $term->readline($prompt);
+            $prompt = "Capture date: ";
+            $images[$i]{"capture-date"} = $term->readline($prompt);
+        }
+    } else {
+        $images[$i]{"name"} = $file;
+        $images[$i]{"display-name"} = $file;
+    }
+
+    # add image manifestations
+    ($baseName = $file) =~ s/\.jpg$//;
+    if ( -x $resizeDir ) {
+        @manifestations = `ls $resizeDir/${baseName}*.jpg`;
+        print "Found manifestations: @manifestations\n";
+        my @mfList;
+
+        foreach $manifestation (@manifestations) {
+            push @mfList, makeMFHashRef($manifestation);
+        }
+
+        $images[$i]{manifestations} = \@mfList;
+    }
+    $i++;
+}
+
+# number the frames
+$prompt = "Enter photo data? (y/n): ";
+$_ = $term->readline($prompt);
+if ( /^y$/ ) {
+    # sort the frames by number and then give them numbers
+    # starting from 1
+    my $frameNum = 1;
+    print "sorting...images has @{[scalar @images]} entries\n";
+    my @sortedImages =
+        sort {$b->{"number"} <=> $a->{"number"}} @images;
+#    my @sortedImages = @images;
+    
+    
+    foreach my $image (@sortedImages) {
+        my %photoData;
+
+        # for now, assume there's only one roll
+        $photoData{"roll-name"} = $roll{"name"};
+
+        $photoData{"frame-number"} = $frameNum;
+        $frameNum++;
+
+        $image{"photo-data"} = \%photoData;
+    }
+}
+
+
+# ask before overwritng output file
+my $outfile;
+#$prompt = "Output filename: ";
+#$outfile = $term->readline($prompt);
+$outfile = "$resizeDir/image-data.xml";
+
+if ( -f $outfile ) {
+    $prompt =
+        "$outfile already exists, overwrite (if no, "
+        . "a new file ${outfile}.x will be created)? (y/n)";
+    $_ = $term->readline($prompt);
+    if ( /^y$/ ) {
+        unlink $outfile;
+    } else {
+        $ext = 0;
+        
+        while ( -f "${outfile}.${ext}" ) {
+            $ext++;
+        }
+        $outfile = $outfile . "." . $ext;
+    }
+}
+
+print "Writing metadata to: $outfile\n";
+my $output = new IO::File(">$outfile");
+my $writer = XML::Writer->new(OUTPUT => $output, DATA_MODE => 1,
+                              DATA_INDENT => 2);
+$writer->xmlDecl("UTF-8");
+$writer->doctype("images", "-//TRAILMAGIC//DTD IMAGES//EN",
+                 "http://www.trailmagic.com/dtd/images.dtd");
+$writer->startTag("images");
+
+# output the roll
+if ( (keys %roll) > 0 ) {
+    $writer->startTag("roll");
+    foreach my $key ("name", "display-name", "description", "owner") {
+#        $writer->dataElement($key, $roll{$key});
+        printHashValue($writer, %roll, $key);
+    }
+    $writer->endTag("roll");
+}
+    
+
+# output the images
+foreach $image (@images) {
+    if ( (keys %{$image}) > 0 ) {
+        $writer->startTag("image");
+        foreach $key ("name", "display-name", , "owner", "caption",
+                      "copyright", "creator", "number", "cd", "photo-data",
+                      "manifestations") {
+            if ($key =~ /manifestations/) {
+                print "@{[scalar @{$image->{manifestations}}]} mfs found.\n";
+                
+                foreach $mf (@{$image->{manifestations}}) {
+                    my %binkie = %{$mf};
+                    printManifestation($writer, %binkie);
+                }
+            } elsif ($key =~ /photo-data/) {
+                printPhotoData($writer, %{$image{"photo-data"}});
+            } else {
+                printHashValue($writer, %{$image}, $key);
+#                $writer->dataElement($key, $image->{$key});
+
+#                $writer->startTag($key);
+#                $writer->characters($image->{$key});
+#                $writer->endTag($key);
+            }
+        }
+        $writer->endTag("image");
+    }
+}
+
+$writer->endTag("images");
+$writer->end();
+exit(0);
+
+sub printManifestation($\%) {
+    my ($writer, $mf) = (@_);
+    my %mfHash = %{$mf};
+
+    $writer->startTag("image-manifestation");
+
+    print "printing manifestation; @{[scalar keys %{$mf}]} keys found.\n";
+
+    printHashValue($writer, %{$mf}, "name");
+    printHashValue($writer, %{$mf}, "height");
+    printHashValue($writer, %{$mf}, "width");
+    printHashValue($writer, %{$mf}, "format");
+    printHashValue($writer, %{$mf}, "original");
+    printHashValue($writer, %{$mf}, "filename");
+    
+#     foreach $key2 (keys %{$mf}) {
+#         print "key: $key2 value: $mf->{$key2}\n";
+#         $writer->startTag($key2);
+#         $writer->characters($mf->{$key2});
+#         $writer->endTag($key2);
+#     }
+    $writer->endTag("image-manifestation");
+}
+
+sub printPhotoData($\%) {
+    my ($writer, $photoData) = (@_);
+
+    print "in printPhotoData; photodata: @{[keys %{$photoData}]}\n";
+
+    $writer->startTag("photo-data");
+
+    printHashValue($writer, %{$photoData}, "roll-name");
+    printHashValue($writer, %{$photoData}, "frame-number");
+    printHashValue($writer, %{$photoData}, "notes");
+    printHashValue($writer, %{$photoData}, "capture-date");
+
+    $writer->endTag("photo-data");
+}
+
+sub printHashValue($\%$) {
+    my ($writer, $hash, $key) = @_;
+
+    if (exists $hash->{$key}) {
+        $writer->dataElement($key, $hash->{$key});
+#        printTag($writer, $key, $hash->{$key});
+    }
+}
+
+sub printTag($$$) {
+    my ($writer, $tagName, $charData) = @_;
+
+    $writer->startTag($tagName);
+    $writer->characters($charData);
+    $writer->endTag($tagName);
+}
+
+sub makeMFHashRef($) {
+    my ($manifestation) = shift;
+    my %mfData;
+
+    $baseName = `basename $manifestation`;
+    chomp $baseName;
+#    $baseName =~ /dsc_(\d+\D*).jpg/;
+#    $mfData{name} = $1;
+    $mfData{name} = $baseName;
+   @identData = split(" ", `identify $manifestation`);
+#    print "@identData \n";
+
+    $identData[2] =~ /(\d+)x(\d+)/;
+    $mfData{width} = $1;
+    print "[width = $mfData{width}]\n";
+    $mfData{height} = $2;
+    print "[height = $mfData{height}]\n";
+    $mfData{format} = "image/jpeg";
+    $mfData{original} = "false";
+ 
+    return \%mfData;
+}
