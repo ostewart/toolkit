@@ -40,6 +40,7 @@
   <property name="trailmagic-user.jar"
     value="${trailmagic-user.dir}/build/trailmagic-user.jar"/>
   <property name="prebuilt.dir" value="prebuilt"/>
+  <property name="resin.conf.dir" value="conf"/>
 
 
   <path id="build.classpath">
@@ -189,7 +190,8 @@
     <copy todir="${deploy.dir}/WEB-INF/classes">
       <fileset dir="${prebuilt.dir}">
         <include name="**/*"/>
-      </fileset>
+  </fileset>
+
   </copy>
     -->
     
@@ -206,6 +208,14 @@
       <fileset dir="${jsp.dir}"/>
     </copy>
   </target>
+
+  <target name="resin" depends="deploy">
+    <copy todir="${resin.deploy.dir}/conf">
+      <fileset dir="${resin.conf.dir}">
+        <include name="**/*"/>
+      </fileset>
+    </copy>
+  </targe>
 
   <target name="force-deploy" depends="deploy">
     <touch file="${deploy.dir}/WEB-INF/web.xml"/>

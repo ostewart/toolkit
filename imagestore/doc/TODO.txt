@@ -1,6 +1,9 @@
-implement imf selection by area
-write queries as named queries
-implement sorting by area
+Implement Roll display page/controller
+Put resin.conf into svn
+Add preview images to album list page
+Use CSS instead of <center>
+
+
 implement upload UI (don't forget height/width detection)
 
 implement Roll, roll UI
