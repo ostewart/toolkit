@@ -2,15 +2,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt" %>
   <c:set var="datePattern" value="dd-MMM-yyyy"/>
-<c:choose>
-  <c:when test="${empty image}">
-    <c:set var="operation" value="Edit"/>
-  </c:when>
-  <c:otherwise>
-    <c:set var="operation" value="Add"/>
-  </c:otherwise>
-</c:choose>
-   <html>
+
+<html>
 
     <head>
       <title><c:out value="${operation}"/>
@@ -18,6 +11,13 @@
     </head>
     <body>
       <h1><c:out value="${operation}"/> Image:</h1>
+      <c:if test="${!empty errors}">
+        <ul>
+          <c:forEach var="error" items="${errors}">
+          <li><c:out value="${error}"/></li>
+          </c:forEach>
+        </ul>
+      </c:if>
       <form method="POST">
         <table>
           <tr>
@@ -60,6 +60,7 @@
           </tr>
           </c:if>
         </table>
+        <input type="submit" value="Submit"/>
       </form>
     </body>
   </html>

@@ -11,6 +11,7 @@ import java.util.StringTokenizer;
 import java.util.NoSuchElementException;
 import java.util.Collection;
 import java.util.ArrayList;
+import java.util.List;
 import net.sf.hibernate.Session;
 import net.sf.hibernate.Transaction;
 import net.sf.hibernate.HibernateException;
@@ -23,9 +24,17 @@ public class DisplayServlet extends HttpServlet {
 
         Collection errors = new ArrayList();
         try {
-        String pathInfo = req.getPathInfo();
+            String pathInfo = req.getPathInfo();
+            if ( pathInfo == null ) {
+                processList(req, res);
+                return;
+            }
             StringTokenizer args = new StringTokenizer(pathInfo, "/");
 
+            if ( !args.hasMoreTokens() ) {
+                processList(req, res);
+                return;
+            }
             String method = args.nextToken();
             if ( method.equals("by-id") ) {
                 Session session = HibernateUtil.currentSession();
@@ -78,5 +87,25 @@ public class DisplayServlet extends HttpServlet {
         errors.add("No image specified.");
         req.setAttribute("errors", errors);
         req.getRequestDispatcher("/display-error.jsp").forward(req, res);
+    }
+
+    private void processList(HttpServletRequest req, HttpServletResponse res)
+        throws ServletException, IOException {
+
+        try {
+            Session session = HibernateUtil.currentSession();
+            Transaction tx= session.beginTransaction();
+            Query query =
+                session.createQuery("from com.trailmagic.image.Image");
+            List images = query.list();
+            req.setAttribute("images", images);
+            req.getRequestDispatcher("/list.jsp").forward(req, res);
+            return;
+        } catch (HibernateException e) {
+            Collection errors = new ArrayList();
+            errors.add("Error retrieving image list.");
+            req.setAttribute("errors", errors);
+            req.getRequestDispatcher("/display-error.jsp").forward(req, res);
+        }
     }
 }

@@ -87,7 +87,12 @@
       <classpath refid="build.classpath"/>
     </javac>
     <copy todir="${build.output.dir}">
-      <fileset dir="${hibernate.conf.dir}"/>
+      <fileset dir="${hibernate.conf.dir}">
+        <!-- Include only XML files, to avoid inclusion of
+             hibernate.properties, only for schema updates
+        -->
+        <include name="**/*.xml"/>
+      </fileset>
     </copy>
   </target>
 
@@ -185,4 +190,3 @@
   </target>
   
 </project>
- 

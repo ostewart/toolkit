@@ -22,11 +22,11 @@
         <param name="sequence">id_sequence</param>
       </generator>
     </id>
-
+<!--
     <discriminator
       column="type"
       type="string"/>
-
+-->
     <property name="name">
       <column name="name" sql-type="varchar(100)" not-null="true"/>
     </property>
