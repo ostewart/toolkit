@@ -86,7 +86,7 @@
         cascade="none"
         column="camera_id"/>
       <many-to-one
-        name="imageGroup"
+        name="roll"
         cascade="none"
         column="image_group_id"/>
     </joined-subclass>

@@ -13,10 +13,16 @@ public class LinkHelper {
         m_request = req;
     }
 
+    /** 
+     * /albums/user/album-name/image-id
+     * this means that an image can't be in an album more than once
+     * I think I can live with that
+     **/
     public String getAlbumFrameUrl(ImageFrame frame) {
-        return m_request.getContextPath() + "/albums/" +
+        return m_request.getContextPath() + m_request.getServletPath() +
+            "/albums/" +
             frame.getImage().getOwner().getScreenName() + "/" +
-            frame.getImageGroup().getName();
+            frame.getImageGroup().getName() + "/" + frame.getImage().getId();
     }
 
     public String getImageDisplayUrl(Image image) {

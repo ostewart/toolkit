@@ -1,8 +1,8 @@
 package com.trailmagic.image;
 
-public class ImageFrame implements Comparable {
+public class ImageFrame/* implements Comparable*/ {
     private ImageGroup m_imageGroup;
-    private int m_position;
+    //    private int m_position;
     private Image m_image;
     private String m_caption;
 
@@ -16,7 +16,7 @@ public class ImageFrame implements Comparable {
     public void setImageGroup(ImageGroup group) {
         m_imageGroup = group;
     }
-
+    /* get it from the List
     public int getPosition() {
         return m_position;
     }
@@ -24,7 +24,7 @@ public class ImageFrame implements Comparable {
     public void setPosition(int pos) {
         m_position = pos;
     }
-
+    */
     public Image getImage() {
         return m_image;
     }
@@ -41,6 +41,27 @@ public class ImageFrame implements Comparable {
         m_caption = caption;
     }
 
+    public boolean equals(Object obj) {
+        /*
+        return (obj instanceof ImageFrame) &&
+            (this.getImageGroup().equals(((ImageFrame)obj).getImageGroup())) &&
+            (this.getImage().equals(((ImageFrame)obj).getImage()));
+        */
+        if ( !(obj instanceof ImageFrame) ) {return false;}
+        ImageGroup mine = getImageGroup();
+        ImageGroup yours = ((ImageFrame)obj).getImageGroup();
+        System.err.println("mine: " + mine + ", yours: " + yours);
+        
+        if (!(mine.equals(yours))) {
+            return false;
+        }
+        if (!(this.getImage().equals(((ImageFrame)obj).getImage()))) {
+            return false;
+        }
+        return false;
+    }
+
+    /*
     public int compareTo(Object obj) throws ClassCastException {
         ImageFrame other = (ImageFrame) obj;
 
@@ -59,4 +80,5 @@ public class ImageFrame implements Comparable {
     public int hashCode() {
         return m_position;
     }
+    */
 }

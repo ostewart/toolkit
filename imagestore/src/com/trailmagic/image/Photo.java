@@ -7,7 +7,7 @@ public class Photo extends Image {
     private Camera m_camera;
     private String m_notes;
     private Date m_captureDate;
-    private ImageGroup m_imageGroup;
+    private ImageGroup m_roll;
 
     public Photo(long id) {
         super(id);
@@ -48,11 +48,12 @@ public class Photo extends Image {
         m_captureDate = date;
     }
 
-    public ImageGroup getImageGroup() {
-        return m_imageGroup;
+    public ImageGroup getRoll() {
+        return m_roll;
     }
 
-    public void setImageGroup(ImageGroup group) {
-        m_imageGroup = group;
+    // XXX: assert(m_imageGroup.getType().equals("roll"));
+    public void setRoll(ImageGroup group) {
+        m_roll = group;
     }
 }

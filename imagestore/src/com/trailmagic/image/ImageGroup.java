@@ -1,6 +1,6 @@
 package com.trailmagic.image;
 
-import java.util.SortedSet;
+import java.util.List;
 import java.util.Collection;
 
 import com.trailmagic.user.User;
@@ -11,7 +11,7 @@ public class ImageGroup {
     private String m_name;
     private String m_displayName;
     private String m_description;
-    private SortedSet m_frames;
+    private List m_frames;
     private Collection m_subgroups;
     private ImageGroup m_supergroup;
     private User m_owner;
@@ -68,11 +68,11 @@ public class ImageGroup {
         m_frames.add(frame);
     }
 
-    public SortedSet getFrames() {
+    public List getFrames() {
         return m_frames;
     }
 
-    public void setFrames(SortedSet frames) {
+    public void setFrames(List frames) {
         m_frames = frames;
     }
 
@@ -104,4 +104,11 @@ public class ImageGroup {
     public void setOwner(User owner) {
         m_owner = owner;
     }
+
+    public boolean equals(Object obj) {
+        return (obj instanceof ImageGroup) &&
+            (this.getName().equals(((ImageGroup)obj).getName())) &&
+            (this.getOwner().equals(((ImageGroup)obj).getOwner()));
+    }
+
 }

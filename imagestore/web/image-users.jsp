@@ -4,26 +4,21 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="tm" uri="http://trailmagic.com/taglibs/image" %>
 
-View for Album Frame display.  Displays a single ImageFrame of an
-Album.
+View to display a list of random Images.
 
 Model Requirements:
 user: currently logged in user
-owners: list of Users who own albums
+images: list of Images to display
 
 -->
 <html>
   <head>
-    <title>Album Owners</title>
+    <title>Images</title>
   </head>
 
   <body>
-    <h1>Album Owners:</h1>
-
-    <ul>
-      <c:forEach var="owner" items="${owners}">
-        <li><c:out value="${owner.screenName}"/></li>
-      </c:forEach>
-    </ul>
+    <c:forEach var="image" items="${images}">
+      <tm:image image="${image}"/>
+    </c:forEach>
   </body>
 </html>

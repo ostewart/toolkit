@@ -21,3 +21,6 @@ to, showing the count based on only those images
 (maybe have an option to show placeholder stuff for the others? - that
 might be a bad idea, from a security perspective)
 
+
+users can reorder albums by their preferences
+highly rated photos first

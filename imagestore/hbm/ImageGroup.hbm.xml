@@ -56,23 +56,22 @@
     </many-to-one>
 
     
-    <set
+    <list
       name="frames"
       table="image_frames"
       cascade="all-delete-orphan"
-      sort="natural"
       lazy="false"
       inverse="true">
       <key>
         <column name="group_id" unique-key="frames_group_position"/>
       </key>
-<!--      <index column="position"/>-->
+      <index>
+        <column name="position" unique-key="frames_group_position"
+          not-null="true"/>
+      </index>
+
       <composite-element class="ImageFrame">
         <parent name="imageGroup"/>
-        <property name="position">
-          <column name="position" unique-key="frames_group_position"
-            not-null="true"/>
-        </property>
         <property name="caption">
           <column name="caption" sql-type="varchar(4000)"/>
         </property>
@@ -80,7 +79,7 @@
           <column name="image_id" not-null="true"/>
         </many-to-one>
       </composite-element>
-    </set>
+    </list>
   </class>
 <!-- This never worked
   <class name="ImageFrame">

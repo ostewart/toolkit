@@ -66,4 +66,9 @@ public class User {
         m_password = pass;
     }
 
+    public boolean equals(Object obj) {
+        return (obj instanceof User) &&
+            (this.getScreenName().equals(((User)obj).getScreenName()));
+
+    }
 }

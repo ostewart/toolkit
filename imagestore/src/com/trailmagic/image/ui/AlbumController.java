@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
 import net.sf.hibernate.Session;
 import java.util.StringTokenizer;
-import java.util.SortedSet;
 import net.sf.hibernate.HibernateException;
 import net.sf.hibernate.Query;
 import net.sf.hibernate.SessionFactory;
@@ -49,7 +48,7 @@ public class AlbumController implements Controller {
         UrlPathHelper pathHelper = new UrlPathHelper();
         String myPath = pathHelper.getPathWithinServletMapping(req);
         StringTokenizer pathTokens = new StringTokenizer(myPath, "/");
-        int numTokens = pathTokens.countTokens();
+        String appName = pathTokens.nextToken();
         
         Map model = new HashMap();
 
@@ -76,7 +75,7 @@ public class AlbumController implements Controller {
         ImageGroup album = getAlbumByOwnerAndName(session, owner, albumName);
         model.put("album", album);
 
-        SortedSet frames = album.getFrames();
+        List frames = album.getFrames();
         model.put("frames", frames);
         /*
         // XXX: This should be fixed
@@ -93,12 +92,32 @@ public class AlbumController implements Controller {
 
         // process third (frame number) arg
         try {
-            long frameId = Long.parseLong(pathTokens.nextToken());
+            long frameId = Long.parseLong(pathTokens.nextToken().trim());
             ImageFrame frame = getImageFrameByAlbumAndImageId(session, album,
                                                               frameId);
+            if ( frame == null ) {
+                // XXX: pure eeeeeevil
+                throw new NumberFormatException("No image found.");
+            }
+            model.put("frame", frame);
+            model.put("image", frame.getImage());
+
+            int index = frames.indexOf(frame);
+            System.err.println("index: " + index + ", size: " + frames.size());
+            if ( index == -1 ) {
+                throw new JspException("No such frame exists.");
+            }
+            if ( index > 0 ) {
+                ImageFrame prevFrame = (ImageFrame)frames.get(index-1);
+                model.put("prevFrame", prevFrame);
+            }
+            if ( index < (frames.size() - 1) ) {
+                ImageFrame nextFrame = (ImageFrame)frames.get(index+1);
+                model.put("nextFrame", nextFrame);
+            }
         
             // got user, album, and frame number: show that frame
-            return new ModelAndView("/album-frame.jsp");
+            return new ModelAndView("/image-display.jsp", model);
         } catch (NumberFormatException e) {
             throw new JspException("Invalid frame number.");
         }
@@ -164,6 +183,7 @@ select elements(grp.frames) from com.trailmagic.image.ImageGroup grp join grp.fr
                                                       long imageId) {
 
         try {
+            /*
             Query query =
                 session.createQuery("select elements(grp.frames) " +
                                     "from com.trailmagic.image.ImageGroup grp"+
@@ -173,6 +193,14 @@ select elements(grp.frames) from com.trailmagic.image.ImageGroup grp join grp.fr
             query.setEntity("album", album);
             query.setLong("imageId", imageId);
             return (ImageFrame)query.uniqueResult();
+            */
+
+            List frames = album.getFrames();
+            frames =
+                (List)session.filter(frames, "where this.image.id = ?",
+                                     new Long(imageId),
+                                     new net.sf.hibernate.type.LongType());
+            return (ImageFrame)frames.get(0);
         } catch (HibernateException e) {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
         }

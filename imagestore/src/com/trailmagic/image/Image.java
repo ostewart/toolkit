@@ -113,9 +113,9 @@ public class Image {
     }
 
     public boolean equals(Object obj) {
-        if ( obj == null || !(obj instanceof Image) ) {
-            return false;
-        }
-        return this.m_id == ((Image)obj).m_id;
+        return (obj instanceof Image) &&
+            //            (this.getId() == ((Image)obj).getId());
+            (this.getName().equals(((Image)obj).getName())) &&
+            (this.getOwner().equals(((Image)obj).getOwner()));
     }
 }

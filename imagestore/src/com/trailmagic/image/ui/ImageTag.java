@@ -4,22 +4,23 @@ import javax.servlet.jsp.tagext.TagSupport;
 import javax.servlet.jsp.JspException;
 import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
+/*
 import javax.servlet.jsp.el.ExpressionEvaluator;
 import javax.servlet.jsp.el.VariableResolver;
+*/
 import com.trailmagic.user.*;
 import com.trailmagic.image.*;
 
 public class ImageTag extends TagSupport {
     private Image m_image;
-    private String m_imageVar;
+    private String m_sizeLabel;
 
     private static final String USER_ATTR = "user";
 
     public int doStartTag() throws JspException {
         StringBuffer html = new StringBuffer();
         ImageManifestation mf;
-        evaluateExpressions();
-        m_image = (Image)pageContext.getAttribute(m_imageVar);
+
         try {
             mf = WebSupport.getDefaultMF((User)pageContext
                                          .findAttribute(USER_ATTR),
@@ -42,27 +43,19 @@ public class ImageTag extends TagSupport {
             throw new JspException(e);
         }
     }
-
-    public void setObj(Image obj) {
-        m_image = obj;
+    public void setImage(Image image) {
+        m_image = image;
     }
 
-    public Image getObj() {
+    public Image getImage() {
         return m_image;
     }
 
-    public void setImage(String obj) {
-        m_imageVar = obj;
+    public void setSizeLabel(String label) {
+        m_sizeLabel = label;
     }
 
-    public String getImage() {
-        return m_imageVar;
-    }
-
-    private void evaluateExpressions() {
-        ExpressionEvaluator evaluator = pageContext.getExpressionEvaluator();
-        m_image = (Image)evaluator.evaluate(m_imageVar, Image.class,
-                                            pageContext.getVariableResolver(),
-                                            null);
+    public String getSizeLabel() {
+        return m_sizeLabel;
     }
 }

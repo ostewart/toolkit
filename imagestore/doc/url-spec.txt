@@ -120,3 +120,204 @@ that could be set in the ImageFrame if needed
 should the URL specify an ImageFrame or an Image?
 perhaps an ImageFrame tied to an Image
 associate/identify ImageFrames with/by Image rather than position
+
+
+we need an action
+
+/display/albums/oliver/germany-2001/10032
+/edit/albums/oliver/germany-2001/10032
+/add/albums
+/albums/display/oliver/germany-2001/10032
+/albums/edit/oliver/germany-2001/10032
+/albums/add
+/albums/oliver/germany-2001/10032/edit
+/albums/oliver/germany-2001/add
+/edit-album?album_id=2423
+/add-frame?album_id=2423&image_id=10033
+
+
+rationale:
+object-centric URL or action-centric?
+/albums/edit
+OR
+/edit/albums
+
+/albums/oliver/germany-2001/edit
+/albums/oliver/germany-2001/add-frame
+/albums/oliver/germany-2001/?action=add-frame
+
+
+do we allow edit/add operations on any object, just using the rest of
+the url as a selector?
+
+we could use a mapping handler thing to map the first part of the url,
+then have that method call another common method to decide what to do
+with the object
+
+
+define common operations:
+edit
+add new
+delete
+display
+
+is it feasible to abstract these operations to allow a generic
+handler?
+what does each need to do?
+need a controller and view for each, really
+
+one controller (part) selects object
+another does operation specific actions, selects view
+
+
+doing things this way means that an object should always be pointed to
+by the same beginning path - that's sort of simple
+
+
+first url part is object type
+/album
+/image
+/imf
+/roll
+
+second url part is identifier, can be multiple
+/image/by-id/22
+/album/oliver/germany-2001
+
+plurality?
+album or albums?
+/album/oliver/ points to many albums
+/albums/oliver/germany-2001 points to only 1 album
+
+i think plural is better
+
+/images/by-id/2
+/albums/oliver/germany-2001
+
+plural makes sense when restricted by more args
+
+with type first, can dispatch to a type-specific controller
+controller can then process object specifier args, then pass operation
+to an operation handler method
+should that be defined in the controller?
+
+this is UI, so it doesn't really belong in the model
+
+perhaps we can isolate common behavior within the V/C, though
+
+album-edit.jsp
+album-add.jsp
+album-display.jsp -- does this handle display of users, albums, and
+frames?
+
+for a given object type, we may have to actually handle multiple types
+(that should only be for display, though)
+
+/users/oliver
+/users/oliver/albums/germany-2001
+/users/oliver/rolls/germany-6
+/users/oliver/images/by-id/2
+
+this defines owner and then object type
+
+comparison to filesystem:
+
+/home/oliver/albums/de/munich/burgard.jpg
+
+
+is everything owned by a user?
+do we always want to expose the user?
+what if we just want to select by object id?
+
+/users/oliver/albums/by-id/6  <-- this is redundant
+/albums/by-id/6
+
+
+do we always have a unique textual selector by user and object type?
+we could, i suppose - tough for images
+user/roll/image
+
+i'm not crazy about managing uniqueness among image names, though i
+guess it's analogous to files in a directory
+images can be in multiple image groups
+maybe images should only be in one roll; that would make this easier
+
+user-centric makes sense from a nav standpoint - go to a user's
+profile, then nav to albums, images, etc.
+
+the urls don't really have to match the nav sequence though
+better to make them sensible in terms of hierarchy
+
+user's home can just point to that user's part of the album hierarchy
+i think that makes sense
+/users/oliver -> /albums/oliver
+/users/oliver -> /rolls/oliver
+
+just pointing to a different part of the system
+it would be onerous to support arbitrary types like that
+
+developers should be able to add new top-level types
+/monkeys/oliver/frump/bag
+
+OTOH, user-centric makes it easy to present a list of things that user
+owns
+(no it doesn't...it's still just select statements...the urls don't
+matter as long as you have a way to map from object type to handler
+URL)
+
+/users/oliver/ shows:
+/users/oliver/albums
+/users/oliver/rolls
+/users/oliver/monkeys
+
+how do we get a list of objects owned by oliver?
+it would be easier with a common object superclass that has an owner
+
+select distinct type from tm_objects where owner = 'oliver'
+album
+roll
+monkey
+
+(we could always do both, or switch at some point
+as long as the part after the object type stays the same, we could
+just chain the controllers, oder?
+I don't see any explicit support in spring for chaining controllers
+it's not necessarily the controller I want to chain, though
+it's a handler mapping, which could select the object and pass it to
+the right controller
+only one controller is needed for the actual action, right?
+
+could this work like a command controller, where you just specify what
+arg positions specify what?
+(why not?)
+
+
+generic way of mapping from a user's object to the handler/url for it?
+
+getUrlForObjectTypeAndUser(album.class, user);
+
+
+permissions?
+if on object itself, the URL doesn't matter
+if on action, **/edit could restrict, right?
+as long as we make sure that there isn't anything else that ends that
+way
+
+/albums/oliver/germany-first-edit
+/albums/oliver/edit/
+
+maybe we need to restrict album names so that they can't be
+add/edit/remove/display
+
+for performative actions, better to have query params :/
+?action=remove
+/remove/?for_real=true
+I guess we could protect with a form
+worry about that later :)
+
+default action is display, with a keyword, it's that keyword
+
+/images/by-id/6
+/images/by-id/6/edit
+/images/by-id/6?action=edit
+/images/by-id/6?action=remove

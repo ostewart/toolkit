@@ -7,7 +7,8 @@
     class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">            
     <property name="mappings">
       <props>
-        <prop key="/**">albumController</prop>
+        <prop key="/albums/**">albumController</prop>
+        <prop key="/images/**">imageController</prop>
       </props>
     </property>
   </bean>
@@ -16,6 +17,25 @@
     class="com.trailmagic.image.ui.AlbumController">
     <property name="sessionFactory">
       <ref bean="sessionFactory"/>
+    </property>
+  </bean>
+
+  <bean id="imageController"
+    class="com.trailmagic.image.ui.ImageController">
+    <property name="sessionFactory">
+      <ref bean="sessionFactory"/>
+    </property>
+    <property name="supportedMethods">
+      <value>GET</value>
+    </property>
+    <property name="requireSession">
+      <value>false</value>
+    </property>
+    <property name="cacheSeconds">
+      <value>-1</value>
+    </property>
+    <property name="controllerPath">
+      <value>/images</value>
     </property>
   </bean>
 
