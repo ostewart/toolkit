@@ -106,7 +106,7 @@ public class MakeAlbum implements ApplicationContextAware {
             int position = 0;
             
             while (name != null) {
-                List images = imgFactory.getByName(name);
+                List images = imgFactory.getByNameAndGroup(name, roll);
                 if (images.size() > 1) {
                     // FIXME: this should check for uniqueness within the roll
                     s_logger.error("Search by name returned more than one "

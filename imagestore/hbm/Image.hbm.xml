@@ -103,5 +103,12 @@
     SELECT FROM com.trailmagic.image.Image
     WHERE name = :name
   </query>
-    
+
+  <query name="imagesByNameAndGroup">
+    SELECT img
+    FROM com.trailmagic.image.ImageFrame AS frame
+    INNER JOIN frame.image AS img
+    WHERE img.name = :name
+    AND frame.imageGroup = :group
+  </query>
 </hibernate-mapping>

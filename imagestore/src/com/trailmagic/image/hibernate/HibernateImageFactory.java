@@ -12,6 +12,8 @@ import com.trailmagic.image.*;
 public class HibernateImageFactory implements ImageFactory {
     private static final String ALL_IMAGES_QUERY_NAME = "allImages";
     private static final String IMAGES_BY_NAME_QUERY_NAME = "imagesByName";
+    private static final String IMAGES_BY_NAME_GROUP_QUERY_NAME =
+        "imagesByNameAndGroup";
 
     private SessionFactory m_sessionFactory;
         
@@ -58,6 +60,20 @@ public class HibernateImageFactory implements ImageFactory {
                 SessionFactoryUtils.getSession(m_sessionFactory, false);
             Query query = session.getNamedQuery(IMAGES_BY_NAME_QUERY_NAME);
             query.setString("name", name);
+            return query.list();
+        } catch (HibernateException e) {
+            throw SessionFactoryUtils.convertHibernateAccessException(e);
+        } 
+    }
+
+    public List getByNameAndGroup(String name, ImageGroup group) {
+        try {
+            Session session =
+                SessionFactoryUtils.getSession(m_sessionFactory, false);
+            Query query =
+                session.getNamedQuery(IMAGES_BY_NAME_GROUP_QUERY_NAME);
+            query.setString("name", name);
+            query.setEntity("group", group);
             return query.list();
         } catch (HibernateException e) {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
