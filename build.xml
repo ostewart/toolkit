@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE project PUBLIC "-//ANT//DTD project//EN"
+  "file:///home/oliver/devel/project.dtd">
+<!--<!DOCTYPE project>-->
+
+<project name="imagestore" default="build" basedir=".">
+  <!-- REMEMBER TO EDIT THIS AND ABOVE -->
+  <property name="project.name" value="imagestore"/>
+  
+  <!-- potentially override what's in here -->
+  <property file="ant.properties"/>
+
+
+  <property name="src.dir" value="src" />
+  <property name="test.src.dir" value="test" />
+  <property name="build.dir" value="build"/>
+  <property name="resources.dir" value="etc"/>
+  <property name="build.output.dir" value="${build.dir}/classes" />
+  <property name="build.resources.dir" value="${build.dir}/etc" />
+  <property name="doc.output.dir" value="${build.dir}/doc"/>
+  <property name="apidoc.output.dir" value="${doc.output.dir}/api"/>
+  <property name="test.output.dir" value="${build.dir}/tests"/>
+  <property name="test.report.dir" value="${build.dir}/reports"/>
+  <property name="jarname" value="${project.name}.jar" />
+  <property name="junit.haltonfailure" value="true"/>
+  <property name="dist.dir" value="dist"/>
+  <property name="web.dir" value="web"/>
+  <property name="lib.dir" value="lib"/>
+  <property name="build.lib.dir" value="lib-build" />
+  <property name="hibernate.conf.dir" value="hbm"/>
+  <property name="javac.debug" value="on"/>
+  <property name="javac.optimize" value="off"/>
+  <property name="deploy.dir" value="deploy"/>
+
+
+  <path id="build.classpath">
+    <fileset dir="${lib.dir}">
+      <include name="**/*.jar"/>
+    </fileset>
+    <fileset dir="${build.lib.dir}">
+      <include name="**/*.jar"/>
+    </fileset>
+  
+    <pathelement path="${build.output.dir}"/>
+    <pathelement path="${java.class.path}"/>
+  </path>
+
+  <path id="hbm.classpath">
+    <path refid="build.classpath"/>
+    <pathelement location="${hibernate.conf.dir}"/>
+  </path>
+    
+
+  <target name="clean">
+    <delete dir="${build.dir}"/>
+  </target>
+
+  <target name="clean-doc">
+    <delete dir="${doc.output.dir}"/>
+  </target>
+
+  <target name="clean-all">
+    <antcall target="clean-doc"/>
+    <antcall target="clean"/>
+  </target>
+
+  <target name="distclean" depends="clean">
+    <delete dir="${dist.dir}"/>
+  </target>
+  
+  <target name="init">
+    <tstamp />
+  </target>
+
+  <!-- enable this for ejbdoclet support -->
+  <!--  <target name="compile" depends="ejbdoclet">-->
+  <target name="compile" depends="init">
+    <mkdir dir="${build.output.dir}"/>
+    <javac destdir="${build.output.dir}" debug="${javac.debug}"
+           optimize="${javac.debug}">
+      <src path="${src.dir}"/>
+      <classpath refid="build.classpath"/>
+    </javac>
+    <copy todir="${build.output.dir}">
+      <fileset dir="${hibernate.conf.dir}"/>
+    </copy>
+  </target>
+
+  <target name="build" depends="compile">
+    <jar destfile="${build.dir}/${jarname}">
+<!--      <fileset dir="${build.resources.dir}"/>-->
+      <fileset dir="${build.output.dir}"/>
+    </jar>
+  </target>
+
+  <target name="javadoc" depends="init">
+    <mkdir dir="${apidoc.output.dir}"/>
+    <javadoc destdir="${apidoc.output.dir}">
+      <fileset dir="${src.dir}">
+        <include name="**/*.java"/>
+      </fileset>
+    </javadoc>
+  </target>
+
+  <target name="compiletests" depends="build">
+    <mkdir dir="${test.output.dir}"/>
+    <javac destdir="${test.output.dir}" debug="${javac.debug}"
+           optimize="${javac.optimize}">
+      <src path="${test.src.dir}"/>
+      <classpath refid="build.classpath"/>
+    </javac>
+  </target>
+
+  <target name="runtests" depends="compiletests">
+    <junit printsummary="yes"
+      showoutput="yes"
+      haltonfailure="${junit.haltonfailure}">
+      <classpath>
+        <pathelement location="${test.output.dir}"/>
+        <path refid="build.classpath"/>
+      </classpath>
+      <formatter type="plain"/>
+      <batchtest fork="yes" todir="${test.report.dir}">
+        <fileset dir="${test.src.dir}">
+          <include name="**/*Test.java"/>
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+  <target name="deploy" depends="compile">
+    <mkdir dir="${dist.dir}"/>
+    <copy todir="${dist.dir}">
+      <fileset dir="${web.dir}"/>
+    </copy>
+    <mkdir dir="${dist.dir}/WEB-INF"/>
+    <copy todir="${dist.dir}/WEB-INF">
+      <fileset dir="${build.dir}"/>
+      <fileset dir="${resources.dir}"/>
+    </copy>
+    <copy todir="${dist.dir}/WEB-INF/lib">
+      <fileset dir="lib"/>
+    </copy>
+  </target>
+
+  <target name="force-deploy" depends="deploy">
+    <touch file="${dist.dir}/WEB-INF/web.xml"/>
+  </target>
+
+  <target name="schemaexport" depends="compile">
+    <taskdef name="schemaexport"
+        classname="net.sf.hibernate.tool.hbm2ddl.SchemaExportTask"
+      classpathref="hbm.classpath"/>
+
+    <schemaexport
+      properties="${hibernate.conf.dir}/hibernate.properties"
+        quiet="no"
+        text="yes"
+        drop="no"
+        delimiter=";"
+        output="${build.dir}/schema-export.sql">
+      <fileset dir="${hibernate.conf.dir}">
+        <include name="**/*.hbm.xml"/>
+      </fileset>
+    </schemaexport>
+  </target>
+
+  <target name="schemaupdate" depends="compile">
+    <taskdef name="schemaupdate"
+      classname="net.sf.hibernate.tool.hbm2ddl.SchemaUpdateTask"
+      classpathref="build.classpath"/>
+    
+    <schemaupdate
+      properties="${hibernate.conf.dir}/hibernate.properties"
+      quiet="no">
+      <fileset dir="${hibernate.conf.dir}">
+        <include name="**/*.hbm.xml"/>
+      </fileset>
+    </schemaupdate>
+  </target>
+  
+</project>
+ 
