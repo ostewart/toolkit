@@ -9,6 +9,7 @@ public interface ImageGroupFactory {
 
     public ImageGroup newInstance(int type);
     public ImageGroup getAlbumByOwnerAndName(User owner, String name);
+    public ImageGroup getRollByOwnerAndName(User owner, String name);
     public ImageFrame getImageFrameByImageGroupAndImageId(ImageGroup album,
                                                           long imageId);
     public List getAlbumsByOwnerScreenName(String name);

@@ -43,8 +43,9 @@ prevImage: Image
       </c:choose>
       <div class="image-sizes">
         |<c:forEach var="imf" items="${image.manifestations}">
-          <c:out value="${imf.width}"/>x<c:out
-          value="${imf.height}"/>|
+          <a href="?size=<c:out value="${imf.area}"/>">
+        <c:out value="${imf.width}"/>x<c:out
+          value="${imf.height}"/></a>|
         </c:forEach>
       </div>
       <div>

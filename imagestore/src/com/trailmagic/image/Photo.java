@@ -16,6 +16,20 @@ public class Photo extends Image {
     public Photo() {
     }
 
+    public Photo(Image image) {
+        super(image);
+    }
+
+    public Photo(Photo photo) {
+        super(photo);
+
+        setLens(photo.getLens());
+        setCamera(photo.getCamera());
+        setNotes(photo.getNotes());
+        setCaptureDate(photo.getCaptureDate());
+        setRoll(photo.getRoll());
+    }
+
     public Lens getLens() {
         return m_lens;
     }

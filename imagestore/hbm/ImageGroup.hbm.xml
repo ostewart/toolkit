@@ -118,6 +118,13 @@
     AND grp.type = 'album'
   </query>
 
+  <query name="rollByOwnerAndName">
+    SELECT FROM com.trailmagic.image.ImageGroup
+    AS grp WHERE grp.owner = :owner AND
+    grp.name = :rollName
+    AND grp.type = 'roll'
+  </query>
+
   <query name="imageFrameByImageGroupAndImageId">
     SELECT 
     FROM com.trailmagic.image.ImageFrame frame

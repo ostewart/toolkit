@@ -39,6 +39,7 @@
   <property name="trailmagic-user.dir" value="../user"/>
   <property name="trailmagic-user.jar"
     value="${trailmagic-user.dir}/build/trailmagic-user.jar"/>
+  <property name="prebuilt.dir" value="prebuilt"/>
 
 
   <path id="build.classpath">
@@ -183,6 +184,14 @@
         <include name="context.xml"/>
       </fileset>
     </copy>
+<!--
+    <mkdir dir="${deploy.dir}/WEB-INF/classes"/>
+    <copy todir="${deploy.dir}/WEB-INF/classes">
+      <fileset dir="${prebuilt.dir}">
+        <include name="**/*"/>
+      </fileset>
+  </copy>
+    -->
     
     <copy todir="${deploy.dir}/WEB-INF/lib">
       <!-- make sure we have a copy of the user jar -->

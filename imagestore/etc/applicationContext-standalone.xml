@@ -73,6 +73,14 @@
     </property>
   </bean>
 
+  <!- local thing for testing...not checking in
+  <bean id="testPoly"
+    class="com.trailmagic.image.util.TestPoly">
+    <property name="sessionFactory">
+      <ref local="sessionFactory"/>
+    </property>
+  </bean>
+  -->
 <!--
   <bean id="hibernateInterceptor"
     class="org.springframework.orm.hibernate.HibernateInterceptor">

@@ -1,37 +1,45 @@
 package com.trailmagic.image.util;
 
-import net.sf.hibernate.Session;
-import net.sf.hibernate.Transaction;
-import net.sf.hibernate.SessionFactory;
-import net.sf.hibernate.HibernateException;
-import org.springframework.orm.hibernate.SessionFactoryUtils;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.context.ApplicationContext;
-import org.xml.sax.helpers.DefaultHandler;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import java.util.Stack;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Stack;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import net.sf.hibernate.HibernateException;
+import net.sf.hibernate.Session;
+import net.sf.hibernate.SessionFactory;
+import net.sf.hibernate.Transaction;
+import org.apache.log4j.Logger;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.orm.hibernate.SessionFactoryUtils;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+import org.xml.sax.helpers.DefaultHandler;
 
+import com.trailmagic.image.*;
 import com.trailmagic.user.User;
 import com.trailmagic.user.UserFactory;
-import com.trailmagic.image.*;
 
 public class ImagesParser extends DefaultHandler
     implements ApplicationContextAware {
 
     private static final String USER_FACTORY_BEAN = "userFactory";
+    private static final String IMAGE_GROUP_FACTORY_BEAN = "imageGroupFactory";
     private static final String METADATA_FILENAME = "image-data.xml";
+    /** ISO 8601 date format **/
+    public static final String DATE_PATTERN = "YYYY-MM-DD";
+
+    private static Logger s_logger = Logger.getLogger(ImagesParser.class);
 
     private String m_inElement;
     private String m_inSubElement;
@@ -44,7 +52,11 @@ public class ImagesParser extends DefaultHandler
     private boolean m_inImage;
     private boolean m_inRoll;
     private boolean m_inManifestation;
+    private boolean m_inPhotoData;
     private boolean m_closeSession;
+    private ImageGroup m_photoRoll;
+    private String m_photoRollName;
+    private String m_photoFrameNum;
     private File m_baseDir;
     private StringBuffer m_characterData;
 
@@ -55,6 +67,11 @@ public class ImagesParser extends DefaultHandler
     }
 
     public ImagesParser(boolean closeSession) {
+        if ( closeSession ) {
+            s_logger.debug("New ImagesParser: session closing enabled");
+        } else {
+            s_logger.debug("New ImagesParser: session closing disabled");
+        }
         m_closeSession = closeSession;
     }
 
@@ -80,11 +97,17 @@ public class ImagesParser extends DefaultHandler
 
     public void startDocument() {
         try {
+            s_logger.debug("beginning parse");
+
             m_session = m_sessionFactory.openSession();
             m_transaction = m_session.beginTransaction();
             m_inImage = false;
             m_inRoll = false;
             m_inManifestation = false;
+            m_inPhotoData = false;
+            m_photoRoll = null;
+            m_photoRollName = null;
+            m_photoFrameNum = null;
         } catch (HibernateException e) {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
         }
@@ -93,7 +116,7 @@ public class ImagesParser extends DefaultHandler
     public void endDocument() {
         try {
             m_transaction.commit();
-            System.err.println("ImagesParser: committed transaction.");
+            s_logger.debug("ImagesParser: committed transaction.");
             if ( m_closeSession ) {
                 m_session.close();
             }
@@ -103,6 +126,8 @@ public class ImagesParser extends DefaultHandler
     }
 
     private void abort() {
+        s_logger.warn("aborting");
+
         try {
             m_transaction.rollback();
             if (m_closeSession) {
@@ -132,10 +157,14 @@ public class ImagesParser extends DefaultHandler
             startRoll();
         } else if ("image-manifestation".equals(eltName)) {
             startManifestation();
+        } else if ("photo-data".equals(eltName)) {
+            startPhotoData();
         }
     }
 
-    public void endElement(String uri, String localName, String qName) {
+    public void endElement(String uri, String localName, String qName)
+        throws SAXException {
+
         String eltName = qName;
 
         processCharacterData(m_characterData.toString(), eltName);
@@ -146,6 +175,8 @@ public class ImagesParser extends DefaultHandler
             endRoll();
         } else if ("image-manifestation".equals(eltName)) {
             endManifestation();
+        } else if ("photo-data".equals(eltName)) {
+            endPhotoData();
         }
     }
 
@@ -156,10 +187,10 @@ public class ImagesParser extends DefaultHandler
 
     public void endImage() {
         try {
-            System.out.println("endImage() called");
+            s_logger.debug("endImage() called");
             m_session.save(m_image);
-            System.out.println("Image saved: " + m_image.getName() + " ("
-                               + m_image.getId() + ")");
+            s_logger.debug("Image saved: " + m_image.getName() + " ("
+                           + m_image.getId() + ")");
         } catch (HibernateException e) {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
         }
@@ -175,18 +206,18 @@ public class ImagesParser extends DefaultHandler
 
     public void endManifestation() {
         try {
-            System.out.println("saving ImageManifestation: "
-                               + "name: " + m_manifestation.getName()
-                               + "height: " + m_manifestation.getHeight()
-                               + "width: " + m_manifestation.getWidth()
-                               + "format: " + m_manifestation.getFormat()
-                               + "original: " + m_manifestation.isOriginal());
-
+            s_logger.debug("saving ImageManifestation: "
+                           + "name: " + m_manifestation.getName()
+                           + "height: " + m_manifestation.getHeight()
+                           + "width: " + m_manifestation.getWidth()
+                           + "format: " + m_manifestation.getFormat()
+                           + "original: " + m_manifestation.isOriginal());
+            
             importManifestation();
             m_session.save(m_manifestation);
-            System.out.println("ImageManifestation saved: "
-                               + m_manifestation.getName()
-                               + " (" + m_manifestation.getId() + ")");
+            s_logger.debug("ImageManifestation saved: "
+                           + m_manifestation.getName()
+                           + " (" + m_manifestation.getId() + ")");
             m_manifestation = null;
             m_inManifestation = false;
         } catch (HibernateException e) {
@@ -204,10 +235,10 @@ public class ImagesParser extends DefaultHandler
 
     public void endRoll() {
         try {
-            System.out.println("endRoll() called");
+            s_logger.debug("endRoll() called");
             m_session.save(m_roll);
-            System.out.println("Roll saved: " + m_roll.getName() + " ("
-                               + m_roll.getId() + ")");
+            s_logger.debug("Roll saved: " + m_roll.getName() + " ("
+                           + m_roll.getId() + ")");
         } catch (HibernateException e) {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
         }
@@ -215,14 +246,102 @@ public class ImagesParser extends DefaultHandler
         m_inRoll = false;
     }
 
+    public void startPhotoData() {
+        m_inPhotoData = true;
+        s_logger.debug("Processing photo data for image " + m_image.getId());
+        // switch type to Photo.  this works because it hasn't been saved yet
+        m_image = new Photo(m_image);
+    }
+
+    public void endPhotoData() {
+        // process the roll information
+        // add the photo to the m_photoRollName roll with frame number
+        // m_photoFrameNum
+        
+        ImageFrame frame = new ImageFrame();
+        frame.setImageGroup(m_photoRoll);
+        frame.setImage(m_image);
+        frame.setPosition(Integer.parseInt(m_photoFrameNum));
+
+        try {
+            // XXX: have to save the image first
+            m_session.save(m_image);
+            m_session.save(frame);
+        } catch (HibernateException e) {
+            throw SessionFactoryUtils.convertHibernateAccessException(e);
+        }
+
+        s_logger.debug("Finished processing photo data for image "
+                       + m_image.getId());
+
+        m_photoFrameNum = null;
+        m_photoRoll = null;
+        m_inPhotoData = false;
+    }
+
     public void characters(char ch[], int start, int length) {
         m_characterData.append(ch, start, length);
     }
 
     private void processCharacterData(String characterData,
-                                      String currentElt) {
+                                      String currentElt) throws SAXException {
         if (m_inImage) {
-            if (!m_inManifestation) {
+            if (m_inManifestation) {
+                if ("name".equals(currentElt)) {
+                    m_manifestation.setName(characterData);
+                } else if ("height".equals(currentElt)) {
+                    m_manifestation.setHeight(Integer
+                                              .parseInt(characterData));
+                } else if ("width".equals(currentElt)) {
+                    m_manifestation.setWidth(Integer
+                                             .parseInt(characterData));
+                } else if ("format".equals(currentElt)) {
+                    m_manifestation.setFormat(characterData);
+                } else if ("original".equals(currentElt)) {
+                    m_manifestation.setOriginal(new Boolean(characterData)
+                                                .booleanValue());
+                }
+            } else if (m_inPhotoData) {
+                Photo photo = (Photo)m_image;
+                if ("roll-name".equals(currentElt)) {
+                    //                    photo.setRoll(getRollByName(characterData));
+                    // XXX: we should just use ImageGroup for this normally
+                    // so make sure the roll exists as an IG, then 
+                    ImageGroupFactory gf =
+                        (ImageGroupFactory)
+                        m_appContext.getBean(IMAGE_GROUP_FACTORY_BEAN);
+                    // XXX: borked if we don't have owner yet
+                    m_photoRoll =
+                        gf.getRollByOwnerAndName(m_image.getOwner(),
+                                                 characterData);
+                    if ( m_photoRoll == null ) {
+                        s_logger.info("No roll by the given name and owner "
+                                      + "found processing photo data, throwing"
+                                      + " exception.");
+                        throw new SAXException("Invalid or no roll name "
+                                               + "specified: " + characterData
+                                               + " (for owner "
+                                               + m_image.getOwner()
+                                                 .getScreenName()
+                                               + ")");
+                    }
+
+                } else if ("frame-number".equals(currentElt)) {
+                    m_photoFrameNum = characterData;
+                } else if ("notes".equals(currentElt)) {
+                    photo.setNotes(characterData);
+                } else if ("capture-date".equals(currentElt)) {
+                    // XXX: use DateFormat
+                    SimpleDateFormat format =
+                        new SimpleDateFormat(DATE_PATTERN);
+                    try {
+                        photo.setCaptureDate(format.parse(characterData));
+                    } catch (ParseException e) {
+                        s_logger.warn("Error parsing capture-date: "
+                                      + e.getMessage());
+                    }
+                }
+            } else {
                 if ( "name".equals(currentElt) ) {
                     m_image.setName(characterData);
                 } else if ( "display-name".equals(currentElt) ) {
@@ -240,21 +359,6 @@ public class ImagesParser extends DefaultHandler
                     m_image.setOwner(uf.getByScreenName(ownerName));
                 } else if ( "number".equals(currentElt) ) {
                     m_image.setNumber(new Integer(characterData));
-                }
-            } else {
-                if ("name".equals(currentElt)) {
-                    m_manifestation.setName(characterData);
-                } else if ("height".equals(currentElt)) {
-                    m_manifestation.setHeight(Integer
-                                              .parseInt(characterData));
-                } else if ("width".equals(currentElt)) {
-                    m_manifestation.setWidth(Integer
-                                             .parseInt(characterData));
-                } else if ("format".equals(currentElt)) {
-                    m_manifestation.setFormat(characterData);
-                } else if ("original".equals(currentElt)) {
-                    m_manifestation.setOriginal(new Boolean(characterData)
-                                                .booleanValue());
                 }
             }
         } else if (m_inRoll) {
@@ -276,14 +380,14 @@ public class ImagesParser extends DefaultHandler
     public static void printUsage() {
         System.err.println("Usage: ImagesParser <base_dir>");
     }
-
+    /*
     public static void importManifestation(File baseDir,
                                            ImageManifestation mf) {
         try {
             File srcFile = new File(baseDir, mf.getName());
             System.out.print("Importing " + srcFile.getPath() + "...");
             if ( srcFile.length() > Integer.MAX_VALUE ) {
-                System.out.println("File is too big...skipping.");
+                s_logger.warn("File is too big...skipping.");
                 return;
             }
             byte[] data = new byte[(int)srcFile.length()];
@@ -293,16 +397,18 @@ public class ImagesParser extends DefaultHandler
             fis.close();
             System.out.println("done");
         } catch (IOException e) {
-            System.err.println("Error: " + e.getMessage());
+            s_logger.error("Error: " + e.getMessage());
         }
     }
+    */
 
     private void importManifestation() {
         try {
             File srcFile = new File(m_baseDir, m_manifestation.getName());
-            System.out.print("Importing " + srcFile.getPath() + "...");
+            s_logger.info("Importing " + srcFile.getPath());
             if ( srcFile.length() > Integer.MAX_VALUE ) {
-                System.out.println("File is too big...skipping.");
+                s_logger.info("File is too big...skipping "
+                              + srcFile.getPath());
                 return;
             }
             byte[] data = new byte[(int)srcFile.length()];
@@ -310,9 +416,9 @@ public class ImagesParser extends DefaultHandler
             fis.read(data);
             m_manifestation.setData(data);
             fis.close();
-            System.out.println("done");
+            s_logger.info("Finished importing " + srcFile.getPath());
         } catch (IOException e) {
-            System.err.println("Error: " + e.getMessage());
+            s_logger.error("Error: " + e.getMessage());
         }
     }
 

@@ -76,6 +76,11 @@ public class ImageGroup {
         m_frames = frames;
     }
 
+    public int getNextFrameNumber() {
+        ImageFrame lastFrame = (ImageFrame)m_frames.last();
+        return lastFrame.getPosition() + 1;
+    }
+
     public ImageGroup getSupergroup() {
         return m_supergroup;
     }

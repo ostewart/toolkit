@@ -26,13 +26,19 @@ public class ImageTag extends TagSupport {
         try {
             HttpServletRequest req =
                 (HttpServletRequest)pageContext.getRequest();
+            // XXX: maybe this should be a parameter of the tag instead?
             String size = req.getParameter("size");
-            if ( size == null ) {
-                mf = WebSupport.getDefaultMF((User)pageContext
-                                             .findAttribute(USER_ATTR),
-                                             m_image);
+            if (size != null) {
+                mf = WebSupport.getMFBySize(m_image, Integer.parseInt(size));
             } else {
-                mf = WebSupport.getMFByLabel(m_image, size);
+                String label = req.getParameter("label");
+                if ( label != null ) {
+                    mf = WebSupport.getMFByLabel(m_image, label);
+                } else {
+                    mf = WebSupport.getDefaultMF((User)pageContext
+                                                 .findAttribute(USER_ATTR),
+                                                 m_image);
+                }
             }
 
             if ( mf != null ) {

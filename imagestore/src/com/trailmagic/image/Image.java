@@ -27,6 +27,18 @@ public class Image {
     public Image() {
     }
 
+    public Image(Image image) {
+        setName(image.getName());
+        setDisplayName(image.getDisplayName());
+        setCaption(image.getCaption());
+        setCopyright(image.getCopyright());
+        setCreator(image.getCreator());
+        setOwner(image.getOwner());
+        setImageCD(image.getImageCD());
+        setManifestations(image.getManifestations());
+        setNumber(image.getNumber());
+    }
+
     public long getId() {
         return m_id;
     }

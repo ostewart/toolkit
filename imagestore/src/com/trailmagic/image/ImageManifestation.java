@@ -92,7 +92,7 @@ public class ImageManifestation implements Comparable {
         m_data = data;
     }
 
-    private int getArea() {
+    public int getArea() {
         return m_height * m_width;
     }
 
