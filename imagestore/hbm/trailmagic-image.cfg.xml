@@ -17,6 +17,7 @@
     -->
     <property name="dialect">net.sf.hibernate.dialect.MySQLDialect</property>
     <property name="jdbc.use_streams_for_binary">true</property>
+    <property name="hibernate.cache.provider_class">net.sf.hibernate.cache.EhCacheProvider</property>
 
         <!-- Mapping files -->
     <mapping resource="Image.hbm.xml"/>
