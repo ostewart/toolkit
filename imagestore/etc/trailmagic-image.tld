@@ -4,16 +4,16 @@
   xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"
   version="2.0">
 
+  <description>trailmagic.com Image Manipulation/Display Tags</description>
   <tlib-version>1.0</tlib-version>
   <short-name>image</short-name>
   <uri>http://trailmagic.com/taglibs/image</uri>
-  <description>trailmagic.com Image Manipulation/Display Tags</description>
   
   <tag>
+    <description>Display an image by substituting an IMG tag</description>
     <name>image</name>
     <tag-class>com.trailmagic.image.ui.ImageTag</tag-class>
     <body-content>empty</body-content> <!-- change to alt -->
-    <description>Display an image by substituting an IMG tag</description>
     <attribute>
       <name>image</name>
       <required>true</required>
@@ -29,10 +29,10 @@
   </tag>
 
   <tag>
+    <description>Output a link to an ImageFrame</description>
     <name>imageFrameLink</name>
     <tag-class>com.trailmagic.image.ui.ImageFrameLinkTag</tag-class>
     <body-content>JSP</body-content>
-    <description>Output a link to an ImageFrame</description>
     <attribute>
       <name>frame</name>
       <required>true</required>
@@ -42,10 +42,10 @@
   </tag>
 
   <tag>
+    <description>Output a link to an Album</description>
     <name>albumLink</name>
     <tag-class>com.trailmagic.image.ui.AlbumLinkTag</tag-class>
     <body-content>JSP</body-content>
-    <description>Output a link to an Album</description>
     <attribute>
       <name>owner</name>
       <required>false</required>

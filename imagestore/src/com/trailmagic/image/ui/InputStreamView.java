@@ -16,6 +16,8 @@ public class InputStreamView extends AbstractView {
         throws Exception {
         
         setContentType((String)model.get(CONTENT_TYPE_KEY));
+        // XXX: that doesn't seem to work, so do it myself
+        res.setContentType((String)model.get(CONTENT_TYPE_KEY));
         OutputStream out = res.getOutputStream();
         InputStream in = (InputStream)model.get(STREAM_KEY);
         byte[] buf = new byte[1024];

@@ -34,44 +34,44 @@
   </servlet>
 
   <servlet>
-    <servlet-name>login</servlet-name>
     <display-name>login</display-name>
+    <servlet-name>login</servlet-name>
     <servlet-class>com.trailmagic.user.ui.LoginServlet</servlet-class>
   </servlet>
 
   <servlet>
-    <servlet-name>display</servlet-name>
     <display-name>display</display-name>
+    <servlet-name>display</servlet-name>
     <servlet-class>com.trailmagic.image.ui.DisplayServlet</servlet-class>
   </servlet>
 
   <servlet>
-    <servlet-name>groups</servlet-name>
     <display-name>groups</display-name>
+    <servlet-name>groups</servlet-name>
     <servlet-class>com.trailmagic.image.ui.GroupServlet</servlet-class>
   </servlet>
 
   <servlet>
-    <servlet-name>edit-add</servlet-name>
     <display-name>edit-add</display-name>
+    <servlet-name>edit-add</servlet-name>
     <servlet-class>com.trailmagic.image.ui.EditAddServlet</servlet-class>
   </servlet>
   
   <servlet>
-    <servlet-name>delete</servlet-name>
     <display-name>delete</display-name>
+    <servlet-name>delete</servlet-name>
     <servlet-class>com.trailmagic.image.ui.DeleteServlet</servlet-class>
   </servlet>
 
   <servlet>
-    <servlet-name>mfDisplay</servlet-name>
     <display-name>mfDisplay</display-name>
+    <servlet-name>mfDisplay</servlet-name>
     <servlet-class>com.trailmagic.image.ui.ImageMFDisplayServlet</servlet-class>
   </servlet>
 
   <servlet>
-    <servlet-name>manifestation</servlet-name>
     <display-name>manifestation</display-name>
+    <servlet-name>manifestation</servlet-name>
     <servlet-class>com.trailmagic.image.ui.ImageMFServlet</servlet-class>
   </servlet>
 
@@ -140,8 +140,10 @@
     <auth-constraint>
       <role-name>everyone</role-name>
     </auth-constraint>
+    <!--
     <user-data-constraint>
     </user-data-constraint>
+-->
   </security-constraint>
 
   <login-config>
