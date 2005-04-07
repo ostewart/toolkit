@@ -63,6 +63,10 @@ public class ImageManifestationController extends AbstractController {
                            + dataStream.getClass() + ")");
             model.put(InputStreamView.STREAM_KEY, dataStream);
             model.put(InputStreamView.CONTENT_TYPE_KEY, mf.getFormat());
+            if (mf.getName() != null) {
+                model.put(InputStreamView.CONTENT_DISPOSITION_KEY,
+                          "inline; filename=" + mf.getName() + ";");
+            }
             return new ModelAndView(new InputStreamView(), model);
         }
 
