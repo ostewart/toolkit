@@ -59,7 +59,7 @@ groupsContainingImage: ImageGroups that contain frame.image
       </div>
     </div>
 
-    <div style="clear: both; float: none; text-align: center">
+    <div style="clear: both; float: none; text-align: center; width: 80%; margin: auto">
       <h1><tm:imageGroupLink imageGroup="${imageGroup}"><c:out value="${imageGroup.displayName}"/></tm:imageGroupLink><c:if test="${!empty
             imageGroup}"> : </c:if><c:out
             value="${image.displayName}"/></h1>
@@ -81,7 +81,9 @@ groupsContainingImage: ImageGroups that contain frame.image
         </c:forEach>
       </div>
       <div>
+        <br/>
       <c:out value="${image.caption}"/><br>
+      <br/>
       <c:out value="${image.copyright}"/>
       <c:out value="${image.creator}"/><br>
       Owned by <tm:imageGroupLink owner="${image.owner}" groupType="${imageGroup.type}">${image.owner.screenName}</tm:imageGroupLink><br/>
@@ -119,7 +121,7 @@ groupsContainingImage: ImageGroups that contain frame.image
     value="${group.name} (${group.type})"/></tm:imageGroupLink>
     </c:forEach>
     </c:if>
-
+</div>
     <div style="clear: both">
       <div style="float: left">
       <!-- Previous Image/Frame Link
@@ -148,7 +150,7 @@ groupsContainingImage: ImageGroups that contain frame.image
       <c:if test="${!empty next}">
         <tm:imageFrameLink frame="${next}">Next --&gt;</tm:imageFrameLink>
         </c:if>
-      </div>
-    </div>
+     </div>
+
   </body>
 </html>
