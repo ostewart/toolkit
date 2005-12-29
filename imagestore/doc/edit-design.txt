@@ -1,0 +1,14 @@
+provde "add to album" form on each page of a roll you own, which
+appends the image to that album
+provide an album edit page that allows you to change the positions of
+images in an album
+
+GOALS
+Make it easy to add images to albums
+
+SCENARIOS:
+I want to add all the images from a roll to an album.
+I want to add most of the images from a single roll to an album.
+- provide a roll view page that allows you to check images to include
+I want to add images from several different rolls to a single album.
+- add rolls to select from and then provide checkboxes?

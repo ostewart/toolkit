@@ -1,0 +1,14 @@
+GOALS
+- provide object-level access-control/permissioning (image/album)
+- provide unauthenticated access to the application
+- define system users
+- allow users to own objects of multiple types (photos/albums)
+- provide system-defined groups (everyone)
+- provide predefined groups to which a user may add users (friends/family)
+- allow users to define new groups, the membership lists of which the
+user can define
+- provide different views of objects based on access - owner gets edit
+view (but can choose to see normal view), others get display view
+maybe just different view components (edit form on display page,
+comment form)
+

@@ -1,12 +1,18 @@
 package com.trailmagic.image.ui;
 
-import java.util.SortedSet;
 import java.util.Iterator;
-
+import java.util.SortedSet;
+import org.apache.log4j.Logger;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import com.trailmagic.image.*;
 import com.trailmagic.user.*;
 
 public class WebSupport {
+    private static Logger s_logger =
+        Logger.getLogger(WebSupport.class);
+
     public static ImageManifestation getDefaultMF(User user, Image image) {
         // default is small (384x256), so find the closest
         return getMFBySize(image, 384*256);
@@ -56,5 +62,30 @@ public class WebSupport {
         }
 
         return closest;
+    }
+
+    /**
+     * If the request URI does not end with a /, redirects to the same URI
+     * with a trailing /.  Otherwise, does nothing.
+     *
+     * @param req the servlet request
+     * @param res the servlet response
+     **/
+    public static void handleDirectoryUrlRedirect(HttpServletRequest req,
+                                                  HttpServletResponse res)
+    throws IOException {
+        String uri = req.getRequestURI();
+        // if trailing / already, no work to do; we're done
+        if (!uri.endsWith("/")) {
+            StringBuffer newLocation = new StringBuffer();
+            newLocation.append(uri);
+            newLocation.append("/");
+            if (req.getQueryString() != null) {
+                newLocation.append("?");
+                newLocation.append(req.getQueryString());
+            }
+
+            res.sendRedirect(newLocation.toString());
+        }
     }
 }

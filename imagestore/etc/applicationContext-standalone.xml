@@ -30,7 +30,7 @@
 
   <bean id="transactionManager"
     class="org.springframework.orm.hibernate.HibernateTransactionManager">
-    <property name="dataSource"><ref local="dataSource"/></property>
+<!--    <property name="dataSource"><ref local="dataSource"/></property>-->
     <property name="sessionFactory"><ref local="sessionFactory"/></property>
   </bean>
 
@@ -118,4 +118,41 @@
     </property>
   </bean>
 
+  <bean id="replaceImageManifestation"
+    class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+    <property name="transactionManager">
+      <ref local="transactionManager"/>
+    </property>
+    <property name="target">
+      <ref local="replaceImageManifestationTarget"/>
+    </property>
+    <property name="transactionAttributes">
+      <props>
+        <prop key="replace*">PROPAGATION_REQUIRED</prop>
+      </props>
+    </property>
+  </bean>
+
+  <bean id="replaceImageManifestationTarget"
+    class="com.trailmagic.image.util.ReplaceImageManifestation">
+    <property name="sessionFactory">
+      <ref local="sessionFactory"/>
+    </property>
+    <property name="imageManifestationFactory">
+      <ref local="imageManifestationFactory"/>
+    </property>
+  </bean>
+<!--  
+  <bean id="replaceImageManifestationOld"
+    class="org.springframework.aop.framework.ProxyFactoryBean">
+    <property name="target">
+      <ref local="replaceImageManifestationTarget"/>
+    </property>
+    <property name="interceptorNames">
+      <list>
+        <value>hibernateInterceptor</value>
+      </list>
+    </property>
+  </bean>
+-->
 </beans>
