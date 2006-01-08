@@ -8,15 +8,16 @@ import java.io.IOException;
 
 
 public class LoginServlet extends HttpServlet {
+    private static final String JSP_PATH = "/WEB-INF/jsp/login.jsp";
     public void doGet(HttpServletRequest req, HttpServletResponse res)
         throws ServletException, IOException {
 
-        req.getRequestDispatcher("/login.jsp").include(req, res);
+        req.getRequestDispatcher(JSP_PATH).include(req, res);
     }
 
     public void doPost(HttpServletRequest req, HttpServletResponse res)
         throws ServletException, IOException {
 
-        req.getRequestDispatcher("/login.jsp").include(req, res);
+        req.getRequestDispatcher(JSP_PATH).include(req, res);
     }
 }

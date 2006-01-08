@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE project PUBLIC "-//ANT//DTD project//EN"
+  "file:///home/oliver/devel/doc/project.dtd">
+<!--<!DOCTYPE project>-->
+
+<project>
+  <property name="jar.name" value="${module.name}.jar" />
+
+  <property name="src.dir" value="src" />
+  <property name="test.src.dir" value="test" />
+  <property name="build.dir" value="build"/>
+  <property name="resources.dir" value="etc"/>
+  <property name="build.output.dir" value="${build.dir}/classes" />
+  <property name="build.resources.dir" value="${build.dir}/etc" />
+  <property name="doc.output.dir" value="${build.dir}/doc"/>
+  <property name="apidoc.output.dir" value="${doc.output.dir}/api"/>
+  <property name="test.output.dir" value="${build.dir}/tests"/>
+  <property name="test.report.dir" value="${build.dir}/reports"/>
+  <property name="web.dir" value="web"/>
+  <property name="lib.dir" value="lib"/>
+  <property name="dep.lib.dir" value="../lib-dep"/>
+  <property name="build.lib.dir" value="lib-build" />
+  <property name="global.build.lib.dir" value="../lib-build" />
+  <property name="global.lib.dir" value="../lib" />
+  <property name="hibernate.conf.dir" value="hbm"/>
+  <property name="jsp.dir" value="jsp"/>
+  <property name="deploy.dir" value="deploy"/>
+  <property name="jsp.deploy.dir" value="${deploy.dir}/WEB-INF/jsp"/>
+  <property name="prebuilt.dir" value="prebuilt"/>
+  <property name="resin.conf.dir" value="conf"/>
+
+  <property name="trailmagic-user.dir" value="../user"/>
+  <property name="trailmagic-user.jar"
+    value="${trailmagic-user.dir}/build/trailmagic-user.jar"/>
+  
+  <property name="junit.haltonfailure" value="true"/>
+  <property name="javac.debug" value="on"/>
+  <property name="javac.optimize" value="off"/>
+
+
+  <!--
+  define a path named dependencies.path as a path of all
+  dependency paths that should be included in the build path
+  dependencies must be build independent of each other (or all at once)
+  -->
+  <path id="build.classpath">
+    <path refid="dependencies.path"/>
+    
+    <fileset dir="${lib.dir}">
+      <include name="**/*.jar"/>
+    </fileset>
+
+    <fileset dir="${build.lib.dir}">
+      <include name="**/*.jar"/>
+    </fileset>
+
+    <fileset dir="${global.build.lib.dir}">
+      <include name="**/*.jar"/>
+    </fileset>
+
+    <fileset dir="${global.lib.dir}">
+      <include name="**/*.jar"/>
+    </fileset>
+
+    <!-- needed only for the schema tool tasks -->
+    <fileset dir="${dep.lib.dir}">
+      <include name="**/*.jar"/>
+    </fileset>
+
+    <pathelement path="${build.output.dir}"/>
+    <pathelement path="${java.class.path}"/>
+    <pathelement path="${prebuilt.dir}"/>
+  </path>
+
+  <path id="hbm.classpath">
+    <path refid="build.classpath"/>
+    <pathelement location="${hibernate.conf.dir}"/>
+  </path>
+
+
+  <!-- TARGETS -->
+
+  <target name="clean">
+    <delete dir="${build.dir}"/>
+  </target>
+
+  <target name="clean-doc">
+    <delete dir="${doc.output.dir}"/>
+  </target>
+
+  <target name="clean-deploy">
+    <delete dir="${deploy.dir}"/>
+  </target>
+
+  <target name="clean-all">
+    <antcall target="clean-doc"/>
+    <antcall target="clean-deploy-dir"/>
+    <antcall target="clean"/>
+  </target>
+
+  <target name="init">
+    <tstamp />
+  </target>
+
+  <!-- enable this for ejbdoclet support -->
+  <!--  <target name="compile" depends="ejbdoclet">-->
+  <target name="compile" depends="init">
+    <mkdir dir="${build.output.dir}"/>
+    <javac destdir="${build.output.dir}" debug="${javac.debug}"
+      optimize="${javac.debug}">
+      <src path="${src.dir}"/>
+      <classpath refid="build.classpath"/>
+    </javac>
+
+    <!-- this should go away -->
+    <copy todir="${build.output.dir}">
+      <fileset dir="${hibernate.conf.dir}">
+        <!-- Include only XML files, to avoid inclusion of
+        hibernate.properties, only for schema updates
+        -->
+        <include name="**/*.xml"/>
+      </fileset>
+    </copy>
+  </target>
+
+  
+  <target name="build" depends="compile">
+    <jar destfile="${build.dir}/${jar.name}">
+<!--      <fileset dir="${build.resources.dir}"/>-->
+      <fileset dir="${build.output.dir}"/>
+    </jar>
+  </target>
+
+  <target name="javadoc" depends="init">
+    <mkdir dir="${apidoc.output.dir}"/>
+    <javadoc destdir="${apidoc.output.dir}">
+      <fileset dir="${src.dir}">
+        <include name="**/*.java"/>
+      </fileset>
+    </javadoc>
+  </target>
+
+  <target name="compiletests" depends="build">
+    <mkdir dir="${test.output.dir}"/>
+    <javac destdir="${test.output.dir}" debug="${javac.debug}"
+           optimize="${javac.optimize}">
+      <src path="${test.src.dir}"/>
+      <classpath refid="build.classpath"/>
+    </javac>
+  </target>
+
+  <target name="runtests" depends="compiletests">
+    <junit printsummary="yes"
+      showoutput="yes"
+      haltonfailure="${junit.haltonfailure}">
+      <classpath>
+        <pathelement location="${test.output.dir}"/>
+        <path refid="build.classpath"/>
+      </classpath>
+      <formatter type="plain"/>
+      <batchtest fork="yes" todir="${test.report.dir}">
+        <fileset dir="${test.src.dir}">
+          <include name="**/*Test.java"/>
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+  <target name="deploy" depends="build">
+    <mkdir dir="${deploy.dir}"/>
+    <copy todir="${deploy.dir}">
+      <fileset dir="${web.dir}"/>
+    </copy>
+    <mkdir dir="${deploy.dir}/WEB-INF"/>
+    <copy todir="${deploy.dir}/WEB-INF">
+      <fileset dir="${build.dir}"/>
+      <fileset dir="${resources.dir}"/>
+    </copy>
+
+    <mkdir dir="${deploy.dir}/META-INF"/>
+    <copy todir="${deploy.dir}/META-INF">
+      <fileset dir="${resources.dir}">
+        <include name="context.xml"/>
+      </fileset>
+    </copy>
+
+    <mkdir dir="${deploy.dir}/WEB-INF/classes"/>
+    <copy todir="${deploy.dir}/WEB-INF/classes">
+      <fileset dir="${prebuilt.dir}">
+        <include name="**/*"/>
+      </fileset>
+    </copy>
+
+    
+    <copy todir="${deploy.dir}/WEB-INF/lib">
+      <fileset dir="${lib.dir}"/>
+      <fileset dir="${global.lib.dir}"/>
+<!--      <fileset dir="${dep.lib.dir}"/>-->
+    </copy>
+    <mkdir dir="${jsp.deploy.dir}"/>
+    <copy todir="${jsp.deploy.dir}">
+      <fileset dir="${jsp.dir}"/>
+    </copy>
+  </target>
+
+
+  <target name="force-deploy" depends="deploy">
+    <touch file="${deploy.dir}/WEB-INF/web.xml"/>
+  </target>
+
+  <target name="resin" depends="deploy">
+    <copy todir="${resin.deploy.dir}/conf">
+      <fileset dir="${resin.conf.dir}">
+        <include name="**/*"/>
+      </fileset>
+    </copy>
+  </target>
+
+
+  <target name="schemaexport" depends="compile">
+    <taskdef name="schemaexport"
+      classname="net.sf.hibernate.tool.hbm2ddl.SchemaExportTask"
+      classpathref="hbm.classpath"/>
+    
+    <schemaexport
+      config="${hibernate.conf.dir}/${module.name}.cfg.xml"
+        quiet="no"
+        text="yes"
+        drop="no"
+        delimiter=";"
+      output="${build.dir}/schema-export.sql"/>
+  </target>
+
+  <target name="schemaupdate" depends="compile">
+    <taskdef name="schemaupdate"
+      classname="net.sf.hibernate.tool.hbm2ddl.SchemaUpdateTask"
+      classpathref="build.classpath"/>
+    
+    <schemaupdate
+      config="${hibernate.conf.dir}/${module.name}.cfg.xml"
+      properties="${hibernate.conf.dir}/hibernate.properties"
+      quiet="no"/>
+
+  </target>
+
+  <target name="hibern8ide" depends="build">
+    <java jar="${build.lib.dir}/hibern8ide.jar" fork="true">
+      <classpath>
+        <path refid="build.classpath"/>
+        <fileset dir="hibern8ide">
+          <include name="**/*.jar"/>
+        </fileset>
+      </classpath>
+    </java>
+  </target>
+
+  <target name="run" depends="build">
+    <java classname="${run.class}" fork="true">
+      <arg line="${run.args}"/>
+      <classpath>
+        <path refid="build.classpath"/>
+        <pathelement location="${resources.dir}"/>
+      </classpath>
+    </java>
+  </target>
+</project>

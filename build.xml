@@ -9,35 +9,59 @@
   
   <!-- potentially override what's in here -->
   <property file="ant.properties"/>
-
-
-    
-
-  <target name="clean">
-    <ant dir="user" inheritAll="false" target="clean"/>
-    <ant dir="imagestore" inheritAll="false" target="clean"/>
-  </target>
-
-  <target name="distclean" depends="clean">
-    <ant dir="user" inheritAll="false" target="distclean"/>
-  </target>
   
-  <target name="init">
-    <ant dir="user" inheritAll="false" target="init"/>
-  </target>
-
-  <target name="build">
-    <ant dir="user" inheritAll="false" target="build"/>
-  </target>
+  <property name="dep.lib.dir" value="lib-dep"/>
+  <property name="global.build.lib.dir" value="lib-build" />
+  <property name="global.lib.dir" value="lib" />
+  
+  <filelist dir="." id="modules.list">
+    <file name="user/build.xml"/>
+    <file name="imagestore/build.xml"/>
+  </filelist>
+  
+  <property name="deploy.lib.dir" value="${deploy.dir}/WEB-INF/lib"/>
+  <property name="deploy.resources.dir"
+    value="${deploy.dir}/WEB-INF"/>
+  <property name="resources.dir" value="etc"/>
+    
+  <macrodef name="iterate">
+    <attribute name="target"/>
+    <sequential>
+      <subant target="@{target}" inheritall="false" inheritrefs="false">
+        <filelist refid="modules.list"/>
+      </subant>
+    </sequential>
+  </macrodef>
 
   <target name="deploy">
-    <ant dir="user" inheritAll="false" target="deploy"/>
-    <ant dir="imagestore" inheritAll="false" target="deploy"/>
+    <mkdir dir="${deploy.lib.dir}"/>
+    <copy todir="${deploy.lib.dir}">
+      <fileset dir="${dep.lib.dir}"/>
+      <fileset dir="${global.lib.dir}"/>
+    </copy>
+
+    <mkdir dir="${deploy.resources.dir}"/>
+    <copy todir="${deploy.resources.dir}">
+      <fileset dir="${resources.dir}"/>
+    </copy>
+    
+    <iterate target="deploy"/>
   </target>
 
   <target name="compile">
-    <ant dir="user" inheritAll="false" target="compile"/>
+    <iterate target="compile"/>
   </target>
 
+  <target name="build">
+    <iterate target="build"/>
+  </target>
+
+  <target name="clean">
+    <iterate target="clean"/>
+  </target>
+
+  <target name="clean-deploy">
+    <iterate target="clean-deploy"/>
+  </target>
   
 </project>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN"
+ "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+  <bean id="dataSource"
+    class="org.springframework.jndi.JndiObjectFactoryBean">
+    <property name="jndiName">
+      <value>java:comp/env/jdbc/trailmagic</value>
+    </property>
+  </bean>
+
+  <bean id="sessionFactory"
+    class="org.springframework.orm.hibernate.LocalSessionFactoryBean"
+    singleton="true">
+    <property name="dataSource"><ref local="dataSource"/></property>
+    <property name="configLocation">
+      <value>classpath:/trailmagic-image.cfg.xml</value>
+    </property>
+  </bean>
+
+  <bean id="transactionManager"
+    class="org.springframework.orm.hibernate.HibernateTransactionManager">
+    <property name="dataSource"><ref local="dataSource"/></property>
+    <property name="sessionFactory"><ref local="sessionFactory"/></property>
+  </bean>
+
+
+</beans>
