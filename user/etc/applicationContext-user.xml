@@ -53,7 +53,7 @@
     </property>
     <property name="defaultTargetUrl"><value>/albums/</value></property>
     <property name="authenticationFailureUrl">
-      <value>/login_fail</value>
+      <value>/login?failure=true</value>
     </property>
     <property name="alwaysUseDefaultTargetUrl">
       <value>false</value>
@@ -101,7 +101,7 @@
   </bean>
 
   <bean id="hibernateUserDetailsService"
-    class="com.trailmagic.user.acegi.HibernateUserDetailsService">
+    class="com.trailmagic.user.security.HibernateUserDetailsService">
     <property name="userFactory">
       <ref local="userFactory"/>
     </property>

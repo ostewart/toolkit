@@ -11,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package com.trailmagic.user.acegi;
+package com.trailmagic.user.security;
 
 import com.trailmagic.user.User;
 import com.trailmagic.user.UserFactory;
