@@ -51,7 +51,7 @@
     <property name="authenticationManager">
       <ref local="authenticationManager"/>
     </property>
-    <property name="defaultTargetUrl"><value>/photo/</value></property>
+    <property name="defaultTargetUrl"><value>/albums/</value></property>
     <property name="authenticationFailureUrl">
       <value>/login_fail</value>
     </property>
@@ -182,7 +182,7 @@
         /j_acegi_switch_user=ROLE_SUPERVISOR
         /acegilogin.jsp*=ROLE_ANONYMOUS,ROLE_USER
         /login=ROLE_ANONYMOUS,ROLE_USER
-        /**=ROLE_USER
+        /**=ROLE_ANONYMOUS,ROLE_USER
       </value>
     </property>
   </bean>
