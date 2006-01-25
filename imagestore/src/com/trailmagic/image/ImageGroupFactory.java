@@ -22,4 +22,5 @@ public interface ImageGroupFactory {
     public ImageGroup getByOwnerNameAndType(User owner, String groupName,
                                             String groupType);
     public List getByImage(Image image);
+    public ImageGroup getRollForImage(Image image);
 }

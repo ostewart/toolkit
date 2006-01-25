@@ -32,6 +32,7 @@ public class HibernateImageFactory implements ImageFactory {
     public Image getById(long id) {
         try {
             // XXX: should we allow creation here?
+            org.apache.log4j.Logger.getLogger(this.getClass()).debug("getById called biznatch");
             Session session =
                 SessionFactoryUtils.getSession(m_sessionFactory, false);
 

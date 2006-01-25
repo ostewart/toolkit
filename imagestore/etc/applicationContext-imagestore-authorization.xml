@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN"
+ "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+  <!-- ========= ACCESS CONTROL LIST LOOKUP MANAGER DEFINITIONS ========= -->
+  
+  <bean id="aclManager" class="org.acegisecurity.acl.AclProviderManager">
+    <property name="providers">
+      <list>
+        <ref local="basicAclProvider"/>
+        <ref local="imageOwnerAclProvider"/>
+      </list>
+    </property>
+  </bean>
+  
+  <bean id="basicAclProvider"
+    class="org.acegisecurity.acl.basic.BasicAclProvider">
+    <property name="basicAclDao"><ref local="basicAclExtendedDao"/></property>
+  </bean>
+
+  <bean id="basicAclExtendedDao"
+    class="org.acegisecurity.acl.basic.jdbc.JdbcExtendedDaoImpl">
+    <property name="dataSource"><ref bean="dataSource"/></property>
+  </bean>
+
+  <bean id="imageOwnerAclProvider"
+    class="com.trailmagic.image.security.ImageOwnerAclProvider">
+    <property name="imageGroupFactory">
+      <ref local="imageGroupFactory"/>
+    </property>
+  </bean>
+
+
+   <!-- ~~~~~~~ "BEFORE INVOCATION" AUTHORIZATION DEFINITIONS~~~~~~~~~~~~~ -->
+
+   <!-- ACL permission masks used by this application -->
+   <bean
+     id="org.acegisecurity.acl.basic.SimpleAclEntry.ADMINISTRATION"
+     class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+    <property name="staticField">
+      <value>org.acegisecurity.acl.basic.SimpleAclEntry.ADMINISTRATION</value>
+    </property>
+  </bean>
+  
+  <bean id="org.acegisecurity.acl.basic.SimpleAclEntry.READ"
+    class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+    <property name="staticField">
+      <value>org.acegisecurity.acl.basic.SimpleAclEntry.READ</value>
+    </property>
+  </bean>
+  <bean id="org.acegisecurity.acl.basic.SimpleAclEntry.DELETE"
+    class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+    <property name="staticField">
+      <value>org.acegisecurity.acl.basic.SimpleAclEntry.DELETE</value>
+    </property>
+  </bean>
+
+
+   <!-- An access decision voter that reads ROLE_* configuration settings -->
+   <bean id="roleVoter" class="org.acegisecurity.vote.RoleVoter"/>
+
+   <!-- An access decision voter that reads ACL_IMAGE_READ configuration settings -->
+  <bean id="aclImageReadVoter"
+    class="org.acegisecurity.vote.BasicAclEntryVoter">
+    <property name="processConfigAttribute">
+      <value>ACL_IMAGE_READ</value>
+    </property>
+    <property name="processDomainObjectClass">
+      <value>com.trailmagic.image.Image</value>
+    </property>
+    <property name="aclManager">
+      <ref local="aclManager"/>
+    </property>
+    <property name="requirePermission">
+      <list>
+        <ref local="org.acegisecurity.acl.basic.SimpleAclEntry.ADMINISTRATION"/>
+        <ref local="org.acegisecurity.acl.basic.SimpleAclEntry.READ"/>
+      </list>
+    </property>
+  </bean>
+
+
+  <!-- ============ METHOD INVOCATION AUTHORIZATION ==================== -->
+
+  <!-- ACL permission masks used by this application -->
+  <bean id="simpleAclEntry.ADMINISTRATION"
+    class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+    <property name="staticField">
+      <value>org.acegisecurity.acl.basic.SimpleAclEntry.ADMINISTRATION</value>
+    </property>
+  </bean>
+  
+  <bean id="simpleAclEntry.READ"
+    class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+    <property name="staticField">
+      <value>org.acegisecurity.acl.basic.SimpleAclEntry.READ</value>
+    </property>
+  </bean>
+  
+  <bean id="simpleAclEntry.DELETE"
+    class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+    <property name="staticField">
+      <value>org.acegisecurity.acl.basic.SimpleAclEntry.DELETE</value>
+    </property>
+  </bean>
+
+
+
+  <!-- An access decision voter for ACL_IMAGE_READ configuration settings -->
+  <bean id="aclImageReadVoter"
+    class="org.acegisecurity.vote.BasicAclEntryVoter">
+    <property name="processConfigAttribute">
+      <value>ACL_IMAGE_READ</value>
+    </property>
+    <property name="processDomainObjectClass">
+      <value>com.trailmagic.image.Image</value>
+    </property>
+    <property name="aclManager"><ref local="aclManager"/></property>
+    <property name="requirePermission">
+      <list>
+        <ref local="simpleAclEntry.ADMINISTRATION"/>
+        <ref local="simpleAclEntry.READ"/>
+      </list>
+    </property>
+  </bean>
+
+  <!-- An access decision voter for ACL_IMAGE_DELETE configuration settings -->
+  <bean id="aclImageDeleteVoter"
+    class="org.acegisecurity.vote.BasicAclEntryVoter">
+    <property name="processConfigAttribute">
+      <value>ACL_IMAGE_DELETE</value>
+    </property>
+    <property name="processDomainObjectClass">
+      <value>com.trailmagic.image.Image</value>
+    </property>
+    <property name="aclManager"><ref local="aclManager"/></property>
+    <property name="requirePermission">
+      <list>
+        <ref local="simpleAclEntry.ADMINISTRATION"/>
+        <ref local="simpleAclEntry.DELETE"/>
+      </list>
+    </property>
+  </bean>
+
+  <!-- An access decision voter for ACL_IMAGE_ADMIN configuration settings -->
+  <bean id="aclImageAdminVoter"
+    class="org.acegisecurity.vote.BasicAclEntryVoter">
+    <property name="processConfigAttribute">
+      <value>ACL_IMAGE_ADMIN</value>
+    </property>
+    <property name="processDomainObjectClass">
+      <value>com.trailmagic.image.Image</value>
+    </property>
+    <property name="aclManager"><ref local="aclManager"/></property>
+    <property name="requirePermission">
+      <list>
+        <ref local="simpleAclEntry.ADMINISTRATION"/>
+      </list>
+    </property>
+  </bean>
+  
+  <bean id="imageAccessDecisionManager"
+    class="org.acegisecurity.vote.AffirmativeBased">
+    <property name="allowIfAllAbstainDecisions">
+      <value>false</value>
+    </property>
+    <property name="decisionVoters">
+      <list>
+        <ref bean="testVoter"/>
+        <ref bean="aclImageReadVoter"/>
+        <ref bean="aclImageDeleteVoter"/>
+        <ref bean="aclImageAdminVoter"/>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="testVoter"
+    class="com.trailmagic.image.security.TestVoter"/>
+
+
+  <!--
+  you got some 'splainin' to do
+    -->
+  <bean id="imageFactorySecurity"
+    class="org.acegisecurity.intercept.method.aopalliance.MethodSecurityInterceptor">
+    <property name="validateConfigAttributes">
+      <value>true</value>
+    </property>
+    <property name="authenticationManager">
+      <ref bean="authenticationManager"/>
+    </property>
+    <property name="accessDecisionManager">
+      <ref local="imageAccessDecisionManager"/>
+    </property>
+    <property name="afterInvocationManager">
+      <ref local="afterInvocationManager"/>
+    </property>
+    <property name="objectDefinitionSource">
+      <value>
+        com.trailmagic.image.ImageFactory.getById=ACL_IMAGE_READ,AFTER_ACL_READ
+        com.trailmagic.image.ImageFactory.getAll=ACL_IMAGE_READ,AFTER_ACL_COLLECTION_READ
+        com.trailmagic.image.ImageFactory.getByNameAndGroup=AFTER_ACL_COLLECTION_READ
+        com.trailmagic.image.ImageFactory.getByName=AFTER_ACL_COLLECTION_READ
+        com.trailmagic.image.ImageFrame.getImage=ACL_IMAGE_READ,AFTER_ACL_READ
+      </value>
+    </property>
+  </bean>
+
+  <!-- ======= "AFTER INTERCEPTION" AUTHORIZATION DEFINITIONS =========== -->
+
+  <bean id="afterInvocationManager"
+    class="org.acegisecurity.afterinvocation.AfterInvocationProviderManager">
+    <property name="providers">
+      <list>
+        <ref local="afterAclRead"/>
+        <ref local="afterAclCollectionRead"/>
+      </list>
+    </property>
+  </bean>
+   
+  <!-- Processes AFTER_ACL_COLLECTION_READ configuration settings -->
+  <bean id="afterAclCollectionRead"
+    class="org.acegisecurity.afterinvocation.BasicAclEntryAfterInvocationCollectionFilteringProvider">
+    <property name="aclManager"><ref local="aclManager"/></property>
+    <property name="requirePermission">
+      <list>
+        <ref local="simpleAclEntry.ADMINISTRATION"/>
+        <ref local="simpleAclEntry.READ"/>
+      </list>
+    </property>
+   </bean>
+   
+  <!-- Processes AFTER_ACL_READ configuration settings -->
+  <bean id="afterAclRead"
+    class="org.acegisecurity.afterinvocation.BasicAclEntryAfterInvocationProvider">
+    <property name="aclManager"><ref local="aclManager"/></property>
+    <property name="requirePermission">
+      <list>
+        <ref local="simpleAclEntry.ADMINISTRATION"/>
+        <ref local="simpleAclEntry.READ"/>
+      </list>
+    </property>
+  </bean>
+</beans>

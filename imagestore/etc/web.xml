@@ -13,6 +13,7 @@
       /WEB-INF/applicationContext-global.xml
       /WEB-INF/applicationContext-user.xml
       /WEB-INF/applicationContext-imagestore.xml
+      /WEB-INF/applicationContext-imagestore-authorization.xml
     </param-value>
   </context-param>
   

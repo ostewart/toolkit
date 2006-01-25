@@ -33,6 +33,8 @@ public class HibernateImageGroupFactory implements ImageGroupFactory {
         "rollByOwnerAndName";
     private static final String GROUPS_BY_IMAGE_QRY =
         "groupsByImage";
+    private static final String ROLL_FOR_IMAGE_QRY =
+        "rollForImage";
 
     private SessionFactory m_sessionFactory;
         
@@ -181,6 +183,24 @@ public class HibernateImageGroupFactory implements ImageGroupFactory {
             Query qry = session.getNamedQuery(GROUPS_BY_IMAGE_QRY);
             qry.setEntity("image", image);
             return qry.list();
+        } catch (HibernateException e) {
+            throw SessionFactoryUtils.convertHibernateAccessException(e);
+        }
+    }
+
+    public ImageGroup getRollForImage(Image image) {
+        // images should always only be in one roll
+        try {
+            Session session =
+                SessionFactoryUtils.getSession(m_sessionFactory, false);
+            Query qry = session.getNamedQuery(ROLL_FOR_IMAGE_QRY);
+            qry.setEntity("image", image);
+            List results = qry.list();
+            if (results.size() < 1) {
+                return null;
+            }
+
+            return (ImageGroup) results.get(0);
         } catch (HibernateException e) {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
         }
