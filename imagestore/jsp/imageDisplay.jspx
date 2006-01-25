@@ -1,10 +1,5 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="tm" uri="http://trailmagic.com/taglibs/image" %>
-<c:set var="datePattern" value="hh:mm a dd-MMM-yyyy"/>
-
 View to display a single Image.
 
 Model Requirements:
@@ -21,7 +16,20 @@ prevImage: Image
 groupsContainingImage: ImageGroups that contain frame.image
 
 -->
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"
+  xmlns:jsp="http://java.sun.com/JSP/Page"
+  xmlns:c="http://java.sun.com/jsp/jstl/core"
+  xmlns:fmt="http://java.sun.com/jsp/jstl/fmt"
+  xmlns:tm="http://trailmagic.com/taglibs/image">
+
+  <jsp:output 
+    omit-xml-declaration="false"
+    doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"
+    doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
+    doctype-root-element="html"/>
+
+    <c:set var="datePattern" value="hh:mm a dd-MMM-yyyy"/>
+
   <head>
     <title><c:out value="${imageGroup.displayName}"/><c:if test="${!empty
     imageGroup}"> : </c:if><c:out value="${image.displayName}"/></title>
@@ -75,22 +83,24 @@ groupsContainingImage: ImageGroups that contain frame.image
       </c:choose>
       <div class="image-sizes">
         | <c:forEach var="imf" items="${image.manifestations}">
-          <a href="?size=<c:out value="${imf.area}"/>">
+          <a href="?size=${imf.area}">
         <c:out value="${imf.width}"/>x<c:out
           value="${imf.height}"/></a> |
         </c:forEach>
       </div>
       <div>
         <br/>
-      <c:out value="${image.caption}"/><br>
-      <br/>
+      <c:out value="${image.caption}"/><br />
+      <br />
       <c:out value="${image.copyright}"/>
-      <c:out value="${image.creator}"/><br>
-      Owned by <tm:imageGroupLink owner="${image.owner}" groupType="${imageGroup.type}">${image.owner.screenName}</tm:imageGroupLink><br/>
+      <c:out value="${image.creator}"/><br />
+      Owned by <tm:imageGroupLink owner="${image.owner}"
+                          groupType="${imageGroup.type}">${image.owner.screenName}</tm:imageGroupLink>
+                        <br />
     </div>
 
     <!-- Photo properties -->
-    <c:if test="${image.class.name == \"com.trailmagic.image.Photo\"}">
+    <c:if test="${image.class.name eq 'com.trailmagic.image.Photo'}">
     <div style="clear: both; text-align: center">
       <c:if test="${!empty image.notes}">
         Image Notes: <c:out value="${image.notes}"/><br/>
@@ -151,6 +161,6 @@ groupsContainingImage: ImageGroups that contain frame.image
         <tm:imageFrameLink frame="${next}">Next --&gt;</tm:imageFrameLink>
         </c:if>
      </div>
-
+      </div>
   </body>
 </html>

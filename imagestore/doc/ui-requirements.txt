@@ -1,0 +1,26 @@
+List ImageGroups Page:
+title [Albums/Rolls for User]
+link up [list of users]
+link over (to other IG type) [Albums -> Rolls, Rolls -> Albums]
+list of ImageGroups:
+ ImageGroup display name
+ preview image(s) (thumbnail)
+ number of images
+ description?
+ date span
+
+user information
+preferences link
+breadcrumbs
+
+---
+
+
+Display ImageGroup Page:
+title [ImageGroup display name]
+description
+number of images
+index [images 1 - 10 of 9268]
+images
+creation/modification date?
+date span?

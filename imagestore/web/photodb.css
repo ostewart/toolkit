@@ -1,0 +1,87 @@
+
+#globalHeader {
+	background-color: orange;
+
+	margin-left: auto;
+	margin-right: auto;
+
+	width: 100%;
+	clear: both;
+}
+
+#globalHeader .userAuth {
+	float: right;
+} 
+
+#globalHeader .breadcrumbs{
+	float: left;
+}
+
+#globalFooter {
+	background-color: purple;
+
+	margin-left: auto;
+	margin-right: auto;
+
+	width: 100%;
+	clear: both;
+}
+
+#globalFooter .footerLeft{
+	float: left;
+}
+
+#globalFooter .footerRight{
+	float: right;
+}
+
+
+#imageGroup {
+	background-color: yellow;
+}
+
+
+#imageGroup #header {
+	background-color: red;
+
+	clear: both;
+}
+
+.thumbnailList {
+	background-color: gray;
+
+	display: block;
+	list-style: none;
+	
+	text-align: center;
+
+	margin-left: auto;
+	margin-right: auto;
+	padding: 5px;
+}
+
+.thumbnailList li {
+	display: inline;
+}
+
+
+#imageGroup #imageGroupDescription {
+	background-color: green;
+}
+
+.thumbnailList li a img {
+	border-color: gray;
+	border-style: solid;
+	padding: 5px;
+	vertical-align: middle;
+}
+
+.thumbnailList li a img:hover {
+	border-style: solid;
+	border-color: blue;
+}
+
+.thumbnailList li a img:active {
+	border-style: solid;
+	border-color: lightgray;
+}

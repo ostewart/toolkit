@@ -16,7 +16,16 @@
     </property>
   </bean>
 
-  <bean id="viewResolver"
+  <bean id="jspxViewResolver"
+    class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+    <property name="prefix"><value>/WEB-INF/jsp/</value></property>
+    <property name="suffix"><value>.jspx</value></property>
+    <property name="viewClass">
+      <value>org.springframework.web.servlet.view.JstlView</value>
+    </property>
+  </bean>
+<!--
+  <bean id="jspViewResolver"
     class="org.springframework.web.servlet.view.UrlBasedViewResolver">
     <property name="prefix"><value>/WEB-INF/jsp/</value></property>
     <property name="suffix"><value>.jsp</value></property>
@@ -24,6 +33,7 @@
       <value>org.springframework.web.servlet.view.JstlView</value>
     </property>
   </bean>
+  -->
 
   <bean id="multipartResolver" 
     class="org.springframework.web.multipart.commons.CommonsMultipartResolver">

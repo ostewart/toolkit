@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+View to list Albums.
+
+Model Requirements:
+user: currently logged in user
+imageGroups: List of ImageGroups
+groupType: the type of ImageGroup
+groupTypeDisplay: the (singular) display name of the type
+owner: the current albums' owner
+
+-->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"
+    xmlns:jsp="http://java.sun.com/JSP/Page"
+    xmlns:c="http://java.sun.com/jsp/jstl/core"
+    xmlns:fmt="http://java.sun.com/jsp/jstl/fmt"
+  xmlns:tm="http://trailmagic.com/taglibs/image">
+
+    <jsp:output 
+      omit-xml-declaration="false"
+      doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"
+      doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
+      doctype-root-element="html"/>
+
+    <head>
+      <title>
+        <c:out value="${groupTypeDisplay}"/>s for User:
+        <c:out value="${owner.screenName}"/>
+      </title>
+    </head>
+    
+    <body>
+      <h1>
+        <c:out value="${groupTypeDisplay}"/>s for User: <c:out
+          value="${owner.screenName}"/>
+      </h1>
+      <ul>
+        <c:forEach var="snapper" items="${imageGroups}">
+          <li>
+            <a href="${snapper.name}">${snapper.displayName}</a>
+          </li>
+        </c:forEach>
+      </ul>
+    </body>
+  </html>
