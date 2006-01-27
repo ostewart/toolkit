@@ -12,10 +12,11 @@ owner: the current albums' owner
 
 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"
-    xmlns:jsp="http://java.sun.com/JSP/Page"
-    xmlns:c="http://java.sun.com/jsp/jstl/core"
-    xmlns:fmt="http://java.sun.com/jsp/jstl/fmt"
-  xmlns:tm="http://trailmagic.com/taglibs/image">
+  xmlns:jsp="http://java.sun.com/JSP/Page"
+  xmlns:c="http://java.sun.com/jsp/jstl/core"
+  xmlns:fmt="http://java.sun.com/jsp/jstl/fmt"
+  xmlns:tm="http://trailmagic.com/taglibs/image"
+  xmlns:authz="http://acegisecurity.org/authz">
 
     <jsp:output 
       omit-xml-declaration="false"
@@ -28,19 +29,39 @@ owner: the current albums' owner
         <c:out value="${groupTypeDisplay}"/>s for User:
         <c:out value="${owner.screenName}"/>
       </title>
+      <link rel="stylesheet" href="/photodb.css" type="text/css" />
     </head>
     
-    <body>
-      <h1>
-        <c:out value="${groupTypeDisplay}"/>s for User: <c:out
-          value="${owner.screenName}"/>
-      </h1>
-      <ul>
-        <c:forEach var="snapper" items="${imageGroups}">
-          <li>
+    <body id="imageGroupList">
+      <div id="globalHeader">
+        <div class="breadcrumbs">
+          trailmagic : testing : some : places
+        </div>
+
+        <div class="userAuth">
+          <authz:authentication operation="username"/> | Home | Sign Out
+        </div>
+      </div>
+
+      <div id="header" style="clear: both">
+        <h1 class="thingDescription">
+          <span class="bigThing">
+            <c:out value="${groupTypeDisplay}"/>s for User:
+          </span>
+          <span class="subThing">
+            <c:out value="${owner.screenName}"/>
+          </span>
+        </h1>
+      </div>
+
+      <div class="imageGroupList">
+        <ul>
+          <c:forEach var="snapper" items="${imageGroups}">
+            <li>
             <a href="${snapper.name}">${snapper.displayName}</a>
-          </li>
-        </c:forEach>
-      </ul>
+            </li>
+          </c:forEach>
+        </ul>
+      </div>
     </body>
   </html>

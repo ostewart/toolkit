@@ -20,57 +20,86 @@ groupsContainingImage: ImageGroups that contain frame.image
   xmlns:jsp="http://java.sun.com/JSP/Page"
   xmlns:c="http://java.sun.com/jsp/jstl/core"
   xmlns:fmt="http://java.sun.com/jsp/jstl/fmt"
-  xmlns:tm="http://trailmagic.com/taglibs/image">
+  xmlns:tm="http://trailmagic.com/taglibs/image"
+  xmlns:authz="http://acegisecurity.org/authz">
 
   <jsp:output 
     omit-xml-declaration="false"
     doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"
     doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
     doctype-root-element="html"/>
-
+    
     <c:set var="datePattern" value="hh:mm a dd-MMM-yyyy"/>
-
-  <head>
-    <title><c:out value="${imageGroup.displayName}"/><c:if test="${!empty
-    imageGroup}"> : </c:if><c:out value="${image.displayName}"/></title>
-  </head>
-
-  <body>
-    <div style="clear: both">
-      <div style="float: left">
-      <!-- Previous Image/Frame Link
+      <!-- Previous Image/Frame Link -->
       <c:if test="${!empty prevImage}">
         <c:set var="prev" value="${prevFrame}"/>
       </c:if>
       <c:if test="${!empty prevFrame}">
         <c:set var="prev" value="${prevFrame}"/>
       </c:if>
-      -->
-      <c:if test="${!empty prev}">
-        <tm:imageFrameLink frame="${prev}">&lt;--
-        Previous</tm:imageFrameLink>
-        </c:if>
-      </div>
-      <div style="float: right">
-
-      <!-- Next Image/Frame Link
+      <!-- Next Image/Frame Link -->
       <c:if test="${!empty nextImage}">
         <c:set var="next" value="${nextFrame}"/>
       </c:if>
       <c:if test="${!empty nextFrame}">
         <c:set var="next" value="${nextFrame}"/>
       </c:if>
-      -->
-      <c:if test="${!empty next}">
-        <tm:imageFrameLink frame="${next}">Next --&gt;</tm:imageFrameLink>
-        </c:if>
-      </div>
-    </div>
+      
+            
+            
+      
+      <head>
+        <title>
+          <c:out value="${imageGroup.displayName}"/>
+            <c:if test="${!empty imageGroup}"> : </c:if>
+            <c:out value="${image.displayName}"/>
+        </title>
+        <link rel="stylesheet" href="/photodb.css" type="text/css" />
+      </head>
+      
+      <body id="image">
+        <div id="globalHeader">
+          <div class="breadcrumbs">
+            trailmagic : testing : some : places
+          </div>
+          
+          <div class="userAuth">
+            <authz:authentication operation="username"/> | Home | Sign Out
+          </div>
+        </div>
 
-    <div style="clear: both; float: none; text-align: center; width: 80%; margin: auto">
-      <h1><tm:imageGroupLink imageGroup="${imageGroup}"><c:out value="${imageGroup.displayName}"/></tm:imageGroupLink><c:if test="${!empty
-            imageGroup}"> : </c:if><c:out
-            value="${image.displayName}"/></h1>
+        <div class="navSection">
+          <span class="prevNav">
+            <c:if test="${!empty prev}">
+              <tm:imageFrameLink frame="${prev}">&lt;--
+                Previous</tm:imageFrameLink>
+            </c:if>
+          </span>
+          <span class="nextNav">
+            <c:if test="${!empty next}">
+              <tm:imageFrameLink frame="${next}">Next --&gt;</tm:imageFrameLink>
+            </c:if>
+          </span>
+        </div>
+
+        <div class="header">
+          <h1 class="thingDescription">
+            <span class="bigThing">
+              <tm:imageGroupLink imageGroup="${imageGroup}">
+                <c:out value="${imageGroup.displayName}"/>
+              </tm:imageGroupLink>
+            </span>
+            <span class="subThing">
+              <c:if test="${!empty imageGroup}"> : </c:if>
+              <c:out value="${image.displayName}"/>
+            </span>
+          </h1>
+
+        </div>
+
+<!--    <div style="clear: both; float: none; text-align: center; -->
+          <!--    width: 80%; margin: auto">-->
+          <div class="imageDisplay">
       <c:choose>
       <c:when test="${!empty image}">
         <tm:image image="${image}"/>
@@ -101,7 +130,7 @@ groupsContainingImage: ImageGroups that contain frame.image
 
     <!-- Photo properties -->
     <c:if test="${image.class.name eq 'com.trailmagic.image.Photo'}">
-    <div style="clear: both; text-align: center">
+    <div class="photoProperties">
       <c:if test="${!empty image.notes}">
         Image Notes: <c:out value="${image.notes}"/><br/>
         </c:if>
@@ -132,31 +161,16 @@ groupsContainingImage: ImageGroups that contain frame.image
     </c:forEach>
     </c:if>
 </div>
-    <div style="clear: both">
-      <div style="float: left">
-      <!-- Previous Image/Frame Link
-      <c:if test="${!empty prevImage}">
-        <c:set var="prev" value="${prevFrame}"/>
-      </c:if>
-      <c:if test="${!empty prevFrame}">
-        <c:set var="prev" value="${prevFrame}"/>
-      </c:if>
-      -->
+    <div class="navSection">
+      <div class="prevNav">
+
       <c:if test="${!empty prev}">
         <tm:imageFrameLink frame="${prev}">&lt;--
         Previous</tm:imageFrameLink>
         </c:if>
       </div>
-      <div style="float: right">
+      <div class="nextNav">
 
-      <!-- Next Image/Frame Link
-      <c:if test="${!empty nextImage}">
-        <c:set var="next" value="${nextFrame}"/>
-      </c:if>
-      <c:if test="${!empty nextFrame}">
-        <c:set var="next" value="${nextFrame}"/>
-      </c:if>
-      -->
       <c:if test="${!empty next}">
         <tm:imageFrameLink frame="${next}">Next --&gt;</tm:imageFrameLink>
         </c:if>

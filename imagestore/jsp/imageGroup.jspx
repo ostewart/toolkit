@@ -12,21 +12,23 @@ frames: List of ImageFrames for this group
 
 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"
-    xmlns:jsp="http://java.sun.com/JSP/Page"
-    xmlns:c="http://java.sun.com/jsp/jstl/core"
-    xmlns:fmt="http://java.sun.com/jsp/jstl/fmt"
-  xmlns:tm="http://trailmagic.com/taglibs/image">
+  xmlns:jsp="http://java.sun.com/JSP/Page"
+  xmlns:c="http://java.sun.com/jsp/jstl/core"
+  xmlns:fmt="http://java.sun.com/jsp/jstl/fmt"
+  xmlns:tm="http://trailmagic.com/taglibs/image"
+  xmlns:authz="http://acegisecurity.org/authz">
 
-    <jsp:output 
-      omit-xml-declaration="false"
-      doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"
-      doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
-      doctype-root-element="html"/>
-  <head>
+  <jsp:output 
+    omit-xml-declaration="false"
+    doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"
+    doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
+    doctype-root-element="html"/>
+
+    <head>
       <title><c:out value="${imageGroup.displayName}"/></title>
       <!-- XXX: must make this path flexible -->
       <link rel="stylesheet" href="/photodb.css" type="text/css" />
-  </head>
+    </head>
 
     <body id="imageGroup">
       <div id="globalHeader">
@@ -35,14 +37,14 @@ frames: List of ImageFrames for this group
         </div>
 
         <div class="userAuth">
-          someuser | Home | Sign Out
+          <authz:authentication operation="username"/> | Home | Sign Out
         </div>
       </div>
 
       <div id="header">
-        <h1 class="imageGroupName">
-          <span class="label">Album:</span>
-          <span class="displayName">${imageGroup.displayName}</span>
+        <h1 class="thingDescription">
+          <span class="bigThing">${groupTypeDisplay}</span>:
+          <span class="subThing">${imageGroup.displayName}</span>
         </h1>
 
         <h2 class="ownerName">
