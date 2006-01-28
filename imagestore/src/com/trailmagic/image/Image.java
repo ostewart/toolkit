@@ -14,7 +14,7 @@ public class Image {
     private String m_caption;
     private String m_copyright;
     private String m_creator;
-    private SortedSet m_manifestations;
+    private SortedSet<ImageManifestation> m_manifestations;
     private User m_owner;
     private ImageCD m_imageCD;
     private Integer m_number;
@@ -103,11 +103,12 @@ public class Image {
         m_imageCD = cd;
     }
 
-    public SortedSet getManifestations() {
+    public SortedSet<ImageManifestation> getManifestations() {
         return m_manifestations;
     }
 
-    public void setManifestations(SortedSet manifestations) {
+    public void setManifestations(SortedSet<ImageManifestation>
+                                  manifestations) {
         m_manifestations = manifestations;
     }
 

@@ -13,6 +13,7 @@
         <prop key="/import">imageImportController</prop>
         <prop key="/mf/**">imageManifestationController</prop>
         <prop key="/logout">logoutController</prop>
+        <prop key="/**">fileController</prop>
       </props>
     </property>
   </bean>
@@ -42,6 +43,13 @@
     <!-- one of the properties available; the maximum file size in bytes -->
     <property name="maxUploadSize">
       <value>10000000</value>
+    </property>
+  </bean>
+
+  <bean id="fileController"
+    class="org.springframework.web.servlet.mvc.ServletForwardingController">
+    <property name="servletName">
+      <value>fileServlet</value> <!-- set in web.xml -->
     </property>
   </bean>
 

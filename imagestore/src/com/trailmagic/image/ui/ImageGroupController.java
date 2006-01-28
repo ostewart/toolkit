@@ -33,7 +33,7 @@ public class ImageGroupController implements Controller, ApplicationContextAware
     private static final String USERS_VIEW = "imageGroupUsers";
     private static final String IMG_GROUP_VIEW = "imageGroup";
     private static final String IMAGE_DISPLAY_VIEW = "imageDisplay";
-    
+
     private static Logger s_logger =
         Logger.getLogger(ImageGroupController.class);
 
@@ -44,7 +44,7 @@ public class ImageGroupController implements Controller, ApplicationContextAware
 
         m_appContext = appContext;
     }
-        
+
     public ModelAndView handleRequest(HttpServletRequest req,
                                       HttpServletResponse res)
         throws Exception {
@@ -64,14 +64,14 @@ public class ImageGroupController implements Controller, ApplicationContextAware
             (ImageGroupFactory)m_appContext.getBean(IMG_GROUP_FACTORY_BEAN);
         UserFactory userFactory =
             (UserFactory)m_appContext.getBean(USER_FACTORY_BEAN);
-        
+
         UrlPathHelper pathHelper = new UrlPathHelper();
         String myPath = pathHelper.getLookupPathForRequest(req);
         s_logger.debug("Lookup path: " +
                        pathHelper.getLookupPathForRequest(req));
         StringTokenizer pathTokens = new StringTokenizer(myPath, "/");
         String groupType = pathTokens.nextToken();
-        Map model = new HashMap();
+        Map<String,Object> model = new HashMap<String,Object>();
 
         // depluralize
         groupType = groupType.substring(0, groupType.length() - 1);
@@ -80,7 +80,7 @@ public class ImageGroupController implements Controller, ApplicationContextAware
         model.put("groupTypeDisplay", groupTypeDisplay);
         model.put("groupType", groupType);
 
-        // got no args: show users        
+        // got no args: show users
         if ( !pathTokens.hasMoreTokens() ) {
             model.put("owners", imgGroupFactory.getOwnersByType(groupType));
             return new ModelAndView(USERS_VIEW, model);
@@ -106,7 +106,7 @@ public class ImageGroupController implements Controller, ApplicationContextAware
             imgGroupFactory.getByOwnerNameAndType(owner, groupName, groupType);
         model.put("imageGroup", group);
 
-        SortedSet frames = group.getFrames();
+        SortedSet<ImageFrame> frames = group.getFrames();
         model.put("frames", frames);
         /*
         // XXX: This should be fixed
@@ -133,20 +133,20 @@ public class ImageGroupController implements Controller, ApplicationContextAware
             }
             model.put("frame", frame);
             model.put("image", frame.getImage());
-            List groupsContainingImage =
+            List<ImageGroup> groupsContainingImage =
                 imgGroupFactory.getByImage(frame.getImage());
-            List otherGroups = new ArrayList();
-            Iterator iter = groupsContainingImage.iterator();
+            List<ImageGroup> otherGroups = new ArrayList<ImageGroup>();
+            Iterator<ImageGroup> iter = groupsContainingImage.iterator();
             ImageGroup containingGroup;
             while (iter.hasNext()) {
-                containingGroup = (ImageGroup)iter.next();
+                containingGroup = iter.next();
                 if ( !group.equals(containingGroup) ) {
                     otherGroups.add(containingGroup);
                 }
             }
             model.put("groupsContainingImage", otherGroups);
 
-            SortedSet tmpSet = frames.headSet(frame);
+            SortedSet<ImageFrame> tmpSet = frames.headSet(frame);
 
 //             Iterator iter = tmpSet.iterator();
 //             iter.next();
@@ -156,18 +156,18 @@ public class ImageGroupController implements Controller, ApplicationContextAware
 
 
             if ( !tmpSet.isEmpty() ) {
-                ImageFrame prevFrame = (ImageFrame)tmpSet.last();
+                ImageFrame prevFrame = tmpSet.last();
                 model.put("prevFrame", prevFrame);
             }
 
             tmpSet = frames.tailSet(frame);
-            iter = tmpSet.iterator();
-            iter.next();
-            if ( iter.hasNext() ) {
-                ImageFrame nextFrame = (ImageFrame)iter.next();
+            Iterator<ImageFrame> framesIter = tmpSet.iterator();
+            framesIter.next();
+            if ( framesIter.hasNext() ) {
+                ImageFrame nextFrame = framesIter.next();
                 model.put("nextFrame", nextFrame);
             }
-        
+
             // got user, group, and frame number: show that frame
             return new ModelAndView(IMAGE_DISPLAY_VIEW, model);
         } catch (NumberFormatException e) {

@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.trailmagic.image.*;
 
+@SuppressWarnings("unchecked") // for query.list()
 public class HibernateImageFactory implements ImageFactory {
     private static final String ALL_IMAGES_QUERY_NAME = "allImages";
     private static final String IMAGES_BY_NAME_QUERY_NAME = "imagesByName";
@@ -16,7 +17,7 @@ public class HibernateImageFactory implements ImageFactory {
         "imagesByNameAndGroup";
 
     private SessionFactory m_sessionFactory;
-        
+
     public SessionFactory getSessionFactory() {
         return m_sessionFactory;
     }
@@ -24,7 +25,7 @@ public class HibernateImageFactory implements ImageFactory {
     public void setSessionFactory(SessionFactory sf) {
         m_sessionFactory = sf;
     }
-        
+
     public Image newInstance() {
         return new Image();
     }
@@ -37,14 +38,14 @@ public class HibernateImageFactory implements ImageFactory {
                 SessionFactoryUtils.getSession(m_sessionFactory, false);
 
             return (Image)session.get(Image.class, new Long(id));
-            
+
         } catch (HibernateException e) {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
         }
-        
+
     }
 
-    public List getAll() {
+    public List<Image> getAll() {
         try {
             Session session =
                 SessionFactoryUtils.getSession(m_sessionFactory, false);
@@ -55,7 +56,7 @@ public class HibernateImageFactory implements ImageFactory {
         }
     }
 
-    public List getByName(String name) {
+    public List<Image> getByName(String name) {
         try {
             Session session =
                 SessionFactoryUtils.getSession(m_sessionFactory, false);
@@ -64,10 +65,10 @@ public class HibernateImageFactory implements ImageFactory {
             return query.list();
         } catch (HibernateException e) {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
-        } 
+        }
     }
 
-    public List getByNameAndGroup(String name, ImageGroup group) {
+    public List<Image> getByNameAndGroup(String name, ImageGroup group) {
         try {
             Session session =
                 SessionFactoryUtils.getSession(m_sessionFactory, false);
@@ -78,6 +79,6 @@ public class HibernateImageFactory implements ImageFactory {
             return query.list();
         } catch (HibernateException e) {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
-        } 
+        }
     }
 }

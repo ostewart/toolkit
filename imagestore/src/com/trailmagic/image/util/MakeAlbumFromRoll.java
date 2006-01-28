@@ -34,7 +34,7 @@ public class MakeAlbumFromRoll implements ApplicationContextAware {
     private static final String MAFR_BEAN = "makeAlbumFromRoll";
 
     private static Logger s_logger = Logger.getLogger(MakeAlbumFromRoll.class);
-    
+
     public SessionFactory getSessionFactory() {
         return m_sessionFactory;
     }
@@ -71,7 +71,7 @@ public class MakeAlbumFromRoll implements ApplicationContextAware {
             // XXX: not copying subgroups
             // this is probably a leaf group
             m_session.save(album);
-        
+
             SortedSet frames = roll.getFrames();
             Iterator iter = frames.iterator();
             int frameNum;
@@ -88,8 +88,8 @@ public class MakeAlbumFromRoll implements ApplicationContextAware {
             }
             m_session.save(album);
             m_transaction.commit();
-            SessionFactoryUtils.closeSessionIfNecessary(m_session,
-                                                        m_sessionFactory);
+            SessionFactoryUtils.releaseSession(m_session,
+                                               m_sessionFactory);
             s_logger.info("Saved new album: " + album.getName());
         } catch (Exception e) {
             s_logger.error("Exception copying image frame data", e);

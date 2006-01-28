@@ -1,6 +1,7 @@
 package com.trailmagic.user;
 
 import java.security.MessageDigest;
+import java.security.Principal;
 import javax.security.auth.spi.LoginModule;
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
@@ -30,7 +31,7 @@ public class UserLoginModule implements LoginModule {
     private Subject m_subject;
     private CallbackHandler m_handler;
     private SessionFactory m_sessFactory;
-    private List m_principals;
+    private List<Principal> m_principals;
     private boolean m_success;
 
     private static final String USER_QUERY =
@@ -47,7 +48,7 @@ public class UserLoginModule implements LoginModule {
                            Map sharedState, Map options) {
         m_handler = handler;
         m_subject = subject;
-        m_principals = new ArrayList();
+        m_principals = new ArrayList<Principal>();
         m_success = false;
 
         try {
@@ -72,7 +73,7 @@ public class UserLoginModule implements LoginModule {
             };
 
             m_handler.handle(callbacks);
-         
+
             String username = ((NameCallback)callbacks[0]).getName();
             char[] password = ((PasswordCallback)callbacks[1]).getPassword();
 
@@ -110,7 +111,7 @@ public class UserLoginModule implements LoginModule {
 
       return true;
     }
-    
+
     public boolean abort() throws LoginException {
         m_success = false;
         return logout();
@@ -144,12 +145,12 @@ public class UserLoginModule implements LoginModule {
 
         try {
             sess = m_sessFactory.openSession();
-        
+
             // validate with the User from hibernate
             Query query =
                 sess.createQuery(USER_QUERY);
             query.setString("screenName", username);
-        
+
             //            user = (User)query.uniqueResult();
             Object obj = query.uniqueResult();
             //            System.err.println("uniqueResult returned a " + obj.getClass());
@@ -159,27 +160,30 @@ public class UserLoginModule implements LoginModule {
             }
 
             String storedPass = user.getPassword();
-        
+
             if ( storedPass != null && password != null &&
                  password.length > 0 ) {
-                
+
                 MessageDigest md = MessageDigest.getInstance(HASH_ALGORITHM);
                 // this seems a little sketchy...are we handling charset right?
                 // what's the result when someone uses a non-ascii char?
                 String digest =
-                    HexUtils.convert(md.digest((new String(password)).getBytes()));
+                    HexUtils.convert(md.digest((new String(password))
+                                               .getBytes()));
                 valid = storedPass.equals(digest);
                 System.err.println("digest = " + digest);
             }
-            
+
             if (valid) {
                 m_principals.add(new UserPrincipal(user.getScreenName()));
                 query = sess.createQuery(GROUPS_QUERY);
                 query.setLong("id", user.getId());
                 Iterator iter = query.iterate();
-                Collection groups = new ArrayList();
+                Collection<GroupPrincipal> groups =
+                    new ArrayList<GroupPrincipal>();
                 while (iter.hasNext()) {
-                    groups.add(new GroupPrincipal(((Group)iter.next()).getName()));
+                    groups.add(new GroupPrincipal(((Group)iter.next())
+                                                  .getName()));
                 }
                 m_principals.addAll(groups);
             }
@@ -196,8 +200,7 @@ public class UserLoginModule implements LoginModule {
                 }
             }
         }
-        
+
         return valid;
     }
-
 }

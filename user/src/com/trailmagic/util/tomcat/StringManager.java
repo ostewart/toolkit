@@ -96,7 +96,7 @@ public class StringManager {
      * @param key
      */
     public String getString(String key) {
-        return MessageFormat.format(getStringInternal(key), null);
+        return MessageFormat.format(getStringInternal(key), (Object[]) null);
     }
 
 
@@ -234,7 +234,7 @@ public class StringManager {
      *
      * @param packageName
      */
-
+    @SuppressWarnings("unchecked")
     public synchronized static StringManager getManager(String packageName) {
         StringManager mgr = (StringManager)managers.get(packageName);
 

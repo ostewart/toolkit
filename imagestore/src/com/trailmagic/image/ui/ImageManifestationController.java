@@ -35,7 +35,7 @@ public class ImageManifestationController extends AbstractController {
     public void setControllerPath(String path) {
         m_controllerPath = path;
     }
-        
+
     public ModelAndView handleRequestInternal(HttpServletRequest req,
                                               HttpServletResponse res)
         throws Exception {
@@ -47,7 +47,7 @@ public class ImageManifestationController extends AbstractController {
         StringTokenizer pathTokens = new StringTokenizer(myPath, "/");
         int numTokens = pathTokens.countTokens();
 
-        Map model = new HashMap();
+        Map<String,Object> model = new HashMap<String,Object>();
 
         String method = pathTokens.nextToken();
 

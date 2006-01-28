@@ -120,8 +120,8 @@ public class ImagesParser extends DefaultHandler
             m_transaction.commit();
             s_logger.debug("ImagesParser: committed transaction.");
             if ( m_closeSession ) {
-                SessionFactoryUtils.closeSessionIfNecessary(m_session,
-                                                            m_sessionFactory);
+                SessionFactoryUtils.releaseSession(m_session,
+                                                   m_sessionFactory);
             }
         } catch (HibernateException e) {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
@@ -134,8 +134,8 @@ public class ImagesParser extends DefaultHandler
         try {
             m_transaction.rollback();
             if (m_closeSession) {
-                SessionFactoryUtils.closeSessionIfNecessary(m_session,
-                                                            m_sessionFactory);
+                SessionFactoryUtils.releaseSession(m_session,
+                                                   m_sessionFactory);
             }
         } catch (HibernateException e) {
             throw SessionFactoryUtils.convertHibernateAccessException(e);

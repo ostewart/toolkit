@@ -42,6 +42,7 @@ public class UserGroupAuthorityGranter implements AuthorityGranter {
      * @return A java.util.Set of role names to grant, or null meaning no
      *         roles should be granted for the principal.
      */
+    @SuppressWarnings("unchecked")
     public Set grant(Principal principal) {
         s_log.debug("Processing principal: " + principal);
         // unimplemented

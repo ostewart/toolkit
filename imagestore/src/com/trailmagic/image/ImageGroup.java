@@ -11,8 +11,8 @@ public class ImageGroup {
     private String m_name;
     private String m_displayName;
     private String m_description;
-    private SortedSet m_frames;
-    private Collection m_subgroups;
+    private SortedSet<ImageFrame> m_frames;
+    private Collection<ImageGroup> m_subgroups;
     private ImageGroup m_supergroup;
     private User m_owner;
 
@@ -68,16 +68,16 @@ public class ImageGroup {
         m_frames.add(frame);
     }
 
-    public SortedSet getFrames() {
+    public SortedSet<ImageFrame> getFrames() {
         return m_frames;
     }
 
-    public void setFrames(SortedSet frames) {
+    public void setFrames(SortedSet<ImageFrame> frames) {
         m_frames = frames;
     }
 
     public int getNextFrameNumber() {
-        ImageFrame lastFrame = (ImageFrame)m_frames.last();
+        ImageFrame lastFrame = m_frames.last();
         return lastFrame.getPosition() + 1;
     }
 
@@ -94,18 +94,18 @@ public class ImageGroup {
         m_subgroups.add(group);
     }
 
-    public Collection getSubgroups() {
+    public Collection<ImageGroup> getSubgroups() {
         return m_subgroups;
     }
 
-    public void setSubgroups(Collection subgroups) {
+    public void setSubgroups(Collection<ImageGroup> subgroups) {
         m_subgroups = subgroups;
     }
 
     public User getOwner() {
         return m_owner;
     }
-    
+
     public void setOwner(User owner) {
         m_owner = owner;
     }

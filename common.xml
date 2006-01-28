@@ -110,6 +110,7 @@
       optimize="${javac.debug}">
       <src path="${src.dir}"/>
       <classpath refid="build.classpath"/>
+      <compilerarg compiler="modern" line="-Xlint -Xlint:-serial -Xlint:-path"/>
     </javac>
 
     <!-- this should go away -->

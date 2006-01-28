@@ -50,7 +50,7 @@ public class MakeAlbum implements ApplicationContextAware {
     private static final String MAKE_ALBUM_BEAN = "makeAlbum";
 
     private static Logger s_logger = Logger.getLogger(MakeAlbum.class);
-    
+
     public SessionFactory getSessionFactory() {
         return m_sessionFactory;
     }
@@ -104,7 +104,7 @@ public class MakeAlbum implements ApplicationContextAware {
                 (ImageFactory)m_appContext.getBean(IMAGE_FACTORY_BEAN);
             String name = keepers.readLine();
             int position = 0;
-            
+
             while (name != null) {
                 List images = imgFactory.getByNameAndGroup(name, roll);
                 if (images.size() > 1) {
@@ -126,7 +126,7 @@ public class MakeAlbum implements ApplicationContextAware {
                 frame.setPosition(position);
                 frame.setImageGroup(album);
                 m_session.save(frame);
-                
+
                 s_logger.debug("Saved frame " + frame.getPosition()
                                + "with image " + image.getName());
 
@@ -136,8 +136,8 @@ public class MakeAlbum implements ApplicationContextAware {
 
             m_session.saveOrUpdate(album);
             m_transaction.commit();
-            SessionFactoryUtils.closeSessionIfNecessary(m_session,
-                                                        m_sessionFactory);
+            SessionFactoryUtils.releaseSession(m_session,
+                                               m_sessionFactory);
             s_logger.info("Saved new album: " + album.getName());
         } catch (Exception e) {
             s_logger.error("Exception copying image frame data", e);

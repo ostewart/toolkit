@@ -31,7 +31,7 @@ public class ImageGroupAddForm extends SimpleFormController {
     public void setUserFactory(UserFactory userFactory) {
         m_userFactory = userFactory;
     }
-        
+
 
     protected ModelAndView onSubmit(Object command) throws Exception {
         ImageGroup imgGroup = (ImageGroup)command;
@@ -39,7 +39,7 @@ public class ImageGroupAddForm extends SimpleFormController {
             SessionFactoryUtils.getSession(m_sessionFactory, false);
 
         imgGroup.setSupergroup(null);
-        imgGroup.setSubgroups(new ArrayList());
+        imgGroup.setSubgroups(new ArrayList<ImageGroup>());
         // TODO: implement multi-user
         imgGroup.setOwner(m_userFactory.getByScreenName("oliver"));
         // TODO: maybe implement new roll

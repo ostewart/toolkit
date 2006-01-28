@@ -10,6 +10,7 @@ import java.util.List;
 import com.trailmagic.user.User;
 import com.trailmagic.image.*;
 
+@SuppressWarnings("unchecked") // for query.list()
 public class HibernateImageGroupFactory implements ImageGroupFactory {
     private static final String ALBUM_BY_OWNER_AND_NAME_QRY =
         "albumByOwnerAndName";
@@ -26,7 +27,7 @@ public class HibernateImageGroupFactory implements ImageGroupFactory {
     private static final String GROUP_OWNERS_QRY =
         "groupOwnersByType";
     private static final String GROUPS_BY_OWNER_NAME_QRY =
-        "groupsByOwnerScreenNameAndType"; 
+        "groupsByOwnerScreenNameAndType";
     private static final String GROUP_BY_OWNER_NAME_TYPE_QRY =
         "groupByOwnerGroupNameAndType";
     private static final String ROLL_BY_OWNER_AND_NAME_QRY =
@@ -37,7 +38,7 @@ public class HibernateImageGroupFactory implements ImageGroupFactory {
         "rollForImage";
 
     private SessionFactory m_sessionFactory;
-        
+
     public SessionFactory getSessionFactory() {
         return m_sessionFactory;
     }
@@ -45,7 +46,7 @@ public class HibernateImageGroupFactory implements ImageGroupFactory {
     public void setSessionFactory(SessionFactory sf) {
         m_sessionFactory = sf;
     }
-        
+
     public ImageGroup newInstance(int type) {
         return new ImageGroup();
     }
@@ -91,7 +92,8 @@ public class HibernateImageGroupFactory implements ImageGroupFactory {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
         }
     }
-    public List getAlbumsByOwnerScreenName(String screenName) {
+
+    public List<ImageGroup> getAlbumsByOwnerScreenName(String screenName) {
         try {
             Session session =
                 SessionFactoryUtils.getSession(m_sessionFactory, false);
@@ -102,7 +104,8 @@ public class HibernateImageGroupFactory implements ImageGroupFactory {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
         }
     }
-    public List getAlbumOwners() {
+
+    public List<User> getAlbumOwners() {
         try {
             Session session =
                 SessionFactoryUtils.getSession(m_sessionFactory, false);
@@ -113,7 +116,7 @@ public class HibernateImageGroupFactory implements ImageGroupFactory {
         }
     }
 
-    public List getRollsByOwnerScreenName(String screenName) {
+    public List<ImageGroup> getRollsByOwnerScreenName(String screenName) {
         try {
             Session session =
                 SessionFactoryUtils.getSession(m_sessionFactory, false);
@@ -124,7 +127,7 @@ public class HibernateImageGroupFactory implements ImageGroupFactory {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
         }
     }
-    public List getRollOwners() {
+    public List<User> getRollOwners() {
         try {
             Session session =
                 SessionFactoryUtils.getSession(m_sessionFactory, false);
@@ -135,7 +138,7 @@ public class HibernateImageGroupFactory implements ImageGroupFactory {
         }
     }
 
-    public List getOwnersByType(String groupType) {
+    public List<User> getOwnersByType(String groupType) {
         try {
             Session session =
                 SessionFactoryUtils.getSession(m_sessionFactory, false);
@@ -147,8 +150,8 @@ public class HibernateImageGroupFactory implements ImageGroupFactory {
         }
     }
 
-    public List getByOwnerScreenNameAndType(String screenName,
-                                            String groupType) {
+    public List<ImageGroup> getByOwnerScreenNameAndType(String screenName,
+                                                        String groupType) {
         try {
             Session session =
                 SessionFactoryUtils.getSession(m_sessionFactory, false);
@@ -176,7 +179,7 @@ public class HibernateImageGroupFactory implements ImageGroupFactory {
         }
     }
 
-    public List getByImage(Image image) {
+    public List<ImageGroup> getByImage(Image image) {
         try {
             Session session =
                 SessionFactoryUtils.getSession(m_sessionFactory, false);

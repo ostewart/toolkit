@@ -27,7 +27,7 @@ public class ImageController extends AbstractController {
     public void setControllerPath(String path) {
         m_controllerPath = path;
     }
-        
+
     public ModelAndView handleRequestInternal(HttpServletRequest req,
                                               HttpServletResponse res)
         throws Exception {
@@ -43,9 +43,10 @@ public class ImageController extends AbstractController {
         myPath = myPath.substring(m_controllerPath.length());
         StringTokenizer pathTokens = new StringTokenizer(myPath, "/");
         int numTokens = pathTokens.countTokens();
-        
-        Map model = new HashMap();
-        ImageFactory imageFactory = 
+
+        Map<String,Object> model =
+            new HashMap<String,Object>();
+        ImageFactory imageFactory =
             (ImageFactory)getApplicationContext().getBean(IMAGE_FACTORY_BEAN);
 
         // got no args: show random images
