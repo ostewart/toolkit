@@ -28,6 +28,10 @@ frames: List of ImageFrames for this group
       <title><c:out value="${imageGroup.displayName}"/></title>
       <!-- XXX: must make this path flexible -->
       <link rel="stylesheet" href="/photodb.css" type="text/css" />
+      <link rel="stylesheet" href="/imagestore-color.css"
+          type="text/css" title="Standard"/>
+      <link rel="alternate stylesheet" href="/imagestore-debug.css"
+            type="text/css" title="Debug"/>
     </head>
 
     <body id="imageGroup">
@@ -37,7 +41,13 @@ frames: List of ImageFrames for this group
         </div>
 
         <div class="userAuth">
-          <authz:authentication operation="username"/> | Home | Sign Out
+          <authz:authorize ifAllGranted="ROLE_USER">
+            <authz:authentication operation="username"/> |
+              <a href="/photo/logout">Sign Out</a>
+          </authz:authorize>
+          <authz:authorize ifNotGranted="ROLE_USER">
+            <a href="/photo/login">Sign in</a>
+          </authz:authorize>
         </div>
       </div>
 

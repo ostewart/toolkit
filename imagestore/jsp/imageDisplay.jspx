@@ -55,6 +55,10 @@ groupsContainingImage: ImageGroups that contain frame.image
             <c:out value="${image.displayName}"/>
         </title>
         <link rel="stylesheet" href="/photodb.css" type="text/css" />
+        <link rel="stylesheet" href="/imagestore-color.css"
+            type="text/css" title="Standard"/>
+        <link rel="alternate stylesheet" href="/imagestore-debug.css"
+              type="text/css" title="Debug"/>
       </head>
       
       <body id="image">
@@ -64,7 +68,13 @@ groupsContainingImage: ImageGroups that contain frame.image
           </div>
           
           <div class="userAuth">
-            <authz:authentication operation="username"/> | Home | Sign Out
+            <authz:authorize ifAllGranted="ROLE_USER">
+              <authz:authentication operation="username"/> |
+                <a href="/photo/logout">Sign Out</a>
+            </authz:authorize>
+            <authz:authorize ifNotGranted="ROLE_USER">
+              <a href="/photo/login">Sign in</a>
+            </authz:authorize>
           </div>
         </div>
 
@@ -82,7 +92,7 @@ groupsContainingImage: ImageGroups that contain frame.image
           </span>
         </div>
 
-        <div class="header">
+        <div id="header">
           <h1 class="thingDescription">
             <span class="bigThing">
               <tm:imageGroupLink imageGroup="${imageGroup}">

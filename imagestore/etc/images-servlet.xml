@@ -12,6 +12,7 @@
         <prop key="/images/**">imageController</prop>
         <prop key="/import">imageImportController</prop>
         <prop key="/mf/**">imageManifestationController</prop>
+        <prop key="/logout">logoutController</prop>
       </props>
     </property>
   </bean>
@@ -46,6 +47,10 @@
 
   <bean id="imageGroupController"
     class="com.trailmagic.image.ui.ImageGroupController">
+  </bean>
+
+  <bean id="logoutController"
+    class="com.trailmagic.image.ui.LogoutController">
   </bean>
 
   <bean id="imageController"

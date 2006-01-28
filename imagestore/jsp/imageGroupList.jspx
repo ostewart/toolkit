@@ -30,6 +30,10 @@ owner: the current albums' owner
         <c:out value="${owner.screenName}"/>
       </title>
       <link rel="stylesheet" href="/photodb.css" type="text/css" />
+      <link rel="stylesheet" href="/imagestore-color.css"
+          type="text/css" title="Standard"/>
+      <link rel="alternate stylesheet" href="/imagestore-debug.css"
+            type="text/css" title="Debug"/>
     </head>
     
     <body id="imageGroupList">
@@ -39,11 +43,17 @@ owner: the current albums' owner
         </div>
 
         <div class="userAuth">
-          <authz:authentication operation="username"/> | Home | Sign Out
+          <authz:authorize ifAllGranted="ROLE_USER">
+            <authz:authentication operation="username"/> |
+              <a href="/photo/logout">Sign Out</a>
+          </authz:authorize>
+          <authz:authorize ifNotGranted="ROLE_USER">
+            <a href="/photo/login">Sign in</a>
+          </authz:authorize>
         </div>
       </div>
 
-      <div id="header" style="clear: both">
+      <div id="header">
         <h1 class="thingDescription">
           <span class="bigThing">
             <c:out value="${groupTypeDisplay}"/>s for User:

@@ -1,34 +1,42 @@
 
 #globalHeader {
-	background-color: orange; // this doesn't do anything for floats
-
 	margin-left: auto;
 	margin-right: auto;
 
 	width: 100%;
-//	clear: both;
-        height: 1em;
-        white-space: nowrap;
+	float: left;
+	//height: 1ex;	// Giving this a height seems to allow the header to sit higher on the 
+                        // page; something to do w/ padding, I think --gs
+
+	/*white-space: nowrap;*/  //This causes subDivs to overlap in a small window
+	/*clear: both;*/
 }
 
 #globalHeader .userAuth {
 	float: right;
+	width: 40%;
+	font-size: 80%;
+	text-align: right;
 } 
 
 #globalHeader .breadcrumbs{
 	float: left;
+	width: 60%;
+	font-size: 80%;
+	text-align: left;
 }
 
 #globalFooter {
-	background-color: purple;
+	float: left;
 
 	margin-left: auto;
 	margin-right: auto;
 
 	width: 100%;
-//	clear: both;
-        height: 1em;
-        white-space: nowrap;
+	font-size: 80%;
+
+	white-space: nowrap;
+	/*clear: both;*/
 }
 
 #globalFooter .footerLeft{
@@ -40,64 +48,73 @@
 }
 
 
-#imageGroup {
-	background-color: yellow;
-}
-
 
 #imageGroup #header {
-	background-color: red;
+	float: left;
 
 //	clear: both;
 }
 
-#image {
-  background-color: yellow;
+
+#header {
+	float: left;
+	width: 100%;
 }
 
-#image #header {
-       background-color: red;
-//       clear: both;
+#header .thingDescription {
+ padding: 0.3em;
+ padding-bottom: 0;
+ margin-bottom: 0;
 }
 
-.thingDescription {
-  background-color: blue;
+.ownerName {
+  width: 80%;
+  margin: auto;
+  padding-top: 0;
+  margin-top: 0;
+}
+
+.imageCount {
+  padding-top: 0;
+  margin-top: 0;
+  text-align: right;
+  width: 100%;
 }
 
 .navSection {
-  width: 100%;
-  clear: both;
+	margin-left: auto;
+	margin-right: auto;
+	float: left;
+	width: 100%;
 }
 
 .prevNav {
-//  width: 50%;
-//  text-align: left;
-  float: left;
+	float: left;
+	width: 50%;
+	text-align: left;
 }
 
 .nextNav {
-//  width: 50%;
-//  text-align: right;
-  float: right;
+	float: right;
+	width: 50%;
+	text-align: right;
 }
 
 .imageDisplay {
-  background-color: gray;
-  text-align: center;
-  width: 80%;
-  margin: auto;
+	text-align: center;
+	width: 80%;
+	margin: auto;
+}
+
+.imageDisplay img {
+	padding: 10px;
 }
 
 .photoProperties {
-  background-color: green;
-//  clear: both;
-  text-align: center;
+	text-align: center;
 }
 
 .thumbnailList {
-	background-color: gray;
-
-	display: block;
 	list-style: none;
 	
 	text-align: center;
@@ -112,8 +129,9 @@
 }
 
 
-#imageGroup #imageGroupDescription {
-	background-color: green;
+.imageGroupList {
+  width: 100%;
+  clear: both; // float: left also works
 }
 
 .thumbnailList li a img {
