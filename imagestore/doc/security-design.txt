@@ -12,3 +12,28 @@ view (but can choose to see normal view), others get display view
 maybe just different view components (edit form on display page,
 comment form)
 
+
+
+Authorization:
+We need to restrict the following operations:
+- creating an Image - only logged-in users (with create perm?)
+- viewing an Image - only users with read perm on that Image
+- view an ImageGroup
+ - security exception if no read perm on ImageGroup
+ - should be able to see all the images for which you have permissions
+ without getting a security exception (for each one)
+
+after advice on Image.getFrames() to filter the collection?
+how will this interact with hibernate if we've got read restrictions
+on the image itself?
+
+if using getFrames, you're not necessarily creating Images...maybe
+referencing those in the cache
+what we want is to prevent holding an instance of an Image, not
+creating...I don't think this is possible directly
+
+--
+
+Want an advisor that will take a collection, perform a security check
+on each Image in the collection (principal hasPerm Image) and remove
+any Images from the collection that fail the security check

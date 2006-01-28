@@ -29,7 +29,7 @@ owner: the current albums' owner
         <c:out value="${groupTypeDisplay}"/>s for User:
         <c:out value="${owner.screenName}"/>
       </title>
-      <link rel="stylesheet" href="/photodb.css" type="text/css" />
+      <link rel="stylesheet" href="/imagestore.css" type="text/css" />
       <link rel="stylesheet" href="/imagestore-color.css"
           type="text/css" title="Standard"/>
       <link rel="alternate stylesheet" href="/imagestore-debug.css"

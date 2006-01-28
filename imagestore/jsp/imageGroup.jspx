@@ -27,7 +27,7 @@ frames: List of ImageFrames for this group
     <head>
       <title><c:out value="${imageGroup.displayName}"/></title>
       <!-- XXX: must make this path flexible -->
-      <link rel="stylesheet" href="/photodb.css" type="text/css" />
+      <link rel="stylesheet" href="/imagestore.css" type="text/css" />
       <link rel="stylesheet" href="/imagestore-color.css"
           type="text/css" title="Standard"/>
       <link rel="alternate stylesheet" href="/imagestore-debug.css"
@@ -66,13 +66,15 @@ frames: List of ImageFrames for this group
         </h2>
 
         <p class="imageCount">${frames.size()} images in ${groupTypeDisplay}</p>
-      </div>
 
-      <c:if test="${!empty imageGroup.description}">
-        <div id="imageGroupDescription">
-          <c:out value="${imageGroup.description}"/>
-        </div>
+            <c:if test="${!empty imageGroup.description}">
+
+          <div id="imageGroupDescription">
+            <c:out value="${imageGroup.description}"/>
+          </div>
       </c:if>
+
+</div>
 
       <ul class="thumbnailList">
         

@@ -54,7 +54,7 @@ groupsContainingImage: ImageGroups that contain frame.image
             <c:if test="${!empty imageGroup}"> : </c:if>
             <c:out value="${image.displayName}"/>
         </title>
-        <link rel="stylesheet" href="/photodb.css" type="text/css" />
+        <link rel="stylesheet" href="/imagestore.css" type="text/css" />
         <link rel="stylesheet" href="/imagestore-color.css"
             type="text/css" title="Standard"/>
         <link rel="alternate stylesheet" href="/imagestore-debug.css"
@@ -131,8 +131,8 @@ groupsContainingImage: ImageGroups that contain frame.image
         <br/>
       <c:out value="${image.caption}"/><br />
       <br />
-      <c:out value="${image.copyright}"/>
-      <c:out value="${image.creator}"/><br />
+                    <c:out value="${image.copyright} ${image.creator}"/>
+                      <br />
       Owned by <tm:imageGroupLink owner="${image.owner}"
                           groupType="${imageGroup.type}">${image.owner.screenName}</tm:imageGroupLink>
                         <br />

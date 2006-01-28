@@ -17,6 +17,7 @@
 	width: 40%;
 	font-size: 80%;
 	text-align: right;
+        padding-bottom: 1em;
 } 
 
 #globalHeader .breadcrumbs{
@@ -55,6 +56,10 @@
 //	clear: both;
 }
 
+#imageGroupDescription {
+  padding: 0.5em;
+}
+
 
 #header {
 	float: left;
@@ -63,6 +68,9 @@
 
 #header .thingDescription {
  padding: 0.3em;
+}
+
+#imageGroup #header .thingDescription {
  padding-bottom: 0;
  margin-bottom: 0;
 }
@@ -76,9 +84,12 @@
 
 .imageCount {
   padding-top: 0;
-  margin-top: 0;
+  padding-right: 1em;
   text-align: right;
-  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 0;
+  width: 99%;
 }
 
 .navSection {
@@ -102,12 +113,14 @@
 
 .imageDisplay {
 	text-align: center;
-	width: 80%;
+//	width: 80%;
+        width: 100%;
 	margin: auto;
+        padding-bottom: 1em;
 }
 
 .imageDisplay img {
-	padding: 10px;
+	padding: 2.5%;
 }
 
 .photoProperties {
@@ -135,7 +148,6 @@
 }
 
 .thumbnailList li a img {
-	border-color: gray;
 	border-style: solid;
 	padding: 5px;
 	vertical-align: middle;
@@ -143,10 +155,8 @@
 
 .thumbnailList li a img:hover {
 	border-style: solid;
-	border-color: blue;
 }
 
 .thumbnailList li a img:active {
 	border-style: solid;
-	border-color: lightgray;
 }

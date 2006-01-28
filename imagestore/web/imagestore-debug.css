@@ -1,0 +1,72 @@
+#globalHeader {
+ background-color: orange; // this doesn't do anything for floats
+}
+
+#globalHeader .userAuth {
+ background-color: magenta;
+}
+
+#globalHeader .breadcrumbs {
+ background-color: brown;
+}
+
+#globalFooter {
+ background-color: purple;
+}
+
+#globalFooter .footerLeft {
+ background-color: lightgray;
+}
+
+#globalFooter .footerRight {
+ background-color: gray;
+}
+
+#imageGroup {
+	background-color: yellow;
+}
+
+#imageGroup #header {
+ background-color: red;
+}
+
+#image {
+  background-color: yellow;
+}
+
+#header {
+ background-color: red;
+}
+
+.thingDescription {
+ background-color: darkblue;
+}
+
+.navSection {
+ background-color: white;
+}
+
+.prevNav {
+ background-color: lightgreen;
+}
+
+.nextNav {
+ background-color: lightgreen;
+}
+
+.imageDisplay {
+ background-color: gray;
+}
+
+.photoProperties {
+	background-color: green;
+}
+
+.thumbnailList {
+	background-color: gray;
+}
+
+#imageGroup #imageGroupDescription {
+	background-color: green;
+}
+

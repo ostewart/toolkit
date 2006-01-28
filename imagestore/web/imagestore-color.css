@@ -1,0 +1,83 @@
+#globalHeader {
+ background-color: white;
+}
+
+#globalHeader .userAuth {
+ background-color: white;
+}
+
+#globalHeader .breadcrumbs {
+ background-color: white;
+}
+
+#globalFooter {
+ background-color: white;
+}
+
+#globalFooter .footerLeft {
+ background-color: white;
+}
+
+#globalFooter .footerRight {
+ background-color: white;
+}
+
+#imageGroup {
+	background-color: white;
+}
+
+#imageGroup #header {
+ background-color: lightgray;
+}
+
+#image {
+  background-color: white;
+}
+
+#header {
+ background-color: lightgray;
+}
+
+.thingDescription {
+// background-color: lightblue;
+}
+
+.navSection {
+ background-color: white;
+}
+
+.prevNav {
+// background-color: white;
+}
+
+.nextNav {
+// background-color: white;
+}
+
+.imageDisplay {
+ background-color: darkgray;
+}
+
+.photoProperties {
+//	background-color: white;
+}
+
+.thumbnailList {
+	background-color: darkgray;
+}
+
+#imageGroup #imageGroupDescription {
+//	background-color: darkgray;
+}
+
+.thumbnailList li a img {
+	border-color: darkgray;
+}
+
+.thumbnailList li a img:hover {
+	border-color: blue;
+}
+
+.thumbnailList li a img:active {
+	border-color: lightgray;
+}
