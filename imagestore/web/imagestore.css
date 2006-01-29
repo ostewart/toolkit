@@ -26,7 +26,7 @@ body {
 }
 
 #globalFooter {
-/* 	float: left; */
+  float: left; 
 
   margin-left: auto;
   margin-right: auto;
@@ -46,7 +46,7 @@ body {
 
 #header {
   float: left;
-  width: 100%;
+  width: 100%; /* no children floated right */
 }
 
 #header .thingDescription {
@@ -65,6 +65,7 @@ body {
   margin-right: auto;
   padding-top: 0;
   margin-top: 0;
+  margin-bottom: 0;
 }
 
 .imageCount {
@@ -86,6 +87,7 @@ body {
   margin-right: auto;
   padding: 5px;
   margin-top: 0px;
+  margin-bottom: 0px;
 }
 
 .thumbnailList li {
@@ -111,7 +113,9 @@ body {
   margin-left: auto;
   margin-right: auto;
   float: left;
-  width: 100%;
+/*  width: 100%;*/
+  padding-left: 1ex;
+  padding-right: 1ex;
 }
 
 .prevNav {
@@ -128,8 +132,7 @@ body {
 
 .imageDisplay {
   text-align: center;
-/*	width: 80%; */
-  width: 100%;
+/*  width: 100%;*/
   margin-left: auto;
   margin-right: auto;
   padding-bottom: 1em;
