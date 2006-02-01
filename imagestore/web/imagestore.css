@@ -52,7 +52,7 @@ body {
 #header .thingDescription {
   padding: 0.3em;
   padding-bottom: 0;
-  margin-bottom: 0;
+  margin: 0;
 }
 
 #imageGroupDescription {
@@ -68,13 +68,14 @@ body {
   margin-bottom: 0;
 }
 
-.imageCount {
+#header .imageCount {
   padding-top: 0;
   padding-right: 1ex;
   text-align: right;
   margin-left: auto;
   margin-right: auto;
   margin-top: 0;
+  margin-bottom: 0;
 /*  width: 99%; */
 }
 
@@ -146,9 +147,43 @@ body {
   text-align: center;
 }
 
-.imageGroupList {
-/*  width: 100%;
-  clear: both;*/ /* float: left also works */
+
+.imageGroups {
+  float: left;
+width: 100%;
+}
+
+.imageGroups .imageGroup {
+  float: left;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 2em;
+  margin: 2em;
+  border-style: solid;
+  border-color: black;
+  border-width: 3px;
+}
+
+.imageGroup .groupData {
   float: left;
 }
 
+.imageGroup .displayName {
+  float: left;
+  clear: left;
+}
+
+.imageGroup .imageCount {
+  clear: left;
+  float: left;
+
+}
+
+.imageGroup .description {
+  float: left;
+  clear: left;
+}
+
+.imageGroup .preview {
+  float: right;
+}

@@ -92,8 +92,8 @@ public class ImageTag extends TagSupport {
                 html.append(mf.getWidth());
                 html.append("\"/>");
             } else {
-                html.append("<p>No manifestations found for the specified " +
-                            "image.</p>");
+                html.append("No manifestations found for the specified " +
+                            "image.");
             }
             pageContext.getOut().write(html.toString());
             return SKIP_BODY;

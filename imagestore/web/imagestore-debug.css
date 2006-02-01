@@ -70,3 +70,32 @@
 	background-color: green;
 }
 
+
+
+.imageGroups {
+background-color: brown;
+}
+
+.imageGroup .groupData {
+background-color: lightgray;
+}
+
+.imageGroups .imageGroup {
+background-color: orange;
+}
+
+.imageGroup .displayName {
+background-color: yellow;
+}
+
+.imageGroup .imageCount {
+background-color: purple;
+}
+
+.imageGroup .description {
+ background-color: green;
+}
+
+.imageGroup .preview {
+background-color: blue;
+}

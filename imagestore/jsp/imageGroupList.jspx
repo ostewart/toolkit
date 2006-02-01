@@ -64,14 +64,36 @@ owner: the current albums' owner
         </h1>
       </div>
 
-      <div class="imageGroupList">
-        <ul>
-          <c:forEach var="snapper" items="${imageGroups}">
-            <li>
-            <a href="${snapper.name}">${snapper.displayName}</a>
-            </li>
-          </c:forEach>
-        </ul>
+      <div class="imageGroups">
+        <c:forEach var="snapper" items="${imageGroups}">
+          <div class="imageGroup">
+            <div class="groupData">
+              <h2 class="displayName">
+                <tm:imageGroupLink owner="${owner}"
+                  groupType="${snapper.type}" imageGroup="${snapper}">
+                  ${snapper.displayName}
+                </tm:imageGroupLink>
+              </h2>
+              <div class="imageCount">
+                ${snapper.frames.size()} images
+              </div>
+              <div class="description">
+                ${snapper.description}
+              </div>
+            </div>
+          
+            <div class="preview">
+              <c:if test="${!empty previewImages[snapper]}">
+                <tm:imageGroupLink owner="${owner}"
+                  groupType="${snapper.type}" imageGroup="${snapper}">
+                  
+                  <tm:image image="${previewImages[snapper]}"
+                    sizeLabel="thumbnail"/>
+                </tm:imageGroupLink>
+              </c:if>
+            </div>
+          </div>
+        </c:forEach>
       </div>
     </body>
   </html>

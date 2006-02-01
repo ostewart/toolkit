@@ -94,9 +94,22 @@ public class ImageGroupController implements Controller, ApplicationContextAware
 
         // got user arg: show his/her groups
         if ( !pathTokens.hasMoreTokens() ) {
-            model.put("imageGroups",
-                      imgGroupFactory.getByOwnerScreenNameAndType(ownerName,
-                                                                  groupType));
+            List<ImageGroup> imageGroups =
+                imgGroupFactory.getByOwnerScreenNameAndType(ownerName,
+                                                            groupType);
+            model.put("imageGroups", imageGroups);
+
+            // show a preview image
+            Map<ImageGroup,Image> previewImages =
+                new HashMap<ImageGroup,Image>();
+            for (ImageGroup group : imageGroups) {
+                if (group.getFrames().size() > 0) {
+                    previewImages.put(group,
+                                      group.getFrames().first().getImage());
+                }
+            }
+            model.put("previewImages", previewImages);
+
             return new ModelAndView(LIST_VIEW, model);
         }
 
