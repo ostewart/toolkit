@@ -16,6 +16,7 @@ public class ImageGroupLinkTag extends TagSupport {
     private ImageGroup m_imageGroup = null;
     private Long m_image = null;
     private String m_groupType = null;
+    private String m_styleClass = null;
 
     public void setOwner(User owner) {
         m_owner = owner;
@@ -48,12 +49,26 @@ public class ImageGroupLinkTag extends TagSupport {
     public Long getImage() {
         return m_image;
     }
-    
+
+    public void setStyleClass(String styleClass) {
+        m_styleClass = styleClass;
+    }
+
+    public String getStyleClass() {
+        return m_styleClass;
+    }
+
+    // getClass is already taken
+
     public int doStartTag() throws JspException {
         StringBuffer html = new StringBuffer();
 
         try {
-            html.append("<a href=\"");
+            html.append("<a ");
+            if (m_styleClass != null) {
+                html.append("class=\"" + m_styleClass + "\" ");
+            }
+            html.append("href=\"");
 
             //XXX: yeek?
             WebApplicationContext ctx =

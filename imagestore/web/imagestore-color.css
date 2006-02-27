@@ -81,3 +81,28 @@
 .thumbnailList li a img:active {
 	border-color: lightgray;
 }
+
+.imageGroups {
+  background-color: white;
+}
+
+.imageGroups .imageGroup {
+}
+
+.imageGroup a.bigLink {
+  background-color: lightgray;
+  border-color: black;
+}
+
+.imageGroup a.bigLink:hover {
+  border-color: blue;
+  background-color: darkgray;
+/*  opacity: 0.75; */
+}
+
+.imageGroup .preview {
+  border-color: gray;
+  background-color: white;
+
+
+}
