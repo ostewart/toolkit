@@ -446,6 +446,8 @@ public class ImagesParser extends DefaultHandler
             s_logger.info("Finished importing " + srcFile.getPath());
         } catch (IOException e) {
             s_logger.error("Error: " + e.getMessage());
+            // I hope this causes a rollback
+            throw new RuntimeException(e);
         }
     }
 
