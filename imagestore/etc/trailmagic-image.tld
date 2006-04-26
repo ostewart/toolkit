@@ -5,7 +5,7 @@
   version="2.0">
 
   <description>trailmagic.com Image Manipulation/Display Tags</description>
-  <tlib-version>1.1</tlib-version>
+  <tlib-version>1.2</tlib-version>
   <short-name>image</short-name>
   <uri>http://trailmagic.com/taglibs/image</uri>
   
@@ -22,6 +22,12 @@
     </attribute>
     <attribute>
       <name>sizeLabel</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <name>alt</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
       <type>java.lang.String</type>

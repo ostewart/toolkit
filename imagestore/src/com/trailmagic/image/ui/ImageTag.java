@@ -17,6 +17,7 @@ import com.trailmagic.image.*;
 public class ImageTag extends TagSupport {
     private Image m_image;
     private String m_sizeLabel;
+    private String m_alt;
 
     private static final String USER_ATTR = "user";
     private static final String DEFAULT_LABEL_ATTR = "defaultLabel";
@@ -90,6 +91,14 @@ public class ImageTag extends TagSupport {
                 html.append(mf.getHeight());
                 html.append("\" width=\"");
                 html.append(mf.getWidth());
+                html.append("\" alt=\"");
+                if (m_alt != null) {
+                    html.append(m_alt);
+                } else if (m_image.getCaption() != null) {
+                    html.append(m_image.getCaption());
+                } else {
+                    html.append(m_image.getDisplayName());
+                }
                 html.append("\"/>");
             } else {
                 html.append("No manifestations found for the specified " +
@@ -115,6 +124,14 @@ public class ImageTag extends TagSupport {
 
     public String getSizeLabel() {
         return m_sizeLabel;
+    }
+
+    public void setAlt(String alt) {
+        m_alt = alt;
+    }
+
+    public String getAlt() {
+        return m_alt;
     }
 
     private String getLabel(ImageManifestation mf) {
