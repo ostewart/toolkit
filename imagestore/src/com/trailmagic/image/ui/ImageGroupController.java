@@ -117,6 +117,11 @@ public class ImageGroupController implements Controller, ApplicationContextAware
         String groupName = pathTokens.nextToken();
         ImageGroup group =
             imgGroupFactory.getByOwnerNameAndType(owner, groupName, groupType);
+        if (group == null) {
+            res.sendError(HttpServletResponse.SC_NOT_FOUND,
+                          "No such image group");
+            return null;
+        }
         model.put("imageGroup", group);
 
         SortedSet<ImageFrame> frames = group.getFrames();
