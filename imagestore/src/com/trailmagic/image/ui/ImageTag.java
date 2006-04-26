@@ -66,9 +66,9 @@ public class ImageTag extends TagSupport {
                 // XXX: resume kludge
                 pageContext.setAttribute("currentLabel", getLabel(mf));
             // XXX: end kludge
-                // XXX: end kludge 
+                // XXX: end kludge
                 html.append("<img src=\"");
-                
+
                 //XXX: yeek?
                 /*
                 LinkHelper helper =
@@ -84,7 +84,7 @@ public class ImageTag extends TagSupport {
                 // XXX: evil cast?
                 helper.setRequest((HttpServletRequest)
                                   pageContext.getRequest());
-                
+
                 html.append(helper.getImageMFUrl(mf));
                 html.append("\" height=\"");
                 html.append(mf.getHeight());
@@ -122,7 +122,7 @@ public class ImageTag extends TagSupport {
         int distance = Integer.MAX_VALUE;
         int newDistance;
         String label = "small";
-        
+
         newDistance = Math.abs(area - 192*128);
         if ( newDistance < distance ) {
             label = "thumbnail";
