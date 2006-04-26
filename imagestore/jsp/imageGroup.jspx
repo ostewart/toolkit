@@ -34,7 +34,7 @@ frames: List of ImageFrames for this group
             type="text/css" title="Debug"/>
     </head>
 
-    <body id="imageGroup">
+    <body id="imageGroupDisplay">
       <div id="globalHeader">
         <div class="breadcrumbs">
           trailmagic : testing : some : places

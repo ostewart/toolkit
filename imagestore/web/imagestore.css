@@ -1,13 +1,13 @@
 body {
   margin: 0px;
-  padding: 0px;
+  padding: 1ex;
 }
 
 #globalHeader {
   margin-left: auto;
   margin-right: auto;
-
-/*	width: 100%; */
+  /* width was commented */
+  width: 99%;
   float: left;
   font-size: 80%;
   padding: 1ex;
@@ -80,6 +80,7 @@ body {
 }
 
 .thumbnailList {
+  clear: both;
   list-style: none;
 	
   text-align: center;
@@ -111,10 +112,12 @@ body {
 }
 
 .navSection {
+clear: both;
   margin-left: auto;
   margin-right: auto;
   float: left;
-/*  width: 100%;*/
+/* width was commented */
+  width: 99%;
   padding-left: 1ex;
   padding-right: 1ex;
 }
@@ -132,6 +135,7 @@ body {
 }
 
 .imageDisplay {
+clear: both;
   text-align: center;
 /*  width: 100%;*/
   margin-left: auto;
@@ -155,7 +159,7 @@ body {
 
   margin: 0;
   border: 0;
-  padding: 0;
+  padding: 1%;
 }
 
 .imageGroups .imageGroup {
@@ -215,6 +219,7 @@ body {
   padding: 0;
 
   font-size: 115%;
+  font-weight: bold;
 
 }
 
@@ -222,7 +227,8 @@ body {
 
   margin: 0;
   margin-top: 1ex;
-  margin-left: 2%;
+/*  margin-left: 2%; */
+  margin-left: 2em;
   padding: 0;
 
   font-size: 85%;

@@ -1,77 +1,88 @@
 #globalHeader {
  background-color: white;
+ color: black;
 }
 
 #globalHeader .userAuth {
  background-color: white;
+ color: black;
 }
 
 #globalHeader .breadcrumbs {
  background-color: white;
+ color: black;
 }
 
 #globalFooter {
  background-color: white;
+ color: black;
 }
 
 #globalFooter .footerLeft {
  background-color: white;
+ color: black;
 }
 
 #globalFooter .footerRight {
  background-color: white;
+ color: black;
 }
 
 #imageGroup {
-	background-color: white;
+ background-color: white;
+ color: black;
 }
 
 #imageGroup #header {
- background-color: lightgray;
+ background-color: #d3d3d3;
+ color: black;
 }
 
 #image {
   background-color: white;
+  color: black;
 }
 
 #header {
- background-color: lightgray;
+ background-color: #d3d3d3;
+ color: black;
 }
 
 .thingDescription {
-// background-color: lightblue;
+/* background-color: lightblue; */
 }
 
 .navSection {
  background-color: white;
+ color: black;
 }
 
 .prevNav {
-// background-color: white;
+/* background-color: white; */
 }
 
 .nextNav {
-// background-color: white;
+/* background-color: white; */
 }
 
 .imageDisplay {
- background-color: darkgray;
+ background-color: #a9a9a9;
 }
 
 .photoProperties {
-//	background-color: white;
+/*	background-color: white; */
 }
 
 .thumbnailList {
-	background-color: darkgray;
+	background-color: #a9a9a9;
 }
 
 #imageGroup #imageGroupDescription {
-//	background-color: darkgray;
+/*	background-color: #a9a9a9; */
 }
 
 .thumbnailList li a img {
-	border-color: darkgray;
+	border-color: #a9a9a9;
 }
 
 .thumbnailList li a img:hover {
@@ -79,7 +90,7 @@
 }
 
 .thumbnailList li a img:active {
-	border-color: lightgray;
+	border-color: #d3d3d3;
 }
 
 .imageGroups {
@@ -90,13 +101,13 @@
 }
 
 .imageGroup a.bigLink {
-  background-color: lightgray;
+  background-color: #d3d3d3;
   border-color: black;
 }
 
 .imageGroup a.bigLink:hover {
   border-color: blue;
-  background-color: darkgray;
+  background-color: #a9a9a9;
 /*  opacity: 0.75; */
 }
 
