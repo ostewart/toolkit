@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE project PUBLIC "-//ANT//DTD project//EN"
+  "file:///home/oliver/devel/doc/project.dtd">
+<!--<!DOCTYPE project>-->
+
+<project name="photo" default="build" basedir=".">
+  <!-- REMEMBER TO EDIT THIS AND PROJECT NAME ABOVE -->
+  <property name="module.name" value="photo"/>
+
+  <!-- potentially override what's in here -->
+  <property file="../../ant.properties"/>
+
+  <path id="dependencies.path">
+    <pathelement
+      location="../../modules/imagestore/build/product/imagestore.jar"/>
+    <pathelement location="../../modules/imagestore/build/product/user.jar"/>
+  </path>
+
+  <import file="../../j2ee-targets.xml"/>
+
+  <target name="build" depends="build-web"/>
+</project>

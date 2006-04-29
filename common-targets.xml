@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!--<!DOCTYPE project PUBLIC "-//ANT//DTD project//EN"
+  "file:///home/oliver/devel/doc/project.dtd">-->
+<!DOCTYPE project>
+
+<project name="common">
+  <property name="src.dir" value="src"/>
+  <property name="resources.dir" value="etc"/>
+  <property name="prebuilt.dir" value="classes"/>
+  <property name="lib.dir" value="lib"/>
+  <property name="build.dir" value="build"/>
+  <property name="build.output.dir" value="${build.dir}/classes"/>
+  <property name="build.product.dir" value="${build.dir}/product"/>
+  <property name="depcache.dir" value="${build.dir}/depcache"/>
+  <property name="javac.debug" value="on"/>
+  <property name="javac.optimize" value="off"/>
+  <property name="junit.haltonfailure" value="true"/>
+  <dirname property="common.basedir" file="${ant.file.common}"/>
+  <property name="global.lib.dir" value="${common.basedir}/lib"/>
+  <property name="ant.lib.dir" value="${common.basedir}/ant-lib"/>
+  <property name="ant.resources.dir"
+    value="${common.basedir}/ant-etc"/>
+  <property name="jar.name" value="${project.name}.jar"/>
+
+  <path id="global.classpath">
+    <fileset dir="${global.lib.dir}">
+      <include name="**/*.jar"/>
+    </fileset>
+  </path>
+
+  <path id="build.classpath">
+    <path refid="dependencies.path"/>
+    <path refid="global.classpath"/>
+    <fileset dir="${lib.dir}">
+      <include name="**/*.jar"/>
+      <include name="**/*.zip"/>
+    </fileset>
+    <pathelement path="${java.class.path}"/>
+    <fileset dir="${ant.lib.dir}" includes="**/*.jar"/>
+  </path>
+  
+  
+  <target name="init">
+    <tstamp />
+  </target>
+
+  <target name="clean"
+    description="Cleans the build directory, including all compiled artifacts.">
+    <delete dir="${build.dir}"/>
+  </target>
+    
+  <target name="compile" depends="init"
+    description="Compiles source code.">
+    <!-- make sure the output directory exists -->
+    <mkdir dir="${build.output.dir}"/>
+
+    <!-- invalidate any classfiles affected by changes -->
+    <depend srcDir="${src.dir}" destDir="${build.output.dir}"
+      cache="${depcache.dir}"/>
+
+    <!-- compile the source files -->
+    <javac destdir="${build.output.dir}" debug="${javac.debug}"
+           optimize="${javac.optimize}" fork="true" memoryMaximumSize="500m">
+      <src path="${src.dir}"/>
+      <classpath refid="build.classpath"/>
+      <compilerarg value="-Xlint"/>
+    </javac>
+
+    <!-- copy over any properties files or serialized files -->
+    <copy todir="${build.output.dir}">
+      <fileset dir="${src.dir}">
+        <include name="**/*.properties"/>
+        <include name="**/*.ser"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="build" depends="compile">
+    <jar destfile="${build.dir}/${jar.name}">
+      <fileset dir="${build.output.dir}"/>
+    </jar>
+  </target>
+
+  <target name="javadoc" depends="init">
+    <mkdir dir="${apidoc.output.dir}"/>
+    <javadoc destdir="${apidoc.output.dir}">
+      <fileset dir="${src.dir}">
+        <include name="**/*.java"/>
+      </fileset>
+    </javadoc>
+  </target>
+
+  <target name="compiletests" depends="build">
+    <mkdir dir="${test.output.dir}"/>
+    <javac destdir="${test.output.dir}" debug="${javac.debug}"
+           optimize="${javac.optimize}">
+      <src path="${test.src.dir}"/>
+      <classpath refid="build.classpath"/>
+    </javac>
+  </target>
+
+  <target name="runtests" depends="compiletests">
+    <junit printsummary="yes"
+      showoutput="yes"
+      haltonfailure="${junit.haltonfailure}">
+      <classpath>
+        <pathelement location="${test.output.dir}"/>
+        <path refid="build.classpath"/>
+      </classpath>
+      <formatter type="plain"/>
+      <batchtest fork="yes" todir="${test.report.dir}">
+        <fileset dir="${test.src.dir}">
+          <include name="**/*Test.java"/>
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+
+    <target name="schemaexport" depends="compile">
+    <taskdef name="schemaexport"
+      classname="net.sf.hibernate.tool.hbm2ddl.SchemaExportTask"
+      classpathref="hbm.classpath"/>
+    
+    <schemaexport
+      config="${hibernate.conf.dir}/${module.name}.cfg.xml"
+        quiet="no"
+        text="yes"
+        drop="no"
+        delimiter=";"
+      output="${build.dir}/schema-export.sql"/>
+  </target>
+
+  <target name="schemaupdate" depends="compile">
+    <taskdef name="schemaupdate"
+      classname="net.sf.hibernate.tool.hbm2ddl.SchemaUpdateTask"
+      classpathref="build.classpath"/>
+    
+    <schemaupdate
+      config="${hibernate.conf.dir}/${module.name}.cfg.xml"
+      properties="${hibernate.conf.dir}/hibernate.properties"
+      quiet="no"/>
+
+  </target>
+
+  <target name="hibern8ide" depends="build">
+    <java jar="${build.lib.dir}/hibern8ide.jar" fork="true">
+      <classpath>
+        <path refid="build.classpath"/>
+        <fileset dir="hibern8ide">
+          <include name="**/*.jar"/>
+        </fileset>
+      </classpath>
+    </java>
+  </target>
+
+  <target name="run" depends="build">
+    <java classname="${run.class}" fork="true">
+      <arg line="${run.args}"/>
+      <classpath>
+        <path refid="build.classpath"/>
+        <pathelement location="${resources.dir}"/>
+      </classpath>
+    </java>
+  </target>
+
+
+</project>

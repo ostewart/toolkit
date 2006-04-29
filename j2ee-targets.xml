@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!--<!DOCTYPE project PUBLIC "-//ANT//DTD project//EN"
+  "file:///home/oliver/devel/doc/project.dtd">-->
+<!DOCTYPE project>
+
+<project>
+  <import file="common-targets.xml"/>
+
+  <property name="ejb.src.dir" value="${build.dir}/ejb"/>
+  <property name="ejb.build.dir" value="${build.dir}/classes"/>
+  <!-- this was META-INF -->
+  <property name="build.resources.dir" value="${build.dir}/etc"/>
+  <property name="jarname" value="${module.name}.jar"/>
+  <property name="warname" value="${module.name}.war"/>
+  <property name="html.dir" value="web"/>
+
+  <pathconvert property="manifest.classpath"
+    pathsep=" ">
+    <mapper type="flatten"/>
+    <path refid="global.classpath"/>
+    <path refid="dependencies.path"/>
+  </pathconvert>
+  
+  <target name="compile-ejb" depends="compile,ejbdoclet"
+    description="Compiles EjbDoclet processed files">
+    <mkdir dir="${ejb.build.dir}"/>
+
+    <javac destDir="${ejb.build.dir}" debug="${javac.debug}"
+      optimize="${javac.optimize}">
+      <src path="${ejb.src.dir}"/>
+      <classpath>
+        <path refid="build.classpath"/>
+        <pathelement path="${build.output.dir}"/>
+      </classpath>
+    </javac>
+
+    <copy todir="${ejb.build.dir}">
+      <fileset dir="${ejb.src.dir}">
+        <include name="**/*.ser"/>
+        <include name="**/*.properties"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="ejbdoclet" depends="init">
+    <taskdef name="ejbdoclet"
+      classname="xdoclet.modules.ejb.EjbDocletTask">
+      <classpath>
+        <path refid="build.classpath"/>
+        <fileset dir="${ant.lib.dir}" includes="**/*.jar"/>
+      </classpath>
+    </taskdef>
+
+    <ejbdoclet
+      ejbSpec="2.1"
+      excludedTags="@version"
+      destDir="${ejb.src.dir}">
+
+      <fileset dir="${src.dir}">
+        <include name="**/*Bean.java"/>
+      </fileset>
+      
+      <jboss version="4.0"
+        destDir="${build.resources.dir}"/>
+      <session/>
+      <remoteinterface/>
+      <homeinterface/>
+      <localinterface/>
+      <localhomeinterface/>
+      <deploymentdescriptor destDir="${build.resources.dir}"/>
+    </ejbdoclet>
+  </target>
+
+  <target name="build-ejb" depends="compile-ejb,compile">
+    <mkdir dir="${build.product.dir}"/>
+    <jar destfile="${build.product.dir}/${jarname}">
+      <manifest>
+        <attribute name="Class-Path" value="${manifest.classpath}"/>
+      </manifest>
+      <metainf dir="${build.resources.dir}">
+        <exclude name="MANIFEST.MF"/>
+      </metainf>
+      <fileset dir="${build.output.dir}"/>
+      <fileset dir="${ejb.build.dir}"/>
+      <fileset dir="${prebuilt.dir}"/>
+    </jar>
+  </target>
+
+  <target name="webdoclet" depends="init">
+    <taskdef name="webdoclet"
+      classname="xdoclet.modules.web.WebDocletTask">
+      <classpath>
+        <path refid="build.classpath"/>
+        <fileset dir="${ant.lib.dir}" includes="**/*.jar"/>
+      </classpath>
+    </taskdef>
+
+    <webdoclet destDir="${build.resources.dir}">
+      <deploymentdescriptor servletspec="2.4"/>
+      <fileset dir="${src.dir}" includes="**/*.java"/>
+    </webdoclet>
+  </target>
+
+  <target name="build-web" depends="compile,webdoclet">
+    <mkdir dir="${build.product.dir}"/>
+    <war destfile="${build.product.dir}/${warname}"
+      webxml="${build.resources.dir}/web.xml">
+      <manifest>
+        <attribute name="Class-Path" value="${manifest.classpath}"/>
+      </manifest>
+      <metainf dir="${build.resources.dir}">
+        <exclude name="MANIFEST.MF"/>
+      </metainf>
+      <fileset dir="${html.dir}"/>
+      <lib dir="${lib.dir}"/>
+      <classes dir="${prebuilt.dir}"/>
+      <classes dir="${build.output.dir}"/>
+      <webinf dir="${basedir}">
+        <include name="jsp/**/*"/>
+      </webinf>
+      <webinf dir="${prebuilt.dir}">
+        <exclude name="web.xml"/>
+      </webinf>
+    </war>
+  </target>
+</project>

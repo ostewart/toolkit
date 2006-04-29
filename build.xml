@@ -4,26 +4,25 @@
 <!--<!DOCTYPE project>-->
 
 <project name="trailmagic-toolkit" default="build" basedir=".">
-  <!-- REMEMBER TO EDIT THIS AND ABOVE -->
-  <property name="project.name" value="trailmagic-toolkit"/>
-  
   <!-- potentially override what's in here -->
   <property file="ant.properties"/>
-  
-  <property name="dep.lib.dir" value="lib-dep"/>
-  <property name="global.build.lib.dir" value="lib-build" />
-  <property name="global.lib.dir" value="lib" />
-  
-  <filelist dir="." id="modules.list">
-    <file name="user/build.xml"/>
-    <file name="imagestore/build.xml"/>
-  </filelist>
-  
-  <property name="deploy.lib.dir" value="${deploy.dir}/WEB-INF/lib"/>
-  <property name="deploy.resources.dir"
-    value="${deploy.dir}/WEB-INF"/>
+
+  <property name="earname" value="trailmagic-toolkit.ear"/>
+  <property name="build.dir" value="build"/>
   <property name="resources.dir" value="etc"/>
-    
+  <property name="products.dir" value="${build.dir}/products"/>
+
+  <!-- these must be in order by dependency...I agree that it sucks -->
+  <filelist dir="." id="modules.list">
+    <file name="modules/user/build.xml"/>
+    <file name="modules/imagestore/build.xml"/>
+    <file name="web/photo/build.xml"/>
+  </filelist>
+
+  <fileset dir="." id="products.fileset">
+    <include name="*/*/build/product/*"/>
+  </fileset>
+  
   <macrodef name="iterate">
     <attribute name="target"/>
     <sequential>
@@ -33,19 +32,9 @@
     </sequential>
   </macrodef>
 
-  <target name="deploy">
-    <mkdir dir="${deploy.lib.dir}"/>
-    <copy todir="${deploy.lib.dir}">
-      <fileset dir="${dep.lib.dir}"/>
-      <fileset dir="${global.lib.dir}"/>
-    </copy>
-
-    <mkdir dir="${deploy.resources.dir}"/>
-    <copy todir="${deploy.resources.dir}">
-      <fileset dir="${resources.dir}"/>
-    </copy>
-    
-    <iterate target="deploy"/>
+  <target name="deploy" depends="build">
+    <!--    <iterate target="deploy"/> -->
+    <copy file="${build.dir}/${earname}" toDir="${deploy.dir}"/>
   </target>
 
   <target name="compile">
@@ -54,6 +43,18 @@
 
   <target name="build">
     <iterate target="build"/>
+
+    <mkdir dir="${build.dir}"/>
+    <mkdir dir="${products.dir}"/>
+    <!-- ugly but I can't find a way to strip the paths for the ear -->
+    <copy toDir="${products.dir}" flatten="true">
+      <fileset refid="products.fileset"/>
+    </copy>
+    
+    <ear destfile="${build.dir}/${earname}"
+      appxml="${resources.dir}/application.xml">
+      <fileset dir="${products.dir}"/>
+    </ear>
   </target>
 
   <target name="clean">
@@ -63,5 +64,4 @@
   <target name="clean-deploy">
     <iterate target="clean-deploy"/>
   </target>
-  
 </project>

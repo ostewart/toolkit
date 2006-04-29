@@ -3,17 +3,15 @@
   "file:///home/oliver/devel/doc/project.dtd">
 <!--<!DOCTYPE project>-->
 
-<project name="trailmagic-image" default="build" basedir=".">
+<project name="trailmagic-user" default="build" basedir=".">
   <!-- REMEMBER TO EDIT THIS AND PROJECT NAME ABOVE -->
-  <property name="module.name" value="trailmagic-image"/>
+  <property name="module.name" value="trailmagic-user"/>
   
   <!-- potentially override what's in here -->
-  <property file="../ant.properties"/>
+  <property file="../../ant.properties"/>
 
   <path id="dependencies.path">
-    <pathelement location="../user/build/trailmagic-user.jar"/>
-    <pathelement location="../user/build/classes"/>
   </path>
 
-  <import file="../common.xml"/>
+  <import file="../../common-targets.xml"/>
 </project>
