@@ -7,13 +7,16 @@
   <!-- REMEMBER TO EDIT THIS AND PROJECT NAME ABOVE -->
   <property name="module.name" value="photo"/>
 
+  <!-- we've already got a web.xml -->
+  <property name="no.webdoclet" value="true"/>
+
   <!-- potentially override what's in here -->
   <property file="../../ant.properties"/>
 
   <path id="dependencies.path">
     <pathelement
-      location="../../modules/imagestore/build/product/imagestore.jar"/>
-    <pathelement location="../../modules/imagestore/build/product/user.jar"/>
+      location="../../modules/user/build/product/trailmagic-user.jar"/>
+    <pathelement location="../../modules/image/build/product/trailmagic-image.jar"/>
   </path>
 
   <import file="../../j2ee-targets.xml"/>

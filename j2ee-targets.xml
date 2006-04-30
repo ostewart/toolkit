@@ -86,7 +86,7 @@
     </jar>
   </target>
 
-  <target name="webdoclet" depends="init">
+  <target name="webdoclet" depends="init" unless="no.webdoclet">
     <taskdef name="webdoclet"
       classname="xdoclet.modules.web.WebDocletTask">
       <classpath>
@@ -101,7 +101,15 @@
     </webdoclet>
   </target>
 
-  <target name="build-web" depends="compile,webdoclet">
+  <target name="copywebxml" if="no.webdoclet">
+    <copy todir="${build.resources.dir}">
+      <fileset dir="${resources.dir}">
+        <include name="web.xml"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="build-web" depends="compile,copywebxml,webdoclet">
     <mkdir dir="${build.product.dir}"/>
     <war destfile="${build.product.dir}/${warname}"
       webxml="${build.resources.dir}/web.xml">
@@ -113,6 +121,32 @@
       </metainf>
       <fileset dir="${html.dir}"/>
       <lib dir="${lib.dir}"/>
+      <classes dir="${prebuilt.dir}"/>
+      <classes dir="${build.output.dir}"/>
+      <webinf dir="${basedir}">
+        <include name="jsp/**/*"/>
+      </webinf>
+      <webinf dir="${prebuilt.dir}">
+        <exclude name="web.xml"/>
+      </webinf>
+    </war>
+  </target>
+
+  <target name="build-web-wars-only" depends="compile,copywebxml,webdoclet">
+    <mkdir dir="${build.product.dir}"/>
+    <war destfile="${build.product.dir}/${warname}"
+      webxml="${build.resources.dir}/web.xml">
+      <manifest>
+        <attribute name="Class-Path" value="${manifest.classpath}"/>
+      </manifest>
+      <metainf dir="${build.resources.dir}">
+        <exclude name="MANIFEST.MF"/>
+      </metainf>
+      <fileset dir="${html.dir}"/>
+      <lib dir="${lib.dir}"/>
+      <lib dir="${global.lib.dir}"/>
+      <lib dir="${global.lib.dep.dir}"/>
+      <lib refid="dependencies.libs"/>
       <classes dir="${prebuilt.dir}"/>
       <classes dir="${build.output.dir}"/>
       <webinf dir="${basedir}">

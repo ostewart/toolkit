@@ -17,16 +17,26 @@
   <property name="junit.haltonfailure" value="true"/>
   <dirname property="common.basedir" file="${ant.file.common}"/>
   <property name="global.lib.dir" value="${common.basedir}/lib"/>
+  <property name="global.lib.dep.dir"
+    value="${common.basedir}/lib-dep"/>
+    <property name="global.lib.build.dir" value="${common.basedir}/lib-build"/>
   <property name="ant.lib.dir" value="${common.basedir}/ant-lib"/>
   <property name="ant.resources.dir"
     value="${common.basedir}/ant-etc"/>
-  <property name="jar.name" value="${project.name}.jar"/>
+  <property name="jar.name" value="${module.name}.jar"/>
 
   <path id="global.classpath">
     <fileset dir="${global.lib.dir}">
       <include name="**/*.jar"/>
     </fileset>
-  </path>
+    <!-- these next two should probably go somewhere else -->
+    <fileset dir="${global.lib.dep.dir}">
+      <include name="**/*.jar"/>
+    </fileset>
+    <fileset dir="${global.lib.build.dir}">
+      <include name="**/*.jar"/>
+    </fileset>
+</path>
 
   <path id="build.classpath">
     <path refid="dependencies.path"/>
@@ -63,7 +73,7 @@
            optimize="${javac.optimize}" fork="true" memoryMaximumSize="500m">
       <src path="${src.dir}"/>
       <classpath refid="build.classpath"/>
-      <compilerarg value="-Xlint"/>
+      <compilerarg line="-Xlint -Xlint:-path -Xlint:-serial"/>
     </javac>
 
     <!-- copy over any properties files or serialized files -->
@@ -76,7 +86,8 @@
   </target>
 
   <target name="build" depends="compile">
-    <jar destfile="${build.dir}/${jar.name}">
+    <mkdir dir="${build.product.dir}"/>
+    <jar destfile="${build.product.dir}/${jar.name}">
       <fileset dir="${build.output.dir}"/>
     </jar>
   </target>

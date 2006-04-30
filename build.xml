@@ -12,10 +12,14 @@
   <property name="resources.dir" value="etc"/>
   <property name="products.dir" value="${build.dir}/products"/>
 
+
+  <property name="global.lib.dir" value="lib"/>
+  <property name="global.lib.dep.dir" value="lib-dep"/>
+
   <!-- these must be in order by dependency...I agree that it sucks -->
   <filelist dir="." id="modules.list">
     <file name="modules/user/build.xml"/>
-    <file name="modules/imagestore/build.xml"/>
+    <file name="modules/image/build.xml"/>
     <file name="web/photo/build.xml"/>
   </filelist>
 
@@ -54,10 +58,13 @@
     <ear destfile="${build.dir}/${earname}"
       appxml="${resources.dir}/application.xml">
       <fileset dir="${products.dir}"/>
+      <fileset dir="${global.lib.dir}"/>
+      <fileset dir="${global.lib.dep.dir}"/>
     </ear>
   </target>
 
   <target name="clean">
+    <delete dir="${build.dir}"/>
     <iterate target="clean"/>
   </target>
 
