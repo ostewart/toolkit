@@ -10,9 +10,12 @@
   <property name="ejb.build.dir" value="${build.dir}/classes"/>
   <!-- this was META-INF -->
   <property name="build.resources.dir" value="${build.dir}/etc"/>
+  <property name="build.lib.dir" value="${build.dir}/lib"/>
   <property name="jarname" value="${module.name}.jar"/>
   <property name="warname" value="${module.name}.war"/>
   <property name="html.dir" value="web"/>
+  <!-- default to only building wars -->
+  <property name="no.ear" value="true"/>
 
   <pathconvert property="manifest.classpath"
     pathsep=" ">
@@ -101,16 +104,19 @@
     </webdoclet>
   </target>
 
-  <target name="copywebxml" if="no.webdoclet">
+  <!--  <target name="copywebxml" if="no.webdoclet">-->
+  <target name="copyresources" depends="init">
     <copy todir="${build.resources.dir}">
       <fileset dir="${resources.dir}">
-        <include name="web.xml"/>
+<!--        <include name="web.xml"/>-->
       </fileset>
     </copy>
   </target>
 
-  <target name="build-web" depends="compile,copywebxml,webdoclet">
+  <target name="build-web"
+    depends="compile,copyresources,webdoclet,prepare-war-libs,prepare-ear-libs">
     <mkdir dir="${build.product.dir}"/>
+
     <war destfile="${build.product.dir}/${warname}"
       webxml="${build.resources.dir}/web.xml">
       <manifest>
@@ -120,41 +126,46 @@
         <exclude name="MANIFEST.MF"/>
       </metainf>
       <fileset dir="${html.dir}"/>
-      <lib dir="${lib.dir}"/>
+      <lib dir="${build.lib.dir}"/>
       <classes dir="${prebuilt.dir}"/>
       <classes dir="${build.output.dir}"/>
       <webinf dir="${basedir}">
         <include name="jsp/**/*"/>
       </webinf>
-      <webinf dir="${prebuilt.dir}">
+      <webinf dir="${build.resources.dir}">
         <exclude name="web.xml"/>
       </webinf>
     </war>
   </target>
 
-  <target name="build-web-wars-only" depends="compile,copywebxml,webdoclet">
-    <mkdir dir="${build.product.dir}"/>
-    <war destfile="${build.product.dir}/${warname}"
-      webxml="${build.resources.dir}/web.xml">
-      <manifest>
-        <attribute name="Class-Path" value="${manifest.classpath}"/>
-      </manifest>
-      <metainf dir="${build.resources.dir}">
-        <exclude name="MANIFEST.MF"/>
-      </metainf>
-      <fileset dir="${html.dir}"/>
-      <lib dir="${lib.dir}"/>
-      <lib dir="${global.lib.dir}"/>
-      <lib dir="${global.lib.dep.dir}"/>
-      <lib refid="dependencies.libs"/>
-      <classes dir="${prebuilt.dir}"/>
-      <classes dir="${build.output.dir}"/>
-      <webinf dir="${basedir}">
-        <include name="jsp/**/*"/>
-      </webinf>
-      <webinf dir="${prebuilt.dir}">
-        <exclude name="web.xml"/>
-      </webinf>
-    </war>
+  <target name="deploy-web" depends="build-web">
+    <copy todir="${deploy.dir}">
+      <fileset dir="${build.product.dir}">
+        <include name="${warname}"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="prepare-ear-libs" unless="no.ear">
+    <!-- for an ear, global libs get stuck into the ear, so we only
+    put the libs in our local lib directory in
+    -->
+    <mkdir dir="${build.lib.dir}"/>
+    <copy dir="${lib.dir}" todir="${build.lib.dir}" flatten="true"/>
+  </target>
+
+  <target name="prepare-war-libs" if="no.ear">
+    <mkdir dir="${build.lib.dir}"/>
+    <!-- can't figure out how to get all the depencencies, etc., into
+         one lib directory in the war, so copy them all into the build
+         directory...yuck
+    -->
+    <copy todir="${build.lib.dir}">
+      <mapper type="flatten"/>
+      <fileset dir="${lib.dir}"/>
+      <fileset dir="${global.lib.dir}"/>
+      <fileset dir="${global.lib.dep.dir}"/>
+      <fileset refid="dependencies.libs"/>
+    </copy>
   </target>
 </project>

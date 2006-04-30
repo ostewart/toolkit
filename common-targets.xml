@@ -24,6 +24,7 @@
   <property name="ant.resources.dir"
     value="${common.basedir}/ant-etc"/>
   <property name="jar.name" value="${module.name}.jar"/>
+  <property name="hibernate.dir" value="hbm"/>
 
   <path id="global.classpath">
     <fileset dir="${global.lib.dir}">
@@ -86,6 +87,9 @@
   </target>
 
   <target name="build" depends="compile">
+    <copy todir="${build.output.dir}">
+      <fileset dir="${hibernate.dir}"/>
+    </copy>
     <mkdir dir="${build.product.dir}"/>
     <jar destfile="${build.product.dir}/${jar.name}">
       <fileset dir="${build.output.dir}"/>
@@ -173,6 +177,12 @@
         <pathelement location="${resources.dir}"/>
       </classpath>
     </java>
+  </target>
+
+  <target name="deploy">
+    <!-- default deploy target does nothing...override in web build
+    files
+    -->
   </target>
 
 

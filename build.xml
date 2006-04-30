@@ -36,8 +36,15 @@
     </sequential>
   </macrodef>
 
-  <target name="deploy" depends="build">
-    <!--    <iterate target="deploy"/> -->
+  <target name="deploy" depends="build,deploy-subprojects,deploy-ear">
+    <!-- depends do all the work -->
+  </target>
+
+  <target name="deploy-subprojects" if="no.ear">
+    <iterate target="deploy"/>
+  </target>
+
+  <target name="deploy-ear" unless="no.ear">
     <copy file="${build.dir}/${earname}" toDir="${deploy.dir}"/>
   </target>
 
@@ -45,9 +52,15 @@
     <iterate target="compile"/>
   </target>
 
-  <target name="build">
-    <iterate target="build"/>
+  <target name="build" depends="build-subprojects,build-ear">
+    <!-- depends do all the work -->
+  </target>
 
+  <target name="build-subprojects">
+    <iterate target="build"/>
+  </target>
+
+  <target name="build-ear" unless="no.ear">
     <mkdir dir="${build.dir}"/>
     <mkdir dir="${products.dir}"/>
     <!-- ugly but I can't find a way to strip the paths for the ear -->
