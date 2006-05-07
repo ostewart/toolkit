@@ -82,6 +82,7 @@
       destdir="${build.output.dir}"
       source="1.5" debug="${javac.debug}">
       <classpath refid="build.classpath"/>
+      <aspectPath refid="aspect.jars"/>
     </aspectj:iajc>
 
     <!-- copy over any properties files or serialized files -->

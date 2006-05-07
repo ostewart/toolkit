@@ -13,5 +13,7 @@
   <path id="dependencies.path">
   </path>
 
+  <path id="aspect.jars"/>
+
   <import file="../../common-targets.xml"/>
 </project>

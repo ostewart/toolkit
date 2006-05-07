@@ -26,6 +26,13 @@
     <include name="modules/image/lib/**/*.jar"/>
   </fileset>
 
+  <path id="aspect.jars">
+    <pathelement
+      location="../../modules/user/build/product/trailmagic-user.jar"/>
+    <pathelement
+      location="../../modules/image/build/product/trailmagic-image.jar"/>
+  </path>
+
   <import file="../../j2ee-targets.xml"/>
 
   <target name="build" depends="build-web,copy-resources"/>
