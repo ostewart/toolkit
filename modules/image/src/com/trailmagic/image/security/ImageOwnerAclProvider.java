@@ -78,8 +78,15 @@ public class ImageOwnerAclProvider implements AclProvider {
 
     public AclEntry[] getAcls(Object domainInstance,
                               Authentication authentication) {
-        // TODO: actually give specific results
-        return getAcls(domainInstance);
+        Image image = (Image) domainInstance;
+        User owner = image.getOwner();
+        if (owner.getScreenName().equals(authentication.getName())) {
+            return getAcls(domainInstance);
+        } else {
+            s_log.debug("Owner doesn't match authentication.  "
+                        + "Returning no ACLS");
+            return new AclEntry[] {};
+        }
     }
 
     /**
@@ -95,6 +102,13 @@ public class ImageOwnerAclProvider implements AclProvider {
             return false;
         }
 
-        return Image.class.isAssignableFrom(domainInstance.getClass());
+        boolean isSupported =
+            Image.class.isAssignableFrom(domainInstance.getClass());
+
+        if (s_log.isDebugEnabled()) {
+            s_log.debug("domain instance " + domainInstance
+                        + (isSupported ? " is" : " is not") + " supported");
+        }
+        return isSupported;
     }
 }

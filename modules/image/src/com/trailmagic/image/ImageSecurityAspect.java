@@ -24,39 +24,37 @@ public aspect ImageSecurityAspect implements InitializingBean {
     private Logger m_log =
         Logger.getLogger(com.trailmagic.image.ImageSecurityAspect.class);
 
-    pointcut imageAccess(Image i): target(i) && call(public * *(..));
-    pointcut imageGroupAccess(ImageGroup g): target(g) && call(public * *(..));
-    pointcut imageFrameAccess(ImageFrame f): target(f) && call(public * *(..));
     pointcut getFrames(ImageGroup g): target(g)
         && call(public SortedSet<ImageFrame> getFrames());
 
-    pointcut framage(ImageGroup g): target(g) && call(public * getFrames(..));
+    //    pointcut springAdvised(): !within(ImageSecurityAspect)
+        //        && execution(public * *(..))
+        //        && (target(Image) || target(ImageFrame));
 
-    after (ImageGroup g) returning (SortedSet<ImageFrame> frames): getFrames(g) {
-        for (ImageFrame frame: frames) {
-            m_log.warn("got frame: " + frame);
+    pointcut springAdvised(): !within(ImageSecurityAspect)
+        && (execution(public * getImage(..))
+            && target(ImageFrame))
+        || (target(ImageGroup)
+            && execution(public SortedSet<ImageFrame> *(..)));
+
+    Object around(): springAdvised() {
+        if (m_securityInterceptor != null) {
+            AspectJCallback callback = new AspectJCallback() {
+                    public Object proceedWithObject() {
+                        return proceed();
+                    }
+                };
+            return m_securityInterceptor.invoke(thisJoinPoint, callback);
+        } else {
+            throw new IllegalStateException("null security interceptor");
         }
     }
 
-    after (ImageGroup g) returning(): framage(g) {
-        m_log.warn("major framage");
-    }
-
-    before (ImageGroup g): imageGroupAccess(g) {
-        m_log.warn("imageGroupAccess advice!!");
-    }
-
-    before(Image i): imageAccess(i) {
-        m_log.warn("imageAccess advice!!!");
-    }
-
-    before(ImageFrame f): imageFrameAccess(f) {
-        m_log.warn("imageFrameAccess advice!!");
-    }
-
-    before(): call(String com.trailmagic.image.Image.get*()) {
-        m_log.warn("about to call getDisplayName(). w00t!");
-    }
+//     after (ImageGroup g) returning (SortedSet<ImageFrame> frames): getFrames(g) {
+//         for (ImageFrame frame: frames) {
+//             m_log.debug("got frame: " + frame);
+//         }
+//     }
 
     public AspectJSecurityInterceptor getSecurityInterceptor() {
         return m_securityInterceptor;

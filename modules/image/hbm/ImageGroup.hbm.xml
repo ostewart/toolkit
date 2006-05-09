@@ -163,7 +163,7 @@
   <query name="rollForImage">
     SELECT frame.imageGroup FROM com.trailmagic.image.ImageFrame
     AS frame INNER JOIN frame.imageGroup
-    WHERE frame.image = :image
-    AND frame.imageGroup.type = 'roll';
+    WHERE frame.imageGroup.type = 'roll'
+    AND frame.image = :image
   </query>
 </hibernate-mapping>

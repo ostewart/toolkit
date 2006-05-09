@@ -8,8 +8,8 @@
   <bean id="aclManager" class="org.acegisecurity.acl.AclProviderManager">
     <property name="providers">
       <list>
-        <ref local="basicAclProvider"/>
         <ref local="imageOwnerAclProvider"/>
+        <ref local="basicAclProvider"/>
       </list>
     </property>
   </bean>
@@ -32,54 +32,8 @@
   </bean>
 
 
-   <!-- ~~~~~~~ "BEFORE INVOCATION" AUTHORIZATION DEFINITIONS~~~~~~~~~~~~~ -->
-
-   <!-- ACL permission masks used by this application -->
-   <bean
-     id="org.acegisecurity.acl.basic.SimpleAclEntry.ADMINISTRATION"
-     class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
-    <property name="staticField">
-      <value>org.acegisecurity.acl.basic.SimpleAclEntry.ADMINISTRATION</value>
-    </property>
-  </bean>
-  
-  <bean id="org.acegisecurity.acl.basic.SimpleAclEntry.READ"
-    class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
-    <property name="staticField">
-      <value>org.acegisecurity.acl.basic.SimpleAclEntry.READ</value>
-    </property>
-  </bean>
-  <bean id="org.acegisecurity.acl.basic.SimpleAclEntry.DELETE"
-    class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
-    <property name="staticField">
-      <value>org.acegisecurity.acl.basic.SimpleAclEntry.DELETE</value>
-    </property>
-  </bean>
-
-
    <!-- An access decision voter that reads ROLE_* configuration settings -->
    <bean id="roleVoter" class="org.acegisecurity.vote.RoleVoter"/>
-
-   <!-- An access decision voter that reads ACL_IMAGE_READ configuration settings -->
-  <bean id="aclImageReadVoter"
-    class="org.acegisecurity.vote.BasicAclEntryVoter">
-    <property name="processConfigAttribute">
-      <value>ACL_IMAGE_READ</value>
-    </property>
-    <property name="processDomainObjectClass">
-      <value>com.trailmagic.image.Image</value>
-    </property>
-    <property name="aclManager">
-      <ref local="aclManager"/>
-    </property>
-    <property name="requirePermission">
-      <list>
-        <ref local="org.acegisecurity.acl.basic.SimpleAclEntry.ADMINISTRATION"/>
-        <ref local="org.acegisecurity.acl.basic.SimpleAclEntry.READ"/>
-      </list>
-    </property>
-  </bean>
-
 
   <!-- ============ METHOD INVOCATION AUTHORIZATION ==================== -->
 
@@ -109,7 +63,7 @@
 
   <!-- An access decision voter for ACL_IMAGE_READ configuration settings -->
   <bean id="aclImageReadVoter"
-    class="org.acegisecurity.vote.BasicAclEntryVoter">
+    class="com.trailmagic.image.security.BetterAclEntryVoter">
     <property name="processConfigAttribute">
       <value>ACL_IMAGE_READ</value>
     </property>
@@ -127,7 +81,7 @@
 
   <!-- An access decision voter for ACL_IMAGE_DELETE configuration settings -->
   <bean id="aclImageDeleteVoter"
-    class="org.acegisecurity.vote.BasicAclEntryVoter">
+    class="com.trailmagic.image.security.BetterAclEntryVoter">
     <property name="processConfigAttribute">
       <value>ACL_IMAGE_DELETE</value>
     </property>
@@ -145,7 +99,7 @@
 
   <!-- An access decision voter for ACL_IMAGE_ADMIN configuration settings -->
   <bean id="aclImageAdminVoter"
-    class="org.acegisecurity.vote.BasicAclEntryVoter">
+    class="com.trailmagic.image.security.BetterAclEntryVoter">
     <property name="processConfigAttribute">
       <value>ACL_IMAGE_ADMIN</value>
     </property>
@@ -163,7 +117,7 @@
   <bean id="imageAccessDecisionManager"
     class="org.acegisecurity.vote.AffirmativeBased">
     <property name="allowIfAllAbstainDecisions">
-      <value>false</value>
+      <value>true</value>
     </property>
     <property name="decisionVoters">
       <list>
@@ -198,12 +152,56 @@
     </property>
     <property name="objectDefinitionSource">
       <value>
-        com.trailmagic.image.ImageFactory.getById=ACL_IMAGE_READ,AFTER_ACL_READ
-        com.trailmagic.image.ImageFactory.getAll=ACL_IMAGE_READ,AFTER_ACL_COLLECTION_READ
+        com.trailmagic.image.ImageFactory.getById=AFTER_ACL_READ
+        com.trailmagic.image.ImageFactory.getAll=AFTER_ACL_COLLECTION_READ
         com.trailmagic.image.ImageFactory.getByNameAndGroup=AFTER_ACL_COLLECTION_READ
         com.trailmagic.image.ImageFactory.getByName=AFTER_ACL_COLLECTION_READ
-        com.trailmagic.image.ImageFrame.getImage=ACL_IMAGE_READ,AFTER_ACL_READ
+        com.trailmagic.image.ImageManifestationFactory.getById=AFTER_ACL_READ
+        com.trailmagic.image.ImageManifestationFactory.getHeavyById=AFTER_ACL_READ
+        com.trailmagic.image.ImageManifestationFactory.getAllForImageId=AFTER_ACL_COLLECTION_READ
+        com.trailmagic.image.ImageGroupFactory.getAlbumByOwnerAndName=AFTER_ACL_READ
+        com.trailmagic.image.ImageGroupFactory.getRollByOwnerAndName=AFTER_ACL_READ
+        com.trailmagic.image.ImageGroupFactory.getImageFrameByImageGroupAndImageId=AFTER_ACL_READ
+        com.trailmagic.image.ImageGroupFactory.getAlbumsByOwnerScreenName=AFTER_ACL_COLLECTION_READ
+        com.trailmagic.image.ImageGroupFactory.getRollsByOwnerScreenName=AFTER_ACL_COLLECTION_READ
+        com.trailmagic.image.ImageGroupFactory.getAlbumOwners=AFTER_ACL_COLLECTION_READ
+        com.trailmagic.image.ImageGroupFactory.getRollOwners=AFTER_ACL_COLLECTION_READ
+        com.trailmagic.image.ImageGroupFactory.getOwnersByType=AFTER_ACL_COLLECTION_READ
+        com.trailmagic.image.ImageGroupFactory.getByOwnerScreenNameAndType=AFTER_ACL_COLLECTION_READ
+        com.trailmagic.image.ImageGroupFactory.getByOwnerNameAndType=AFTER_ACL_READ
+        com.trailmagic.image.ImageGroupFactory.getByImage=AFTER_ACL_COLLECTION_READ
+        com.trailmagic.image.ImageGroupFactory.getRollForImage=AFTER_ACL_READ
       </value>
+    </property>
+  </bean>
+
+  <bean id="imageAspectSecurity"
+    class="org.acegisecurity.intercept.method.aspectj.AspectJSecurityInterceptor">
+    <property name="validateConfigAttributes">
+      <value>true</value>
+    </property>
+    <property name="authenticationManager">
+      <ref bean="authenticationManager"/>
+    </property>
+    <property name="accessDecisionManager">
+      <ref local="imageAccessDecisionManager"/>
+    </property>
+    <property name="afterInvocationManager">
+      <ref local="afterInvocationManager"/>
+    </property>
+    <property name="objectDefinitionSource">
+      <value>
+        com.trailmagic.image.ImageFrame.getImage=AFTER_ACL_READ
+        com.trailmagic.image.ImageGroup.getFrames=AFTER_ACL_COLLECTION_READ
+      </value>
+    </property>
+  </bean>
+
+  <bean id="imageInstanceSecurityAspect"
+    class="com.trailmagic.image.ImageSecurityAspect"
+    factory-method="aspectOf">
+    <property name="securityInterceptor">
+      <ref bean="imageAspectSecurity"/>
     </property>
   </bean>
 
