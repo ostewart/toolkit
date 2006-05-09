@@ -9,6 +9,7 @@
     <property name="providers">
       <list>
         <ref local="imageOwnerAclProvider"/>
+        <ref local="imageGroupOwnerAclProvider"/>
         <ref local="basicAclProvider"/>
       </list>
     </property>
@@ -30,6 +31,9 @@
       <ref local="imageGroupFactory"/>
     </property>
   </bean>
+
+  <bean id="imageGroupOwnerAclProvider"
+    class="com.trailmagic.image.security.ImageGroupOwnerAclProvider"/>
 
 
    <!-- An access decision voter that reads ROLE_* configuration settings -->
