@@ -1,5 +1,6 @@
 package com.trailmagic.image;
 
+import com.trailmagic.user.Owned;
 import java.util.SortedSet;
 import net.sf.hibernate.Query;
 import net.sf.hibernate.Session;
@@ -7,7 +8,7 @@ import net.sf.hibernate.HibernateException;
 
 import com.trailmagic.user.User;
 
-public class Image {
+public class Image implements Owned {
     private long m_id;
     private String m_name;
     private String m_displayName;

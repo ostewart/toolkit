@@ -73,8 +73,10 @@ public abstract class OwnerAclProvider implements AclProvider {
         if (owner.getScreenName().equals(authentication.getName())) {
             return getAcls(domainInstance);
         } else {
-            s_log.debug("Owner doesn't match authentication.  "
-                        + "Returning no ACLS");
+            if (s_log.isDebugEnabled()) {
+                s_log.debug("Owner doesn't match authentication.  "
+                            + "Returning no ACLS");
+            }
             return new AclEntry[] {};
         }
     }

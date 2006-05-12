@@ -8,7 +8,7 @@
       <value>
         CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
         PATTERN_TYPE_APACHE_ANT
-        /**=channelProcessingFilter,httpSessionContextIntegrationFilter,authenticationProcessingFilter,rememberMeProcessingFilter,anonymousProcessingFilter,securityEnforcementFilter
+        /**=channelProcessingFilter,httpSessionContextIntegrationFilter,authenticationProcessingFilter,rememberMeProcessingFilter,anonymousProcessingFilter,exceptionTranslationFilter,filterSecurityInterceptor
          </value>
       </property>
   </bean>
@@ -79,6 +79,9 @@
     <property name="rememberMeServices">
       <ref local="rememberMeServices"/>
     </property>
+    <property name="authenticationManager">
+      <ref local="authenticationManager"/>
+    </property>
   </bean>
 
   <bean id="rememberMeServices"
@@ -144,11 +147,8 @@
   <bean id="insecureChannelProcessor"
     class="org.acegisecurity.securechannel.InsecureChannelProcessor"/>
 
-  <bean id="securityEnforcementFilter"
-    class="org.acegisecurity.intercept.web.SecurityEnforcementFilter">
-    <property name="filterSecurityInterceptor">
-      <ref local="filterInvocationInterceptor"/>
-    </property>
+  <bean id="exceptionTranslationFilter"
+    class="org.acegisecurity.ui.ExceptionTranslationFilter">
     <property name="authenticationEntryPoint">
       <ref local="authenticationProcessingFilterEntryPoint"/>
     </property>
@@ -163,7 +163,7 @@
   </bean>
 
   
-  <bean id="filterInvocationInterceptor"
+  <bean id="filterSecurityInterceptor"
     class="org.acegisecurity.intercept.web.FilterSecurityInterceptor">
     <property name="authenticationManager">
       <ref bean="authenticationManager"/>

@@ -10,6 +10,7 @@
       <list>
         <ref local="imageOwnerAclProvider"/>
         <ref local="imageGroupOwnerAclProvider"/>
+        <ref local="imageFrameImageAclProvider"/>
         <ref local="basicAclProvider"/>
       </list>
     </property>
@@ -17,12 +18,21 @@
   
   <bean id="basicAclProvider"
     class="org.acegisecurity.acl.basic.BasicAclProvider">
-    <property name="basicAclDao"><ref local="basicAclExtendedDao"/></property>
+    <property name="basicAclDao"><ref
+        local="basicAclExtendedDao"/></property>
+    <property name="basicAclEntryCache">
+      <ref local="aclEntryCache"/>
+    </property>
   </bean>
 
   <bean id="basicAclExtendedDao"
     class="org.acegisecurity.acl.basic.jdbc.JdbcExtendedDaoImpl">
     <property name="dataSource"><ref bean="dataSource"/></property>
+    <!--
+    <property name="basicAclEntryCache">
+      <ref local="aclEntryCache"/>
+  </property>
+    -->
   </bean>
 
   <bean id="imageOwnerAclProvider"
@@ -34,6 +44,13 @@
 
   <bean id="imageGroupOwnerAclProvider"
     class="com.trailmagic.image.security.ImageGroupOwnerAclProvider"/>
+
+  <bean id="imageFrameImageAclProvider"
+    class="com.trailmagic.image.security.ImageFrameImageAclProvider">
+    <property name="aclManager">
+      <ref local="aclManager"/>
+    </property>
+  </bean>
 
 
    <!-- An access decision voter that reads ROLE_* configuration settings -->
@@ -243,5 +260,30 @@
         <ref local="simpleAclEntry.READ"/>
       </list>
     </property>
+  </bean>
+
+
+  <!-- ACL CACHE -->
+  <bean id="cacheManager"
+    class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+
+    <property name="configLocation">
+      <value>classpath:/ehcache-failsafe.xml</value>
+    </property>
+  </bean>
+
+  <bean id="aclCacheBackend"
+    class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+    <property name="cacheManager">
+      <ref local="cacheManager"/>
+    </property>
+    <property name="cacheName">
+      <value>aclCache</value>
+    </property>
+  </bean>
+
+  <bean id="aclEntryCache"
+    class="org.acegisecurity.acl.basic.cache.EhCacheBasedAclEntryCache">
+    <property name="cache"><ref local="aclCacheBackend"/></property>
   </bean>
 </beans>

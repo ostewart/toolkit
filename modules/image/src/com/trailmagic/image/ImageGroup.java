@@ -1,11 +1,11 @@
 package com.trailmagic.image;
 
+import com.trailmagic.user.Owned;
+import com.trailmagic.user.User;
 import java.util.SortedSet;
 import java.util.Collection;
 
-import com.trailmagic.user.User;
-
-public class ImageGroup {
+public class ImageGroup implements Owned {
     private long m_id;
     private String m_type;
     private String m_name;
