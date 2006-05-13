@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN"
+ "http://www.springframework.org/dtd/spring-beans.dtd">
+
+
+<beans>
+  <!-- moved from applicationContext-imagestore.xml -->
+  <bean id="linkHelper"
+    class="com.trailmagic.image.ui.LinkHelper">
+    <property name="albumServletPath">
+      <value>/albums/</value>
+    </property>
+  </bean>
+</beans>

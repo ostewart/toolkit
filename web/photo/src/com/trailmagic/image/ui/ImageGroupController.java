@@ -11,6 +11,7 @@ import java.util.StringTokenizer;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
+import org.acegisecurity.AccessDeniedException;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -34,7 +35,7 @@ public class ImageGroupController implements Controller, ApplicationContextAware
     private static final String IMG_GROUP_VIEW = "imageGroup";
     private static final String IMAGE_DISPLAY_VIEW = "imageDisplay";
 
-    private static Logger s_logger =
+    private static Logger s_log =
         Logger.getLogger(ImageGroupController.class);
 
     private ApplicationContext m_appContext;
@@ -67,8 +68,8 @@ public class ImageGroupController implements Controller, ApplicationContextAware
 
         UrlPathHelper pathHelper = new UrlPathHelper();
         String myPath = pathHelper.getLookupPathForRequest(req);
-        s_logger.debug("Lookup path: " +
-                       pathHelper.getLookupPathForRequest(req));
+        s_log.debug("Lookup path: " +
+                    pathHelper.getLookupPathForRequest(req));
         StringTokenizer pathTokens = new StringTokenizer(myPath, "/");
         String groupType = pathTokens.nextToken();
         Map<String,Object> model = new HashMap<String,Object>();
@@ -97,17 +98,27 @@ public class ImageGroupController implements Controller, ApplicationContextAware
             List<ImageGroup> imageGroups =
                 imgGroupFactory.getByOwnerScreenNameAndType(ownerName,
                                                             groupType);
-            model.put("imageGroups", imageGroups);
+
+            List<ImageGroup> filteredGroups = new ArrayList<ImageGroup>();
 
             // show a preview image
             Map<ImageGroup,Image> previewImages =
                 new HashMap<ImageGroup,Image>();
             for (ImageGroup group : imageGroups) {
-                if (group.getFrames().size() > 0) {
-                    previewImages.put(group,
-                                      group.getFrames().first().getImage());
+                try {
+                    if (group.getFrames().size() > 0) {
+                        // if there are no images that we have permission
+                        // to see, we'll get an AccessDeniedException
+                        previewImages.put(group,
+                                          group.getFrames().first().getImage());
+                    }
+                    filteredGroups.add(group);
+                } catch (AccessDeniedException e) {
+                    s_log.debug("Access Denied: not including group in "
+                                + "collection: " + group);
                 }
             }
+            model.put("imageGroups", filteredGroups);
             model.put("previewImages", previewImages);
 
             return new ModelAndView(LIST_VIEW, model);

@@ -11,7 +11,7 @@
   <property file="../../ant.properties"/>
 
   <path id="dependencies.path">
-    <pathelement location="../user/build/trailmagic-user.jar"/>
+    <pathelement location="../user/build/product/trailmagic-user.jar"/>
     <pathelement location="../user/build/classes"/>
   </path>
 

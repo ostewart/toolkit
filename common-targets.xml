@@ -25,6 +25,8 @@
     value="${common.basedir}/ant-etc"/>
   <property name="jar.name" value="${module.name}.jar"/>
   <property name="hibernate.dir" value="hbm"/>
+  <property name="global.resources.dir"
+    value="${common.basedir}/${resources.dir}"/>
 
   <path id="global.classpath">
     <fileset dir="${global.lib.dir}">
@@ -97,6 +99,8 @@
   <target name="build" depends="compile">
     <copy todir="${build.output.dir}">
       <fileset dir="${hibernate.dir}"/>
+      <!-- this may not be good - added for run target -->
+      <fileset dir="${resources.dir}"/>
     </copy>
     <mkdir dir="${build.product.dir}"/>
     <jar destfile="${build.product.dir}/${jar.name}">
@@ -183,6 +187,10 @@
       <classpath>
         <path refid="build.classpath"/>
         <pathelement location="${resources.dir}"/>
+        <fileset dir="${build.product.dir}">
+          <include name="**/*.jar"/>
+        </fileset>
+        <pathelement location="${global.resources.dir}"/>
       </classpath>
     </java>
   </target>

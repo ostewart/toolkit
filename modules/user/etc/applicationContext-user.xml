@@ -99,8 +99,9 @@
 
   <bean id="userFactory"
     class="com.trailmagic.user.hibernate.HibernateUserFactory">
-    <property name="sessionFactory"><ref
-        local="sessionFactory"/></property>
+    <property name="sessionFactory">
+      <ref bean="sessionFactory"/>
+    </property>
   </bean>
 
   <bean id="hibernateUserDetailsService"

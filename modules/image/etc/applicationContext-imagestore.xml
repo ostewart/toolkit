@@ -4,23 +4,16 @@
 
   <!-- basic stuff is setup in applicationContext-global.xml -->
 <beans>
-  <bean id="linkHelper"
-    class="com.trailmagic.image.ui.LinkHelper">
-    <property name="albumServletPath">
-      <value>/albums/</value>
-    </property>
-  </bean>
-
   <bean id="imageGroupFactory"
     class="com.trailmagic.image.hibernate.HibernateImageGroupFactory">
     <property name="sessionFactory"><ref
-        local="sessionFactory"/></property>
+        bean="sessionFactory"/></property>
   </bean>
 
   <bean id="imageManifestationFactory"
     class="com.trailmagic.image.hibernate.HibernateImageManifestationFactory">
     <property name="sessionFactory">
-      <ref local="sessionFactory"/>
+      <ref bean="sessionFactory"/>
     </property>
   </bean>
 
@@ -28,7 +21,7 @@
     class="com.trailmagic.image.util.ImagesParser">
     <constructor-arg index="0"><value>false</value></constructor-arg>
     <property name="sessionFactory">
-      <ref local="sessionFactory"/>
+      <ref bean="sessionFactory"/>
     </property>
     <property name="baseDir">
       <value>/photo/import</value>
@@ -73,14 +66,14 @@
 
   <bean id="imageFactoryTarget"
     class="com.trailmagic.image.hibernate.HibernateImageFactory">
-    <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    <property name="sessionFactory"><ref bean="sessionFactory"/></property>
   </bean>
 
 <!--
   <bean id="hibernateInterceptor"
     class="org.springframework.orm.hibernate.HibernateInterceptor">
     <property name="sessionFactory">
-      <ref local="sessionFactory"/>
+      <ref bean="sessionFactory"/>
     </property>
   </bean>
 -->

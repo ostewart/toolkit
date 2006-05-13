@@ -8,10 +8,11 @@
   <bean id="aclManager" class="org.acegisecurity.acl.AclProviderManager">
     <property name="providers">
       <list>
+        <ref local="basicAclProvider"/>
         <ref local="imageOwnerAclProvider"/>
         <ref local="imageGroupOwnerAclProvider"/>
+        <ref local="imageManifestationOwnerAclProvider"/>
         <ref local="imageFrameImageAclProvider"/>
-        <ref local="basicAclProvider"/>
       </list>
     </property>
   </bean>
@@ -38,12 +39,15 @@
   <bean id="imageOwnerAclProvider"
     class="com.trailmagic.image.security.ImageOwnerAclProvider">
     <property name="imageGroupFactory">
-      <ref local="imageGroupFactory"/>
+      <ref bean="imageGroupFactory"/>
     </property>
   </bean>
 
   <bean id="imageGroupOwnerAclProvider"
     class="com.trailmagic.image.security.ImageGroupOwnerAclProvider"/>
+
+  <bean id="imageManifestationOwnerAclProvider"
+    class="com.trailmagic.image.security.ImageManifestationOwnerAclProvider"/>
 
   <bean id="imageFrameImageAclProvider"
     class="com.trailmagic.image.security.ImageFrameImageAclProvider">
@@ -192,6 +196,11 @@
         com.trailmagic.image.ImageGroupFactory.getByOwnerNameAndType=AFTER_ACL_READ
         com.trailmagic.image.ImageGroupFactory.getByImage=AFTER_ACL_COLLECTION_READ
         com.trailmagic.image.ImageGroupFactory.getRollForImage=AFTER_ACL_READ
+        com.trailmagic.image.ImageManifestationFactory.getById=AFTER_ACL_READ
+        com.trailmagic.image.ImageManifestationFactory.getHeavyById=AFTER_ACL_READ
+        com.trailmagic.image.ImageManifestationFactory.getAllForImageId=ACL_COLLECTION_READ
+        com.trailmagic.image.security.ImageSecurityFactory.makePublic=ACL_IMAGE_ADMIN
+        com.trailmagic.image.security.ImageSecurityFactory.makePrivate=ACL_IMAGE_ADMIN
       </value>
     </property>
   </bean>
@@ -214,6 +223,7 @@
       <value>
         com.trailmagic.image.ImageFrame.getImage=AFTER_ACL_READ
         com.trailmagic.image.ImageGroup.getFrames=AFTER_ACL_COLLECTION_READ
+        com.trailmagic.image.Image.getManifestations=AFTER_ACL_COLLECTION_READ
       </value>
     </property>
   </bean>

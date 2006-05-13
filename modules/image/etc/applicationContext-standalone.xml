@@ -34,13 +34,14 @@
     <property name="sessionFactory"><ref local="sessionFactory"/></property>
   </bean>
 
+  <!--
   <bean id="linkHelper"
     class="com.trailmagic.image.ui.LinkHelper">
     <property name="albumServletPath">
       <value>/albums/</value>
     </property>
   </bean>
-
+-->
   <bean id="imageFactory"
     class="com.trailmagic.image.hibernate.HibernateImageFactory">
     <property name="sessionFactory"><ref local="sessionFactory"/></property>
@@ -154,5 +155,104 @@
       </list>
     </property>
   </bean>
--->
+  -->
+
+  <bean id="basicAclExtendedDao"
+    class="org.acegisecurity.acl.basic.jdbc.JdbcExtendedDaoImpl">
+    <property name="dataSource"><ref bean="dataSource"/></property>
+    <!--
+    <property name="basicAclEntryCache">
+      <ref local="aclEntryCache"/>
+  </property>
+    -->
+  </bean>
+
+  <bean id="imageSecurityFactory"
+    class="com.trailmagic.image.security.ImageSecurityFactory">
+    <property name="basicAclExtendedDao">
+      <ref local="basicAclExtendedDao"/>
+    </property>
+  </bean>
+
+  <bean id="imageAspectSecurity"
+    class="org.acegisecurity.intercept.method.aspectj.AspectJSecurityInterceptor">
+    <property name="validateConfigAttributes">
+      <value>true</value>
+    </property>
+    <property name="authenticationManager">
+      <ref bean="authenticationManager"/>
+    </property>
+    <property name="accessDecisionManager">
+      <ref bean="imageAccessDecisionManager"/>
+    </property>
+    <property name="afterInvocationManager">
+      <ref bean="afterInvocationManager"/>
+    </property>
+
+    <property name="objectDefinitionSource">
+      <value>
+        <!-- bypass security in this environment
+        com.trailmagic.image.ImageFrame.getImage=AFTER_ACL_READ
+        com.trailmagic.image.ImageGroup.getFrames=AFTER_ACL_COLLECTION_READ
+        com.trailmagic.image.Image.getManifestations=AFTER_ACL_COLLECTION_READ
+        -->
+      </value>
+    </property>
+  </bean>
+
+  <bean id="imageInstanceSecurityAspect"
+    class="com.trailmagic.image.ImageSecurityAspect"
+    factory-method="aspectOf">
+    <property name="securityInterceptor">
+      <ref bean="imageAspectSecurity"/>
+    </property>
+  </bean>
+
+  <!-- override because jaas.config isn't in the right place -->
+  <bean id="jaasAuthenticationProvider" class="org.acegisecurity.providers.jaas.JaasAuthenticationProvider">
+    <property name="loginConfig">
+      <value>jaas.config</value>
+    </property>
+    <property name="loginContextName">
+      <value>ImageStore</value>
+    </property>
+    <property name="callbackHandlers">
+      <list>
+        <bean class="org.acegisecurity.providers.jaas.JaasNameCallbackHandler"/>
+        <bean class="org.acegisecurity.providers.jaas.JaasPasswordCallbackHandler"/>
+      </list>
+    </property>
+    <property name="authorityGranters">
+      <list>
+        <bean class="com.trailmagic.user.UserGroupAuthorityGranter"/>
+      </list>
+    </property>
+  </bean>
+
+  <!-- Wrap the MakeAlbum with a session -->
+  <bean id="addPermissions"
+    class="org.springframework.aop.framework.ProxyFactoryBean">
+    <property name="target">
+      <bean
+        class="com.trailmagic.image.util.AddPermissions">
+        <property name="imageSecurityFactory">
+          <ref local="imageSecurityFactory"/>
+        </property>
+        <property name="imageGroupFactory">
+          <ref local="imageGroupFactory"/>
+        </property>
+        <property name="userFactory">
+          <ref local="userFactory"/>
+        </property>
+        <property name="sessionFactory">
+          <ref local="sessionFactory"/>
+        </property>
+      </bean>
+    </property>
+    <property name="interceptorNames">
+      <list>
+        <value>hibernateInterceptor</value>
+      </list>
+    </property>
+  </bean>
 </beans>

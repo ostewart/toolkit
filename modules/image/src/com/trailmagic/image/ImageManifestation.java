@@ -1,12 +1,14 @@
 package com.trailmagic.image;
 
 import java.util.SortedSet;
+import com.trailmagic.user.Owned;
+import com.trailmagic.user.User;
 
 /**
  * This class maps the metadata of the manifestation, while its subclass,
  * the <code>HeavyImageManifestation</code> also maps the data.
  **/
-public class ImageManifestation implements Comparable {
+public class ImageManifestation implements Comparable, Owned {
     private long m_id;
     private Image m_image;
     private int m_height;
@@ -14,7 +16,7 @@ public class ImageManifestation implements Comparable {
     private String m_format;
     private boolean m_original;
     private String m_name;
-    
+
     public ImageManifestation() {
     }
 
@@ -39,7 +41,7 @@ public class ImageManifestation implements Comparable {
     public int getHeight() {
         return m_height;
     }
-    
+
     public void setHeight(int height) {
         m_height = height;
     }
@@ -78,6 +80,10 @@ public class ImageManifestation implements Comparable {
 
     public int getArea() {
         return m_height * m_width;
+    }
+
+    public User getOwner() {
+        return m_image.getOwner();
     }
 
     public int compareTo(Object obj) throws ClassCastException {

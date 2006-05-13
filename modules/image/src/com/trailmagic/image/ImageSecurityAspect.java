@@ -35,7 +35,9 @@ public aspect ImageSecurityAspect implements InitializingBean {
         && (execution(public * getImage(..))
             && target(ImageFrame))
         || (target(ImageGroup)
-            && execution(public SortedSet<ImageFrame> *(..)));
+            && execution(public SortedSet<ImageFrame> *(..)))
+        || (target(Image)
+            && execution(public SortedSet<ImageManifestation> *(..)));
 
     Object around(): springAdvised() {
         if (m_securityInterceptor != null) {

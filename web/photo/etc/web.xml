@@ -14,6 +14,7 @@
       /WEB-INF/applicationContext-user.xml
       /WEB-INF/applicationContext-imagestore.xml
       /WEB-INF/applicationContext-imagestore-authorization.xml
+      /WEB-INF/applicationContext-photo.xml
     </param-value>
   </context-param>
   
