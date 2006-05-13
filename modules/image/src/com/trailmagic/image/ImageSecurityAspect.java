@@ -32,8 +32,8 @@ public aspect ImageSecurityAspect implements InitializingBean {
         //        && (target(Image) || target(ImageFrame));
 
     pointcut springAdvised(): !within(ImageSecurityAspect)
-        && (execution(public * getImage(..))
-            && target(ImageFrame))
+        && (execution(public Image *(..))
+            && (target(ImageFrame) || target(ImageGroup)))
         || (target(ImageGroup)
             && execution(public SortedSet<ImageFrame> *(..)))
         || (target(Image)

@@ -76,6 +76,19 @@ public class ImageGroup implements Owned {
         m_frames = frames;
     }
 
+    // mainly to optimize group display so that we don't have to
+    // check permissions on everything
+    // XXX: this will break if we don't have permission for the first image
+    public Image getPreviewImage() {
+        return m_frames.first().getImage();
+    }
+
+    // mainly to optimize group display so that we don't have to get the
+    // frames
+    public int size() {
+        return m_frames.size();
+    }
+
     public int getNextFrameNumber() {
         ImageFrame lastFrame = m_frames.last();
         return lastFrame.getPosition() + 1;

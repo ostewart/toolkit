@@ -106,11 +106,11 @@ public class ImageGroupController implements Controller, ApplicationContextAware
                 new HashMap<ImageGroup,Image>();
             for (ImageGroup group : imageGroups) {
                 try {
-                    if (group.getFrames().size() > 0) {
+                    if (group.size() > 0) {
                         // if there are no images that we have permission
                         // to see, we'll get an AccessDeniedException
                         previewImages.put(group,
-                                          group.getFrames().first().getImage());
+                                          group.getPreviewImage());
                     }
                     filteredGroups.add(group);
                 } catch (AccessDeniedException e) {
