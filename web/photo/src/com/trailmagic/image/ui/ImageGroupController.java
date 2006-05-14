@@ -104,20 +104,27 @@ public class ImageGroupController implements Controller, ApplicationContextAware
             // show a preview image
             Map<ImageGroup,Image> previewImages =
                 new HashMap<ImageGroup,Image>();
+            Map<ImageGroup,Integer> numImages =
+                new HashMap<ImageGroup,Integer>();
             for (ImageGroup group : imageGroups) {
                 try {
-                    if (group.size() > 0) {
+                    // need to get all the frames in order to get an
+                    // accurate count of how many we have access to :(
+                    SortedSet<ImageFrame> frames = group.getFrames();
+                    if (frames.size() > 0) {
                         // if there are no images that we have permission
                         // to see, we'll get an AccessDeniedException
                         previewImages.put(group,
-                                          group.getPreviewImage());
+                                          frames.first().getImage());
+                        filteredGroups.add(group);
+                        numImages.put(group, frames.size());
                     }
-                    filteredGroups.add(group);
                 } catch (AccessDeniedException e) {
                     s_log.debug("Access Denied: not including group in "
                                 + "collection: " + group);
                 }
             }
+            model.put("numImages", numImages);
             model.put("imageGroups", filteredGroups);
             model.put("previewImages", previewImages);
 

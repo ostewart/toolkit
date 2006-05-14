@@ -75,7 +75,7 @@ owner: the current albums' owner
                   ${snapper.displayName}
                 </span>
                 <span class="imageCount">
-                  ${snapper.size()} images
+                  ${numImages[snapper]} images
                 </span>
                 <span class="description">
                   ${snapper.description}
