@@ -104,6 +104,11 @@
     WHERE name = :name
   </query>
 
+  <query name="imagesById">
+    FROM com.trailmagic.image.Image AS image
+    WHERE image.id = :imageId
+  </query>
+
   <query name="imagesByNameAndGroup">
     SELECT img
     FROM com.trailmagic.image.ImageFrame AS frame

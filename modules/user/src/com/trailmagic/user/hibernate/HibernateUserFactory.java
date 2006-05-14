@@ -11,9 +11,9 @@ import com.trailmagic.user.*;
 
 public class HibernateUserFactory implements UserFactory {
     private static final String BY_SN_QUERY_NAME = "userByScreenName";
-    
+
     private SessionFactory m_sessionFactory;
-        
+
     public SessionFactory getSessionFactory() {
         return m_sessionFactory;
     }
@@ -21,7 +21,7 @@ public class HibernateUserFactory implements UserFactory {
     public void setSessionFactory(SessionFactory sf) {
         m_sessionFactory = sf;
     }
-        
+
 
 
     public User newInstance() {
@@ -34,15 +34,10 @@ public class HibernateUserFactory implements UserFactory {
             Session session =
                 SessionFactoryUtils.getSession(m_sessionFactory, false);
             Query query = session.getNamedQuery(BY_SN_QUERY_NAME);
-                /*
-                session.createQuery("select from com.trailmagic.user.User " +
-                                    "as user " +
-                                    "where user.screenName = :screenName");
-                */
             query.setString("screenName", screenName);
-            
+
             return (User)query.uniqueResult();
-            
+
         } catch (HibernateException e) {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
         }
@@ -55,7 +50,7 @@ public class HibernateUserFactory implements UserFactory {
                 SessionFactoryUtils.getSession(m_sessionFactory, false);
 
             return (User)session.get(User.class, new Long(id));
-            
+
         } catch (HibernateException e) {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
         }

@@ -34,13 +34,8 @@ public class UserLoginModule implements LoginModule {
     private List<Principal> m_principals;
     private boolean m_success;
 
-    private static final String USER_QUERY =
-        "select from com.trailmagic.user.User as user " +
-        "where user.screenName = :screenName";
-    private static final String GROUPS_QUERY =
-        "select grp from com.trailmagic.user.Group as grp " +
-        "inner join grp.users as user " +
-        "where user.id = :id";
+    private static final String USER_BY_SN_QUERY = "userByScreenName";
+    private static final String GROUPS_QUERY = "groupsForUserId";
     private static final String HASH_ALGORITHM = "MD5";
     private static final String CFG_FILE = "/trailmagic-user.cfg.xml";
 
@@ -148,7 +143,7 @@ public class UserLoginModule implements LoginModule {
 
             // validate with the User from hibernate
             Query query =
-                sess.createQuery(USER_QUERY);
+                sess.getNamedQuery(USER_BY_SN_QUERY);
             query.setString("screenName", username);
 
             //            user = (User)query.uniqueResult();
@@ -176,8 +171,8 @@ public class UserLoginModule implements LoginModule {
 
             if (valid) {
                 m_principals.add(new UserPrincipal(user.getScreenName()));
-                query = sess.createQuery(GROUPS_QUERY);
-                query.setLong("id", user.getId());
+                query = sess.getNamedQuery(GROUPS_QUERY);
+                query.setLong("userId", user.getId());
                 Iterator iter = query.iterate();
                 Collection<GroupPrincipal> groups =
                     new ArrayList<GroupPrincipal>();

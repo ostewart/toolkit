@@ -130,10 +130,8 @@ public class Image implements Owned, AclObjectIdentityAware {
 
     public static Image findById(long id) throws HibernateException {
         Session sess = HibernateUtil.currentSession();
-        Query query =
-            sess.createQuery("select from com.trailmagic.image.Image " +
-                             "as image where image.id = :id");
-        query.setLong("id", id);
+        Query query = sess.getNamedQuery("imagesById");
+        query.setLong("imageId", id);
         return (Image)query.uniqueResult();
     }
 

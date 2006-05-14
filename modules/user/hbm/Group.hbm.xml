@@ -40,4 +40,10 @@
     </bag>
 
   </class>
+
+  <query name="groupsForUserId">
+    SELECT grp FROM com.trailmagic.user.Group AS grp
+    INNER JOIN grp.users AS user
+    WHERE user.id = :userId
+  </query>
 </hibernate-mapping>
