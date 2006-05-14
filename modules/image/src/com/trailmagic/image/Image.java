@@ -1,14 +1,16 @@
 package com.trailmagic.image;
 
 import com.trailmagic.user.Owned;
-import java.util.SortedSet;
-import net.sf.hibernate.Query;
-import net.sf.hibernate.Session;
-import net.sf.hibernate.HibernateException;
-
 import com.trailmagic.user.User;
+import java.util.SortedSet;
+import org.acegisecurity.acl.basic.AclObjectIdentity;
+import org.acegisecurity.acl.basic.AclObjectIdentityAware;
+import org.acegisecurity.acl.basic.NamedEntityObjectIdentity;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
 
-public class Image implements Owned {
+public class Image implements Owned, AclObjectIdentityAware {
     private long m_id;
     private String m_name;
     private String m_displayName;
@@ -91,7 +93,7 @@ public class Image implements Owned {
     public User getOwner() {
         return m_owner;
     }
-    
+
     public void setOwner(User owner) {
         m_owner = owner;
     }
@@ -140,5 +142,10 @@ public class Image implements Owned {
             //            (this.getId() == ((Image)obj).getId());
             (this.getName().equals(((Image)obj).getName())) &&
             (this.getOwner().equals(((Image)obj).getOwner()));
+    }
+
+    public AclObjectIdentity getAclObjectIdentity() {
+        return new NamedEntityObjectIdentity(Image.class.getName(),
+                                             Long.toString(getId()));
     }
 }

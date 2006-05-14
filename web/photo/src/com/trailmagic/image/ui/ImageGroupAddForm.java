@@ -3,9 +3,9 @@ package com.trailmagic.image.ui;
 import com.trailmagic.image.ImageGroup;
 import com.trailmagic.user.UserFactory;
 import java.util.ArrayList;
-import net.sf.hibernate.Session;
-import net.sf.hibernate.SessionFactory;
-import org.springframework.orm.hibernate.SessionFactoryUtils;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 

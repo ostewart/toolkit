@@ -1,11 +1,11 @@
 package com.trailmagic.user.hibernate;
 
-import net.sf.hibernate.HibernateException;
-import net.sf.hibernate.Query;
-import net.sf.hibernate.Session;
-import net.sf.hibernate.SessionFactory;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.springframework.dao.DataAccessException;
-import org.springframework.orm.hibernate.SessionFactoryUtils;
+import org.springframework.orm.hibernate3.SessionFactoryUtils;
 
 import com.trailmagic.user.*;
 

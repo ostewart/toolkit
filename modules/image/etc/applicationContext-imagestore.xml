@@ -71,7 +71,7 @@
 
 <!--
   <bean id="hibernateInterceptor"
-    class="org.springframework.orm.hibernate.HibernateInterceptor">
+    class="org.springframework.orm.hibernate3.HibernateInterceptor">
     <property name="sessionFactory">
       <ref bean="sessionFactory"/>
     </property>

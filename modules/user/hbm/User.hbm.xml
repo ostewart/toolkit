@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping
     PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
-    "http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd">
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping
   default-cascade="all"
@@ -48,7 +48,7 @@
   </class>
 
   <query name="userByScreenName">
-    SELECT FROM com.trailmagic.user.User
+    FROM com.trailmagic.user.User
     AS user
     WHERE user.screenName = :screenName
   </query>

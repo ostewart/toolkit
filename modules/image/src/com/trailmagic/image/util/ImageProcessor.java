@@ -1,9 +1,9 @@
 package com.trailmagic.image.util;
 
 import com.trailmagic.image.*;
-import net.sf.hibernate.HibernateException;
-import net.sf.hibernate.Query;
-import net.sf.hibernate.Session;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import javax.activation.FileDataSource;
 import java.io.File;
 import java.io.BufferedReader;

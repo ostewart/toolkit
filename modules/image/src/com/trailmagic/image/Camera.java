@@ -1,6 +1,10 @@
 package com.trailmagic.image;
 
-public class Camera {
+import org.acegisecurity.acl.basic.AclObjectIdentity;
+import org.acegisecurity.acl.basic.AclObjectIdentityAware;
+import org.acegisecurity.acl.basic.NamedEntityObjectIdentity;
+
+public class Camera implements AclObjectIdentityAware {
     private long m_id;
     private String m_name;
     private String m_manufacturer;
@@ -45,5 +49,8 @@ public class Camera {
         m_format = format;
     }
 
-
+    public AclObjectIdentity getAclObjectIdentity() {
+        return new NamedEntityObjectIdentity(Camera.class.getName(),
+                                             Long.toString(getId()));
+    }
 }

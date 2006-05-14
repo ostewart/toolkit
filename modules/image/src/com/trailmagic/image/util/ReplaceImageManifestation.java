@@ -17,16 +17,16 @@ import com.trailmagic.image.HeavyImageManifestation;
 import com.trailmagic.image.ImageManifestationFactory;
 import java.io.File;
 import java.io.FileInputStream;
-import net.sf.hibernate.Hibernate;
-import net.sf.hibernate.HibernateException;
-import net.sf.hibernate.Session;
-import net.sf.hibernate.SessionFactory;
-import net.sf.hibernate.Transaction;
+import org.hibernate.Hibernate;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.orm.hibernate.SessionFactoryUtils;
+import org.springframework.orm.hibernate3.SessionFactoryUtils;
 
 
 /**

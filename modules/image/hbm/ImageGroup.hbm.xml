@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping
     PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
-    "http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd">
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping
   package="com.trailmagic.image">
@@ -127,28 +127,27 @@
   </query>
 
   <query name="albumByOwnerAndName">
-    SELECT FROM com.trailmagic.image.ImageGroup
+    FROM com.trailmagic.image.ImageGroup
     AS grp WHERE grp.owner = :owner AND
     grp.name = :albumName
     AND grp.type = 'album'
   </query>
 
   <query name="rollByOwnerAndName">
-    SELECT FROM com.trailmagic.image.ImageGroup
+    FROM com.trailmagic.image.ImageGroup
     AS grp WHERE grp.owner = :owner AND
     grp.name = :rollName
     AND grp.type = 'roll'
   </query>
 
   <query name="groupByOwnerGroupNameAndType">
-    SELECT FROM com.trailmagic.image.ImageGroup
+    FROM com.trailmagic.image.ImageGroup
     AS grp WHERE grp.owner = :owner
     AND grp.name = :groupName
     AND grp.type = :groupType
   </query>
 
   <query name="imageFrameByImageGroupAndImageId">
-    SELECT 
     FROM com.trailmagic.image.ImageFrame frame
     WHERE frame.imageGroup = :imageGroup
     AND frame.image.id = :imageId

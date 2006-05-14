@@ -9,15 +9,15 @@ import com.trailmagic.image.ImageGroupFactory;
 import com.trailmagic.user.UserFactory;
 import java.util.Iterator;
 import java.util.SortedSet;
-import net.sf.hibernate.HibernateException;
-import net.sf.hibernate.Session;
-import net.sf.hibernate.SessionFactory;
-import net.sf.hibernate.Transaction;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.orm.hibernate.SessionFactoryUtils;
+import org.springframework.orm.hibernate3.SessionFactoryUtils;
 
 /**
  * Run like: ant run -Drun.class=com.trailmagic.image.util.MakeAlbumFromRoll -Drun.args="oliver descrie"

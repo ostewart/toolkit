@@ -1,7 +1,7 @@
 package com.trailmagic.image;
 
-import net.sf.hibernate.*;
-import net.sf.hibernate.cfg.*;
+import org.hibernate.*;
+import org.hibernate.cfg.*;
 
 /**
  * Taken from the Hibernate Quickstart.  Assumed to be under GPL.

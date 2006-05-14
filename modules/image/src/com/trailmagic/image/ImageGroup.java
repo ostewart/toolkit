@@ -2,10 +2,13 @@ package com.trailmagic.image;
 
 import com.trailmagic.user.Owned;
 import com.trailmagic.user.User;
-import java.util.SortedSet;
 import java.util.Collection;
+import java.util.SortedSet;
+import org.acegisecurity.acl.basic.AclObjectIdentity;
+import org.acegisecurity.acl.basic.AclObjectIdentityAware;
+import org.acegisecurity.acl.basic.NamedEntityObjectIdentity;
 
-public class ImageGroup implements Owned {
+public class ImageGroup implements Owned, AclObjectIdentityAware {
     private long m_id;
     private String m_type;
     private String m_name;
@@ -130,4 +133,8 @@ public class ImageGroup implements Owned {
             (this.getType().equals(((ImageGroup)obj).getType()));
     }
 
+    public AclObjectIdentity getAclObjectIdentity() {
+        return new NamedEntityObjectIdentity(ImageGroup.class.getName(),
+                                             Long.toString(getId()));
+    }
 }

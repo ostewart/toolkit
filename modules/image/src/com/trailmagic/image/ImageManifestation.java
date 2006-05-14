@@ -1,14 +1,18 @@
 package com.trailmagic.image;
 
-import java.util.SortedSet;
 import com.trailmagic.user.Owned;
 import com.trailmagic.user.User;
+import java.util.SortedSet;
+import org.acegisecurity.acl.basic.AclObjectIdentity;
+import org.acegisecurity.acl.basic.AclObjectIdentityAware;
+import org.acegisecurity.acl.basic.NamedEntityObjectIdentity;
 
 /**
  * This class maps the metadata of the manifestation, while its subclass,
  * the <code>HeavyImageManifestation</code> also maps the data.
  **/
-public class ImageManifestation implements Comparable, Owned {
+public class ImageManifestation implements Comparable, Owned,
+                                           AclObjectIdentityAware {
     private long m_id;
     private Image m_image;
     private int m_height;
@@ -107,5 +111,11 @@ public class ImageManifestation implements Comparable, Owned {
 
     public int hashCode() {
         return new Long(getId()).hashCode();
+    }
+
+    public AclObjectIdentity getAclObjectIdentity() {
+        return new NamedEntityObjectIdentity(ImageManifestation.class
+                                             .getName(),
+                                             Long.toString(getId()));
     }
 }

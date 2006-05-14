@@ -1,6 +1,10 @@
 package com.trailmagic.image;
 
-public class ImageFrame implements Comparable {
+import org.acegisecurity.acl.basic.AclObjectIdentity;
+import org.acegisecurity.acl.basic.AclObjectIdentityAware;
+import org.acegisecurity.acl.basic.NamedEntityObjectIdentity;
+
+public class ImageFrame implements Comparable, AclObjectIdentityAware {
     private long m_id;
     private ImageGroup m_imageGroup;
     private int m_position;
@@ -61,7 +65,7 @@ public class ImageFrame implements Comparable {
         ImageGroup mine = getImageGroup();
         ImageGroup yours = ((ImageFrame)obj).getImageGroup();
         System.err.println("mine: " + mine + ", yours: " + yours);
-        
+
         if (!(mine.equals(yours))) {
             return false;
         }
@@ -83,4 +87,8 @@ public class ImageFrame implements Comparable {
         return m_position;
     }
 
+    public AclObjectIdentity getAclObjectIdentity() {
+        return new NamedEntityObjectIdentity(ImageFrame.class.getName(),
+                                             Long.toString(getId()));
+    }
 }

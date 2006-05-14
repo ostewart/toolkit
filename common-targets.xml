@@ -33,9 +33,11 @@
       <include name="**/*.jar"/>
     </fileset>
     <!-- these next two should probably go somewhere else -->
+    <!--
     <fileset dir="${global.lib.dep.dir}">
       <include name="**/*.jar"/>
-    </fileset>
+  </fileset>
+    -->
     <fileset dir="${global.lib.build.dir}">
       <include name="**/*.jar"/>
     </fileset>
@@ -146,7 +148,7 @@
 
     <target name="schemaexport" depends="compile">
     <taskdef name="schemaexport"
-      classname="net.sf.hibernate.tool.hbm2ddl.SchemaExportTask"
+      classname="org.hibernate.tool.hbm2ddl.SchemaExportTask"
       classpathref="hbm.classpath"/>
     
     <schemaexport
@@ -160,7 +162,7 @@
 
   <target name="schemaupdate" depends="compile">
     <taskdef name="schemaupdate"
-      classname="net.sf.hibernate.tool.hbm2ddl.SchemaUpdateTask"
+      classname="org.hibernate.tool.hbm2ddl.SchemaUpdateTask"
       classpathref="build.classpath"/>
     
     <schemaupdate

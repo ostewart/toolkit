@@ -1,8 +1,12 @@
 package com.trailmagic.image;
 
 import java.util.Date;
+import org.acegisecurity.acl.basic.AclObjectIdentity;
+import org.acegisecurity.acl.basic.AclObjectIdentityAware;
+import org.acegisecurity.acl.basic.NamedEntityObjectIdentity;
 
-public class Photo extends Image {
+
+public class Photo extends Image implements AclObjectIdentityAware {
     private Lens m_lens;
     private Camera m_camera;
     private String m_notes;
@@ -69,5 +73,10 @@ public class Photo extends Image {
     // XXX: assert(m_imageGroup.getType().equals("roll"));
     public void setRoll(ImageGroup group) {
         m_roll = group;
+    }
+
+    public AclObjectIdentity getAclObjectIdentity() {
+        return new NamedEntityObjectIdentity(Photo.class.getName(),
+                                             Long.toString(getId()));
     }
 }

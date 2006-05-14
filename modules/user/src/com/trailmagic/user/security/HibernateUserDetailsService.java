@@ -15,12 +15,12 @@ package com.trailmagic.user.security;
 
 import com.trailmagic.user.User;
 import com.trailmagic.user.UserFactory;
-import net.sf.hibernate.HibernateException;
+import org.hibernate.HibernateException;
 import org.acegisecurity.userdetails.UserDetails;
 import org.acegisecurity.userdetails.UserDetailsService;
 import org.acegisecurity.userdetails.UsernameNotFoundException;
 import org.springframework.dao.DataAccessException;
-import org.springframework.orm.hibernate.SessionFactoryUtils;
+import org.springframework.orm.hibernate3.SessionFactoryUtils;
 
 public class HibernateUserDetailsService implements UserDetailsService {
     private UserFactory m_userFactory;

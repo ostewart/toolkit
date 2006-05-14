@@ -1,8 +1,11 @@
 package com.trailmagic.image;
 
 import java.util.Collection;
+import org.acegisecurity.acl.basic.AclObjectIdentity;
+import org.acegisecurity.acl.basic.AclObjectIdentityAware;
+import org.acegisecurity.acl.basic.NamedEntityObjectIdentity;
 
-public class ImageCD {
+public class ImageCD implements AclObjectIdentityAware {
     private long m_id;
     private int m_number;
     private String m_description;
@@ -41,5 +44,10 @@ public class ImageCD {
 
     public void setImages(Collection images) {
         m_images = images;
+    }
+
+    public AclObjectIdentity getAclObjectIdentity() {
+        return new NamedEntityObjectIdentity(ImageCD.class.getName(),
+                                             Long.toString(getId()));
     }
 }

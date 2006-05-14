@@ -1,10 +1,10 @@
 package com.trailmagic.image.hibernate;
 
-import net.sf.hibernate.Session;
-import net.sf.hibernate.SessionFactory;
-import net.sf.hibernate.Query;
-import net.sf.hibernate.HibernateException;
-import org.springframework.orm.hibernate.SessionFactoryUtils;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Query;
+import org.hibernate.HibernateException;
+import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import java.util.List;
 
 import com.trailmagic.user.User;

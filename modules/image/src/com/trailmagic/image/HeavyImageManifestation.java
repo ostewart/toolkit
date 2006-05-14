@@ -4,8 +4,13 @@
 package com.trailmagic.image;
 
 import java.sql.Blob;
+import org.acegisecurity.acl.basic.AclObjectIdentity;
+import org.acegisecurity.acl.basic.AclObjectIdentityAware;
+import org.acegisecurity.acl.basic.NamedEntityObjectIdentity;
 
-public class HeavyImageManifestation extends ImageManifestation {
+public class HeavyImageManifestation extends ImageManifestation
+    implements AclObjectIdentityAware {
+
     //    private byte[] m_data;
     private Blob m_data;
 
@@ -30,4 +35,11 @@ public class HeavyImageManifestation extends ImageManifestation {
     }
     */
 
+    public AclObjectIdentity getAclObjectIdentity() {
+        // pretend we're an ImageManifestation...really the same thing
+        // in terms of identity
+        return new NamedEntityObjectIdentity(ImageManifestation.class
+                                             .getName(),
+                                             Long.toString(getId()));
+    }
 }
