@@ -106,7 +106,55 @@ public class AddPermissions {
         m_groupFactory = factory;
     }
 
-    public void doIt(String ownerName, String rollName) {
+    public void makeEverythingPublic(final String ownerName) {
+        m_hibernateTemplate.execute(new HibernateCallback() {
+                public Object doInHibernate(Session session) {
+                    User owner = m_userFactory.getByScreenName(ownerName);
+
+                    Collection<ImageGroup> imageGroups =
+                        m_imageGroupFactory
+                        .getAlbumsByOwnerScreenName(ownerName);
+                    imageGroups.addAll(m_imageGroupFactory
+                                       .getRollsByOwnerScreenName(ownerName));
+
+                    for (ImageGroup group : imageGroups) {
+                        makeGroupPublic(group);
+                    }
+                    return null;
+                }
+            });
+    }
+
+    // assumes within a session
+    private void makeGroupPublic(ImageGroup group) {
+        m_imageSecurityFactory.makePublic(group);
+        s_log.info("Added public permission for group: "
+                   + group.getName());
+
+        Collection<ImageFrame> frames = group.getFrames();
+
+        for (ImageFrame frame : frames) {
+            m_imageSecurityFactory.makePublic(frame);
+            s_log.info("Added public permission for frame: "
+                       + frame.getPosition() + " of group "
+                       + group.getName());
+
+            Image image = frame.getImage();
+            m_imageSecurityFactory.makePublic(image);
+            s_log.info("Added public permission for image: "
+                       + image.getDisplayName());
+
+            for (ImageManifestation mf : image.getManifestations()) {
+                m_imageSecurityFactory.makePublic(mf);
+                s_log.info("Added public permission for "
+                           + "manifestation: "
+                           + mf.getHeight() + "x" + mf.getWidth());
+            }
+        }
+    }
+
+    public void makeImageGroupsPublic(String ownerName, String type,
+                                      Collection<String> groupNames) {
         Session session =
             SessionFactoryUtils.getSession(m_sessionFactory, false);
         Transaction transaction = null;
@@ -115,30 +163,20 @@ public class AddPermissions {
             transaction = session.beginTransaction();
 
             User owner = m_userFactory.getByScreenName(ownerName);
-            ImageGroup group =
-                m_imageGroupFactory.getRollByOwnerAndName(owner, rollName);
-            m_imageSecurityFactory.makePublic(group);
-            s_log.info("Added public permission for group: "
-                       + group.getName());
-
-            Collection<ImageFrame> frames = group.getFrames();
-
-            for (ImageFrame frame : frames) {
-                m_imageSecurityFactory.makePublic(frame);
-                s_log.info("Added public permission for frame: "
-                           + frame.getPosition() + " of group "
-                           + group.getName());
-
-                Image image = frame.getImage();
-                m_imageSecurityFactory.makePublic(image);
-                s_log.info("Added public permission for image: "
-                           + image.getDisplayName());
-
-                for (ImageManifestation mf : image.getManifestations()) {
-                    m_imageSecurityFactory.makePublic(mf);
-                    s_log.info("Added public permission for manifestation: "
-                               + mf.getHeight() + "x" + mf.getWidth());
+            for (String groupName : groupNames) {
+                ImageGroup group;
+                if ("roll".equals(type)) {
+                    group =
+                        m_imageGroupFactory.getRollByOwnerAndName(owner,
+                                                                  groupName);
+                } else if ("album".equals(type)) {
+                    group =
+                        m_imageGroupFactory.getAlbumByOwnerAndName(owner,
+                                                                   groupName);
+                } else {
+                    throw new IllegalArgumentException("invalid type");
                 }
+                makeGroupPublic(group);
             }
             transaction.commit();
             SessionFactoryUtils.releaseSession(session,
@@ -328,20 +366,18 @@ public class AddPermissions {
             ap.makeReadable(args[1], imageIds);
         } else if ("addAccounts".equals(command)) {
             ap.addAccounts(args[1]);
+        } else if ("makeImageGroupsPublic".equals(command)) {
+            ArrayList<String> groups = new ArrayList<String>();
+            for (int i = 2; i < args.length; i++) {
+                groups.add(args[i]);
+            }
+            // username, type, groups...
+            ap.makeImageGroupsPublic(args[1], args[2], groups);
+        } else if ("makeEverythingPublic".equals(command)) {
+            ap.makeEverythingPublic(args[1]);
         } else {
             printUsage();
             System.exit(1);
         }
-
-//         switch (args.length) {
-//         case 2:
-//             break;
-//         case 3:
-//             ap.doIt(args[0], args[1]);
-//             break;
-//         default:
-//             printUsage();
-//             break;
-//         }
     }
 }

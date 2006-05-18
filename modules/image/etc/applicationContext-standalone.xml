@@ -228,6 +228,23 @@
     </property>
   </bean>
 
+  <bean id="transactionInterceptor"
+    class="org.springframework.transaction.interceptor.TransactionInterceptor">
+    <property name="transactionManager">
+      <ref bean="transactionManager"/>
+    </property>
+    <property name="transactionAttributeSource">
+      <value>
+        com.trailmagic.image.hibernate.HibernateImageFactory.getById=PROPAGATION_REQUIRED,readOnly
+        com.trailmagic.image.hibernate.HibernateImageFactory.getByName=PROPAGATION_REQUIRED,readOnly
+        com.trailmagic.image.hibernate.HibernateImageFactory.getAll=PROPAGATION_REQUIRED,readOnly
+        com.trailmagic.image.hibernate.HibernateImageFactory.getByNameAndGroup=PROPAGATION_REQUIRED,readOnly
+        com.trailmagic.image.util.AddPermissions.add*=PROPAGACTION_REQUIRED
+        com.trailmagic.image.util.AddPermissions.make*=PROPAGACTION_REQUIRED
+      </value>
+    </property>
+  </bean>
+
   <!-- Wrap the MakeAlbum with a session -->
   <bean id="addPermissions"
     class="org.springframework.aop.framework.ProxyFactoryBean">
@@ -256,6 +273,7 @@
     </property>
     <property name="interceptorNames">
       <list>
+        <value>transactionInterceptor</value>
         <value>hibernateInterceptor</value>
       </list>
     </property>
