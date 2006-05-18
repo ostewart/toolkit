@@ -12,6 +12,7 @@ public interface ImageGroupFactory {
     public ImageGroup getRollByOwnerAndName(User owner, String rollName);
     public ImageFrame getImageFrameByImageGroupAndImageId(ImageGroup group,
                                                           long imageId);
+    public List<ImageFrame> getFramesContainingImage(Image image);
     public List<ImageGroup> getAlbumsByOwnerScreenName(String screenName);
     public List<ImageGroup> getRollsByOwnerScreenName(String screenName);
     public List<User> getAlbumOwners();
@@ -23,4 +24,6 @@ public interface ImageGroupFactory {
                                             String groupType);
     public List<ImageGroup> getByImage(Image image);
     public ImageGroup getRollForImage(Image image);
+    public ImageGroup getById(long id);
+    public List<ImageGroup> getAll();
 }

@@ -13,6 +13,8 @@
  */
 package com.trailmagic.user;
 
-public interface Owned {
+import org.acegisecurity.acl.basic.AclObjectIdentityAware;
+
+public interface Owned extends AclObjectIdentityAware {
     public User getOwner();
 }

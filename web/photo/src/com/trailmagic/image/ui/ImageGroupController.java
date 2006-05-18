@@ -14,12 +14,14 @@ import javax.servlet.jsp.JspException;
 import org.acegisecurity.AccessDeniedException;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.util.Assert;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 import org.springframework.web.util.UrlPathHelper;
-
+import com.trailmagic.image.security.ImageSecurityFactory;
 import com.trailmagic.image.*;
 import com.trailmagic.user.*;
 
@@ -27,7 +29,7 @@ import com.trailmagic.user.*;
  * to add a new group type, simply add a new mapping to this controller as
  * "/<type-name>s/**" in the handlerMapping in images-servlet.xml
  **/
-public class ImageGroupController implements Controller, ApplicationContextAware {
+public class ImageGroupController implements Controller, ApplicationContextAware, InitializingBean {
     private static final String USER_FACTORY_BEAN = "userFactory";
     private static final String IMG_GROUP_FACTORY_BEAN = "imageGroupFactory";
     private static final String LIST_VIEW = "imageGroupList";
@@ -39,11 +41,22 @@ public class ImageGroupController implements Controller, ApplicationContextAware
         Logger.getLogger(ImageGroupController.class);
 
     private ApplicationContext m_appContext;
+    private ImageSecurityFactory m_imageSecurityFactory;
 
     public void setApplicationContext(ApplicationContext appContext)
         throws BeansException {
 
         m_appContext = appContext;
+    }
+
+    public void setImageSecurityFactory(ImageSecurityFactory factory) {
+        m_imageSecurityFactory = factory;
+    }
+
+
+    public void afterPropertiesSet() throws Exception {
+        Assert.notNull(m_imageSecurityFactory);
+        Assert.notNull(m_appContext);
     }
 
     public ModelAndView handleRequest(HttpServletRequest req,
@@ -141,6 +154,8 @@ public class ImageGroupController implements Controller, ApplicationContextAware
             return null;
         }
         model.put("imageGroup", group);
+        model.put("imageGroupIsPublic",
+                  m_imageSecurityFactory.isPublic(group));
 
         SortedSet<ImageFrame> frames = group.getFrames();
         model.put("frames", frames);
@@ -169,6 +184,8 @@ public class ImageGroupController implements Controller, ApplicationContextAware
             }
             model.put("frame", frame);
             model.put("image", frame.getImage());
+            model.put("imageIsPublic",
+                      m_imageSecurityFactory.isPublic(frame.getImage()));
             List<ImageGroup> groupsContainingImage =
                 imgGroupFactory.getByImage(frame.getImage());
             List<ImageGroup> otherGroups = new ArrayList<ImageGroup>();

@@ -3,6 +3,8 @@ package com.trailmagic.image.hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Query;
+import org.springframework.orm.hibernate3.HibernateCallback;
+import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.hibernate.HibernateException;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import java.util.List;
@@ -36,8 +38,13 @@ public class HibernateImageGroupFactory implements ImageGroupFactory {
         "groupsByImage";
     private static final String ROLL_FOR_IMAGE_QRY =
         "rollForImage";
+    private static final String FRAMES_CONTAINING_IMAGE_QRY =
+        "framesContainingImage";
+    private static final String ALL_GROUPS_QUERY =
+        "allImageGroups";
 
     private SessionFactory m_sessionFactory;
+    private HibernateTemplate m_hibernateTemplate;
 
     public SessionFactory getSessionFactory() {
         return m_sessionFactory;
@@ -45,6 +52,10 @@ public class HibernateImageGroupFactory implements ImageGroupFactory {
 
     public void setSessionFactory(SessionFactory sf) {
         m_sessionFactory = sf;
+    }
+
+    public void setHibernateTemplate(HibernateTemplate template) {
+        m_hibernateTemplate = template;
     }
 
     public ImageGroup newInstance(int type) {
@@ -88,6 +99,19 @@ public class HibernateImageGroupFactory implements ImageGroupFactory {
             qry.setEntity("imageGroup", group);
             qry.setLong("imageId", imageId);
             return (ImageFrame)qry.uniqueResult();
+        } catch (HibernateException e) {
+            throw SessionFactoryUtils.convertHibernateAccessException(e);
+        }
+    }
+
+    public List<ImageFrame> getFramesContainingImage(Image image) {
+        try {
+            Session session =
+                SessionFactoryUtils.getSession(m_sessionFactory, false);
+            Query qry =
+                session.getNamedQuery(FRAMES_CONTAINING_IMAGE_QRY);
+            qry.setEntity("image", image);
+            return qry.list();
         } catch (HibernateException e) {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
         }
@@ -207,5 +231,26 @@ public class HibernateImageGroupFactory implements ImageGroupFactory {
         } catch (HibernateException e) {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
         }
+    }
+
+    public ImageGroup getById(long id) {
+        try {
+            Session session =
+                SessionFactoryUtils.getSession(m_sessionFactory, false);
+
+            return (ImageGroup)session.get(ImageGroup.class, new Long(id));
+        } catch (HibernateException e) {
+            throw SessionFactoryUtils.convertHibernateAccessException(e);
+        }
+    }
+
+    public List<ImageGroup> getAll() {
+        return (List<ImageGroup>)
+            m_hibernateTemplate.execute(new HibernateCallback() {
+                    public Object doInHibernate(Session session) {
+                        Query qry = session.getNamedQuery(ALL_GROUPS_QUERY);
+                        return qry.list();
+                    }
+                });
     }
 }

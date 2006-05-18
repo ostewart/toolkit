@@ -187,12 +187,16 @@
     <java classname="${run.class}" fork="true">
       <arg line="${run.args}"/>
       <classpath>
+        <pathelement location="${prebuilt.dir}"/>
         <path refid="build.classpath"/>
         <pathelement location="${resources.dir}"/>
         <fileset dir="${build.product.dir}">
           <include name="**/*.jar"/>
         </fileset>
         <pathelement location="${global.resources.dir}"/>
+        <fileset dir="${global.lib.dep.dir}">
+          <include name="**/*.jar"/>
+        </fileset>
       </classpath>
     </java>
   </target>

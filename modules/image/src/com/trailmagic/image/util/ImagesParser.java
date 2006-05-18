@@ -30,6 +30,7 @@ import org.xml.sax.helpers.DefaultHandler;
 import com.trailmagic.image.*;
 import com.trailmagic.user.User;
 import com.trailmagic.user.UserFactory;
+import com.trailmagic.image.security.ImageSecurityFactory;
 
 public class ImagesParser extends DefaultHandler
     implements ApplicationContextAware {
@@ -60,7 +61,7 @@ public class ImagesParser extends DefaultHandler
     private String m_photoFrameNum;
     private File m_baseDir;
     private StringBuffer m_characterData;
-
+    private ImageSecurityFactory m_imageSecurityFactory;
     private ApplicationContext m_appContext;
 
     public ImagesParser() {
@@ -86,6 +87,10 @@ public class ImagesParser extends DefaultHandler
 
     public void setApplicationContext(ApplicationContext applicationContext) {
         m_appContext = applicationContext;
+    }
+
+    public void setImageSecurityFactory(ImageSecurityFactory factory) {
+        m_imageSecurityFactory = factory;
     }
 
     public File getBaseDir() {
@@ -193,6 +198,7 @@ public class ImagesParser extends DefaultHandler
         try {
             s_logger.debug("endImage() called");
             m_session.saveOrUpdate(m_image);
+            m_imageSecurityFactory.addOwnerAcl(m_image);
             synchronized (m_session) {
                 m_session.flush();
                 m_session.clear();
@@ -221,7 +227,7 @@ public class ImagesParser extends DefaultHandler
                            + "width: " + m_manifestation.getWidth()
                            + "format: " + m_manifestation.getFormat()
                            + "original: " + m_manifestation.isOriginal());
-            
+
             importManifestation();
             m_manifestation = null;
             m_inManifestation = false;
@@ -242,6 +248,7 @@ public class ImagesParser extends DefaultHandler
         try {
             s_logger.debug("endRoll() called");
             m_session.saveOrUpdate(m_roll);
+            m_imageSecurityFactory.addOwnerAcl(m_roll);
             s_logger.debug("Roll saved: " + m_roll.getName() + " ("
                            + m_roll.getId() + ")");
         } catch (HibernateException e) {
@@ -262,7 +269,7 @@ public class ImagesParser extends DefaultHandler
         // process the roll information
         // add the photo to the m_photoRollName roll with frame number
         // m_photoFrameNum
-        
+
         ImageFrame frame = new ImageFrame();
         frame.setImageGroup(m_photoRoll);
         frame.setImage(m_image);
@@ -271,7 +278,10 @@ public class ImagesParser extends DefaultHandler
         try {
             // XXX: have to save the image first
             m_session.saveOrUpdate(m_image);
+            // this might happen twice, but i think that's okay
+            m_imageSecurityFactory.addOwnerAcl(m_image);
             m_session.saveOrUpdate(frame);
+            m_imageSecurityFactory.addOwnerAcl(frame);
             synchronized (m_session) {
                 m_session.flush();
                 m_session.evict(frame);
@@ -315,7 +325,7 @@ public class ImagesParser extends DefaultHandler
                 if ("roll-name".equals(currentElt)) {
                     //                    photo.setRoll(getRollByName(characterData));
                     // XXX: we should just use ImageGroup for this normally
-                    // so make sure the roll exists as an IG, then 
+                    // so make sure the roll exists as an IG, then
                     ImageGroupFactory gf =
                         (ImageGroupFactory)
                         m_appContext.getBean(IMAGE_GROUP_FACTORY_BEAN);
@@ -431,6 +441,7 @@ public class ImagesParser extends DefaultHandler
             FileInputStream fis = new FileInputStream(srcFile);
             m_manifestation.setData(Hibernate.createBlob(fis));
             m_session.saveOrUpdate(m_manifestation);
+            m_imageSecurityFactory.addOwnerAcl(m_manifestation);
 
             s_logger.info("ImageManifestation saved: "
                           + m_manifestation.getName()
@@ -441,7 +452,7 @@ public class ImagesParser extends DefaultHandler
                 m_session.flush();
                 m_session.evict(m_manifestation);
             }
-            
+
             fis.close();
             s_logger.info("Finished importing " + srcFile.getPath());
         } catch (IOException e) {

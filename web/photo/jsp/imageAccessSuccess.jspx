@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+View to display a single Image.
+
+Model Requirements:
+user: currently logged in user
+image: Image to display
+
+Optional Attributes:
+imageGroup: ImageGroup
+frame: current ImageFrame
+nextFrame: ImageFrame
+prevFrame: ImageFrame
+nextImage: Image
+prevImage: Image
+groupsContainingImage: ImageGroups that contain frame.image
+
+-->
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:jsp="http://java.sun.com/JSP/Page"
+  xmlns:c="http://java.sun.com/jsp/jstl/core"
+  xmlns:fmt="http://java.sun.com/jsp/jstl/fmt"
+  xmlns:tm="http://trailmagic.com/taglibs/image"
+  xmlns:authz="http://acegisecurity.org/authz">
+
+  <jsp:output 
+    omit-xml-declaration="false"
+    doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"
+    doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
+    doctype-root-element="html"/>
+
+  <head>
+    <title>
+      Image Access
+    </title>
+    <link rel="stylesheet" href="/imagestore.css" type="text/css" />
+    <link rel="stylesheet" href="/imagestore-color.css"
+      type="text/css" title="Standard"/>
+    <link rel="alternate stylesheet" href="/imagestore-debug.css"
+      type="text/css" title="Debug"/>
+  </head>
+  
+  <body id="imageAccess">
+    Image ID ${command.id} made
+    <c:choose>
+      <c:when test="${command.action == 'makePublic'}">
+        public.
+      </c:when>
+      <c:otherwise>
+        private.
+      </c:otherwise>
+    </c:choose>
+  </body>
+</html>

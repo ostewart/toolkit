@@ -27,10 +27,14 @@ frames: List of ImageFrames for this group
     <head>
       <title><c:out value="${imageGroup.displayName}"/></title>
       <!-- XXX: must make this path flexible -->
-      <link rel="stylesheet" href="/imagestore.css" type="text/css" />
-      <link rel="stylesheet" href="/imagestore-color.css"
+    <link rel="stylesheet"
+      href="${pageContext.request.contextPath}/imagestore.css"
+      type="text/css" />
+    <link rel="stylesheet"
+      href="${pageContext.request.contextPath}/imagestore-color.css"
           type="text/css" title="Standard"/>
-      <link rel="alternate stylesheet" href="/imagestore-debug.css"
+    <link rel="alternate stylesheet"
+      href="${pageContext.request.contextPath}/imagestore-debug.css"
             type="text/css" title="Debug"/>
     </head>
 
@@ -74,7 +78,32 @@ frames: List of ImageFrames for this group
           </div>
       </c:if>
 
+        
 </div>
+    <div class="imageGroupAdmin">
+      <authz:acl domainObject="${imageGroup}" hasPermission="1">
+        <jsp:element name="form">
+          <jsp:attribute name="method">POST</jsp:attribute>
+          <jsp:attribute
+            name="action">${pageContext.request.contextPath}/changePermission</jsp:attribute>
+          <jsp:body>
+            <input name="id" type="hidden" value="${imageGroup.id}"/>
+            <input name="target" type="hidden" value="imageGroup"/>
+            <c:choose>
+              <c:when test="${imageGroupIsPublic}">
+                <input name="action" type="hidden" value="makePrivate"/>
+                <input type="submit" name="submit" value="Make ${imageGroup.type} Private"/>
+              </c:when>
+              <c:otherwise>
+                <input name="action" type="hidden" value="makePublic"/>
+                <input type="submit" name="submit" value="Make ${imageGroup.type} Public"/>
+              </c:otherwise>
+            </c:choose>
+          </jsp:body>
+        </jsp:element>
+      </authz:acl>
+        
+    </div>
 
       <ul class="thumbnailList">
         

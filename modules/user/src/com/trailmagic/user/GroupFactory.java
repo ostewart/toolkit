@@ -11,16 +11,12 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package com.trailmagic.util;
+package com.trailmagic.user;
 
-import com.trailmagic.user.UserLoginModule;
+import java.util.List;
 
-public class PasswordGen {
-    public static final void main(String[] args) {
-        String password = args[0];
-
-        password =
-            new String(UserLoginModule.encodePassword(password.toCharArray()));
-        System.out.println(password);
-    }
+public interface GroupFactory {
+    public Group getById(long id);
+    public Group getByName(String groupName);
+    public List<Group> getForUser(User user);
 }

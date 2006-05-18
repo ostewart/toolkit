@@ -99,9 +99,16 @@
   </class>
 
   <query name="albumsByOwnerScreenName">
-    SELECT album FROM com.trailmagic.image.ImageGroup
-    AS album INNER JOIN album.owner AS owner
+    SELECT album FROM com.trailmagic.image.ImageGroup AS album
+    INNER JOIN album.owner AS owner
     WHERE album.type = 'album'
+    AND owner.screenName = :screenName
+  </query>
+
+  <query name="rollsByOwnerScreenName">
+    SELECT album FROM com.trailmagic.image.ImageGroup AS album
+    INNER JOIN album.owner AS owner
+    WHERE album.type = 'roll'
     AND owner.screenName = :screenName
   </query>
 
@@ -153,6 +160,11 @@
     AND frame.image.id = :imageId
   </query>
 
+  <query name="framesContainingImage">
+    FROM com.trailmagic.image.ImageFrame frame
+    WHERE frame.image = :image
+  </query>
+
   <query name="groupsByImage">
     SELECT frame.imageGroup FROM com.trailmagic.image.ImageFrame
     AS frame INNER JOIN frame.imageGroup
@@ -164,5 +176,9 @@
     AS frame INNER JOIN frame.imageGroup
     WHERE frame.imageGroup.type = 'roll'
     AND frame.image = :image
+  </query>
+
+  <query name="allImageGroups">
+    FROM com.trailmagic.image.ImageGroup
   </query>
 </hibernate-mapping>

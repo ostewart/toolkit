@@ -28,6 +28,14 @@
     </property>
   </bean>
 
+  <!-- override standard definition to bypass security for standalone
+  operation -->
+  <bean id="imageSecurityFactory"
+    class="com.trailmagic.image.security.AcegiImageSecurityFactory"
+    autowire="byName">
+  </bean>
+
+
   <bean id="transactionManager"
     class="org.springframework.orm.hibernate3.HibernateTransactionManager">
 <!--    <property name="dataSource"><ref local="dataSource"/></property>-->
@@ -45,12 +53,6 @@
   <bean id="imageFactory"
     class="com.trailmagic.image.hibernate.HibernateImageFactory">
     <property name="sessionFactory"><ref local="sessionFactory"/></property>
-  </bean>
-
-  <bean id="imageGroupFactory"
-    class="com.trailmagic.image.hibernate.HibernateImageGroupFactory">
-    <property name="sessionFactory"><ref
-        local="sessionFactory"/></property>
   </bean>
 
   <bean id="imageManifestationFactory"
@@ -71,6 +73,9 @@
     <constructor-arg index="0"><value>false</value></constructor-arg>
     <property name="sessionFactory">
       <ref local="sessionFactory"/>
+    </property>
+    <property name="imageSecurityFactory">
+      <ref bean="imageSecurityFactory"/>
     </property>
   </bean>
 
@@ -167,13 +172,6 @@
     -->
   </bean>
 
-  <bean id="imageSecurityFactory"
-    class="com.trailmagic.image.security.ImageSecurityFactory">
-    <property name="basicAclExtendedDao">
-      <ref local="basicAclExtendedDao"/>
-    </property>
-  </bean>
-
   <bean id="imageAspectSecurity"
     class="org.acegisecurity.intercept.method.aspectj.AspectJSecurityInterceptor">
     <property name="validateConfigAttributes">
@@ -209,7 +207,8 @@
   </bean>
 
   <!-- override because jaas.config isn't in the right place -->
-  <bean id="jaasAuthenticationProvider" class="org.acegisecurity.providers.jaas.JaasAuthenticationProvider">
+  <bean id="jaasAuthenticationProvider"
+    class="org.acegisecurity.providers.jaas.JaasAuthenticationProvider">
     <property name="loginConfig">
       <value>jaas.config</value>
     </property>
@@ -236,16 +235,22 @@
       <bean
         class="com.trailmagic.image.util.AddPermissions">
         <property name="imageSecurityFactory">
-          <ref local="imageSecurityFactory"/>
+          <ref bean="imageSecurityFactory"/>
         </property>
         <property name="imageGroupFactory">
-          <ref local="imageGroupFactory"/>
+          <ref bean="imageGroupFactory"/>
         </property>
         <property name="userFactory">
-          <ref local="userFactory"/>
+          <ref bean="userFactory"/>
         </property>
         <property name="sessionFactory">
-          <ref local="sessionFactory"/>
+          <ref bean="sessionFactory"/>
+        </property>
+        <property name="hibernateTemplate">
+          <ref bean="hibernateTemplate"/>
+        </property>
+        <property name="groupFactory">
+          <ref bean="groupFactory"/>
         </property>
       </bean>
     </property>

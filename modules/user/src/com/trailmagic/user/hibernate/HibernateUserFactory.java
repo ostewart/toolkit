@@ -6,11 +6,11 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
-
 import com.trailmagic.user.*;
 
 public class HibernateUserFactory implements UserFactory {
     private static final String BY_SN_QUERY_NAME = "userByScreenName";
+    private static final String HASH_ALGORITHM = "MD5";
 
     private SessionFactory m_sessionFactory;
 

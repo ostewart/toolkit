@@ -1,26 +1,27 @@
 package com.trailmagic.user;
 
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
-import javax.security.auth.spi.LoginModule;
-import javax.security.auth.Subject;
-import javax.security.auth.login.LoginException;
-import javax.security.auth.callback.Callback;
-import javax.security.auth.callback.NameCallback;
-import javax.security.auth.callback.PasswordCallback;
-import javax.security.auth.callback.CallbackHandler;
-import org.hibernate.Session;
-import org.hibernate.Query;
-import org.hibernate.SessionFactory;
-import org.hibernate.HibernateException;
-import org.hibernate.cfg.Configuration;
-import java.util.Map;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Collection;
 import java.util.Iterator;
-import com.trailmagic.util.tomcat.HexUtils;
-
+import java.util.List;
+import java.util.Map;
+import javax.security.auth.Subject;
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.callback.NameCallback;
+import javax.security.auth.callback.PasswordCallback;
+import javax.security.auth.login.LoginException;
+import javax.security.auth.spi.LoginModule;
+import org.apache.commons.codec.binary.Hex;
+import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
 
 
 /**
@@ -33,6 +34,7 @@ public class UserLoginModule implements LoginModule {
     private SessionFactory m_sessFactory;
     private List<Principal> m_principals;
     private boolean m_success;
+    private static Logger s_log = Logger.getLogger(UserLoginModule.class);
 
     private static final String USER_BY_SN_QUERY = "userByScreenName";
     private static final String GROUPS_QUERY = "groupsForUserId";
@@ -50,13 +52,13 @@ public class UserLoginModule implements LoginModule {
             m_sessFactory =
                 new Configuration().configure(CFG_FILE).buildSessionFactory();
         } catch (HibernateException ex) {
-            ex.printStackTrace();
+            s_log.error("Couldn't initialize", ex);
             m_sessFactory = null;
         }
     }
 
     public boolean login() throws LoginException {
-        System.err.println("UserLoginModule.login called!!");
+        s_log.debug("UserLoginModule.login called!!");
         if (m_handler == null) {
             throw new LoginException("Error: no CallbackHandler available");
         }
@@ -82,7 +84,7 @@ public class UserLoginModule implements LoginModule {
 
             return m_success;
         } catch (Exception e) {
-            e.printStackTrace();
+            s_log.error("Error processing login", e);
             throw new LoginException(e.getMessage());
         }
     }
@@ -113,7 +115,7 @@ public class UserLoginModule implements LoginModule {
     }
 
     public boolean commit() throws LoginException {
-        System.err.println("commit() called!");
+        s_log.debug("commit() called!");
         if (m_success) {
             if (m_subject.isReadOnly()) {
                 throw new LoginException("Subject is read-only");
@@ -127,8 +129,24 @@ public class UserLoginModule implements LoginModule {
         } else {
             m_principals.clear();
         }
-        System.err.println("returning true!");
+        s_log.debug("returning true!");
         return true;
+    }
+
+    public static String encodePassword(char[] password)
+        throws RuntimeException {
+
+        try {
+            MessageDigest md = MessageDigest.getInstance(HASH_ALGORITHM);
+            byte[] passBytes = new byte[password.length];
+            for (int i=0; i < passBytes.length; i++) {
+                passBytes[i] = (byte) password[i];
+            }
+            return new String(Hex.encodeHex(md.digest(passBytes)));
+        } catch (NoSuchAlgorithmException e) {
+            s_log.error("Digest algorithm not found: " + HASH_ALGORITHM);
+            throw new RuntimeException(e);
+        }
     }
 
     private boolean validate(String username, char[] password)
@@ -159,14 +177,9 @@ public class UserLoginModule implements LoginModule {
             if ( storedPass != null && password != null &&
                  password.length > 0 ) {
 
-                MessageDigest md = MessageDigest.getInstance(HASH_ALGORITHM);
-                // this seems a little sketchy...are we handling charset right?
-                // what's the result when someone uses a non-ascii char?
-                String digest =
-                    HexUtils.convert(md.digest((new String(password))
-                                               .getBytes()));
+                String digest = encodePassword(password);
                 valid = storedPass.equals(digest);
-                System.err.println("digest = " + digest);
+                //                s_log.debug("digest = " + digest);
             }
 
             if (valid) {
@@ -183,15 +196,13 @@ public class UserLoginModule implements LoginModule {
                 m_principals.addAll(groups);
             }
         } catch (HibernateException e) {
-            // ignore
-            e.printStackTrace();
+            s_log.error("Hibernate error validating credentials", e);
         } finally {
             if (sess != null) {
                 try {
                     sess.close();
                 } catch (HibernateException e) {
-                    // ignore
-                    e.printStackTrace();
+                    s_log.error("Error closing session", e);
                 }
             }
         }

@@ -5,12 +5,48 @@
   <!-- basic stuff is setup in applicationContext-global.xml -->
 <beans>
   <bean id="imageGroupFactory"
+    class="org.springframework.aop.framework.ProxyFactoryBean">
+    <property name="proxyInterfaces">
+      <value>com.trailmagic.image.ImageGroupFactory</value>
+    </property>
+    <property name="targetName">
+      <value>imageGroupFactoryTarget</value>
+    </property>
+    <property name="interceptorNames">
+      <list>
+        <idref local="transactionInterceptor"/>
+        <idref bean="imageFactorySecurity"/>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="imageGroupFactoryTarget"
     class="com.trailmagic.image.hibernate.HibernateImageGroupFactory">
-    <property name="sessionFactory"><ref
-        bean="sessionFactory"/></property>
+    <property name="sessionFactory">
+      <ref bean="sessionFactory"/>
+    </property>
+    <property name="hibernateTemplate">
+      <ref bean="hibernateTemplate"/>
+    </property>
   </bean>
 
   <bean id="imageManifestationFactory"
+    class="org.springframework.aop.framework.ProxyFactoryBean">
+    <property name="proxyInterfaces">
+      <value>com.trailmagic.image.ImageManifestationFactory</value>
+    </property>
+    <property name="targetName">
+      <value>imageManifestationFactoryTarget</value>
+    </property>
+    <property name="interceptorNames">
+      <list>
+        <idref local="transactionInterceptor"/>
+        <idref bean="imageFactorySecurity"/>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="imageManifestationFactoryTarget"
     class="com.trailmagic.image.hibernate.HibernateImageManifestationFactory">
     <property name="sessionFactory">
       <ref bean="sessionFactory"/>
@@ -25,6 +61,9 @@
     </property>
     <property name="baseDir">
       <value>/photo/import</value>
+    </property>
+    <property name="imageSecurityFactory">
+      <ref bean="imageSecurityFactory"/>
     </property>
   </bean>
 

@@ -29,11 +29,11 @@
   <bean id="basicAclExtendedDao"
     class="org.acegisecurity.acl.basic.jdbc.JdbcExtendedDaoImpl">
     <property name="dataSource"><ref bean="dataSource"/></property>
-    <!--
+
     <property name="basicAclEntryCache">
       <ref local="aclEntryCache"/>
   </property>
-    -->
+
   </bean>
 
   <bean id="imageOwnerAclProvider"
@@ -100,6 +100,22 @@
       <list>
         <ref local="simpleAclEntry.ADMINISTRATION"/>
         <ref local="simpleAclEntry.READ"/>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="aclObjectAdminVoter"
+    class="com.trailmagic.image.security.BetterAclEntryVoter">
+    <property name="processConfigAttribute">
+      <value>ACL_OBJECT_ADMIN</value>
+    </property>
+    <property name="processDomainObjectClass">
+      <value>java.lang.Object</value>
+    </property>
+    <property name="aclManager"><ref local="aclManager"/></property>
+    <property name="requirePermission">
+      <list>
+        <ref local="simpleAclEntry.ADMINISTRATION"/>
       </list>
     </property>
   </bean>
@@ -189,9 +205,6 @@
         com.trailmagic.image.ImageGroupFactory.getImageFrameByImageGroupAndImageId=AFTER_ACL_READ
         com.trailmagic.image.ImageGroupFactory.getAlbumsByOwnerScreenName=AFTER_ACL_COLLECTION_READ
         com.trailmagic.image.ImageGroupFactory.getRollsByOwnerScreenName=AFTER_ACL_COLLECTION_READ
-        com.trailmagic.image.ImageGroupFactory.getAlbumOwners=AFTER_ACL_COLLECTION_READ
-        com.trailmagic.image.ImageGroupFactory.getRollOwners=AFTER_ACL_COLLECTION_READ
-        com.trailmagic.image.ImageGroupFactory.getOwnersByType=AFTER_ACL_COLLECTION_READ
         com.trailmagic.image.ImageGroupFactory.getByOwnerScreenNameAndType=AFTER_ACL_COLLECTION_READ
         com.trailmagic.image.ImageGroupFactory.getByOwnerNameAndType=AFTER_ACL_READ
         com.trailmagic.image.ImageGroupFactory.getByImage=AFTER_ACL_COLLECTION_READ
@@ -199,10 +212,33 @@
         com.trailmagic.image.ImageManifestationFactory.getById=AFTER_ACL_READ
         com.trailmagic.image.ImageManifestationFactory.getHeavyById=AFTER_ACL_READ
         com.trailmagic.image.ImageManifestationFactory.getAllForImageId=ACL_COLLECTION_READ
-        com.trailmagic.image.security.ImageSecurityFactory.makePublic=ACL_IMAGE_ADMIN
-        com.trailmagic.image.security.ImageSecurityFactory.makePrivate=ACL_IMAGE_ADMIN
+        com.trailmagic.image.security.ImageSecurityFactory.makePublic=ACL_OBJECT_ADMIN
+        com.trailmagic.image.security.ImageSecurityFactory.makePrivate=ACL_OBJECT_ADMIN
+        com.trailmagic.image.security.ImageSecurityFactory.addPermission=ACL_OBJECT_ADMIN
+        com.trailmagic.image.security.ImageSecurityFactory.setPermission=ACL_OBJECT_ADMIN
       </value>
     </property>
+  </bean>
+
+  <bean id="imageSecurityFactory"
+    class="org.springframework.aop.framework.ProxyFactoryBean">
+    <property name="proxyInterfaces">
+      <value>com.trailmagic.image.security.ImageSecurityFactory</value>
+    </property>
+    <property name="targetName">
+      <value>imageSecurityFactoryTarget</value>
+    </property>
+    <property name="interceptorNames">
+      <list>
+<!--        <idref bean="transactionInterceptor"/>-->
+        <idref bean="imageFactorySecurity"/>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="imageSecurityFactoryTarget"
+    class="com.trailmagic.image.security.AcegiImageSecurityFactory"
+    autowire="byName">
   </bean>
 
   <bean id="imageAspectSecurity"

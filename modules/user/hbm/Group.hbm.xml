@@ -41,6 +41,23 @@
 
   </class>
 
+  <query name="groupById">
+    FROM com.trailmagic.user.Group AS group
+    WHERE group.id = :id
+  </query>
+
+  <query name="groupByName">
+    FROM com.trailmagic.user.Group AS group
+    WHERE group.name = :name
+  </query>
+
+  <query name="groupsForUser">
+    SELECT grp
+    FROM com.trailmagic.user.Group AS grp
+    INNER JOIN grp.users AS user
+    WHERE user = :user
+  </query>
+
   <query name="groupsForUserId">
     SELECT grp FROM com.trailmagic.user.Group AS grp
     INNER JOIN grp.users AS user

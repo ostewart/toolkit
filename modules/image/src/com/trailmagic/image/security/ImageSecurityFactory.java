@@ -13,66 +13,30 @@
  */
 package com.trailmagic.image.security;
 
+import com.trailmagic.image.Image;
+import com.trailmagic.image.ImageFrame;
+import com.trailmagic.image.ImageGroup;
+import com.trailmagic.image.ImageManifestation;
 import com.trailmagic.user.Owned;
-import com.trailmagic.user.User;
-import java.lang.reflect.InvocationTargetException;
-import org.acegisecurity.acl.basic.AclObjectIdentity;
-import org.acegisecurity.acl.basic.BasicAclExtendedDao;
-import org.acegisecurity.acl.basic.NamedEntityObjectIdentity;
-import org.acegisecurity.acl.basic.SimpleAclEntry;
 
-
-public class ImageSecurityFactory {
-    private BasicAclExtendedDao m_aclDao;
-    private static final String ROLE_EVERYONE = "ROLE_EVERYONE";
-
-    public ImageSecurityFactory() {
-        // do nothing
-    }
-
-    public BasicAclExtendedDao getBasicAclExtendedDao() {
-        return m_aclDao;
-    }
-
-    public void setBasicAclExtendedDao(BasicAclExtendedDao dao) {
-        m_aclDao = dao;
-    }
-
-
-    public void makePublic(Object obj, Object parent) {
-        SimpleAclEntry entry =
-            new SimpleAclEntry(ROLE_EVERYONE,
-                               getIdentity(obj),
-                               (parent == null ? null
-                                :getIdentity(parent)),
-                               SimpleAclEntry.READ);
-
-        m_aclDao.create(entry);
-    }
-
-    public void addOwnerAcl(Owned ownedObj, Object parent) {
-        User owner = ownedObj.getOwner();
-
-        SimpleAclEntry entry =
-            new SimpleAclEntry(owner.getScreenName(),
-                               getIdentity(ownedObj),
-                               getIdentity(parent),
-                               (SimpleAclEntry.ADMINISTRATION
-                                |SimpleAclEntry.READ_WRITE_CREATE_DELETE));
-        m_aclDao.create(entry);
-    }
-
-    public void makePrivate(Object obj, Object parent) {
-        m_aclDao.delete(getIdentity(obj), ROLE_EVERYONE);
-    }
-
-    private AclObjectIdentity getIdentity(Object obj) {
-        try {
-            return new NamedEntityObjectIdentity(obj);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException("Error creating ACL identity", e);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException("Error creating ACL identity", e);
-        }
-    }
+public interface ImageSecurityFactory {
+    public void makePublic(Image image);
+    public void makePublic(ImageFrame frame);
+    public void makePublic(ImageGroup group);
+    public void makePublic(ImageManifestation mf);
+    public void makePrivate(Image image);
+    public void makePrivate(ImageFrame frame);
+    public void makePrivate(ImageGroup group);
+    public void makePrivate(ImageManifestation mf);
+    public void addOwnerAcl(Image image);
+    public void addOwnerAcl(ImageFrame frame);
+    public void addOwnerAcl(ImageGroup group);
+    public void addOwnerAcl(ImageManifestation mf);
+    public void addReadPermission(Object obj, Object parent,
+                                  Object recipient);
+    public void addPermission(Object obj, Object parent,
+                              Object recipient, int mask);
+    public void setPermission(Object obj, Object parent,
+                              Object recipient, int mask);
+    public boolean isPublic(Object obj);
 }

@@ -146,4 +146,9 @@ public class Image implements Owned, AclObjectIdentityAware {
         return new NamedEntityObjectIdentity(Image.class.getName(),
                                              Long.toString(getId()));
     }
+
+    public String toString() {
+        return getClass().getName() + ": " + getName();
+    }
+
 }

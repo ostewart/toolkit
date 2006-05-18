@@ -1,10 +1,12 @@
 package com.trailmagic.image;
 
+import com.trailmagic.user.Owned;
+import com.trailmagic.user.User;
 import org.acegisecurity.acl.basic.AclObjectIdentity;
 import org.acegisecurity.acl.basic.AclObjectIdentityAware;
 import org.acegisecurity.acl.basic.NamedEntityObjectIdentity;
 
-public class ImageFrame implements Comparable, AclObjectIdentityAware {
+public class ImageFrame implements Owned, Comparable, AclObjectIdentityAware {
     private long m_id;
     private ImageGroup m_imageGroup;
     private int m_position;
@@ -85,6 +87,17 @@ public class ImageFrame implements Comparable, AclObjectIdentityAware {
 
     public int hashCode() {
         return m_position;
+    }
+
+    /**
+     * The frame is always owned by the owner of the image group,
+     * since it's really only a link class.  This could cause mayhem if
+     * the permissions on an image change to disallow access to the group
+     * owner, but it's a tricky situation anyway, and the frame really
+     * properly belongs to the group.
+     **/
+    public User getOwner() {
+        return getImageGroup().getOwner();
     }
 
     public AclObjectIdentity getAclObjectIdentity() {

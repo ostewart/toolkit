@@ -13,6 +13,7 @@
         <prop key="/import">imageImportController</prop>
         <prop key="/mf/**">imageManifestationController</prop>
         <prop key="/logout">logoutController</prop>
+        <prop key="/changePermission">imageAccessController</prop>
         <prop key="/**">fileController</prop>
       </props>
     </property>
@@ -54,7 +55,8 @@
   </bean>
 
   <bean id="imageGroupController"
-    class="com.trailmagic.image.ui.ImageGroupController">
+    class="com.trailmagic.image.ui.ImageGroupController"
+    autowire="byName">
   </bean>
 
   <bean id="logoutController"
@@ -109,6 +111,31 @@
     </property>
     <property name="validateOnBinding">
       <value>false</value>
+    </property>
+  </bean>
+
+  <bean id="imageAccessController"
+    class="com.trailmagic.image.ui.ImageAccessController">
+    <property name="commandName">
+      <value>imageAccessBean</value>
+    </property>
+    <property name="commandClass">
+      <value>com.trailmagic.image.ui.ImageAccessBean</value>
+    </property>
+    <property name="formView">
+      <value>imageAccessForm</value>
+    </property>
+    <property name="successView">
+      <value>imageAccessSuccess</value>
+    </property>
+    <property name="imageFactory">
+      <ref bean="imageFactory"/>
+    </property>
+    <property name="imageGroupFactory">
+      <ref bean="imageGroupFactory"/>
+    </property>
+    <property name="imageSecurityFactory">
+      <ref bean="imageSecurityFactory"/>
     </property>
   </bean>
 

@@ -42,4 +42,12 @@ public class Group {
     public void setUsers(Collection users) {
         m_users = users;
     }
+
+    public void addUser(User user) {
+        m_users.add(user);
+    }
+
+    public void removeUser(User user) {
+        m_users.remove(user);
+    }
 }
