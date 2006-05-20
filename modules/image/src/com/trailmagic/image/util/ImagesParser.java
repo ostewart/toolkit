@@ -462,6 +462,24 @@ public class ImagesParser extends DefaultHandler
         }
     }
 
+    public void parseFile(File baseDir, File metadataFile) {
+        try {
+	    setBaseDir(baseDir);
+
+	    SAXParserFactory factory = SAXParserFactory.newInstance();
+	    factory.setValidating(true);
+	    SAXParser parser = factory.newSAXParser();
+
+	    System.out.print("Parsing " + metadataFile.getPath() + "...");
+	    System.out.flush();
+	    parser.parse(metadataFile, this);
+	    System.out.println("done");
+        } catch (Throwable t) {
+            t.printStackTrace();
+            System.exit(1);
+        }
+    }
+
     public static final void main(String[] args) {
         File baseDir = new File(args[0]);
         if (!baseDir.isDirectory()) {
@@ -479,27 +497,21 @@ public class ImagesParser extends DefaultHandler
 
         ClassPathXmlApplicationContext appContext =
             new ClassPathXmlApplicationContext(new String[]
-                {"applicationContext-standalone.xml"});
+                {"applicationContext-global.xml",
+                 "applicationContext-user.xml",
+                 "applicationContext-imagestore.xml",
+                 "applicationContext-imagestore-authorization.xml",
+                 "applicationContext-standalone.xml"});
         ImagesParser handler =
             (ImagesParser)appContext.getBean("imagesParser");
         //        handler.setApplicationContext(appContext);
-        try {
             // make sure there's a session bound to the thread
             Session session =
                 SessionFactoryUtils.getSession(handler.getSessionFactory(),
                                                true);
             assert (session != null);
 
-            handler.setBaseDir(baseDir);
-
-            SAXParserFactory factory = SAXParserFactory.newInstance();
-            factory.setValidating(true);
-            SAXParser parser = factory.newSAXParser();
-
-            System.out.print("Parsing " + metadataFile.getPath() + "...");
-            System.out.flush();
-            parser.parse(metadataFile, handler);
-            System.out.println("done");
+	    handler.parseFile(baseDir, metadataFile);
 
             /*
             System.out.println("Importing image files:");
@@ -510,10 +522,6 @@ public class ImagesParser extends DefaultHandler
             }
             System.out.println("All done.");
             */
-        } catch (Throwable t) {
-            t.printStackTrace();
-            System.exit(1);
-        }
         System.exit(0);
     }
 

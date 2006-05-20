@@ -55,6 +55,10 @@
     <property name="sessionFactory"><ref local="sessionFactory"/></property>
   </bean>
 
+  <bean id="imageGroupFactory"
+    class="com.trailmagic.image.hibernate.HibernateImageGroupFactory"
+    autowire="byName"/>
+
   <bean id="imageManifestationFactory"
     class="com.trailmagic.image.hibernate.HibernateImageManifestationFactory">
     <property name="sessionFactory">
@@ -69,6 +73,22 @@
   </bean>
 
   <bean id="imagesParser"
+    class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+    <property name="proxyTargetClass"><value>true</value></property>
+    <property name="transactionManager">
+      <ref local="transactionManager"/>
+    </property>
+    <property name="target">
+      <ref local="imagesParserTarget"/>
+    </property>
+    <property name="transactionAttributes">
+      <props>
+        <prop key="parseFile">PROPAGATION_REQUIRED</prop>
+      </props>
+    </property>
+  </bean>
+
+  <bean id="imagesParserTarget"
     class="com.trailmagic.image.util.ImagesParser">
     <constructor-arg index="0"><value>false</value></constructor-arg>
     <property name="sessionFactory">
@@ -239,8 +259,8 @@
         com.trailmagic.image.hibernate.HibernateImageFactory.getByName=PROPAGATION_REQUIRED,readOnly
         com.trailmagic.image.hibernate.HibernateImageFactory.getAll=PROPAGATION_REQUIRED,readOnly
         com.trailmagic.image.hibernate.HibernateImageFactory.getByNameAndGroup=PROPAGATION_REQUIRED,readOnly
-        com.trailmagic.image.util.AddPermissions.add*=PROPAGACTION_REQUIRED
-        com.trailmagic.image.util.AddPermissions.make*=PROPAGACTION_REQUIRED
+        com.trailmagic.image.util.AddPermissions.add*=PROPAGATION_REQUIRED
+        com.trailmagic.image.util.AddPermissions.make*=PROPAGATION_REQUIRED
       </value>
     </property>
   </bean>
