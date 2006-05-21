@@ -189,6 +189,7 @@
       <classpath>
         <pathelement location="${prebuilt.dir}"/>
         <path refid="build.classpath"/>
+        <path refid="run.dependencies.path"/>
         <pathelement location="${resources.dir}"/>
         <fileset dir="${build.product.dir}">
           <include name="**/*.jar"/>

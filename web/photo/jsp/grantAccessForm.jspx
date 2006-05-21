@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+View for ImageGroup display.
+
+Model Requirements:
+user: currently logged in user
+imageGroup: the current ImageGroup
+groupType: the type of ImageGroup
+groupTypeDisplay: the (singular) display name of the type
+owner: the current album's owner
+frames: List of ImageFrames for this group
+
+-->
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:jsp="http://java.sun.com/JSP/Page"
+  xmlns:c="http://java.sun.com/jsp/jstl/core"
+  xmlns:fmt="http://java.sun.com/jsp/jstl/fmt"
+  xmlns:tm="http://trailmagic.com/taglibs/image"
+  xmlns:authz="http://acegisecurity.org/authz">
+
+  <jsp:output 
+    omit-xml-declaration="false"
+    doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"
+    doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
+    doctype-root-element="html"/>
+
+    <head>
+      <title><c:out value="${imageGroup.displayName}"/></title>
+      <!-- XXX: must make this path flexible -->
+    <link rel="stylesheet"
+      href="${pageContext.request.contextPath}/imagestore.css"
+      type="text/css" />
+    <link rel="stylesheet"
+      href="${pageContext.request.contextPath}/imagestore-color.css"
+          type="text/css" title="Standard"/>
+    <link rel="alternate stylesheet"
+      href="${pageContext.request.contextPath}/imagestore-debug.css"
+            type="text/css" title="Debug"/>
+    </head>
+
+    <body id="imageGroupDisplay">
+      <div id="globalHeader">
+        <div class="breadcrumbs">
+          trailmagic : testing : some : places
+        </div>
+
+        <div class="userAuth">
+          <authz:authorize ifAllGranted="ROLE_USER">
+            <authz:authentication operation="username"/> |
+              <a href="/photo/logout">Sign Out</a>
+          </authz:authorize>
+          <authz:authorize ifNotGranted="ROLE_USER">
+            <a href="/photo/login">Sign in</a>
+          </authz:authorize>
+        </div>
+      </div>
+
+      <div id="header">
+        <h1 class="thingDescription">
+          <span class="bigThing">${groupTypeDisplay}</span>:
+          <span class="subThing">${imageGroup.displayName}</span>
+        </h1>
+
+        <h2 class="ownerName">
+          <span class="label">Owned by:</span>
+          <span class="displayName">
+            <tm:imageGroupLink owner="${owner}"
+              groupType="${imageGroup.type}">${owner.screenName}</tm:imageGroupLink>
+          </span>
+        </h2>
+
+        <p class="imageCount">${frames.size()} images in ${groupTypeDisplay}</p>
+
+            <c:if test="${!empty imageGroup.description}">
+
+          <div id="imageGroupDescription">
+            <c:out value="${imageGroup.description}"/>
+          </div>
+      </c:if>
+
+        
+</div>
+    <div class="imageGroupAdmin">
+      <authz:acl domainObject="${imageGroup}" hasPermission="1">
+        <jsp:element name="form">
+          <jsp:attribute name="method">POST</jsp:attribute>
+          <jsp:attribute
+            name="action">${pageContext.request.contextPath}/changePermission</jsp:attribute>
+          <jsp:body>
+            <input name="id" type="hidden" value="${imageGroup.id}"/>
+            <input name="target" type="hidden" value="imageGroup"/>
+            <c:choose>
+              <c:when test="${imageGroupIsPublic}">
+                <input name="action" type="hidden" value="makePrivate"/>
+                <input type="submit" name="submit" value="Make ${imageGroup.type} Private"/>
+              </c:when>
+              <c:otherwise>
+                <input name="action" type="hidden" value="makePublic"/>
+                <input type="submit" name="submit" value="Make ${imageGroup.type} Public"/>
+              </c:otherwise>
+            </c:choose>
+          </jsp:body>
+        </jsp:element>
+      </authz:acl>
+        
+    </div>
+
+    <authz:acl domainObject="${frame.image}" hasPermission="1">
+      <form method="POST">
+        <label for="recipient">Grant photos to user:</label>
+        <input name="recipient" type="text"/>
+        <label for="mask">Mask:</label>
+        <input name="mask" type="text"/>
+        <table class="thumbnailList">
+          <c:forEach var="frame" items="${frames}">
+            <tr>
+              <td>
+              <tm:imageFrameLink frame="${frame}">
+                <tm:image image="${frame.image}" sizeLabel="thumbnail"/>
+                </tm:imageFrameLink>
+              </td>
+              <td>
+              <input type="checkbox" name="imageIds"
+                  value="${frame.image.id}"/>
+                </td>
+            </tr>
+          </c:forEach>
+        </table>
+        <input type="submit" value="Grant Access"/>
+      </form>
+    </authz:acl>
+      
+    <div id="globalFooter">
+      <div class="footerLeft">
+        To the left.
+      </div>
+      <div class="footerRight">
+        To the right.
+      </div>
+    </div>
+  </body>
+</html>

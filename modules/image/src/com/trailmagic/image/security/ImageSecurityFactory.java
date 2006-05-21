@@ -34,6 +34,7 @@ public interface ImageSecurityFactory {
     public void addOwnerAcl(ImageManifestation mf);
     public void addReadPermission(Object obj, Object parent,
                                   Object recipient);
+    public void addPermission(Image image, Object recipient, int mask);
     public void addPermission(Object obj, Object parent,
                               Object recipient, int mask);
     public void setPermission(Object obj, Object parent,

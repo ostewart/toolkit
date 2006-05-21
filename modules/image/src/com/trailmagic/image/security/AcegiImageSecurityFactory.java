@@ -178,6 +178,27 @@ public class AcegiImageSecurityFactory implements ImageSecurityFactory {
         addPermission(obj, parent, recipient, SimpleAclEntry.READ);
     }
 
+    /**
+     * Adds permission to the image and the frames it's in.
+     **/
+    public void addPermission(Image image, Object recipient, int mask) {
+        ImageGroup parent = m_imageGroupFactory.getRollForImage(image);
+
+        addPermission(image, parent, recipient, mask);
+
+        // add read permission for all the frames if mask includes READ
+        // ADMIN should be transitive from the group
+        if ((SimpleAclEntry.READ & mask) == SimpleAclEntry.READ) {
+            for (ImageFrame frame
+                     : m_imageGroupFactory.getFramesContainingImage(image)) {
+                addPermission(frame, parent, recipient, SimpleAclEntry.READ);
+            }
+        }
+    }
+
+    /**
+     * recipient should be a string, not a user
+     **/
     public void addPermission(Object obj, Object parent, Object recipient,
                               int mask) {
         AclObjectIdentity objIdentity = getIdentity(obj);

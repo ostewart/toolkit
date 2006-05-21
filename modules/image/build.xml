@@ -15,6 +15,12 @@
     <pathelement location="../user/build/classes"/>
   </path>
 
+  <path id="run.dependencies.path">
+    <fileset dir="../user/lib">
+      <include name="**/*.jar"/>
+    </fileset>
+  </path>
+
   <path id="aspect.jars"/>
 
   <import file="../../common-targets.xml"/>

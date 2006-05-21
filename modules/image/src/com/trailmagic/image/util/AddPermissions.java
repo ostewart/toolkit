@@ -287,17 +287,22 @@ public class AddPermissions {
                                final String primaryEmail) {
         m_hibernateTemplate.execute(new HibernateCallback() {
                 public Object doInHibernate(Session session) {
-                    User user = new User();
-                    user.setScreenName(username);
-                    user.setFirstName(firstname);
-                    user.setLastName(lastname);
-                    user.setPrimaryEmail(primaryEmail);
-                    user.setPassword(UserLoginModule
-                                     .encodePassword(password.toCharArray()));
-                    session.saveOrUpdate(user);
-                    Group everyoneGroup =
-                        m_groupFactory.getByName(EVERYONE_GROUP_NAME);
-                    everyoneGroup.addUser(user);
+                    try {
+                        s_log.info("Adding account: " + username);
+                        User user = new User();
+                        user.setScreenName(username);
+                        user.setFirstName(firstname);
+                        user.setLastName(lastname);
+                        user.setPrimaryEmail(primaryEmail);
+                        user.setPassword(UserLoginModule
+                                         .encodePassword(password.toCharArray()));
+                        session.saveOrUpdate(user);
+                        Group everyoneGroup =
+                            m_groupFactory.getByName(EVERYONE_GROUP_NAME);
+                        everyoneGroup.addUser(user);
+                    } catch (Exception e) {
+                        s_log.error("Error adding account", e);
+                    }
                     return null;
                 }
             });
