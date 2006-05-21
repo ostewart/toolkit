@@ -55,6 +55,21 @@
   </bean>
 
   <bean id="imageGroupController"
+    class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+    <property name="transactionManager">
+      <ref local="transactionManager"/>
+    </property>
+    <property name="target">
+      <ref local="imageGroupControllerTarget"/>
+    </property>
+    <property name="transactionAttributes">
+      <props>
+        <prop key="handleRequest">PROPAGATION_REQUIRED,readOnly</prop>
+      </props>
+    </property>
+  </bean>
+
+  <bean id="imageGroupControllerTarget"
     class="com.trailmagic.image.ui.ImageGroupController"
     autowire="byName">
   </bean>
@@ -80,6 +95,21 @@
   </bean>
 
   <bean id="imageManifestationController"
+    class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+    <property name="transactionManager">
+      <ref local="transactionManager"/>
+    </property>
+    <property name="target">
+      <ref local="imageManifestationControllerTarget"/>
+    </property>
+    <property name="transactionAttributes">
+      <props>
+        <prop key="handleRequest">PROPAGATION_REQUIRED,readOnly</prop>
+      </props>
+    </property>
+  </bean>
+
+  <bean id="imageManifestationControllerTarget"
     class="com.trailmagic.image.ui.ImageManifestationController">
     <property name="supportedMethods">
       <value>GET,HEAD</value>

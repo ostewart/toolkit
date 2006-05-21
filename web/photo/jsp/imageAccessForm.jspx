@@ -42,9 +42,9 @@ groupsContainingImage: ImageGroups that contain frame.image
   
   <body id="imageAccess">
     <form method="POST">
-      <label name="imageId">Image Id:</label>
+      <label for="imageId">Image Id:</label>
       <input name="imageId" type="text"/>
-      <label name="action">Action:</label>
+      <label for="action">Action:</label>
       <input name="action" type="text"/>
       <input type="submit" name="submit" value="Submit"/>
     </form>

@@ -248,8 +248,6 @@ clear: both;
   clear: right;
   float: right;
 
-  max-width: 205px;
-  min-width: 192px;
     /* 192px of pic + 5px padding Left & Right */
 
   margin: 0;

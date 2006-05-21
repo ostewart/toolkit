@@ -59,6 +59,17 @@ foreach my $file (@fileList) {
     $number = $2;
 #    $suffix = $3;
 
+    # first autorotate the image
+    if ( $file =~ /\.jpe?g$/ ) {
+        my $origFileRotated;
+        $origFileRotated = "$resizeDir/$prefix$number-orig.jpg";
+        system "cp $file $origFileRotated";
+        $srcFile = "$origFileRotated\[0\]";
+        print "Rotating image $origFileRotated\n";
+        system "exiftran -ai $origFileRotated";
+        $file = $origFileRotated;
+    }
+
     # only get the first line for tifs with multiple images
     # this probably won't work all the time
     $geometry = `identify $baseDir/$file | head -1 |awk '{print \$3;}'`;
@@ -89,8 +100,6 @@ foreach my $file (@fileList) {
         system "echo Cropping TIFF file.";
         system "echo $cmd";
         system "$cmd";
-    } else {
-        $srcFile = "$croppedFile\[0\]";
     }
 
     foreach my $size (keys %geometries) {
@@ -113,7 +122,9 @@ foreach my $file (@fileList) {
 if ($fileList[0] =~ /\.jpe?g$/) {
     print "Rotating images from exif data...\n";
     system "chmod 644 $resizeDir/*.jpg";
-    system "exiftran -ai $resizeDir/*.jpg";
+# exiftran is broken
+#    system "exiftran -ai $resizeDir/*.jpg";
+
 }
 
 if (-f $tempFile) {

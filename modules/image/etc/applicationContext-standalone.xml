@@ -167,6 +167,15 @@
     <property name="imageManifestationFactory">
       <ref local="imageManifestationFactory"/>
     </property>
+    <property name="userFactory">
+      <ref bean="userFactory"/>
+    </property>
+    <property name="hibernateTemplate">
+      <ref bean="hibernateTemplate"/>
+    </property>
+    <property name="imageGroupFactory">
+      <ref bean="imageGroupFactory"/>
+    </property>
   </bean>
 <!--  
   <bean id="replaceImageManifestationOld"
@@ -260,7 +269,8 @@
         com.trailmagic.image.hibernate.HibernateImageFactory.getAll=PROPAGATION_REQUIRED,readOnly
         com.trailmagic.image.hibernate.HibernateImageFactory.getByNameAndGroup=PROPAGATION_REQUIRED,readOnly
         com.trailmagic.image.util.AddPermissions.add*=PROPAGATION_REQUIRED
-        com.trailmagic.image.util.AddPermissions.make*=PROPAGATION_REQUIRED
+          com.trailmagic.image.util.AddPermissions.make*=PROPAGATION_REQUIRED
+          com.trailmagic.image.util.FixDimensions.fixDimensions=PROPAGATION_REQUIRED
       </value>
     </property>
   </bean>
@@ -298,4 +308,33 @@
       </list>
     </property>
   </bean>
+
+<!--
+  <bean id="fixDimensions"
+    class="org.springframework.aop.framework.ProxyFactoryBean">
+    <property name="target">
+      <bean
+        class="com.trailmagic.image.util.FixDimensions">
+        <property name="imageGroupFactory">
+          <ref bean="imageGroupFactory"/>
+        </property>
+        <property name="userFactory">
+          <ref bean="userFactory"/>
+        </property>
+        <property name="hibernateTemplate">
+          <ref bean="hibernateTemplate"/>
+        </property>
+        <property name="imageManifestationFactory">
+          <ref bean="imageManifestationFactory"/>
+        </property>
+      </bean>
+    </property>
+    <property name="interceptorNames">
+      <list>
+        <value>transactionInterceptor</value>
+        <value>hibernateInterceptor</value>
+      </list>
+    </property>
+  </bean>
+-->
 </beans>
