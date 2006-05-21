@@ -158,6 +158,7 @@ public class ImageGroupController implements Controller, ApplicationContextAware
                   m_imageSecurityFactory.isPublic(group));
 
         SortedSet<ImageFrame> frames = group.getFrames();
+        s_log.debug("Frames contains " + frames.size() + " items.");
         model.put("frames", frames);
         /*
         // XXX: This should be fixed

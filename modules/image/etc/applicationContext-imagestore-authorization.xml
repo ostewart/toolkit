@@ -16,6 +16,13 @@
       </list>
     </property>
   </bean>
+
+  <bean id="messageSource"
+    class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+    <property name="basename">
+      <value>org/acegisecurity/messages</value>
+    </property>
+  </bean>
   
   <bean id="basicAclProvider"
     class="org.acegisecurity.acl.basic.BasicAclProvider">

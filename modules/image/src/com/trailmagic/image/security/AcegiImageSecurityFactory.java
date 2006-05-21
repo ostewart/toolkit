@@ -105,7 +105,9 @@ public class AcegiImageSecurityFactory implements ImageSecurityFactory {
     }
 
     public void makePublic(ImageFrame frame) {
-        makePublic(frame, frame.getImageGroup());
+        // image is always parent of frame so that we never have
+        // access to a frame without having access to the image
+        makePublic(frame, frame.getImage());
     }
 
     public void makePublic(ImageGroup group) {
@@ -136,7 +138,9 @@ public class AcegiImageSecurityFactory implements ImageSecurityFactory {
     }
 
     public void addOwnerAcl(ImageFrame frame) {
-        addOwnerAcl(frame, frame.getImageGroup());
+        // image is always parent of frame so that we never
+        // have access to a frame without having access to the image
+        addOwnerAcl(frame, frame.getImage());
     }
 
     public void addOwnerAcl(ImageGroup group) {
@@ -191,7 +195,7 @@ public class AcegiImageSecurityFactory implements ImageSecurityFactory {
         if ((SimpleAclEntry.READ & mask) == SimpleAclEntry.READ) {
             for (ImageFrame frame
                      : m_imageGroupFactory.getFramesContainingImage(image)) {
-                addPermission(frame, parent, recipient, SimpleAclEntry.READ);
+                addPermission(frame, image, recipient, SimpleAclEntry.READ);
             }
         }
     }
@@ -296,7 +300,7 @@ public class AcegiImageSecurityFactory implements ImageSecurityFactory {
     }
 
     public void makePrivate(ImageFrame frame) {
-        makePrivate(frame, frame.getImageGroup());
+        makePrivate(frame, frame.getImage());
     }
 
     public void makePrivate(ImageGroup group) {
