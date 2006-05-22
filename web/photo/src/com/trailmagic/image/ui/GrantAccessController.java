@@ -39,6 +39,9 @@ public class GrantAccessController extends SimpleFormController {
     private static Logger s_log =
         Logger.getLogger(GrantAccessController.class);
 
+    private static final String GRANT_ACTION = "grant";
+    private static final String MAKE_PUBLIC_ACTION = "makePublic";
+
     public ImageSecurityFactory getImageSecurityFactory() {
         return m_imageSecurityFactory;
     }
@@ -98,9 +101,19 @@ public class GrantAccessController extends SimpleFormController {
             Image image = m_imageFactory.getById(id);
             User recipient =
                 m_userFactory.getByScreenName(bean.getRecipient());
-            m_imageSecurityFactory.addPermission(image,
-                                                 recipient.getScreenName(),
-                                                 bean.getMask());
+            if (GRANT_ACTION.equals(bean.getAction())) {
+                s_log.info("Adding permission " + bean.getMask()
+                           + " for " + recipient.getScreenName()
+                           + " to Image: " + image);
+                m_imageSecurityFactory.addPermission(image,
+                                                     recipient.getScreenName(),
+                                                     bean.getMask());
+            } else if (MAKE_PUBLIC_ACTION.equals(bean.getAction())) {
+                s_log.info("Making Image public: " + image);
+                m_imageSecurityFactory.makePublic(image);
+            } else {
+                throw new IllegalArgumentException("Unknown action");
+            }
         }
     }
 }

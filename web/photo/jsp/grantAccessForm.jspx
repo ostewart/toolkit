@@ -107,6 +107,10 @@ frames: List of ImageFrames for this group
 
     <authz:acl domainObject="${frame.image}" hasPermission="1">
       <form method="POST">
+        <select name="action">
+          <option value="grant">Grant Access</option>
+          <option value="makePublic">Make Public</option>
+        </select>
         <label for="recipient">Grant photos to user:</label>
         <input name="recipient" type="text"/>
         <label for="mask">Mask:</label>

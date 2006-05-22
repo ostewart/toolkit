@@ -19,6 +19,7 @@ public class GrantAccessBean {
     private List<String> m_imageIds;
     private int m_mask;
     private String m_recipient;
+    private String m_action;
 
     public GrantAccessBean() {
         // do nothing
@@ -46,5 +47,13 @@ public class GrantAccessBean {
 
     public void setRecipient(String recipient) {
         m_recipient = recipient;
+    }
+
+    public String getAction() {
+        return m_action;
+    }
+
+    public void setAction(String action) {
+        m_action = action;
     }
 }
