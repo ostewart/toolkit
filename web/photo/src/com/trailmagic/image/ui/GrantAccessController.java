@@ -78,6 +78,8 @@ public class GrantAccessController extends SimpleFormController {
             m_imageGroupFactory.getById(Long.parseLong(groupId));
 
         HashMap<String,Object> model = new HashMap<String,Object>();
+        model.put("imageGroupIsPublic",
+                  m_imageSecurityFactory.isPublic(group));
         model.put("imageGroup", group);
         model.put("groupType", group.getType());
         model.put("groupTypeDisplay",

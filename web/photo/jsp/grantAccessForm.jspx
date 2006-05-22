@@ -117,17 +117,19 @@ frames: List of ImageFrames for this group
         <input name="mask" type="text"/>
         <table class="thumbnailList">
           <c:forEach var="frame" items="${frames}">
-            <tr>
-              <td>
-              <tm:imageFrameLink frame="${frame}">
-                <tm:image image="${frame.image}" sizeLabel="thumbnail"/>
-                </tm:imageFrameLink>
-              </td>
-              <td>
-              <input type="checkbox" name="imageIds"
-                  value="${frame.image.id}"/>
+            <authz:acl domainObject="${frame.image}" hasPermission="1">
+              <tr>
+                <td>
+                  <tm:imageFrameLink frame="${frame}">
+                    <tm:image image="${frame.image}" sizeLabel="thumbnail"/>
+                  </tm:imageFrameLink>
                 </td>
-            </tr>
+                <td>
+                  <input type="checkbox" name="imageIds"
+                    value="${frame.image.id}"/>
+                </td>
+              </tr>
+            </authz:acl>
           </c:forEach>
         </table>
         <input type="submit" value="Grant Access"/>
