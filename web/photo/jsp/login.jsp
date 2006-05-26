@@ -7,7 +7,7 @@
 <html>
   <head>
     <title>Login</title>
-    <base href="/"/>
+<!--    <base href="/"/> -->
   </head>
   
   <body>
