@@ -62,6 +62,10 @@ public class ImageGroupController implements Controller, ApplicationContextAware
     public ModelAndView handleRequest(HttpServletRequest req,
                                       HttpServletResponse res)
         throws Exception {
+
+        // make sure caches don't get in the way of selective content
+        // to authorized users
+        res.setHeader("Cache-control", "private");
         /*
          * Model Requirements:
          * user: currently logged in user

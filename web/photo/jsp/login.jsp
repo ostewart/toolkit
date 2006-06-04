@@ -11,6 +11,10 @@
   </head>
   
   <body>
+    <c:if test="${param['failure']}">
+      <h2 style="color: red">Login Failed!</h2>
+    </c:if>
+    
     <h1>Please login:</h1>
     <form method="POST" action="j_acegi_security_check">
       <table>
