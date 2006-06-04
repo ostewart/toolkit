@@ -1,5 +1,12 @@
 package com.trailmagic.image.ui;
 
+import com.trailmagic.image.Image;
+import com.trailmagic.image.ImageFrame;
+import com.trailmagic.image.ImageGroup;
+import com.trailmagic.image.ImageGroupFactory;
+import com.trailmagic.image.security.ImageSecurityFactory;
+import com.trailmagic.user.User;
+import com.trailmagic.user.UserFactory;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -12,6 +19,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
 import org.acegisecurity.AccessDeniedException;
+import org.acegisecurity.ui.AbstractProcessingFilter;
+import org.acegisecurity.ui.savedrequest.SavedRequest;
+import org.acegisecurity.util.PortResolver;
+import org.acegisecurity.util.PortResolverImpl;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
@@ -21,9 +32,6 @@ import org.springframework.util.Assert;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 import org.springframework.web.util.UrlPathHelper;
-import com.trailmagic.image.security.ImageSecurityFactory;
-import com.trailmagic.image.*;
-import com.trailmagic.user.*;
 
 /**
  * to add a new group type, simply add a new mapping to this controller as
@@ -42,6 +50,7 @@ public class ImageGroupController implements Controller, ApplicationContextAware
 
     private ApplicationContext m_appContext;
     private ImageSecurityFactory m_imageSecurityFactory;
+    private PortResolver m_portResolver = new PortResolverImpl();
 
     public void setApplicationContext(ApplicationContext appContext)
         throws BeansException {
@@ -66,6 +75,17 @@ public class ImageGroupController implements Controller, ApplicationContextAware
         // make sure caches don't get in the way of selective content
         // to authorized users
         res.setHeader("Cache-control", "private");
+        // save the request in case someone clicks the sign in link
+        SavedRequest savedRequest =
+            new SavedRequest(req, m_portResolver);
+        if (s_log.isDebugEnabled()) {
+            s_log.debug("SavedRequest added to Session: " + savedRequest);
+        }
+        // Store the HTTP request itself. Used by AbstractProcessingFilter
+        // for redirection after successful authentication (SEC-29)
+        req.getSession().setAttribute(AbstractProcessingFilter
+                                      .ACEGI_SAVED_REQUEST_KEY, savedRequest);
+
         /*
          * Model Requirements:
          * user: currently logged in user
