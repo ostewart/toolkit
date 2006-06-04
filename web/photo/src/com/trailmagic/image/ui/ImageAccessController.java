@@ -18,13 +18,16 @@ import com.trailmagic.image.ImageFactory;
 import com.trailmagic.image.ImageGroup;
 import com.trailmagic.image.ImageGroupFactory;
 import com.trailmagic.image.security.ImageSecurityFactory;
-import org.springframework.web.servlet.mvc.SimpleFormController;
-import org.apache.log4j.Logger;
-import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import org.acegisecurity.ui.AbstractProcessingFilter;
+import org.acegisecurity.ui.savedrequest.SavedRequest;
+import org.apache.log4j.Logger;
 import org.springframework.validation.BindException;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.SimpleFormController;
 
 public class ImageAccessController extends SimpleFormController {
     private ImageSecurityFactory m_imageSecurityFactory;
@@ -62,7 +65,10 @@ public class ImageAccessController extends SimpleFormController {
         m_imageGroupFactory = factory;
     }
 
-    protected void doSubmitAction(Object command) throws Exception {
+    protected ModelAndView onSubmit(HttpServletRequest req,
+                                    HttpServletResponse res,
+                                    Object command,
+                                    BindException errors) throws Exception {
         ImageAccessBean bean = (ImageAccessBean) command;
 
         if (bean == null) {
@@ -97,6 +103,18 @@ public class ImageAccessController extends SimpleFormController {
             } else {
                 throw new Exception("invalid action");
             }
+        }
+
+        // if all goes well, redirect back to the last page
+        HttpSession session = req.getSession(false);
+        SavedRequest savedRequest =
+            (SavedRequest) session.getAttribute(AbstractProcessingFilter
+                                                .ACEGI_SAVED_REQUEST_KEY);
+        if (savedRequest != null) {
+            res.sendRedirect(savedRequest.getFullRequestUrl());
+            return null;
+        } else {
+            return super.onSubmit(req, res, command, errors);
         }
     }
 }
