@@ -120,6 +120,7 @@ public class ImageGroupController implements Controller, ApplicationContextAware
 
         // got no args: show users
         if ( !pathTokens.hasMoreTokens() ) {
+            WebSupport.handleDirectoryUrlRedirect(req, res);
             model.put("owners", imgGroupFactory.getOwnersByType(groupType));
             return new ModelAndView(USERS_VIEW, model);
         }
@@ -132,6 +133,7 @@ public class ImageGroupController implements Controller, ApplicationContextAware
 
         // got user arg: show his/her groups
         if ( !pathTokens.hasMoreTokens() ) {
+            WebSupport.handleDirectoryUrlRedirect(req, res);
             List<ImageGroup> imageGroups =
                 imgGroupFactory.getByOwnerScreenNameAndType(ownerName,
                                                             groupType);
@@ -194,6 +196,7 @@ public class ImageGroupController implements Controller, ApplicationContextAware
 
         // got user and group args: show one group
         if (!pathTokens.hasMoreTokens()) {
+            WebSupport.handleDirectoryUrlRedirect(req, res);
             return new ModelAndView(IMG_GROUP_VIEW, model);
         }
 
