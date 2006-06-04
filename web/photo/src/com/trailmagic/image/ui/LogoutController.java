@@ -17,7 +17,9 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.acegisecurity.ui.AbstractProcessingFilter;
 import org.acegisecurity.ui.rememberme.TokenBasedRememberMeServices;
+import org.acegisecurity.ui.savedrequest.SavedRequest;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
@@ -29,6 +31,9 @@ public class LogoutController extends AbstractController {
         throws Exception {
 
         HttpSession session = req.getSession(false);
+        SavedRequest savedRequest =
+            (SavedRequest) session.getAttribute(AbstractProcessingFilter
+                                                .ACEGI_SAVED_REQUEST_KEY);
         if (session != null) {
             session.invalidate();
         }
@@ -38,7 +43,13 @@ public class LogoutController extends AbstractController {
                        null);
         terminate.setMaxAge(0);
         res.addCookie(terminate);
-        res.sendRedirect("/photo/albums/");
+
+
+        if (savedRequest != null) {
+            res.sendRedirect(savedRequest.getFullRequestUrl());
+        } else {
+            res.sendRedirect("/photo/albums/");
+        }
         return null;
     }
 }
