@@ -169,10 +169,16 @@ public class AddPermissions {
                     group =
                         m_imageGroupFactory.getRollByOwnerAndName(owner,
                                                                   groupName);
+		    if (group == null) {
+			s_log.error("No roll found with name " + groupName
+				    + " owned by " + owner);
+		    }
                 } else if ("album".equals(type)) {
                     group =
                         m_imageGroupFactory.getAlbumByOwnerAndName(owner,
                                                                    groupName);
+			s_log.error("No album found with name " + groupName
+				    + " owned by " + owner);
                 } else {
                     throw new IllegalArgumentException("invalid type");
                 }
@@ -373,7 +379,7 @@ public class AddPermissions {
             ap.addAccounts(args[1]);
         } else if ("makeImageGroupsPublic".equals(command)) {
             ArrayList<String> groups = new ArrayList<String>();
-            for (int i = 2; i < args.length; i++) {
+            for (int i = 3; i < args.length; i++) {
                 groups.add(args[i]);
             }
             // username, type, groups...
