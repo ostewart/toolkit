@@ -63,11 +63,15 @@ foreach my $file (@fileList) {
     if ( $file =~ /\.jpe?g$/ ) {
         my $origFileRotated;
         $origFileRotated = "$resizeDir/$prefix$number-orig.jpg";
-        system "cp $file $origFileRotated";
-        $srcFile = "$origFileRotated\[0\]";
-        print "Rotating image $origFileRotated\n";
-        system "exiftran -ai $origFileRotated";
-        $file = $origFileRotated;
+	if ( !-f $origFileRotated ) {
+            system "cp $file $origFileRotated";
+            $srcFile = "$origFileRotated\[0\]";
+            print "Rotating image $origFileRotated\n";
+            system "exiftran -ai $origFileRotated";
+            $file = $origFileRotated;
+	} else {
+	    system "echo skipping rotation of existing file: $origFileRotated";
+	}
     }
 
     # only get the first line for tifs with multiple images
@@ -104,6 +108,11 @@ foreach my $file (@fileList) {
 
     foreach my $size (keys %geometries) {
         $newFile = "$prefix$number-$size.jpg";
+	if ( -f "$resizeDir/$newFile" ) {
+	    system "echo Skipping existing file: $resizeDir/$newFile";
+	    next;
+	}
+
 # this stuff is too big
 #        if ( $area < $areas{$size} ) {
 #            # we should only get here for jpegs
