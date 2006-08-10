@@ -48,6 +48,10 @@
       <column name="description" sql-type="varchar(2048)"/>
     </property>
 
+    <property name="uploadDate">
+      <column name="upload_date" not-null="true"/>
+    </property>
+
     <many-to-one name="owner"
       class="com.trailmagic.user.User"
       cascade="none">

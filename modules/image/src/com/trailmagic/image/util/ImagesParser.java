@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
@@ -240,6 +241,7 @@ public class ImagesParser extends DefaultHandler
         m_roll = new ImageGroup();
         m_roll.setType(ImageGroup.ROLL_TYPE);
         m_roll.setSupergroup(null);
+        m_roll.setUploadDate(new Date());
         m_inRoll = true;
     }
 

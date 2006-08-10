@@ -3,6 +3,7 @@ package com.trailmagic.image;
 import com.trailmagic.user.Owned;
 import com.trailmagic.user.User;
 import java.util.Collection;
+import java.util.Date;
 import java.util.SortedSet;
 import org.acegisecurity.acl.basic.AclObjectIdentity;
 import org.acegisecurity.acl.basic.AclObjectIdentityAware;
@@ -14,6 +15,7 @@ public class ImageGroup implements Owned, AclObjectIdentityAware {
     private String m_name;
     private String m_displayName;
     private String m_description;
+    private Date m_uploadDate;
     private SortedSet<ImageFrame> m_frames;
     private Collection<ImageGroup> m_subgroups;
     private ImageGroup m_supergroup;
@@ -57,6 +59,14 @@ public class ImageGroup implements Owned, AclObjectIdentityAware {
 
     public void setDescription(String desc) {
         m_description = desc;
+    }
+
+    public Date getUploadDate() {
+        return m_uploadDate;
+    }
+
+    public void setUploadDate(Date uploadDate) {
+        m_uploadDate = uploadDate;
     }
 
     public String getType() {

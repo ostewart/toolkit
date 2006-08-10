@@ -53,7 +53,16 @@
 <!--    <pathelement path="${java.class.path}"/>--> 
     <fileset dir="${ant.lib.dir}" includes="**/*.jar"/>
   </path>
-  
+
+  <path id="hbm.classpath">
+    <path refid="build.classpath"/>
+    <fileset dir="${global.lib.dep.dir}">
+      <include name="**/*.jar"/>
+    </fileset>
+    <pathelement location="${hibernate.dir}"/>
+    <pathelement location="${resources.dir}"/>
+    <pathelement location="${build.output.dir}"/>
+  </path>
   
   <target name="init">
     <tstamp />
@@ -152,7 +161,7 @@
       classpathref="hbm.classpath"/>
     
     <schemaexport
-      config="${hibernate.conf.dir}/${module.name}.cfg.xml"
+      config="${hibernate.dir}/${module.name}.cfg.xml"
         quiet="no"
         text="yes"
         drop="no"
@@ -163,12 +172,12 @@
   <target name="schemaupdate" depends="compile">
     <taskdef name="schemaupdate"
       classname="org.hibernate.tool.hbm2ddl.SchemaUpdateTask"
-      classpathref="build.classpath"/>
+      classpathref="hbm.classpath"/>
     
     <schemaupdate
-      config="${hibernate.conf.dir}/${module.name}.cfg.xml"
-      properties="${hibernate.conf.dir}/hibernate.properties"
-      quiet="no"/>
+      config="${hibernate.dir}/${module.name}.cfg.xml"
+      quiet="no"
+      text="no"/>
 
   </target>
 

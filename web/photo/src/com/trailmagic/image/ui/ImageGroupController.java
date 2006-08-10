@@ -9,6 +9,8 @@ import com.trailmagic.user.User;
 import com.trailmagic.user.UserFactory;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -163,6 +165,15 @@ public class ImageGroupController implements Controller, ApplicationContextAware
                                 + "collection: " + group);
                 }
             }
+
+            // sort the groups by upload date (descending)
+            Collections.sort(filteredGroups, new Comparator<ImageGroup>() {
+                    public int compare(ImageGroup g1, ImageGroup g2) {
+                        return g2.getUploadDate()
+                            .compareTo(g1.getUploadDate());
+                    }
+                });
+
             model.put("numImages", numImages);
             model.put("imageGroups", filteredGroups);
             model.put("previewImages", previewImages);
@@ -176,7 +187,7 @@ public class ImageGroupController implements Controller, ApplicationContextAware
             imgGroupFactory.getByOwnerNameAndType(owner, groupName, groupType);
         if (group == null) {
             res.sendError(HttpServletResponse.SC_NOT_FOUND,
-                          "No such image group");
+                          "No such " + groupType);
             return null;
         }
         model.put("imageGroup", group);
