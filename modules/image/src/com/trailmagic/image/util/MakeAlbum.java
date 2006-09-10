@@ -163,7 +163,11 @@ public class MakeAlbum implements ApplicationContextAware {
 
         ClassPathXmlApplicationContext appContext =
             new ClassPathXmlApplicationContext(new String[]
-                {"applicationContext-standalone.xml"});
+                {"applicationContext-global.xml",
+                 "applicationContext-user.xml",
+                 "applicationContext-imagestore.xml",
+                 "applicationContext-imagestore-authorization.xml",
+                 "applicationContext-standalone.xml"});
         MakeAlbum worker =
             (MakeAlbum)appContext.getBean(MAKE_ALBUM_BEAN);
 

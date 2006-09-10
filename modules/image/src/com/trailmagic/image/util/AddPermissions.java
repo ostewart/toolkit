@@ -226,6 +226,29 @@ public class AddPermissions {
             });
     }
 
+    public void addOwnerPermissions(final String ownerName,
+				    final String albumName) {
+        m_hibernateTemplate.execute(new HibernateCallback() {
+                public Object doInHibernate(Session session) {
+                    User user = m_userFactory.getByScreenName(ownerName);
+		    ImageGroup group =
+			m_imageGroupFactory.getAlbumByOwnerAndName(user,
+								   albumName);
+		    m_imageSecurityFactory.addOwnerAcl(group);
+		    for (ImageFrame frame : group.getFrames()) {
+			m_imageSecurityFactory.addOwnerAcl(frame);
+			Image image = frame.getImage();
+			m_imageSecurityFactory.addOwnerAcl(image);
+			for (ImageManifestation mf
+				 : image.getManifestations()) {
+			    m_imageSecurityFactory.addOwnerAcl(mf);
+			}
+		    }
+		    return null;
+		}
+	    });
+    }
+
     public void fixFramePermissions() {
         m_hibernateTemplate.execute(new HibernateCallback() {
                 public Object doInHibernate(Session session) {
@@ -361,6 +384,8 @@ public class AddPermissions {
             ap.fixFramePermissions();
         } else if ("addAllOwnerPermissions".equals(command)) {
             ap.addAllOwnerPermissions(args[1]);
+        } else if ("addOwnerPermissions".equals(command)) {
+            ap.addOwnerPermissions(args[1], args[2]);
         } else if ("addUserAccount".equals(command)) {
             ap.addUserAccount(args[1], args[2], args[3], args[4], args[5]);
         } else if ("makeAdminReadable".equals(command)) {
