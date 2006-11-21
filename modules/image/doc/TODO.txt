@@ -1,7 +1,6 @@
 ADD SALT to password encoding
 Rolls link to individual rolls doesn't work with no trailing slash!
 ImageGroupLinkTag needs to support all combinations of options!
-Implement Roll display page/controller
 Put resin.conf into svn
 Add preview images to album list page
 Use CSS instead of <center>
@@ -26,6 +25,7 @@ slightly different semantics
 
 refactor user, group to descend from Party
 
+DONE: Implement Roll display page/controller
 DONE: implement Album
 DONE: implement ImageCD
 DONE: implement UI: Album display, Roll entry, individual image display
