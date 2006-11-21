@@ -59,6 +59,7 @@ public class ImageGroupController implements Controller, ApplicationContextAware
     private static final String USERS_VIEW = "imageGroupUsers";
     private static final String IMG_GROUP_VIEW = "imageGroup";
     private static final String IMAGE_DISPLAY_VIEW = "imageDisplay";
+    private static final int DIR_TOKENS = 3;
 
     private static Logger s_log =
         Logger.getLogger(ImageGroupController.class);
@@ -123,6 +124,16 @@ public class ImageGroupController implements Controller, ApplicationContextAware
         s_log.debug("Lookup path: " +
                     pathHelper.getLookupPathForRequest(req));
         StringTokenizer pathTokens = new StringTokenizer(myPath, "/");
+
+        // if this is a "directory" request, make sure there's a trailing
+        // slash
+        if (pathTokens.countTokens() <= DIR_TOKENS) {
+            if (WebSupport.handleDirectoryUrlRedirect(req, res)) {
+                // stop processing if we redirected
+                return new ModelAndView();
+            }
+        }
+
         String groupType = pathTokens.nextToken();
         Map<String,Object> model = new HashMap<String,Object>();
 
@@ -135,7 +146,6 @@ public class ImageGroupController implements Controller, ApplicationContextAware
 
         // got no args: show users
         if ( !pathTokens.hasMoreTokens() ) {
-            WebSupport.handleDirectoryUrlRedirect(req, res);
             model.put("owners", imgGroupFactory.getOwnersByType(groupType));
             return new ModelAndView(USERS_VIEW, model);
         }
@@ -148,7 +158,6 @@ public class ImageGroupController implements Controller, ApplicationContextAware
 
         // got user arg: show his/her groups
         if ( !pathTokens.hasMoreTokens() ) {
-            WebSupport.handleDirectoryUrlRedirect(req, res);
             List<ImageGroup> imageGroups =
                 imgGroupFactory.getByOwnerScreenNameAndType(ownerName,
                                                             groupType);
@@ -220,7 +229,6 @@ public class ImageGroupController implements Controller, ApplicationContextAware
 
         // got user and group args: show one group
         if (!pathTokens.hasMoreTokens()) {
-            WebSupport.handleDirectoryUrlRedirect(req, res);
             return new ModelAndView(IMG_GROUP_VIEW, model);
         }
 

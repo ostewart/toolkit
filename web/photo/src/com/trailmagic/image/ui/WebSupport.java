@@ -84,7 +84,7 @@ public class WebSupport {
      * @param req the servlet request
      * @param res the servlet response
      **/
-    public static void handleDirectoryUrlRedirect(HttpServletRequest req,
+    public static boolean handleDirectoryUrlRedirect(HttpServletRequest req,
                                                   HttpServletResponse res)
     throws IOException {
         String uri = req.getRequestURI();
@@ -99,6 +99,8 @@ public class WebSupport {
             }
 
             res.sendRedirect(newLocation.toString());
+            return true;
         }
+        return false;
     }
 }
