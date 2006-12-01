@@ -141,13 +141,6 @@ public class Image implements Owned, AclObjectIdentityAware {
         m_number = number;
     }
 
-    public static Image findById(long id) throws HibernateException {
-        Session sess = HibernateUtil.currentSession();
-        Query query = sess.getNamedQuery("imagesById");
-        query.setLong("imageId", id);
-        return (Image)query.uniqueResult();
-    }
-
     public boolean equals(Object obj) {
         return (obj instanceof Image) &&
             //            (this.getId() == ((Image)obj).getId());

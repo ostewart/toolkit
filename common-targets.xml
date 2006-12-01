@@ -73,10 +73,14 @@
     <fileset dir="${global.lib.dep.dir}">
       <include name="**/*.jar"/>
     </fileset>
-    <pathelement location="${hibernate.dir}"/>
+<!--    <pathelement location="${hibernate.dir}"/> -->
     <pathelement location="${resources.dir}"/>
     <pathelement location="${build.output.dir}"/>
   </path>
+
+  <filterset id="hbm">
+    <filter token="HIBERNATE.DIALECT" value="${hibernate.dialect}"/>
+  </filterset>
   
   <target name="init">
     <tstamp />
@@ -123,6 +127,7 @@
 
   <target name="build" depends="compile">
     <copy todir="${build.output.dir}">
+      <filterset refid="hbm"/>
       <fileset dir="${hibernate.dir}"/>
       <!-- this may not be good - added for run target -->
       <fileset dir="${resources.dir}"/>
@@ -169,13 +174,13 @@
   </target>
 
 
-    <target name="schemaexport" depends="compile">
+    <target name="schemaexport" depends="build">
     <taskdef name="schemaexport"
       classname="org.hibernate.tool.hbm2ddl.SchemaExportTask"
       classpathref="hbm.classpath"/>
     
     <schemaexport
-      config="${hibernate.dir}/${module.name}.cfg.xml"
+      config="${build.output.dir}/${module.name}.cfg.xml"
         quiet="no"
         text="yes"
         drop="no"
@@ -183,13 +188,13 @@
       output="${build.dir}/schema-export.sql"/>
   </target>
 
-  <target name="schemaupdate" depends="compile">
+  <target name="schemaupdate" depends="build">
     <taskdef name="schemaupdate"
       classname="org.hibernate.tool.hbm2ddl.SchemaUpdateTask"
       classpathref="hbm.classpath"/>
     
     <schemaupdate
-      config="${hibernate.dir}/${module.name}.cfg.xml"
+      config="${build.output.dir}/${module.name}.cfg.xml"
       quiet="no"
       text="no"/>
 

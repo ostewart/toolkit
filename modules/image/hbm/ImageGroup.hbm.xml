@@ -105,7 +105,7 @@
       <column name="group_id" not-null="true"/>
     </many-to-one>
     <property name="position">
-      <column name="position" unique-key="frames_group_position"
+      <column name="pos" unique-key="frames_group_position"
         not-null="true"/>
     </property>
     <property name="caption">
