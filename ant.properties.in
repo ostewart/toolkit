@@ -6,3 +6,4 @@ log4j.appender.A1=org.apache.log4j.ConsoleAppender
 log4j.logger.net.sf.hibernate.cfg.Environment=DEBUG, A1
 build.compiler=modern
 no.ear=true
+hibernate.dialect=org.hibernate.dialect.HSQLDialect
