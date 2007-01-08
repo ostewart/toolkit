@@ -24,6 +24,7 @@ import java.util.List;
 
 import com.trailmagic.user.User;
 import com.trailmagic.image.*;
+import com.trailmagic.image.ImageGroup.Type;
 
 @SuppressWarnings("unchecked") // for query.list()
 public class HibernateImageGroupFactory implements ImageGroupFactory {
@@ -175,12 +176,12 @@ public class HibernateImageGroupFactory implements ImageGroupFactory {
         }
     }
 
-    public List<User> getOwnersByType(String groupType) {
+    public List<User> getOwnersByType(Type groupType) {
         try {
             Session session =
                 SessionFactoryUtils.getSession(m_sessionFactory, false);
             Query qry = session.getNamedQuery(GROUP_OWNERS_QRY);
-            qry.setString("groupType", groupType);
+            qry.setString("groupType", groupType.toString());
             return qry.list();
         } catch (HibernateException e) {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
@@ -188,13 +189,13 @@ public class HibernateImageGroupFactory implements ImageGroupFactory {
     }
 
     public List<ImageGroup> getByOwnerScreenNameAndType(String screenName,
-                                                        String groupType) {
+                                                        Type groupType) {
         try {
             Session session =
                 SessionFactoryUtils.getSession(m_sessionFactory, false);
             Query qry = session.getNamedQuery(GROUPS_BY_OWNER_NAME_QRY);
             qry.setString("screenName", screenName);
-            qry.setString("groupType", groupType);
+            qry.setString("groupType", groupType.toString());
             return qry.list();
         } catch (HibernateException e) {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
@@ -202,14 +203,14 @@ public class HibernateImageGroupFactory implements ImageGroupFactory {
     }
 
     public ImageGroup getByOwnerNameAndType(User owner, String groupName,
-                                            String groupType) {
+                                            Type groupType) {
         try {
             Session session =
                 SessionFactoryUtils.getSession(m_sessionFactory, false);
             Query qry = session.getNamedQuery(GROUP_BY_OWNER_NAME_TYPE_QRY);
             qry.setEntity("owner", owner);
             qry.setString("groupName", groupName);
-            qry.setString("groupType", groupType);
+            qry.setString("groupType", groupType.toString());
             return (ImageGroup)qry.uniqueResult();
         } catch (HibernateException e) {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
@@ -265,5 +266,18 @@ public class HibernateImageGroupFactory implements ImageGroupFactory {
                         return qry.list();
                     }
                 });
+    }
+
+    public ImageGroup createImageGroup(Type type) {
+        return new ImageGroup();
+    }
+
+    public void saveFrame(ImageFrame frame) {
+        m_hibernateTemplate.saveOrUpdate(frame);
+
+    }
+
+    public void saveGroup(ImageGroup newGroup) {
+        m_hibernateTemplate.saveOrUpdate(newGroup);
     }
 }

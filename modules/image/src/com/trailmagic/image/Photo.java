@@ -31,6 +31,7 @@ public class Photo extends Image implements AclObjectIdentityAware {
     }
 
     public Photo() {
+        super();
     }
 
     public Photo(Image image) {

@@ -28,7 +28,7 @@ public class ImageGroupLinkTag extends TagSupport {
     private User m_owner = null;
     private ImageGroup m_imageGroup = null;
     private Long m_image = null;
-    private String m_groupType = null;
+    private ImageGroup.Type m_groupType = null;
     private String m_styleClass = null;
 
     public void setOwner(User owner) {
@@ -48,10 +48,10 @@ public class ImageGroupLinkTag extends TagSupport {
     }
 
     public void setGroupType(String groupType) {
-        m_groupType = groupType;
+        this.m_groupType = ImageGroup.Type.fromString(groupType);
     }
 
-    public String getGroupType() {
+    public ImageGroup.Type getGroupType() {
         return m_groupType;
     }
 

@@ -14,7 +14,8 @@
 package com.trailmagic.user;
 
 public interface UserFactory {
-    public User newInstance();
+    public User createUser();
     public User getByScreenName(String screenName);
     public User getById(long id);
+    public void save(User user);
 }

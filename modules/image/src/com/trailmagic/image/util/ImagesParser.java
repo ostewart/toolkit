@@ -44,6 +44,7 @@ import org.xml.sax.helpers.DefaultHandler;
 import com.trailmagic.image.*;
 import com.trailmagic.user.User;
 import com.trailmagic.user.UserFactory;
+import com.trailmagic.image.ImageGroup.Type;
 import com.trailmagic.image.security.ImageSecurityFactory;
 
 public class ImagesParser extends DefaultHandler
@@ -77,8 +78,18 @@ public class ImagesParser extends DefaultHandler
     private StringBuffer m_characterData;
     private ImageSecurityFactory m_imageSecurityFactory;
     private ApplicationContext m_appContext;
+    private ImageGroupFactory m_imageGroupFactory;
+    private ImageFactory m_imageFactory;
 
-    public ImagesParser() {
+    public void setImageFactory(ImageFactory imageFactory) {
+		m_imageFactory = imageFactory;
+	}
+
+	public void setImageGroupFactory(ImageGroupFactory imageGroupFactory) {
+		m_imageGroupFactory = imageGroupFactory;
+	}
+
+	public ImagesParser() {
         this(true);
     }
 
@@ -251,8 +262,8 @@ public class ImagesParser extends DefaultHandler
     }
 
     public void startRoll() {
-        m_roll = new ImageGroup();
-        m_roll.setType(ImageGroup.ROLL_TYPE);
+        m_roll = m_imageGroupFactory.createImageGroup(Type.ROLL);
+        m_roll.setType(ImageGroup.Type.ROLL);
         m_roll.setSupergroup(null);
         m_roll.setUploadDate(new Date());
         m_inRoll = true;

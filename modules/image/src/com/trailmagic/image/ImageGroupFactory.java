@@ -13,6 +13,7 @@
  */
 package com.trailmagic.image;
 
+import com.trailmagic.image.ImageGroup.Type;
 import com.trailmagic.user.User;
 import java.util.List;
 
@@ -30,13 +31,18 @@ public interface ImageGroupFactory {
     public List<ImageGroup> getRollsByOwnerScreenName(String screenName);
     public List<User> getAlbumOwners();
     public List<User> getRollOwners();
-    public List<User> getOwnersByType(String groupType);
+    public List<User> getOwnersByType(Type groupType);
     public List<ImageGroup> getByOwnerScreenNameAndType(String screenName,
-                                                        String groupType);
+                                                        Type groupType);
     public ImageGroup getByOwnerNameAndType(User owner, String groupName,
-                                            String groupType);
+                                            Type groupType);
     public List<ImageGroup> getByImage(Image image);
     public ImageGroup getRollForImage(Image image);
     public ImageGroup getById(long id);
     public List<ImageGroup> getAll();
+    /** Only need to call this on a new object **/
+    public void saveFrame(ImageFrame frame);
+    /** Creates a new ImageGroup...call saveGroup() to persist **/
+	public ImageGroup createImageGroup(Type type);
+	public void saveGroup(ImageGroup newGroup);
 }

@@ -42,7 +42,7 @@
 
   <bean id="jaasAuthenticationProvider" class="org.acegisecurity.providers.jaas.JaasAuthenticationProvider">
     <property name="loginConfig">
-      <value>/WEB-INF/jaas.config</value>
+      <value>classpath:jaas.config</value>
     </property>
     <property name="loginContextName">
       <value>ImageStore</value>
@@ -115,6 +115,9 @@
     class="com.trailmagic.user.hibernate.HibernateUserFactory">
     <property name="sessionFactory">
       <ref bean="sessionFactory"/>
+    </property>
+    <property name="hibernateTemplate">
+      <ref bean="hibernateTemplate"/>
     </property>
   </bean>
 

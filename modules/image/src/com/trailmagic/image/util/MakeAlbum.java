@@ -87,7 +87,7 @@ public class MakeAlbum implements ApplicationContextAware {
 
             ImageGroup album = new ImageGroup();
             album.setName(albumName);
-            album.setType(ImageGroup.ALBUM_TYPE);
+            album.setType(ImageGroup.Type.ALBUM);
             album.setDisplayName(roll.getDisplayName());
             album.setDescription(roll.getDescription());
             album.setOwner(roll.getOwner());

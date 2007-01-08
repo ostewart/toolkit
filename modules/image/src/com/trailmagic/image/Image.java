@@ -16,6 +16,7 @@ package com.trailmagic.image;
 import com.trailmagic.user.Owned;
 import com.trailmagic.user.User;
 import java.util.SortedSet;
+import java.util.TreeSet;
 import org.acegisecurity.acl.basic.AclObjectIdentity;
 import org.acegisecurity.acl.basic.AclObjectIdentityAware;
 import org.acegisecurity.acl.basic.NamedEntityObjectIdentity;
@@ -36,11 +37,13 @@ public class Image implements Owned, AclObjectIdentityAware {
     private Integer m_number;
 
     public Image(long id) {
+        super();
         // nothing for now
         m_id = id;
     }
 
     public Image() {
+        m_manifestations = new TreeSet<ImageManifestation>();
     }
 
     public Image(Image image) {

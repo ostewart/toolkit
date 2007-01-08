@@ -63,6 +63,7 @@
       </fileset>
       <fileset dir="../../etc">
         <include name="applicationContext*.xml"/>
+        <include name="*.properties"/>
       </fileset>
     </copy>
   </target>

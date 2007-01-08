@@ -23,7 +23,6 @@ import com.trailmagic.user.UserFactory;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 import org.apache.log4j.Logger;
 import org.springframework.web.servlet.ModelAndView;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.validation.BindException;
@@ -83,8 +82,7 @@ public class GrantAccessController extends SimpleFormController {
         model.put("imageGroup", group);
         model.put("groupType", group.getType());
         model.put("groupTypeDisplay",
-                  group.getType().substring(0, 1).toUpperCase()
-                  + group.getType().substring(1));
+                  group.getTypeDisplay());
         model.put("owner", group.getOwner());
         model.put("frames", group.getFrames());
         return new ModelAndView(getFormView(), model);

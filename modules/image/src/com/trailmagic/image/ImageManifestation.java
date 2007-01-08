@@ -51,6 +51,7 @@ public class ImageManifestation implements Comparable, Owned,
 
     public void setImage(Image image) {
         m_image = image;
+        // this would be redundant if we added to the other collection
         //        SortedSet mfs = image.getManifestations();
         //        mfs.add(this);
     }

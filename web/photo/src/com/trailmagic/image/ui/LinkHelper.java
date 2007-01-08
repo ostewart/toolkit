@@ -92,7 +92,7 @@ public class LinkHelper {
         return getAlbumsRootUrl() + owner.getScreenName() + "/";
     }
 
-    public String getImageGroupsUrl(String groupType, User owner) {
+    public String getImageGroupsUrl(ImageGroup.Type groupType, User owner) {
         return getImageGroupsRootUrl(groupType) +
             owner.getScreenName() + "/";
     }
@@ -101,8 +101,19 @@ public class LinkHelper {
         return m_request.getContextPath() + m_albumServletPath;
     }
 
-    public String getImageGroupsRootUrl(String groupType) {
-        return m_request.getContextPath() + "/" + groupType + "s/";
+    public String getImageGroupsRootUrl(ImageGroup.Type type) {
+    	String prettyType;
+    	switch (type) {
+    	case ROLL:
+    		prettyType = "roll";
+    		break;
+    	case ALBUM:
+    		prettyType = "album";
+    		break;
+    	default:
+    		throw new IllegalArgumentException();
+    	}
+        return m_request.getContextPath() + "/" + prettyType + "s/";
     }
 
     public String getImageDisplayUrl(Image image) {

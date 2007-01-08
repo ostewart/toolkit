@@ -119,7 +119,7 @@
 
   <bean id="imageFactoryTarget"
     class="com.trailmagic.image.hibernate.HibernateImageFactory">
-    <property name="sessionFactory"><ref bean="sessionFactory"/></property>
+    <property name="hibernateTemplate"><ref bean="hibernateTemplate"/></property>
   </bean>
 
 <!--

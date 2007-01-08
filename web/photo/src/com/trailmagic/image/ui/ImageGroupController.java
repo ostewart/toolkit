@@ -21,7 +21,6 @@ import com.trailmagic.image.security.ImageSecurityFactory;
 import com.trailmagic.user.User;
 import com.trailmagic.user.UserFactory;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -134,15 +133,17 @@ public class ImageGroupController implements Controller, ApplicationContextAware
             }
         }
 
-        String groupType = pathTokens.nextToken();
+        String groupTypeString = pathTokens.nextToken();
+        ImageGroup.Type groupType;
         Map<String,Object> model = new HashMap<String,Object>();
 
         // depluralize
-        groupType = groupType.substring(0, groupType.length() - 1);
-        String groupTypeDisplay = groupType.substring(0, 1).toUpperCase()
-            + groupType.substring(1);
+        groupTypeString = groupTypeString.substring(0, groupTypeString.length() - 1);
+        groupType = ImageGroup.Type.fromString(groupTypeString);
+        String groupTypeDisplay = groupTypeString.substring(0, 1).toUpperCase()
+            + groupTypeString.substring(1);
         model.put("groupTypeDisplay", groupTypeDisplay);
-        model.put("groupType", groupType);
+        model.put("groupType", groupTypeString);
 
         // got no args: show users
         if ( !pathTokens.hasMoreTokens() ) {

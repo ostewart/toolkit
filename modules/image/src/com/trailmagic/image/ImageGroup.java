@@ -23,8 +23,28 @@ import org.acegisecurity.acl.basic.AclObjectIdentityAware;
 import org.acegisecurity.acl.basic.NamedEntityObjectIdentity;
 
 public class ImageGroup implements Owned, AclObjectIdentityAware {
+    public enum Type { ROLL("roll"), ALBUM("album");
+    private String typeName;
+    private Type(String typeName) {
+        this.typeName = typeName;
+    }
+    public String toString() {
+        return this.typeName;
+    }
+        
+    public static Type fromString(String typeString) {
+        if ("album".equalsIgnoreCase(typeString)) {
+            return ALBUM;
+        } else if ("roll".equalsIgnoreCase(typeString)) {
+            return ROLL;
+        } else {
+            throw new IllegalArgumentException("Invalid type string");
+        }
+    }
+    }
+
     private long m_id;
-    private String m_type;
+    private Type m_type;
     private String m_name;
     private String m_displayName;
     private String m_description;
@@ -82,12 +102,23 @@ public class ImageGroup implements Owned, AclObjectIdentityAware {
         m_uploadDate = uploadDate;
     }
 
-    public String getType() {
+    public Type getType() {
         return m_type;
     }
 
-    public void setType(String type) {
+    public void setType(Type type) {
         m_type = type;
+    }
+    
+    public String getTypeDisplay() {
+    	switch (m_type) {
+    	case ROLL:
+    		return "Roll";
+    	case ALBUM:
+    		return "Album";
+    	default:
+    	    throw new IllegalStateException("Unknown type");
+    	}
     }
 
     public void addFrame(ImageFrame frame) {

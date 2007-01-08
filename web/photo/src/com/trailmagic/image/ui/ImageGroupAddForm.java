@@ -56,7 +56,7 @@ public class ImageGroupAddForm extends SimpleFormController {
         // TODO: implement multi-user
         imgGroup.setOwner(m_userFactory.getByScreenName("oliver"));
         // TODO: maybe implement new roll
-        imgGroup.setType("album");
+        imgGroup.setType(ImageGroup.Type.ALBUM);
         session.save(imgGroup);
 
         return new ModelAndView(getSuccessView(), "imageGroup", imgGroup);

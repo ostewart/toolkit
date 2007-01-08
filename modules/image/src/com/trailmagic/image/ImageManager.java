@@ -13,18 +13,13 @@
  */
 package com.trailmagic.image;
 
-import java.util.List;
-
 import com.trailmagic.user.User;
 
-public interface ImageFactory {
-
-    public Image newInstance();
-    public Image getById(long id);
-    public List<Image> getAll();
-    public List<Image> getByName(String name);
-    public List<Image> getByNameAndGroup(String name, ImageGroup group);
-    /** don't use this...use ImageManager.addPhoto(..) **/ 
-    public Photo createPhoto();
-	public void save(Photo newPhoto);
+public interface ImageManager {
+    public ImageGroup createImageGroup(ImageGroup.Type type,
+                                       User owner, String name);
+    public Photo addPhoto(User owner, ImageGroup roll, String name);
+    public ImageGroup addImageGroup(User owner, ImageGroup.Type type, String name);
+    //    public void addImageToGroup(Image image, ImageGroup group);
+    public ImageFrame addImageToGroup(Image image, ImageGroup group, int position);
 }

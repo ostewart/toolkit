@@ -19,6 +19,7 @@
 
 <project name="common" xmlns:aspectj="antlib:org.aspectj">
   <property name="src.dir" value="src"/>
+  <property name="test.src.dir" value="test"/>
   <property name="resources.dir" value="etc"/>
   <property name="prebuilt.dir" value="classes"/>
   <property name="lib.dir" value="lib"/>
@@ -41,6 +42,8 @@
   <property name="hibernate.dir" value="hbm"/>
   <property name="global.resources.dir"
     value="${common.basedir}/${resources.dir}"/>
+  <property name="test.output.dir" value="${build.dir}/test"/>
+  <property name="test.report.dir" value="${build.dir}/report"/>
 
   <path id="global.classpath">
     <fileset dir="${global.lib.dir}">
@@ -76,6 +79,20 @@
 <!--    <pathelement location="${hibernate.dir}"/> -->
     <pathelement location="${resources.dir}"/>
     <pathelement location="${build.output.dir}"/>
+  </path>
+
+  <path id="run.classpath">
+    <pathelement location="${prebuilt.dir}"/>
+    <path refid="build.classpath"/>
+    <path refid="run.dependencies.path"/>
+    <pathelement location="${resources.dir}"/>
+    <fileset dir="${build.product.dir}">
+      <include name="**/*.jar"/>
+    </fileset>
+    <pathelement location="${global.resources.dir}"/>
+    <fileset dir="${global.lib.dep.dir}">
+      <include name="**/*.jar"/>
+    </fileset>
   </path>
 
   <filterset id="hbm">
@@ -152,22 +169,35 @@
     <javac destdir="${test.output.dir}" debug="${javac.debug}"
            optimize="${javac.optimize}">
       <src path="${test.src.dir}"/>
-      <classpath refid="build.classpath"/>
+      <classpath>
+        <path refid="build.classpath"/>
+        <pathelement location="${build.output.dir}"/>
+      </classpath>
     </javac>
+    <copy todir="${test.output.dir}">
+      <fileset dir="${test.src.dir}">
+        <include name="**/*.xml"/>
+        <include name="**/*.properties"/>
+      </fileset>
+    </copy>
   </target>
 
   <target name="runtests" depends="compiletests">
+    <mkdir dir="${test.report.dir}"/>
     <junit printsummary="yes"
       showoutput="yes"
       haltonfailure="${junit.haltonfailure}">
       <classpath>
         <pathelement location="${test.output.dir}"/>
-        <path refid="build.classpath"/>
+        <path refid="run.classpath"/>
+        <pathelement location="${build.output.dir}"/>
+
       </classpath>
       <formatter type="plain"/>
       <batchtest fork="yes" todir="${test.report.dir}">
         <fileset dir="${test.src.dir}">
           <include name="**/*Test.java"/>
+          <include name="**/*Tests.java"/>
         </fileset>
       </batchtest>
     </junit>
@@ -214,19 +244,7 @@
   <target name="run" depends="build">
     <java classname="${run.class}" fork="true">
       <arg line="${run.args}"/>
-      <classpath>
-        <pathelement location="${prebuilt.dir}"/>
-        <path refid="build.classpath"/>
-        <path refid="run.dependencies.path"/>
-        <pathelement location="${resources.dir}"/>
-        <fileset dir="${build.product.dir}">
-          <include name="**/*.jar"/>
-        </fileset>
-        <pathelement location="${global.resources.dir}"/>
-        <fileset dir="${global.lib.dep.dir}">
-          <include name="**/*.jar"/>
-        </fileset>
-      </classpath>
+      <classpath refid="run.classpath"/>
     </java>
   </target>
 
