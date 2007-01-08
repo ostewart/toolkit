@@ -21,6 +21,7 @@ public abstract class AbstractHibernateTests extends
         return new String[] {"applicationContext-global.xml",
                 "applicationContext-imagestore.xml",
                 "applicationContext-imagestore-authorization.xml",
-                "applicationContext-user.xml"};
+                "applicationContext-user.xml",
+                "com/trailmagic/image/applicationContext-test.xml"};
     }
 }

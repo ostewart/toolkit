@@ -33,6 +33,11 @@
     <pathelement location="../../modules/image/build/product/trailmagic-image.jar"/>
   </path>
 
+  <path id="run.dependencies.path">
+    <!-- for the test app context (get rid of this!)-->
+    <pathelement location="../../modules/image/build/test"/>
+  </path>
+
   <fileset id="dependencies.libs" dir="../../">
     <include name="modules/user/build/product/trailmagic-user.jar"/>
     <include name="modules/image/build/product/trailmagic-image.jar"/>

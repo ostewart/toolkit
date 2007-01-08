@@ -66,6 +66,10 @@
     <iterate target="compile"/>
   </target>
 
+  <target name="runtests">
+    <iterate target="runtests"/>
+  </target>
+
   <target name="build" depends="build-subprojects,build-ear">
     <!-- depends do all the work -->
   </target>

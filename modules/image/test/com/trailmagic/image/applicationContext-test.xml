@@ -6,6 +6,26 @@
            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd">
 
-    <!-- add bean definitions here -->
+  <!-- override the aspect based security for the tests -->
+  <bean id="imageAspectSecurity"
+    class="org.acegisecurity.intercept.method.aspectj.AspectJSecurityInterceptor">
+    <property name="validateConfigAttributes">
+      <value>true</value>
+    </property>
+    <property name="authenticationManager">
+      <ref bean="authenticationManager"/>
+    </property>
+    <property name="accessDecisionManager">
+      <ref bean="imageAccessDecisionManager"/>
+    </property>
+    <property name="afterInvocationManager">
+      <ref bean="afterInvocationManager"/>
+    </property>
+    <property name="objectDefinitionSource">
+      <value>
+
+      </value>
+    </property>
+  </bean>
 
 </beans>
