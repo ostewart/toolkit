@@ -1,17 +1,44 @@
-ADD SALT to password encoding
-Rolls link to individual rolls doesn't work with no trailing slash!
-ImageGroupLinkTag needs to support all combinations of options!
-Put resin.conf into svn
-Add preview images to album list page
-Use CSS instead of <center>
-handle images where the max size is less than large by not making a
-huge copy in gather-images
-make links to albums directory links
+* Speed up/denormalize image count
+* Add RSS/new groups/images api
+* Add stats reporting (image views, navigation, etc.)...JMX?
+* Add error handling (email on exceptions)
+* Finish productization (add test data with InitializingBean?)
+* Refactor to acegi 1.0.3 api
+* Add persistent preferences
+* Add upload/replace/edit API (web service)
+* Add image edit UI (comments, metadata)
+* Add image group edit UI (comments, metadata)
+* Integrate permissions UI
+* Group permissions
+* Resize images based on megapixel model rather than by geometry
+* Split results into multiple pages (x images/albums per page)
+* Add photo printing API
+* Add image purchase UI - integrate with paypal?
+* Change HEIGHTxWIDTH to small/med/large to be consistent with default
+* implement upload UI (don't forget height/width detection)
+* ADD SALT to password encoding
+* ImageGroupLinkTag needs to support all combinations of options!
+* Put resin.conf into svn
+* handle images where the max size is less than large by not making a
+  huge copy in gather-images
 
 
-implement upload UI (don't forget height/width detection)
 
-implement Roll, roll UI
+
+WONTFIX: refactor user, group to descend from Party
+
+DONE: implement Roll, roll UI
+DONE: Use CSS instead of <center>
+DONE: Add preview images to album list page
+DONE: Rolls link to individual rolls doesn't work with no trailing slash!
+DONE: make links to albums directory links
+DONE: Implement Roll display page/controller
+DONE: implement Album
+DONE: implement ImageCD
+DONE: implement UI: Album display, Roll entry, individual image
+display
+
+DONE:
 IMPORTANT: how does the frame number get stored?
 with roll in the photos table, no ImageFrame
 abandon roll_id in images or add frame_no in images?
@@ -21,11 +48,3 @@ maybe the two should be split up
 in java space, could have two different objects descendent from
 ImageGroup
 slightly different semantics
-
-
-refactor user, group to descend from Party
-
-DONE: Implement Roll display page/controller
-DONE: implement Album
-DONE: implement ImageCD
-DONE: implement UI: Album display, Roll entry, individual image display
