@@ -15,7 +15,9 @@ package com.trailmagic.image.ui;
 
 import java.util.Iterator;
 import java.util.SortedSet;
+import java.util.StringTokenizer;
 import org.apache.log4j.Logger;
+import org.springframework.web.util.UrlPathHelper;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -102,5 +104,27 @@ public class WebSupport {
             return true;
         }
         return false;
+    }
+    
+    public static Long extractImageIdFromRequest(HttpServletRequest req)
+            throws IllegalArgumentException, NumberFormatException {
+        UrlPathHelper pathHelper = new UrlPathHelper();
+        String myPath = pathHelper.getLookupPathForRequest(req);
+        s_logger.debug("Lookup path: " +
+                    pathHelper.getLookupPathForRequest(req));
+        StringTokenizer pathTokens = new StringTokenizer(myPath, "/");
+        String token = null;
+        while (pathTokens.hasMoreTokens()) {
+            token = pathTokens.nextToken();
+        }
+        
+        if (s_logger.isDebugEnabled()) {
+            s_logger.debug("Last token is: " + token);
+        }
+        
+        if (token == null || "".equals(token)) {
+            throw new IllegalArgumentException("Invalid request");
+        }
+        return new Long(token);
     }
 }
