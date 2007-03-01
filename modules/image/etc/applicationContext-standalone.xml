@@ -63,10 +63,12 @@
       <value>/albums/</value>
     </property>
   </bean>
--->
+  -->
+
+  <!-- override to disable security checks? -->
   <bean id="imageFactory"
     class="com.trailmagic.image.hibernate.HibernateImageFactory">
-    <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    <property name="hibernateTemplate"><ref bean="hibernateTemplate"/></property>
   </bean>
 
   <bean id="imageGroupFactory"
@@ -75,16 +77,11 @@
 
   <bean id="imageManifestationFactory"
     class="com.trailmagic.image.hibernate.HibernateImageManifestationFactory">
-    <property name="sessionFactory">
-      <ref local="sessionFactory"/>
+    <property name="hibernateTemplate">
+      <ref local="hibernateTemplate"/>
     </property>
   </bean>
 
-  <bean id="userFactory"
-    class="com.trailmagic.user.hibernate.HibernateUserFactory">
-    <property name="sessionFactory"><ref
-        local="sessionFactory"/></property>
-  </bean>
 
   <bean id="imagesParser"
     class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
