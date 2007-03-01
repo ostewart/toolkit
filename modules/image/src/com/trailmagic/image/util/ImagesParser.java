@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006 Oliver Stewart.  All Rights Reserved.
+ * Copyright (c) 2006, 2007 Oliver Stewart.  All Rights Reserved.
  *
  * This file is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -521,6 +521,8 @@ public class ImagesParser extends DefaultHandler
             System.exit(1);
         }
 
+        System.out.println("Starting context...");
+
         ClassPathXmlApplicationContext appContext =
             new ClassPathXmlApplicationContext(new String[]
                 {"applicationContext-global.xml",
@@ -530,24 +532,28 @@ public class ImagesParser extends DefaultHandler
                  "applicationContext-standalone.xml"});
         ImagesParser handler =
             (ImagesParser)appContext.getBean("imagesParser");
+
+        System.out.println("Verifying session");
         //        handler.setApplicationContext(appContext);
-            // make sure there's a session bound to the thread
-            Session session =
-                SessionFactoryUtils.getSession(handler.getSessionFactory(),
-                                               true);
-            assert (session != null);
+        // make sure there's a session bound to the thread
+        Session session =
+            SessionFactoryUtils.getSession(handler.getSessionFactory(),
+                                           true);
+        assert (session != null);
 
-	    handler.parseFile(baseDir, metadataFile);
+        System.out.println("Beginning parse.");
 
-            /*
-            System.out.println("Importing image files:");
-            List manifestations = handler.getManifestations();
-            Iterator iter = manifestations.iterator();
-            while (iter.hasNext()) {
-                importManifestation(baseDir, (ImageManifestation)iter.next());
-            }
-            System.out.println("All done.");
-            */
+        handler.parseFile(baseDir, metadataFile);
+
+        /*
+          System.out.println("Importing image files:");
+          List manifestations = handler.getManifestations();
+          Iterator iter = manifestations.iterator();
+          while (iter.hasNext()) {
+          importManifestation(baseDir, (ImageManifestation)iter.next());
+          }
+          System.out.println("All done.");
+        */
         System.exit(0);
     }
 
