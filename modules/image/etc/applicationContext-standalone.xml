@@ -78,7 +78,7 @@
   <bean id="imageManifestationFactory"
     class="com.trailmagic.image.hibernate.HibernateImageManifestationFactory">
     <property name="hibernateTemplate">
-      <ref local="hibernateTemplate"/>
+      <ref bean="hibernateTemplate"/>
     </property>
   </bean>
 
