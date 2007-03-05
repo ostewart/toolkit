@@ -23,6 +23,7 @@ import com.trailmagic.user.UserFactory;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -192,6 +193,15 @@ public class ImageGroupController implements Controller, ApplicationContextAware
             // sort the groups by upload date (descending)
             Collections.sort(filteredGroups, new Comparator<ImageGroup>() {
                     public int compare(ImageGroup g1, ImageGroup g2) {
+                        Date g1Date = g1.getUploadDate();
+                        Date g2Date = g2.getUploadDate();
+                        if (g2Date == null) {
+                            if (g1Date == null) {
+                                return 0;
+                            } else {
+                                return g1Date.compareTo(g1Date);
+                            }
+                        }
                         return g2.getUploadDate()
                             .compareTo(g1.getUploadDate());
                     }
