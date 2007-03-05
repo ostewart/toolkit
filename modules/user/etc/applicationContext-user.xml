@@ -3,7 +3,7 @@
  "http://www.springframework.org/dtd/spring-beans.dtd">
 
 <!--
- Copyright (c) 2006 Oliver Stewart.  All Rights Reserved.
+ Copyright (c) 2006, 2007 Oliver Stewart.  All Rights Reserved.
 
  This file is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -33,13 +33,29 @@
   <bean id="authenticationManager" class="org.acegisecurity.providers.ProviderManager">
     <property name="providers">
       <list>
-        <ref local="jaasAuthenticationProvider"/>
+        <!--        <ref local="jaasAuthenticationProvider"/>-->
+        <ref local="daoAuthenticationProvider"/>
         <ref local="anonymousAuthenticationProvider"/>
         <ref local="rememberMeAuthenticationProvider"/>
       </list>
     </property>
   </bean>
 
+  <bean id="daoAuthenticationProvider"
+    class="org.acegisecurity.providers.dao.DaoAuthenticationProvider">
+    <property name="userDetailsService">
+      <ref bean="hibernateUserDetailsService"/>
+    </property>
+    <property name="passwordEncoder">
+      <ref bean="passwordEncoder"/>
+    </property>
+  </bean>
+
+  <bean id="passwordEncoder"
+    class="org.acegisecurity.providers.encoding.Md5PasswordEncoder">
+  </bean>
+  
+<!--
   <bean id="jaasAuthenticationProvider" class="org.acegisecurity.providers.jaas.JaasAuthenticationProvider">
     <property name="loginConfig">
       <value>classpath:jaas.config</value>
@@ -59,7 +75,7 @@
       </list>
     </property>
   </bean>
-
+-->
   <bean id="authenticationProcessingFilter"
     class="org.acegisecurity.ui.webapp.AuthenticationProcessingFilter">
     <property name="authenticationManager">
@@ -133,6 +149,10 @@
     <property name="userFactory">
       <ref local="userFactory"/>
     </property>
+    <property name="groupFactory">
+      <ref bean="groupFactory"/>
+    </property>
+
   </bean>
 
   <!-- You will need to uncomment the "Acegi Channel Processing Filter"

@@ -4,7 +4,7 @@
 <!--<!DOCTYPE project>-->
 
 <!--
- Copyright (c) 2006 Oliver Stewart.  All Rights Reserved.
+ Copyright (c) 2006, 2007 Oliver Stewart.  All Rights Reserved.
 
  This file is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -68,6 +68,12 @@
       </fileset>
       <fileset dir="../../etc">
         <include name="applicationContext*.xml"/>
+<!--        <include name="*.properties"/>-->
+      </fileset>
+    </copy>
+    <!-- put properties files in the classpath -->
+    <copy todir="${build.output.dir}">
+      <fileset dir="${global.resources.dir}">
         <include name="*.properties"/>
       </fileset>
     </copy>

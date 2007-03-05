@@ -18,10 +18,17 @@ import org.acegisecurity.GrantedAuthority;
 import org.acegisecurity.userdetails.UserDetails;
 
 public class ToolkitUserDetails implements UserDetails {
-    private User m_user;
+    private User user;
+    private GrantedAuthority[] grantedAuthorities;
 
     public ToolkitUserDetails(User realUser) {
-        m_user = realUser;
+        this(realUser, new GrantedAuthority[] {});
+    }
+    
+    public ToolkitUserDetails(User realUser,
+                              GrantedAuthority[] grantedAuthorities) {
+        this.user = realUser;
+        this.grantedAuthorities = grantedAuthorities;
     }
 
     /**
@@ -29,7 +36,7 @@ public class ToolkitUserDetails implements UserDetails {
      * @return <code>User</code> object backing this <code>UserDetails</code>.
      **/
     public User getRealUser() {
-        return m_user;
+        return this.user;
     }
 
     /**
@@ -64,8 +71,7 @@ public class ToolkitUserDetails implements UserDetails {
      * @return the authorities (never <code>null</code>)
      */
     public GrantedAuthority[] getAuthorities() {
-        // TODO: add some real authorities
-        return new GrantedAuthority[] {};
+        return this.grantedAuthorities;
     }
 
     /**
@@ -100,7 +106,7 @@ public class ToolkitUserDetails implements UserDetails {
      * @return the password (never <code>null</code>)
      */
     public String getPassword() {
-        return m_user.getPassword();
+        return this.user.getPassword();
     }
 
     /**
@@ -110,6 +116,10 @@ public class ToolkitUserDetails implements UserDetails {
      * @return the username (never <code>null</code>)
      */
     public String getUsername() {
-        return m_user.getScreenName();
+        return this.user.getScreenName();
+    }
+    
+    public String toString() {
+        return "ToolkitUserDetails {username: " + getUsername() + "}";
     }
 }

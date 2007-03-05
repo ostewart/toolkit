@@ -217,8 +217,6 @@ public class ImagesParser extends DefaultHandler {
     public void endRoll() {
 	s_logger.debug("endRoll() called");
 	m_hibernateTemplate.saveOrUpdate(m_roll);
-	// testing
-	m_hibernateTemplate.flush();
 	m_imageSecurityFactory.addOwnerAcl(m_roll);
 	s_logger.debug("Roll saved: " + m_roll.getName() + " ("
 		       + m_roll.getId() + ") owner: " + m_roll.getOwner()
@@ -242,8 +240,7 @@ public class ImagesParser extends DefaultHandler {
 
 	// XXX: have to save the image first
 	m_hibernateTemplate.saveOrUpdate(m_image);
-	// testing
-	m_hibernateTemplate.flush();
+
 	s_logger.debug("After save, image id is: " + m_image.getId());
 	// this might happen twice, but i think that's okay
 	m_imageSecurityFactory.addOwnerAcl(m_image);
@@ -259,8 +256,7 @@ public class ImagesParser extends DefaultHandler {
 		       + frame.getPosition());
 
 	m_hibernateTemplate.saveOrUpdate(frame);
-	// testing
-	m_hibernateTemplate.flush();
+        m_imageSecurityFactory.addOwnerAcl(frame);
 	s_logger.debug("After save, frame id is: " + frame.getId());
 	//	m_imageSecurityFactory.addOwnerAcl(frame);
 	synchronized (m_hibernateTemplate) {
@@ -409,8 +405,7 @@ public class ImagesParser extends DefaultHandler {
 	    FileInputStream fis = new FileInputStream(srcFile);
 	    m_manifestation.setData(Hibernate.createBlob(fis));
 	    m_hibernateTemplate.saveOrUpdate(m_manifestation);
-	    // testing
-	    m_hibernateTemplate.flush();
+
 	    m_imageSecurityFactory.addOwnerAcl(m_manifestation);
 
 	    s_logger.info("ImageManifestation saved: "

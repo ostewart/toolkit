@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN"
- "http://www.springframework.org/dtd/spring-beans.dtd">
-    
 <!--
- Copyright (c) 2006 Oliver Stewart.  All Rights Reserved.
+ Copyright (c) 2006, 2007 Oliver Stewart.  All Rights Reserved.
 
  This file is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -16,7 +13,17 @@
  GNU General Public License for more details.
 -->
 
-<beans>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:tx="http://www.springframework.org/schema/tx"
+  xmlns:aop="http://www.springframework.org/schema/aop"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+  http://www.springframework.org/schema/aop
+  http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+  http://www.springframework.org/schema/tx
+  http://www.springframework.org/schema/tx/spring-tx-2.0.xsd">
+    
   <bean id="handlerMapping" 
     class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">            
     <property name="mappings">
@@ -29,6 +36,7 @@
         <prop key="/logout">logoutController</prop>
         <prop key="/changePermission">imageAccessController</prop>
         <prop key="/grantAccess">accessGrantController</prop>
+        <prop key="/testing/**">imageEditController</prop>
         <prop key="/**">fileController</prop>
       </props>
     </property>
@@ -68,6 +76,33 @@
       <value>fileServlet</value> <!-- set in web.xml -->
     </property>
   </bean>
+
+  <bean id="imageEditController"
+    class="com.trailmagic.image.ui.ImageEditController">
+    <constructor-arg ref="imageFactory"/>
+      <property name="commandClass" value="com.trailmagic.image.Image"/>
+      <property name="commandName" value="image"/>
+      <property name="formView" value="imageDisplay"/>
+      <property name="validators">
+        <list>
+        <bean id="imageValidator"
+          class="com.trailmagic.image.ImageValidator"/>
+        </list>
+      </property>
+  </bean>
+  
+    <tx:advice id="imageEditAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+          <tx:method name="handleRequest" propagation="required"
+          isolation="READ_COMMITTED" timeout="-1" read-only="false"/>
+        </tx:attributes>
+    </tx:advice>
+
+  <aop:config>
+    <aop:pointcut id="imageEditTransactions" expression="execution(* com.trailmagic.image.ui.ImageEditController.handleRequest(..))"/>
+        <aop:advisor advice-ref="imageEditAdvice" pointcut-ref="imageEditTransactions"/>
+        
+    </aop:config>
 
   <bean id="imageGroupController"
     class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">

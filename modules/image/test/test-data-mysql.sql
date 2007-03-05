@@ -37,7 +37,7 @@ INSERT INTO image_groups (supergroup_id, name, display_name,
 VALUES (LAST_INSERT_ID(), 'test-album', 'Test Album', 'album', '',
         (select user_id from users where screen_name = 'oliver'));
 
-INSERT INTO image_frames (frame_id, group_id, position, caption, image_id)
+INSERT INTO image_frames (group_id, position, caption, image_id)
 VALUES ((select group_id from image_groups where name = 'test-album'),
         0, 'Good Stuff',
         (select image_id from images where name = 'bug-love'));

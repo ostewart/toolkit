@@ -13,20 +13,31 @@
  */
 package com.trailmagic.user.security;
 
+import com.trailmagic.user.Group;
+import com.trailmagic.user.GroupFactory;
 import com.trailmagic.user.User;
 import com.trailmagic.user.UserFactory;
-import org.hibernate.HibernateException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import org.acegisecurity.GrantedAuthority;
+import org.acegisecurity.GrantedAuthorityImpl;
+import org.acegisecurity.providers.dao.DaoAuthenticationProvider;
 import org.acegisecurity.userdetails.UserDetails;
 import org.acegisecurity.userdetails.UserDetailsService;
 import org.acegisecurity.userdetails.UsernameNotFoundException;
 import org.springframework.dao.DataAccessException;
-import org.springframework.orm.hibernate3.SessionFactoryUtils;
 
 public class HibernateUserDetailsService implements UserDetailsService {
     private UserFactory m_userFactory;
+    private GroupFactory m_groupFactory;
 
     public void setUserFactory(UserFactory factory) {
         m_userFactory = factory;
+    }
+
+    public void setGroupFactory(GroupFactory groupFactory) {
+        m_groupFactory = groupFactory;
     }
 
     /**
@@ -53,6 +64,26 @@ public class HibernateUserDetailsService implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException("No such user");
         }
-        return new ToolkitUserDetails(user);
+        
+        // add a ROLE_<GROUPNAME> for each group the user's in
+        List<Group> groups = m_groupFactory.getForUser(user);
+        Collection<GrantedAuthority> authorities =
+            new ArrayList<GrantedAuthority>();
+        for (Group group : groups) {
+            authorities
+                .add(new GrantedAuthorityImpl("ROLE_"
+                                              + group.getName().toUpperCase()));
+        }
+        // add ROLE_USER for every user
+        authorities.add(new GrantedAuthorityImpl("ROLE_USER"));
+        
+        // TODO: this doesn't really make sense, since I think this
+        // should be included by virtue of including the user itself,
+        // but that doens't seem to work and I want to move on, so
+        // just adding the username directly
+        authorities.add(new GrantedAuthorityImpl(user.getScreenName()));
+        
+        return new ToolkitUserDetails(user,
+                                      authorities.toArray(new GrantedAuthority[0]));
     }
 }
