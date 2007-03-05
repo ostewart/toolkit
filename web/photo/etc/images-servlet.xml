@@ -177,6 +177,7 @@
 
   <bean id="imageImportController"
     class="com.trailmagic.image.ui.ImageImportController">
+    <constructor-arg ref="imagesParser"/>
     <property name="commandName">
       <value>imageImportBean</value>
     </property>

@@ -1,138 +1,169 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN"
- "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+							http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+							http://www.springframework.org/schema/tx
+							http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+                            http://www.springframework.org/schema/aop
+                            http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
-<!--
- Copyright (c) 2006, 2007 Oliver Stewart.  All Rights Reserved.
+    <!--
+        Copyright (c) 2006, 2007 Oliver Stewart.  All Rights Reserved.
+        
+        This file is free software; you can redistribute it and/or modify
+        it under the terms of the GNU General Public License as published by
+        the Free Software Foundation; either version 2, or (at your option)
+        any later version.
+        
+        This file is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU General Public License for more details.
+    -->
 
- This file is free software; you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation; either version 2, or (at your option)
- any later version.
+    <!-- basic stuff is setup in applicationContext-global.xml -->
+    <bean id="imageGroupFactory"
+        class="org.springframework.aop.framework.ProxyFactoryBean">
+        <property name="proxyInterfaces">
+            <value>com.trailmagic.image.ImageGroupFactory</value>
+        </property>
+        <property name="targetName">
+            <value>imageGroupFactoryTarget</value>
+        </property>
+        <property name="interceptorNames">
+            <list>
+                <idref local="transactionInterceptor" />
+                <idref bean="imageFactorySecurity" />
+            </list>
+        </property>
+    </bean>
 
- This file is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
--->
+    <bean id="imageGroupFactoryTarget"
+        class="com.trailmagic.image.hibernate.HibernateImageGroupFactory">
+        <property name="sessionFactory">
+            <ref bean="sessionFactory" />
+        </property>
+        <property name="hibernateTemplate">
+            <ref bean="hibernateTemplate" />
+        </property>
+    </bean>
 
-  <!-- basic stuff is setup in applicationContext-global.xml -->
-<beans>
-  <bean id="imageGroupFactory"
-    class="org.springframework.aop.framework.ProxyFactoryBean">
-    <property name="proxyInterfaces">
-      <value>com.trailmagic.image.ImageGroupFactory</value>
-    </property>
-    <property name="targetName">
-      <value>imageGroupFactoryTarget</value>
-    </property>
-    <property name="interceptorNames">
-      <list>
-        <idref local="transactionInterceptor"/>
-        <idref bean="imageFactorySecurity"/>
-      </list>
-    </property>
-  </bean>
+    <bean id="imageManifestationFactory"
+        class="org.springframework.aop.framework.ProxyFactoryBean">
+        <property name="proxyInterfaces">
+            <value>
+                com.trailmagic.image.ImageManifestationFactory
+            </value>
+        </property>
+        <property name="targetName">
+            <value>imageManifestationFactoryTarget</value>
+        </property>
+        <property name="interceptorNames">
+            <list>
+                <idref local="transactionInterceptor" />
+                <idref bean="imageFactorySecurity" />
+            </list>
+        </property>
+    </bean>
 
-  <bean id="imageGroupFactoryTarget"
-    class="com.trailmagic.image.hibernate.HibernateImageGroupFactory">
-    <property name="sessionFactory">
-      <ref bean="sessionFactory"/>
-    </property>
-    <property name="hibernateTemplate">
-      <ref bean="hibernateTemplate"/>
-    </property>
-  </bean>
-
-  <bean id="imageManifestationFactory"
-    class="org.springframework.aop.framework.ProxyFactoryBean">
-    <property name="proxyInterfaces">
-      <value>com.trailmagic.image.ImageManifestationFactory</value>
-    </property>
-    <property name="targetName">
-      <value>imageManifestationFactoryTarget</value>
-    </property>
-    <property name="interceptorNames">
-      <list>
-        <idref local="transactionInterceptor"/>
-        <idref bean="imageFactorySecurity"/>
-      </list>
-    </property>
-  </bean>
-
-  <bean id="imageManifestationFactoryTarget"
-    class="com.trailmagic.image.hibernate.HibernateImageManifestationFactory">
-    <property name="sessionFactory">
-      <ref bean="sessionFactory"/>
-    </property>
-  </bean>
-
-  <bean id="imagesParser"
-    class="com.trailmagic.image.util.ImagesParser">
-    <property name="hibernateTemplate">
-      <ref bean="hibernateTemplate"/>
-    </property>
-    <property name="imageSecurityFactory">
-      <ref bean="imageSecurityFactory"/>
-    </property>
-    <property name="imageGroupFactory">
-      <ref bean="imageGroupFactory"/>
-    </property>
-    <property name="imageFactory">
-      <ref bean="imageFactory"/>
-    </property>
-    <property name="userFactory">
-      <ref bean="userFactory"/>
-    </property>
-  </bean>
+    <bean id="imageManifestationFactoryTarget"
+        class="com.trailmagic.image.hibernate.HibernateImageManifestationFactory">
+        <property name="sessionFactory">
+            <ref bean="sessionFactory" />
+        </property>
+    </bean>
+<!--    
+    <bean id="imagesParser"
+        class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="proxyTargetClass">
+            <value>true</value>
+        </property>
+        <property name="transactionManager">
+            <ref local="transactionManager" />
+        </property>
+        <property name="target">
+            <ref local="imagesParserTarget" />
+        </property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="parseFile">
+                    PROPAGATION_REQUIRED,readWrite
+                </prop>
+            </props>
+        </property>
+    </bean>
+    -->
 
 
-  <bean id="transactionInterceptor"
-    class="org.springframework.transaction.interceptor.TransactionInterceptor">
-    <property name="transactionManager">
-      <ref bean="transactionManager"/>
-    </property>
-    <property name="transactionAttributeSource">
-      <value>
-        com.trailmagic.image.hibernate.HibernateImageFactory.getById=PROPAGATION_REQUIRED,readOnly
-        com.trailmagic.image.hibernate.HibernateImageFactory.getByName=PROPAGATION_REQUIRED,readOnly
-        com.trailmagic.image.hibernate.HibernateImageFactory.getAll=PROPAGATION_REQUIRED,readOnly
-        com.trailmagic.image.hibernate.HibernateImageFactory.getByNameAndGroup=PROPAGATION_REQUIRED,readOnly
-      </value>
-    </property>
-  </bean>
+  <tx:annotation-driven transaction-manager="transactionManager"/>
 
-  <bean id="testInterceptor"
-    class="com.trailmagic.image.security.TestMethodInterceptor"/>
+    <bean id="imagesParser"
+        class="com.trailmagic.image.util.ImagesParserImpl">
+        <property name="hibernateTemplate">
+            <ref bean="hibernateTemplate" />
+        </property>
+        <property name="imageSecurityFactory">
+            <ref bean="imageSecurityFactory" />
+        </property>
+        <property name="imageGroupFactory">
+            <ref bean="imageGroupFactory" />
+        </property>
+        <property name="userFactory">
+            <ref bean="userFactory" />
+        </property>
+    </bean>
 
-  <bean id="imageFactory"
-    class="org.springframework.aop.framework.ProxyFactoryBean">
-    <property name="proxyInterfaces">
-      <value>com.trailmagic.image.ImageFactory</value>
-    </property>
-    <property name="targetName">
-      <value>imageFactoryTarget</value>
-    </property>
-    <property name="interceptorNames">
-      <list>
-        <idref local="transactionInterceptor"/>
-        <idref bean="imageFactorySecurity"/>
-        <idref local="testInterceptor"/>
-      </list>
-    </property>
-  </bean>
+    <bean id="transactionInterceptor"
+        class="org.springframework.transaction.interceptor.TransactionInterceptor">
+        <property name="transactionManager">
+            <ref bean="transactionManager" />
+        </property>
+        <property name="transactionAttributeSource">
+            <value>
+                com.trailmagic.image.hibernate.HibernateImageFactory.getById=PROPAGATION_REQUIRED,readOnly
+                com.trailmagic.image.hibernate.HibernateImageFactory.getByName=PROPAGATION_REQUIRED,readOnly
+                com.trailmagic.image.hibernate.HibernateImageFactory.getAll=PROPAGATION_REQUIRED,readOnly
+                com.trailmagic.image.hibernate.HibernateImageFactory.getByNameAndGroup=PROPAGATION_REQUIRED,readOnly
+            </value>
+        </property>
+    </bean>
 
-  <bean id="imageFactoryTarget"
-    class="com.trailmagic.image.hibernate.HibernateImageFactory">
-    <property name="hibernateTemplate"><ref bean="hibernateTemplate"/></property>
-  </bean>
+    <bean id="testInterceptor"
+        class="com.trailmagic.image.security.TestMethodInterceptor" />
 
-<!--
-  <bean id="hibernateInterceptor"
-    class="org.springframework.orm.hibernate3.HibernateInterceptor">
-    <property name="sessionFactory">
-      <ref bean="sessionFactory"/>
-    </property>
-  </bean>
--->
+    <bean id="imageFactory"
+        class="org.springframework.aop.framework.ProxyFactoryBean">
+        <property name="proxyInterfaces">
+            <value>com.trailmagic.image.ImageFactory</value>
+        </property>
+        <property name="targetName">
+            <value>imageFactoryTarget</value>
+        </property>
+        <property name="interceptorNames">
+            <list>
+                <idref local="transactionInterceptor" />
+                <idref bean="imageFactorySecurity" />
+                <idref local="testInterceptor" />
+            </list>
+        </property>
+    </bean>
+
+    <bean id="imageFactoryTarget"
+        class="com.trailmagic.image.hibernate.HibernateImageFactory">
+        <property name="hibernateTemplate">
+            <ref bean="hibernateTemplate" />
+        </property>
+    </bean>
+
+    <!--
+        <bean id="hibernateInterceptor"
+        class="org.springframework.orm.hibernate3.HibernateInterceptor">
+        <property name="sessionFactory">
+        <ref bean="sessionFactory"/>
+        </property>
+        </bean>
+    -->
 </beans>

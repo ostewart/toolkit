@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN"
- "http://www.springframework.org/dtd/spring-beans.dtd">
-
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+  http://www.springframework.org/schema/tx
+  http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+  http://www.springframework.org/schema/aop
+  http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 <!--
  Copyright (c) 2006, 2007 Oliver Stewart.  All Rights Reserved.
 
@@ -16,7 +23,6 @@
  GNU General Public License for more details.
 -->
 
-<beans>
   <bean id="dataSource"
     class="org.springframework.jdbc.datasource.DriverManagerDataSource">
     <property name="driverClassName">
@@ -34,8 +40,7 @@
   </bean>
 
   <bean id="sessionFactory"
-    class="org.springframework.orm.hibernate3.LocalSessionFactoryBean"
-    singleton="true">
+    class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
     <property name="dataSource"><ref local="dataSource"/></property>
     <property name="configLocation">
       <value>classpath:/trailmagic-image.cfg.xml</value>
@@ -83,6 +88,8 @@
   </bean>
 
 
+  <tx:annotation-driven transaction-manager="transactionManager"/>
+<!--  
   <bean id="imagesParser"
     class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
     <property name="proxyTargetClass"><value>true</value></property>
@@ -98,9 +105,9 @@
       </props>
     </property>
   </bean>
-
-  <bean id="imagesParserTarget"
-    class="com.trailmagic.image.util.ImagesParser">
+-->
+  <bean id="imagesParser"
+    class="com.trailmagic.image.util.ImagesParserImpl">
     <property name="hibernateTemplate">
       <ref bean="hibernateTemplate"/>
     </property>
@@ -109,9 +116,6 @@
     </property>
     <property name="imageGroupFactory">
       <ref bean="imageGroupFactory"/>
-    </property>
-    <property name="imageFactory">
-      <ref bean="imageFactory"/>
     </property>
     <property name="userFactory">
       <ref bean="userFactory"/>
