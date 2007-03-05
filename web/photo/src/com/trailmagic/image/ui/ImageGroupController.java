@@ -195,13 +195,17 @@ public class ImageGroupController implements Controller, ApplicationContextAware
                     public int compare(ImageGroup g1, ImageGroup g2) {
                         Date g1Date = g1.getUploadDate();
                         Date g2Date = g2.getUploadDate();
-                        if (g2Date == null) {
-                            if (g1Date == null) {
-                                return 0;
-                            } else {
-                                return g1Date.compareTo(g1Date);
-                            }
+                        if (g2Date == null && g1Date == null) {
+                            return 0;
                         }
+                        
+                        if (g2Date == null) {
+                            return 1;
+                        }
+                        if (g2Date == null) {
+                            return -1;
+                        }
+                        
                         return g2.getUploadDate()
                             .compareTo(g1.getUploadDate());
                     }
