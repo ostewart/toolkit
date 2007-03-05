@@ -77,8 +77,8 @@
 
   <bean id="imageManifestationFactory"
     class="com.trailmagic.image.hibernate.HibernateImageManifestationFactory">
-    <property name="hibernateTemplate">
-      <ref bean="hibernateTemplate"/>
+    <property name="sessionFactory">
+      <ref bean="sessionFactory"/>
     </property>
   </bean>
 
@@ -101,9 +101,8 @@
 
   <bean id="imagesParserTarget"
     class="com.trailmagic.image.util.ImagesParser">
-    <constructor-arg index="0"><value>false</value></constructor-arg>
-    <property name="sessionFactory">
-      <ref local="sessionFactory"/>
+    <property name="hibernateTemplate">
+      <ref bean="hibernateTemplate"/>
     </property>
     <property name="imageSecurityFactory">
       <ref bean="imageSecurityFactory"/>
@@ -113,6 +112,9 @@
     </property>
     <property name="imageFactory">
       <ref bean="imageFactory"/>
+    </property>
+    <property name="userFactory">
+      <ref bean="userFactory"/>
     </property>
   </bean>
 
