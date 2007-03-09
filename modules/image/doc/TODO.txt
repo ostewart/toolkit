@@ -1,3 +1,4 @@
+* add support for modified images, linked to original
 * Speed up/denormalize image count
 * Add RSS/new groups/images api
 * Add stats reporting (image views, navigation, etc.)...JMX?
