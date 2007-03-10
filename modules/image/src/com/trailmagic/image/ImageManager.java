@@ -22,4 +22,8 @@ public interface ImageManager {
     public ImageGroup addImageGroup(User owner, ImageGroup.Type type, String name);
     //    public void addImageToGroup(Image image, ImageGroup group);
     public ImageFrame addImageToGroup(Image image, ImageGroup group, int position);
+    public void makeImageGroupPublic(ImageGroup group);
+    public void makeImageGroupPublic(String ownerName,
+                                     ImageGroup.Type type,
+                                     String imageGroupName);
 }

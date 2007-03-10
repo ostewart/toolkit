@@ -13,13 +13,23 @@
  */
 package com.trailmagic.image;
 
+import com.trailmagic.image.ImageGroup.Type;
 import com.trailmagic.image.security.ImageSecurityFactory;
 import com.trailmagic.user.User;
+import com.trailmagic.user.UserFactory;
+import java.util.Collection;
+import org.apache.log4j.Logger;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 public class ImageManagerBackend implements ImageManager {
     private ImageGroupFactory m_imageGroupFactory;
     private ImageFactory m_imageFactory;
     private ImageSecurityFactory m_imageSecurityFactory;
+    private UserFactory m_userFactory;
+    
+    private static Logger s_log =
+        Logger.getLogger(ImageManagerBackend.class);
 
     public void setImageGroupFactory(ImageGroupFactory factory) {
         m_imageGroupFactory = factory;
@@ -31,6 +41,10 @@ public class ImageManagerBackend implements ImageManager {
 
     public void setImageSecurityFactory(ImageSecurityFactory factory) {
         m_imageSecurityFactory = factory;
+    }
+
+    public void setUserFactory(UserFactory userFactory) {
+        m_userFactory = userFactory;
     }
 
     public ImageGroup createImageGroup(ImageGroup.Type type,
@@ -92,4 +106,45 @@ public class ImageManagerBackend implements ImageManager {
 
     // for add to group, need accurate position count
     // (i.e. without security filtering)
+    
+    
+    public void makeImageGroupPublic(ImageGroup group) {
+        m_imageSecurityFactory.makePublic(group);
+        s_log.info("Added public permission for group: "
+                   + group.getName());
+
+        Collection<ImageFrame> frames = group.getFrames();
+
+        for (ImageFrame frame : frames) {
+            m_imageSecurityFactory.makePublic(frame);
+            s_log.info("Added public permission for frame: "
+                       + frame.getPosition() + " of group "
+                       + group.getName());
+
+            Image image = frame.getImage();
+            m_imageSecurityFactory.makePublic(image);
+            s_log.info("Added public permission for image: "
+                       + image.getDisplayName());
+
+            for (ImageManifestation mf : image.getManifestations()) {
+                m_imageSecurityFactory.makePublic(mf);
+                s_log.info("Added public permission for "
+                           + "manifestation: "
+                           + mf.getHeight() + "x" + mf.getWidth());
+            }
+        }
+    }
+
+    public void makeImageGroupPublic(String ownerName, Type type, String imageGroupName) {
+        User owner = m_userFactory.getByScreenName(ownerName);
+        ImageGroup group =
+            m_imageGroupFactory.getByOwnerNameAndType(owner,
+                                                      imageGroupName,
+                                                      type);
+        if (group == null) {
+            s_log.error("No " + type + " found with name " + imageGroupName
+                        + " owned by " + owner);
+        }
+        makeImageGroupPublic(group);
+    }
 }

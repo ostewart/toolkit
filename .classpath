@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="modules/image/src"/>
-	<classpathentry kind="src" path="modules/image/test"/>
-	<classpathentry kind="src" path="modules/user/src"/>
-	<classpathentry kind="src" path="web/photo/src"/>
-	<classpathentry kind="src" path="web/photo/test"/>
+	<classpathentry kind="src" output="modules/image/build/classes" path="modules/image/src"/>
+	<classpathentry kind="src" output="modules/image/build/test/classes" path="modules/image/test"/>
+	<classpathentry kind="src" output="modules/user/build/classes" path="modules/user/src"/>
+	<classpathentry kind="src" output="web/photo/build/classes" path="web/photo/src"/>
+	<classpathentry kind="src" output="web/photo/build/test/classes" path="web/photo/test"/>
 	<classpathentry kind="lib" path="ant-lib/aspectjtools.jar"/>
 	<classpathentry kind="lib" path="ant-lib/commons-collections-2.0.jar"/>
 	<classpathentry kind="lib" path="ant-lib/commons-logging.jar"/>
@@ -31,7 +31,6 @@
 	<classpathentry kind="lib" path="lib-dep/jaxen-1.1-beta-7.jar"/>
 	<classpathentry kind="lib" path="lib-dep/jdbc2_0-stdext.jar"/>
 	<classpathentry kind="lib" path="lib-dep/jta.jar"/>
-	<classpathentry kind="lib" path="lib-dep/mysql.jar"/>
 	<classpathentry kind="lib" path="lib-dep/odmg-3.0.jar"/>
 	<classpathentry kind="lib" path="lib-dep/postgresql.jar"/>
 	<classpathentry kind="lib" path="lib-dep/xalan-2.4.0.jar"/>
@@ -46,7 +45,7 @@
 	<classpathentry kind="lib" path="lib/junit.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.11.jar"/>
 	<classpathentry kind="lib" path="lib/spring-mock.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/spring.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/spring.jar" sourcepath="/home/oliver/devel/spring-framework-2.0.1/dist/spring-src.zip"/>
 	<classpathentry kind="lib" path="modules/image/hibern8ide/bsh-2.0b1.jar"/>
 	<classpathentry kind="lib" path="modules/image/hibern8ide/forms-1.0.3.jar"/>
 	<classpathentry kind="lib" path="modules/image/hibern8ide/jgraph.jar"/>
@@ -57,7 +56,6 @@
 	<classpathentry kind="lib" path="modules/image/lib/jstl.jar"/>
 	<classpathentry kind="lib" path="modules/image/lib/standard.jar"/>
 	<classpathentry kind="lib" path="modules/user/lib/commons-codec-1.3.jar"/>
-	<classpathentry kind="lib" path="web/photo/lib/commons-fileupload-1.1.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.ajdt.core.ASPECTJRT_CONTAINER"/>
 	<classpathentry kind="lib" path="/home/oliver/devel/toolkit/lib-build/easymock.jar"/>

@@ -18,6 +18,7 @@ import com.trailmagic.image.ImageFactory;
 import com.trailmagic.image.ImageFrame;
 import com.trailmagic.image.ImageGroup;
 import com.trailmagic.image.ImageGroupFactory;
+import com.trailmagic.image.ImageManager;
 import com.trailmagic.image.ImageManifestation;
 import com.trailmagic.image.security.ImageSecurityFactory;
 import com.trailmagic.user.User;
@@ -43,7 +44,10 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(propagation=Propagation.REQUIRED,readOnly=false)
 public class AddPermissions {
     private ImageFactory m_imageFactory;
     private ImageGroupFactory m_imageGroupFactory;
@@ -153,52 +157,36 @@ public class AddPermissions {
         }
     }
 
-    public void makeImageGroupsPublic(String ownerName, String type,
-                                      Collection<String> groupNames) {
-        Session session =
-            SessionFactoryUtils.getSession(m_sessionFactory, false);
-        Transaction transaction = null;
+    public void makeImageGroupsPublic(final String ownerName, final String type,
+                                      final Collection<String> groupNames) {
 
-        try {
-            transaction = session.beginTransaction();
-
-            User owner = m_userFactory.getByScreenName(ownerName);
-            for (String groupName : groupNames) {
-                ImageGroup group;
-                if ("roll".equals(type)) {
-                    group =
-                        m_imageGroupFactory.getRollByOwnerAndName(owner,
-                                                                  groupName);
-		    if (group == null) {
-			s_log.error("No roll found with name " + groupName
-				    + " owned by " + owner);
-		    }
-                } else if ("album".equals(type)) {
-                    group =
-                        m_imageGroupFactory.getAlbumByOwnerAndName(owner,
-                                                                   groupName);
-			s_log.error("No album found with name " + groupName
-				    + " owned by " + owner);
-                } else {
-                    throw new IllegalArgumentException("invalid type");
+        m_hibernateTemplate.execute(new HibernateCallback() {
+            public Object doInHibernate(Session session) {
+                User owner = m_userFactory.getByScreenName(ownerName);
+                for (String groupName : groupNames) {
+                    ImageGroup group;
+                    if ("roll".equals(type)) {
+                        group =
+                            m_imageGroupFactory.getRollByOwnerAndName(owner,
+                                                                      groupName);
+                        if (group == null) {
+                            s_log.error("No roll found with name " + groupName
+                                        + " owned by " + owner);
+                        }
+                    } else if ("album".equals(type)) {
+                        group =
+                            m_imageGroupFactory.getAlbumByOwnerAndName(owner,
+                                                                       groupName);
+                        s_log.error("No album found with name " + groupName
+                                    + " owned by " + owner);
+                    } else {
+                        throw new IllegalArgumentException("invalid type");
+                    }
+                    makeGroupPublic(group);
                 }
-                makeGroupPublic(group);
+                return null;
             }
-            transaction.commit();
-            SessionFactoryUtils.releaseSession(session,
-                                               m_sessionFactory);
-        } catch (Exception e) {
-            try {
-                if (transaction != null) {
-                    transaction.rollback();
-                    s_log.error("Exception adding acls; "
-                                + "transaction rolled back",
-                                e);
-                }
-            } catch (HibernateException e1) {
-                s_log.error("Couldn't roll back transaction", e1);
-            }
-        }
+        });
     }
 
     public void addAllOwnerPermissions(final String ownerName) {
@@ -376,8 +364,10 @@ public class AddPermissions {
                  "applicationContext-imagestore-authorization.xml",
                  "applicationContext-standalone.xml"});
 
-        AddPermissions ap =
-            (AddPermissions) appContext.getBean(ADD_PERMISSIONS_BEAN);
+        // can't proxy becuase it's a class :(
+        // refactoring to ImageManager
+        AddPermissions ap = null;
+//            (AddPermissions) appContext.getBean(ADD_PERMISSIONS_BEAN);
 
         String command = args[0];
         if ("fixFramePermissions".equals(command)) {
@@ -403,12 +393,16 @@ public class AddPermissions {
         } else if ("addAccounts".equals(command)) {
             ap.addAccounts(args[1]);
         } else if ("makeImageGroupsPublic".equals(command)) {
+            ImageManager manager =
+                (ImageManager) appContext.getBean("imageManager");
             ArrayList<String> groups = new ArrayList<String>();
             for (int i = 3; i < args.length; i++) {
-                groups.add(args[i]);
+                manager.makeImageGroupPublic(args[1],
+                                             ImageGroup.Type.fromString(args[2]),
+                                             args[i]);
             }
             // username, type, groups...
-            ap.makeImageGroupsPublic(args[1], args[2], groups);
+//            ap.makeImageGroupsPublic(args[1], args[2], groups);
         } else if ("makeEverythingPublic".equals(command)) {
             ap.makeEverythingPublic(args[1]);
         } else {

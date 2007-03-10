@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beansProjectDescription>
+	<configExtensions>
+		<configExtension>xml</configExtension>
+	</configExtensions>
+	<configs>
+		<config>etc/applicationContext-global.xml</config>
+		<config>modules/image/etc/applicationContext-standalone.xml</config>
+		<config>modules/image/etc/applicationContext-imagestore.xml</config>
+		<config>modules/image/etc/applicationContext-imagestore-authorization.xml</config>
+		<config>modules/user/etc/applicationContext-user.xml</config>
+	</configs>
+	<configSets>
+		<configSet>
+			<name>fullApplication</name>
+			<allowBeanDefinitionOverriding>false</allowBeanDefinitionOverriding>
+			<incomplete>false</incomplete>
+			<configs>
+				<config>etc/applicationContext-global.xml</config>
+				<config>modules/image/etc/applicationContext-imagestore-authorization.xml</config>
+				<config>modules/image/etc/applicationContext-imagestore.xml</config>
+				<config>modules/image/etc/applicationContext-standalone.xml</config>
+				<config>modules/user/etc/applicationContext-user.xml</config>
+			</configs>
+		</configSet>
+	</configSets>
+</beansProjectDescription>

@@ -100,21 +100,21 @@
 
   <tx:annotation-driven transaction-manager="transactionManager"/>
 
-    <bean id="imagesParser"
-        class="com.trailmagic.image.util.ImagesParserImpl">
-        <property name="hibernateTemplate">
-            <ref bean="hibernateTemplate" />
-        </property>
-        <property name="imageSecurityFactory">
-            <ref bean="imageSecurityFactory" />
-        </property>
-        <property name="imageGroupFactory">
-            <ref bean="imageGroupFactory" />
-        </property>
-        <property name="userFactory">
-            <ref bean="userFactory" />
-        </property>
-    </bean>
+  <bean id="imagesParser"
+    class="com.trailmagic.image.util.ImagesParserImpl">
+    <property name="hibernateTemplate">
+      <ref bean="hibernateTemplate"/>
+    </property>
+    <property name="imageSecurityFactory">
+      <ref bean="imageSecurityFactory"/>
+    </property>
+    <property name="imageGroupFactory">
+      <ref bean="imageGroupFactory"/>
+    </property>
+    <property name="userFactory">
+      <ref bean="userFactory"/>
+    </property>
+  </bean>
 
     <bean id="transactionInterceptor"
         class="org.springframework.transaction.interceptor.TransactionInterceptor">
@@ -158,6 +158,13 @@
         </property>
     </bean>
 
+    <bean id="imageManager" class="com.trailmagic.image.ImageManagerBackend">
+        <property name="imageFactory" ref="imageFactory" />
+        <property name="imageGroupFactory" ref="imageGroupFactory"/>
+        <property name="imageSecurityFactory" ref="imageSecurityFactory"/>
+        <property name="userFactory" ref="userFactory"/>
+    </bean>
+    
     <!--
         <bean id="hibernateInterceptor"
         class="org.springframework.orm.hibernate3.HibernateInterceptor">
