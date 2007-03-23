@@ -102,13 +102,13 @@ foreach my $file (@files) {
     my $baseFile = `basename $file`;
     chomp $baseFile;
     if ( $suffix eq ".jpg" ) {
-        $baseFile =~ /dsc_(\d+)-?(thumbnail|small|medium|large|huge)?$suffix/
+        $baseFile =~ /(dsc_|p)(\d+)-?(thumbnail|small|medium|large|huge)?$suffix/
             || die "Couldn't get number from name for $baseFile";
-        $images[$i]{"number"} = $1;
+        $images[$i]{"number"} = $2;
     } elsif ( $suffix eq ".tif" ) {
         $baseFile =~ /^(\d+)$suffix$/
             || die "Couldn't get number from name for $baseFile";
-        $images[$i]{"number"} = $1;
+        $images[$i]{"number"} = $2;
     } else {
         die "Unknown suffix: $suffix";
     }
