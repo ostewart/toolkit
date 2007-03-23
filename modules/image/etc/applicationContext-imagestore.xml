@@ -48,7 +48,8 @@
         </property>
         <property name="hibernateTemplate">
             <ref bean="hibernateTemplate" />
-        </property>
+    </property>
+    <property name="jdbcTemplate" ref="simpleJdbcTemplate"/>
     </bean>
 
     <bean id="imageManifestationFactory"

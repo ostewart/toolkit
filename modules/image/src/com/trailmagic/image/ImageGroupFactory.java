@@ -43,6 +43,7 @@ public interface ImageGroupFactory {
     /** Only need to call this on a new object **/
     public void saveFrame(ImageFrame frame);
     /** Creates a new ImageGroup...call saveGroup() to persist **/
-	public ImageGroup createImageGroup(Type type);
-	public void saveGroup(ImageGroup newGroup);
+    public ImageGroup createImageGroup(Type type);
+    public void saveGroup(ImageGroup newGroup);
+    public int getPublicFrameCount(ImageGroup group);
 }

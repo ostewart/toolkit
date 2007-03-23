@@ -120,8 +120,10 @@
   </bean>
 
   <bean id="imageGroupControllerTarget"
-    class="com.trailmagic.image.ui.ImageGroupController"
-    autowire="byName">
+    class="com.trailmagic.image.ui.ImageGroupController">
+    <property name="imageGroupFactory" ref="imageGroupFactory"/>
+    <property name="imageSecurityFactory" ref="imageSecurityFactory"/>
+    <property name="userFactory" ref="userFactory"/>
   </bean>
 
   <bean id="logoutController"

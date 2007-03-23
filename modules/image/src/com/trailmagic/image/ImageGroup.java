@@ -25,11 +25,38 @@ import org.acegisecurity.acl.basic.NamedEntityObjectIdentity;
 public class ImageGroup implements Owned, AclObjectIdentityAware {
     public enum Type { ROLL("roll"), ALBUM("album");
     private String typeName;
+    private static final String ROLL_DISPLAY = "Roll";
+    private static final String ALBUM_DISPLAY = "Album";
+    private static final String ROLL_DISPLAY_PLURAL = "Rolls";
+    private static final String ALBUM_DISPLAY_PLURAL = "Albums";
+    
     private Type(String typeName) {
         this.typeName = typeName;
     }
     public String toString() {
         return this.typeName;
+    }
+    
+    public String toDisplayString() {
+        switch (this) {
+        case ROLL:
+            return ROLL_DISPLAY;
+        case ALBUM:
+            return ALBUM_DISPLAY;
+        default:
+            throw new IllegalStateException("Unhandled type");    
+        }
+    }
+    
+    public String toPluralDisplayString() {
+        switch (this) {
+        case ROLL:
+            return ROLL_DISPLAY_PLURAL;
+        case ALBUM:
+            return ALBUM_DISPLAY_PLURAL;
+        default:
+            throw new IllegalStateException("Unhandled type");    
+        }
     }
         
     public static Type fromString(String typeString) {

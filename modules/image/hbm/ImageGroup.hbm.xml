@@ -4,7 +4,7 @@
     "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <!--
- Copyright (c) 2006 Oliver Stewart.  All Rights Reserved.
+ Copyright (c) 2006, 2007 Oliver Stewart.  All Rights Reserved.
 
  This file is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -200,4 +200,16 @@
   <query name="allImageGroups">
     FROM com.trailmagic.image.ImageGroup
   </query>
+
+  <sql-query name="publicFrameCount">
+    <return-scalar column="publicFrames" type="integer"/>
+
+    SELECT count(recipient) AS publicFrames FROM acl_object_identity INNER JOIN
+    acl_permission ON  (acl_object_identity.id =
+    acl_permission.acl_object_identity)
+    WHERE recipient = 'ROLE_EVERYONE'
+    AND object_identity in
+    (SELECT concat('com.trailmagic.image.ImageFrame:', frame_id)
+     FROM image_frames where group_id = ?);
+  </sql-query>
 </hibernate-mapping>

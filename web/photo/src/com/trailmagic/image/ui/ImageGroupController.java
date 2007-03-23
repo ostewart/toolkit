@@ -41,6 +41,7 @@ import org.acegisecurity.util.PortResolverImpl;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.Assert;
@@ -52,7 +53,7 @@ import org.springframework.web.util.UrlPathHelper;
  * to add a new group type, simply add a new mapping to this controller as
  * "/<type-name>s/**" in the handlerMapping in images-servlet.xml
  **/
-public class ImageGroupController implements Controller, ApplicationContextAware, InitializingBean {
+public class ImageGroupController implements Controller {
     private static final String USER_FACTORY_BEAN = "userFactory";
     private static final String IMG_GROUP_FACTORY_BEAN = "imageGroupFactory";
     private static final String LIST_VIEW = "imageGroupList";
@@ -64,25 +65,26 @@ public class ImageGroupController implements Controller, ApplicationContextAware
     private static Logger s_log =
         Logger.getLogger(ImageGroupController.class);
 
-    private ApplicationContext m_appContext;
     private ImageSecurityFactory m_imageSecurityFactory;
     private PortResolver m_portResolver = new PortResolverImpl();
+    private ImageGroupFactory m_imageGroupFactory;
+    private UserFactory m_userFactory;
 
-    public void setApplicationContext(ApplicationContext appContext)
-        throws BeansException {
-
-        m_appContext = appContext;
+    @Required
+    public void setImageGroupFactory(ImageGroupFactory imageGroupFactory) {
+        m_imageGroupFactory = imageGroupFactory;
     }
 
+    @Required
+    public void setUserFactory(UserFactory userFactory) {
+        m_userFactory = userFactory;
+    }
+
+    @Required
     public void setImageSecurityFactory(ImageSecurityFactory factory) {
         m_imageSecurityFactory = factory;
     }
 
-
-    public void afterPropertiesSet() throws Exception {
-        Assert.notNull(m_imageSecurityFactory);
-        Assert.notNull(m_appContext);
-    }
 
     public ModelAndView handleRequest(HttpServletRequest req,
                                       HttpServletResponse res)
@@ -114,10 +116,6 @@ public class ImageGroupController implements Controller, ApplicationContextAware
          * the first element as the group type (could get around this with
          * a skipTokens arg
          */
-        ImageGroupFactory imgGroupFactory =
-            (ImageGroupFactory)m_appContext.getBean(IMG_GROUP_FACTORY_BEAN);
-        UserFactory userFactory =
-            (UserFactory)m_appContext.getBean(USER_FACTORY_BEAN);
 
         UrlPathHelper pathHelper = new UrlPathHelper();
         String myPath = pathHelper.getLookupPathForRequest(req);
@@ -148,20 +146,20 @@ public class ImageGroupController implements Controller, ApplicationContextAware
 
         // got no args: show users
         if ( !pathTokens.hasMoreTokens() ) {
-            model.put("owners", imgGroupFactory.getOwnersByType(groupType));
+            model.put("owners", m_imageGroupFactory.getOwnersByType(groupType));
             return new ModelAndView(USERS_VIEW, model);
         }
 
         // process first (owner) arg
         String ownerName = pathTokens.nextToken();
-        User owner = userFactory.getByScreenName(ownerName);
+        User owner = m_userFactory.getByScreenName(ownerName);
         // check for null!
         model.put("owner", owner);
 
         // got user arg: show his/her groups
         if ( !pathTokens.hasMoreTokens() ) {
             List<ImageGroup> imageGroups =
-                imgGroupFactory.getByOwnerScreenNameAndType(ownerName,
+                m_imageGroupFactory.getByOwnerScreenNameAndType(ownerName,
                                                             groupType);
 
             List<ImageGroup> filteredGroups = new ArrayList<ImageGroup>();
@@ -182,7 +180,9 @@ public class ImageGroupController implements Controller, ApplicationContextAware
                         previewImages.put(group,
                                           frames.first().getImage());
                         filteredGroups.add(group);
-                        numImages.put(group, frames.size());
+                        numImages.put(group,
+                                      m_imageGroupFactory
+                                      .getPublicFrameCount(group));
                     }
                 } catch (AccessDeniedException e) {
                     s_log.debug("Access Denied: not including group in "
@@ -221,7 +221,7 @@ public class ImageGroupController implements Controller, ApplicationContextAware
         // process second (group name) arg
         String groupName = pathTokens.nextToken();
         ImageGroup group =
-            imgGroupFactory.getByOwnerNameAndType(owner, groupName, groupType);
+            m_imageGroupFactory.getByOwnerNameAndType(owner, groupName, groupType);
         if (group == null) {
             res.sendError(HttpServletResponse.SC_NOT_FOUND,
                           "No such " + groupType);
@@ -251,7 +251,7 @@ public class ImageGroupController implements Controller, ApplicationContextAware
         try {
             long frameId = Long.parseLong(pathTokens.nextToken().trim());
             ImageFrame frame =
-                imgGroupFactory.getImageFrameByImageGroupAndImageId(group,
+                m_imageGroupFactory.getImageFrameByImageGroupAndImageId(group,
                                                                     frameId);
             if ( frame == null ) {
                 // XXX: pure eeeeeevil
@@ -262,7 +262,7 @@ public class ImageGroupController implements Controller, ApplicationContextAware
             model.put("imageIsPublic",
                       m_imageSecurityFactory.isPublic(frame.getImage()));
             List<ImageGroup> groupsContainingImage =
-                imgGroupFactory.getByImage(frame.getImage());
+                m_imageGroupFactory.getByImage(frame.getImage());
             List<ImageGroup> otherGroups = new ArrayList<ImageGroup>();
             Iterator<ImageGroup> iter = groupsContainingImage.iterator();
             ImageGroup containingGroup;

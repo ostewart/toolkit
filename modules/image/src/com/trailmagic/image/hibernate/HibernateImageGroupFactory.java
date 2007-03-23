@@ -16,10 +16,12 @@ package com.trailmagic.image.hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Query;
+import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.hibernate.HibernateException;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
+import java.sql.SQLException;
 import java.util.List;
 
 import com.trailmagic.user.User;
@@ -59,6 +61,7 @@ public class HibernateImageGroupFactory implements ImageGroupFactory {
 
     private SessionFactory m_sessionFactory;
     private HibernateTemplate m_hibernateTemplate;
+    private SimpleJdbcTemplate m_jdbcTemplate;
 
     public SessionFactory getSessionFactory() {
         return m_sessionFactory;
@@ -70,6 +73,10 @@ public class HibernateImageGroupFactory implements ImageGroupFactory {
 
     public void setHibernateTemplate(HibernateTemplate template) {
         m_hibernateTemplate = template;
+    }
+
+    public void setJdbcTemplate(SimpleJdbcTemplate jdbcTemplate) {
+        m_jdbcTemplate = jdbcTemplate;
     }
 
     public ImageGroup newInstance(int type) {
@@ -279,5 +286,13 @@ public class HibernateImageGroupFactory implements ImageGroupFactory {
 
     public void saveGroup(ImageGroup newGroup) {
         m_hibernateTemplate.saveOrUpdate(newGroup);
+    }
+
+    public int getPublicFrameCount(ImageGroup group) {
+        return ((Integer)
+                m_hibernateTemplate.findByNamedQuery("publicFrameCount",
+                                                     group.getId()).get(0))
+               .intValue();
+
     }
 }
