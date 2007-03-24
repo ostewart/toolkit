@@ -80,6 +80,7 @@ public class ImageGroup implements Owned, AclObjectIdentityAware {
     private Collection<ImageGroup> m_subgroups;
     private ImageGroup m_supergroup;
     private User m_owner;
+    private Image m_previewImage;
 
     public static final String ROLL_TYPE = "roll";
     public static final String ALBUM_TYPE = "album";
@@ -204,5 +205,13 @@ public class ImageGroup implements Owned, AclObjectIdentityAware {
     public AclObjectIdentity getAclObjectIdentity() {
         return new NamedEntityObjectIdentity(ImageGroup.class.getName(),
                                              Long.toString(getId()));
+    }
+
+    public Image getPreviewImage() {
+        return m_previewImage;
+    }
+
+    public void setPreviewImage(Image previewImage) {
+        m_previewImage = previewImage;
     }
 }

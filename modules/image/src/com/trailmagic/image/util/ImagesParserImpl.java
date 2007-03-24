@@ -206,6 +206,7 @@ public class ImagesParserImpl extends DefaultHandler implements ImagesParser {
 
     public void endRoll() {
         s_logger.debug("endRoll() called");
+        m_roll.setPreviewImage(m_roll.getFrames().first().getImage());
         m_hibernateTemplate.saveOrUpdate(m_roll);
         m_imageSecurityFactory.addOwnerAcl(m_roll);
         s_logger.debug("Roll saved: " + m_roll.getName() + " ("

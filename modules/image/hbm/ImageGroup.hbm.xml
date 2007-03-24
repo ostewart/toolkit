@@ -59,6 +59,9 @@
 	check="in ('roll', 'album')"/>
     </property>
 
+    <many-to-one name="previewImage" column="preview_image"
+        cascade="none"/>    
+
     <property name="description">
       <column name="description" sql-type="varchar(2048)"/>
     </property>

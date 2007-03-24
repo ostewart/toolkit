@@ -38,8 +38,15 @@
   </bean>
 
   <bean id="imageGroupFactory"
-    class="com.trailmagic.image.hibernate.HibernateImageGroupFactory"
-    autowire="byName"/>
+      class="com.trailmagic.image.hibernate.HibernateImageGroupFactory">
+      <property name="sessionFactory">
+          <ref bean="sessionFactory" />
+      </property>
+      <property name="hibernateTemplate">
+          <ref bean="hibernateTemplate" />
+      </property>
+      <property name="jdbcTemplate" ref="simpleJdbcTemplate" />
+  </bean>
 
   <bean id="imageManifestationFactory"
     class="com.trailmagic.image.hibernate.HibernateImageManifestationFactory">
@@ -275,8 +282,13 @@
       </list>
     </property>
   </bean>
+  
+  <bean id="setPreviewImage"
+      class="com.trailmagic.image.util.SetPreviewImageImpl">
+      <property name="imageGroupFactory" ref="imageGroupFactory"/>
+  </bean>
 
-<!--
+  <!--
   <bean id="fixDimensions"
     class="org.springframework.aop.framework.ProxyFactoryBean">
     <property name="target">
