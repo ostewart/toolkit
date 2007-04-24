@@ -22,6 +22,7 @@ import com.trailmagic.user.Owned;
 import com.trailmagic.user.User;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.SortedSet;
 import org.acegisecurity.AccessDeniedException;
 import org.acegisecurity.acl.AclEntry;
 import org.acegisecurity.acl.AclManager;
@@ -32,8 +33,9 @@ import org.acegisecurity.acl.basic.BasicAclExtendedDao;
 import org.acegisecurity.acl.basic.NamedEntityObjectIdentity;
 import org.acegisecurity.acl.basic.SimpleAclEntry;
 import org.apache.log4j.Logger;
+import org.springframework.transaction.annotation.Transactional;
 
-
+@Transactional
 public class AcegiImageSecurityFactory implements ImageSecurityFactory {
     private BasicAclExtendedDao m_aclDao;
     private ImageGroupFactory m_imageGroupFactory;
@@ -79,6 +81,16 @@ public class AcegiImageSecurityFactory implements ImageSecurityFactory {
                            + " for image: " + image);
             }
         }
+
+	// for now also make the manifestations public
+	// this will mess things up if we set e.g. the original
+	// to be permissioned differently
+	SortedSet<ImageManifestation> manifestations =
+	    image.getManifestations();
+	for (ImageManifestation mf : manifestations) {
+	    makePublic(mf);
+	}
+
         /*
         try {
             // also try to make the roll frame public
@@ -284,6 +296,13 @@ public class AcegiImageSecurityFactory implements ImageSecurityFactory {
                            + " for image: " + image);
             }
         }
+
+	// for now also make the manifestations private
+	SortedSet<ImageManifestation> manifestations =
+	    image.getManifestations();
+	for (ImageManifestation mf : manifestations) {
+	    makePrivate(mf);
+	}
     }
 
     public void makePrivate(ImageFrame frame) {

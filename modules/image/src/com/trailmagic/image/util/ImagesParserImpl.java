@@ -108,6 +108,13 @@ public class ImagesParserImpl extends DefaultHandler implements ImagesParser {
     }
 
     public void endDocument() {
+	if (m_roll != null && m_roll.getFrames() != null
+	    && m_roll.getFrames().first() != null) {
+	    m_roll.setPreviewImage(m_roll.getFrames().first().getImage());
+	    m_hibernateTemplate.saveOrUpdate(m_roll);
+	    s_logger.debug("Set preview image for roll: " + m_roll.getName());
+
+	}
         // nothing to do ...transaction MUST be committed or rolled back
         // by an interceptor
     }
@@ -206,14 +213,13 @@ public class ImagesParserImpl extends DefaultHandler implements ImagesParser {
 
     public void endRoll() {
         s_logger.debug("endRoll() called");
-        m_roll.setPreviewImage(m_roll.getFrames().first().getImage());
         m_hibernateTemplate.saveOrUpdate(m_roll);
         m_imageSecurityFactory.addOwnerAcl(m_roll);
         s_logger.debug("Roll saved: " + m_roll.getName() + " ("
                        + m_roll.getId() + ") owner: " + m_roll.getOwner()
                        + " (type: " + m_roll.getType());
 
-        m_roll = null;
+	//        m_roll = null;
         m_inRoll = false;
     }
 
