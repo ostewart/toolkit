@@ -23,6 +23,7 @@ import org.hibernate.HibernateException;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.SortedSet;
 
 import com.trailmagic.user.User;
 import com.trailmagic.image.*;
@@ -294,5 +295,11 @@ public class HibernateImageGroupFactory implements ImageGroupFactory {
                                                      group.getId()).get(0))
                .intValue();
 
+    }
+
+    public int getAccurateFrameCount(ImageGroup group) {
+        // need to get all the frames in order to get an
+        // accurate count of how many we have access to :(
+        return group.getFrames().size();
     }
 }

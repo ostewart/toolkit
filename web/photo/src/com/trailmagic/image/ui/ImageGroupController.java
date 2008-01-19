@@ -171,20 +171,11 @@ public class ImageGroupController implements Controller {
                 new HashMap<ImageGroup,Integer>();
             for (ImageGroup group : imageGroups) {
                 try {
-                    // need to get all the frames in order to get an
-//                    // accurate count of how many we have access to :(
-//                    SortedSet<ImageFrame> frames = group.getFrames();
-//                    if (frames.size() > 0) {
-//                        // if there are no images that we have permission
-//                        // to see, we'll get an AccessDeniedException
-//                        previewImages.put(group,
-//                                          frames.first().getImage());
-                        filteredGroups.add(group);
-                        previewImages.put(group, group.getPreviewImage());
-                        numImages.put(group,
-                                      m_imageGroupFactory
-                                      .getPublicFrameCount(group));
-//                    }
+                    filteredGroups.add(group);
+                    previewImages.put(group, group.getPreviewImage());
+                    numImages.put(group,
+                                  m_imageGroupFactory
+                                  .getPublicFrameCount(group));
                 } catch (AccessDeniedException e) {
                     s_log.debug("Access Denied: not including group in "
                                 + "collection: " + group);

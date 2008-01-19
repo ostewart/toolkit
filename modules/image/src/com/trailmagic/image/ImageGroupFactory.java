@@ -46,4 +46,5 @@ public interface ImageGroupFactory {
     public ImageGroup createImageGroup(Type type);
     public void saveGroup(ImageGroup newGroup);
     public int getPublicFrameCount(ImageGroup group);
+    public int getAccurateFrameCount(ImageGroup group);
 }
