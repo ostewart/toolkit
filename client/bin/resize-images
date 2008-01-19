@@ -3,7 +3,8 @@
 use strict;
 
 my (%landscapeGeometries, %portraitGeometries, %areas, @fileList,
-    $baseDir, $resizeDir, $quality, $tempFile, $gzTemp);
+    $baseDir, $resizeDir, $quality, $tempFile, $gzTemp, %landscapeSizes,
+    %portraitSizes);
 
 %landscapeGeometries =
     ("thumbnail" => "192x128",
@@ -17,6 +18,19 @@ my (%landscapeGeometries, %portraitGeometries, %areas, @fileList,
      "medium" => "512x768",
      "large" => "1024x1536",
      "huge" => "2048x3072");
+
+%landscapeSizes =
+    ("thumbnail" => "x128",
+     "small" => "x256",
+     "medium" => "x512",
+     "large" => "x1024",
+     "huge" => "x2048");
+%portraitSizes =
+    ("thumbnail" => "128x",
+     "small" => "256x",
+     "medium" => "512x",
+     "large" => "1024x",
+     "huge" => "2048x");
 
 %areas =
     ("thumbnail" => (128 * 192),
@@ -51,7 +65,7 @@ $gzTemp = "/tmp/resize-images-gztemp.tif";
 
 foreach my $file (@fileList) {
     my ($width, $height, $area, $geometry, %geometries, $newFile, $srcFile,
-        $cmd, $prefix, $number);
+        $cmd, $prefix, $number, %sizes);
     chomp $file;
 
     ($newFile = $file) =~ /^(\D*)\d*?-?(\d+)\.(.+?)(.gz)?$/; # $1$2-thumbnail.$3/;
@@ -61,9 +75,10 @@ foreach my $file (@fileList) {
 
     # first autorotate the image
     if ( $file =~ /\.jpe?g$/ ) {
-        my $origFileRotated;
+        my ($origFileRotated, $origFileHuge);
         $origFileRotated = "$resizeDir/$prefix$number-orig.jpg";
-	if ( !-f $origFileRotated ) {
+        $origFileHuge = "$resizeDir/$prefix$number-huge.jpg";
+	if ( !-f $origFileRotated && !-f $origFileHuge) {
             system "cp $file $origFileRotated";
             $srcFile = "$origFileRotated\[0\]";
             print "Rotating image $origFileRotated\n";
@@ -71,6 +86,7 @@ foreach my $file (@fileList) {
             $file = $origFileRotated;
 	} else {
 	    system "echo skipping rotation of existing file: $origFileRotated";
+            next;
 	}
     }
 
@@ -83,8 +99,10 @@ foreach my $file (@fileList) {
     $area = $width * $height;
     if ( $width > $height ) {
         %geometries = %landscapeGeometries;
+        %sizes = %landscapeSizes;
     } else {
         %geometries = %portraitGeometries;
+        %sizes = %portraitSizes;
     }
     
     #crop tiffs first
@@ -120,7 +138,7 @@ foreach my $file (@fileList) {
 #        } else {
             # always use the first image if there are multiple ([0])
             $cmd = "convert -size $geometries{$size} -quality $quality "
-                . "-resize \'$geometries{$size}\>\' $srcFile "
+                . "-resize \'$sizes{$size}\>\' $srcFile "
                 . "$resizeDir/$newFile";
 #        }
         system "echo $cmd";
