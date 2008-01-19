@@ -57,7 +57,8 @@ owner: the current albums' owner
     <body id="imageGroupList">
       <div id="globalHeader">
         <div class="breadcrumbs">
-          trailmagic : testing : some : places
+<![CDATA[          &nbsp;]]>
+<!--          trailmagic : testing : some : places-->
         </div>
 
         <div class="userAuth">
@@ -72,14 +73,19 @@ owner: the current albums' owner
       </div>
 
       <div id="header">
-        <h1 class="thingDescription">
-          <span class="bigThing">
-            <c:out value="${groupTypeDisplay}"/>s for User:
-          </span>
-          <span class="subThing">
-            <c:out value="${owner.screenName}"/>
-          </span>
-        </h1>
+        <div id="sitename">
+          <h1>trailmagic.com</h1>
+        </div>
+        <div id="pageDescription">
+          <h2 class="thingDescription">
+            <span class="bigThing">
+              <c:out value="${groupTypeDisplay}"/>s for User:
+            </span>
+            <span class="subThing">
+              <c:out value="${owner.screenName}"/>
+            </span>
+          </h2>
+        </div>
       </div>
 
       <div class="imageGroups">

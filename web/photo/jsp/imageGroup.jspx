@@ -70,10 +70,15 @@ frames: List of ImageFrames for this group
       </div>
 
       <div id="header">
-        <h1 class="thingDescription">
-          <span class="bigThing">${groupTypeDisplay}</span>:
-          <span class="subThing">${imageGroup.displayName}</span>
-        </h1>
+        <div id="sitename">
+          <h1>trailmagic.com</h1>
+        </div>
+        <div id="pageDescription">
+          <h2 class="thingDescription">
+            <span class="bigThing">${groupTypeDisplay}</span>:
+            <span class="subThing">${imageGroup.displayName}</span>
+          </h2>
+        </div>
 
         <h2 class="ownerName">
           <span class="label">Owned by:</span>
