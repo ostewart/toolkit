@@ -121,16 +121,26 @@ body {
 
 .thumbnailList li a img {
   border-style: solid;
-  padding: 5px;
+  border-width: 0;
   vertical-align: middle;
+  margin-bottom: 0px;
 }
 
 .thumbnailList li a img:hover {
   border-style: solid;
+  background-color: #759fe3;
 }
 
 .thumbnailList li a img:active {
   border-style: solid;
+}
+
+.thumbnailList img.portrait {
+  padding: 8px 36px;
+}
+
+.thumbnailList img.landscape {
+  padding: 36px 8px;
 }
 
 .navSection {

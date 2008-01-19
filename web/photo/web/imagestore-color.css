@@ -83,16 +83,13 @@
 }
 
 .thumbnailList {
-	background-color: #a9a9a9;
+	background-color: white;
 }
 
 #imageGroup #imageGroupDescription {
 /*	background-color: #a9a9a9; */
 }
 
-.thumbnailList li a img {
-	border-color: #a9a9a9;
-}
 
 .thumbnailList li a img:hover {
 	border-color: blue;
@@ -101,6 +98,7 @@
 .thumbnailList li a img:active {
 	border-color: #d3d3d3;
 }
+
 
 .imageGroups {
 

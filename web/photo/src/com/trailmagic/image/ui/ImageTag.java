@@ -31,6 +31,7 @@ public class ImageTag extends TagSupport {
     private Image m_image;
     private String m_sizeLabel;
     private String m_alt;
+    private String m_cssClass;
 
     private static final String USER_ATTR = "user";
     private static final String DEFAULT_LABEL_ATTR = "defaultLabel";
@@ -112,6 +113,18 @@ public class ImageTag extends TagSupport {
                 } else {
                     html.append(m_image.getDisplayName());
                 }
+
+                html.append("\" class=\"");
+                if (mf.getWidth() > mf.getHeight()) {
+                    html.append("landscape");
+                } else {
+                    html.append("portrait");
+                }
+                if (m_cssClass != null) {
+                    html.append(" ");
+                    html.append(m_cssClass);
+                }
+
                 html.append("\"/>");
             } else {
                 html.append("No manifestations found for the specified " +
@@ -145,6 +158,14 @@ public class ImageTag extends TagSupport {
 
     public String getAlt() {
         return m_alt;
+    }
+
+    public void setCssClass(String cssClass) {
+        m_cssClass = cssClass;
+    }
+
+    public String getCssClass() {
+        return m_cssClass;
     }
 
     private String getLabel(ImageManifestation mf) {
