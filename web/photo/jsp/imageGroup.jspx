@@ -73,13 +73,30 @@ frames: List of ImageFrames for this group
         <div id="sitename">
           <h1>trailmagic.com</h1>
         </div>
+<!--
         <div id="pageDescription">
           <h2 class="thingDescription">
             <span class="bigThing">${groupTypeDisplay}</span>:
             <span class="subThing">${imageGroup.displayName}</span>
           </h2>
         </div>
+-->
+        <div class="imageGroup">
+          <span class="groupData">
+            <span class="displayName">${imageGroup.displayName}</span>
+            <span class="imageCount">${frames.size()} images in ${groupTypeDisplay}</span>
+            <span class="description">${imageGroup.description}</span>
+            <span class="owner">
+              Owned by:
+              <tm:imageGroupLink owner="${owner}"
+                                 groupType="${imageGroup.type}">
+                ${owner.screenName}
+              </tm:imageGroupLink>
+            </span>
 
+          </span>
+        </div>
+<!--
         <h2 class="ownerName">
           <span class="label">Owned by:</span>
           <span class="displayName">
@@ -96,7 +113,7 @@ frames: List of ImageFrames for this group
             <c:out value="${imageGroup.description}"/>
           </div>
       </c:if>
-
+-->
         
 </div>
     <div class="imageGroupAdmin">
