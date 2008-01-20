@@ -79,7 +79,8 @@ groupsContainingImage: ImageGroups that contain frame.image
   <body id="image">
     <div id="globalHeader">
       <div class="breadcrumbs">
-        trailmagic : testing : some : places
+&amp;nbsp;
+<!--        trailmagic : testing : some : places-->
       </div>
       
       <div class="userAuth">
