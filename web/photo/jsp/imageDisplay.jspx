@@ -96,18 +96,39 @@ groupsContainingImage: ImageGroups that contain frame.image
     <div class="navSection">
       <span class="prevNav">
         <c:if test="${!empty prev}">
-          <tm:imageFrameLink frame="${prev}">&lt;--
+          <tm:imageFrameLink frame="${prev}">&amp;laquo;
             Previous</tm:imageFrameLink>
         </c:if>
       </span>
       <span class="nextNav">
         <c:if test="${!empty next}">
-          <tm:imageFrameLink frame="${next}">Next --&gt;</tm:imageFrameLink>
+          <tm:imageFrameLink frame="${next}">Next &amp;raquo;</tm:imageFrameLink>
         </c:if>
       </span>
     </div>
     
     <div id="header">
+        <div id="sitename">
+          <h1>trailmagic.com</h1>
+        </div>
+        <div class="imageGroup">
+          <span class="groupData">
+            <span class="displayName"><tm:imageGroupLink imageGroup="${imageGroup}">${imageGroup.displayName}</tm:imageGroupLink></span>
+            <span class="imageCount">${imageGroup.frames.size()}
+            images in ${imageGroup.type}</span>
+<!--
+            <span class="owner">
+              Owned by:
+              <tm:imageGroupLink owner="${owner}"
+                                 groupType="${imageGroup.type}">
+                ${owner.screenName}
+              </tm:imageGroupLink>
+            </span>
+-->
+
+          </span>
+        </div>
+<!--
       <h1 class="thingDescription">
         <span class="bigThing">
           <tm:imageGroupLink imageGroup="${imageGroup}">
@@ -119,7 +140,7 @@ groupsContainingImage: ImageGroups that contain frame.image
           <c:out value="${image.displayName}"/>
         </span>
       </h1>
-      
+-->  
     </div>
     
     
@@ -168,7 +189,9 @@ groupsContainingImage: ImageGroups that contain frame.image
               value="${imf.height}"/></a> |
         </c:forEach>
       </div>
-      <div>
+      <div class="imageDetails">
+        <br/>
+        ${image.displayName}
         <br/>
         <c:out value="${image.caption}"/><br />
         <br />
@@ -221,7 +244,7 @@ groupsContainingImage: ImageGroups that contain frame.image
 	google_ad_channel ="5744624246";
 	google_color_border = "CCCCCC";
 	google_color_link = "000000";
-	google_color_bg = "d3d3d3";
+	google_color_bg = "ffffff";
 	google_color_text = "333333";
 	google_color_url = "666666";
 	//--&gt;</script>
@@ -235,14 +258,14 @@ groupsContainingImage: ImageGroups that contain frame.image
       <div class="prevNav">
 
       <c:if test="${!empty prev}">
-        <tm:imageFrameLink frame="${prev}">&lt;--
+        <tm:imageFrameLink frame="${prev}">&amp;laquo;
         Previous</tm:imageFrameLink>
         </c:if>
       </div>
       <div class="nextNav">
 
       <c:if test="${!empty next}">
-        <tm:imageFrameLink frame="${next}">Next --&gt;</tm:imageFrameLink>
+        <tm:imageFrameLink frame="${next}">Next &amp;raquo;</tm:imageFrameLink>
         </c:if>
      </div>
       </div>

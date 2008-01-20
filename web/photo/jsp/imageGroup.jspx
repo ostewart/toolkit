@@ -163,7 +163,7 @@ frames: List of ImageFrames for this group
 	google_ad_channel ="5744624246";
 	google_color_border = "CCCCCC";
 	google_color_link = "000000";
-	google_color_bg = "d3d3d3";
+	google_color_bg = "ffffff";
 	google_color_text = "333333";
 	google_color_url = "666666";
 	//--&gt;</script>

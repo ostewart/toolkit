@@ -267,14 +267,23 @@ clear: both;
 }
 
 
-#imageGroupDisplay .imageGroup {
+#imageGroupDisplay .imageGroup,#image .imageGroup {
     width: 90%;
 }
 
-#imageGroupDisplay .groupData {
+#imageGroupDisplay .groupData,#image .groupData {
     float: none;
     margin-right: 0pt;
     width: 98%;
+}
+
+#image .imageGroup .displayName a {
+    text-decoration: none;
+    color: black;
+}
+
+#image .imageGroup .displayName a:hover {
+    background-color: #759fe3;
 }
 
 .imageGroup .owner {
