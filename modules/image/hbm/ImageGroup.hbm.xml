@@ -206,7 +206,7 @@
 
   <sql-query name="publicFrameCount">
     <return-scalar column="publicFrames" type="integer"/>
-
+<!-- this is way too slow
     SELECT count(recipient) AS publicFrames FROM acl_object_identity INNER JOIN
     acl_permission ON  (acl_object_identity.id =
     acl_permission.acl_object_identity)
@@ -214,5 +214,11 @@
     AND object_identity in
     (SELECT concat('com.trailmagic.image.ImageFrame:', frame_id)
      FROM image_frames where group_id = ?);
+-->
+   <!-- so this will inaccurate whenever there are private frames, but
+       it's quick and the group page should calculate the actual frames
+       with security information
+    -->
+    SELECT count(*) AS publicFrames FROM image_frames where group_id = ?
   </sql-query>
 </hibernate-mapping>
