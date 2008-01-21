@@ -1,0 +1,74 @@
+.imageGroup {
+    clear: both;
+    width: 100%;
+//    overflow: auto;
+}
+
+.preview {
+//    width: 240px;
+    float: left;
+//    border: 1px solid black;
+//    display: block;
+    margin-right: 10%;
+}
+
+.preview img {
+    border: 1px solid black;
+}
+
+.groupData {
+//    border: 1px solid blue;
+    display: block;
+//    height: 100%;
+
+}
+
+.groupData .displayName, .groupData .imageCount {
+    display: block;
+    text-align: right;
+    float: right;
+    clear: right;
+//    background-color: red;
+//    margin: 0px 5em;
+}
+
+.groupData .displayName {
+//    margin-top: 1em;
+}
+
+.groupData .description {
+    display: block;
+//    margin-top: 2em;
+    clear: right;
+}
+
+
+a.bigLink {
+    text-decoration: none;
+    color: black;
+    display: block;
+ //   overflow: auto;
+//    background-color: red;
+    padding: 2em;
+ //   background-color: #eeeeee;
+    margin: 1%;
+}
+
+a.bigLink:hover {
+    text-decoration: none;
+    color: black;
+    display: block;
+ //   overflow: auto;
+//    background-color: red;
+    padding: 2em;
+ //   margin: 1%;
+    background-color: #759fe3;
+}
+
+.groupData :after {
+    content: "&nbsp;";
+    visibility: hidden;
+    height: 0px;
+    display: block;
+    clear: both;
+}
