@@ -188,72 +188,19 @@ clear: both;
   padding-top: 2em;
 }
 
-.imageGroups .imageGroup {
-  clear: left;
-  padding: 0px;
-  width: auto;
-  margin-left: 5%;
-  margin-right: 5%;
-}
-.imageGroup span {
-  display: block;
-}
-
-.imageGroup a.bigLink {
-  display: block;
-  height: 100%;
-  margin: 0px;
-  padding: 8pt;
-  color: black;
-  text-decoration: none;
-}
-
-.imageGroup .groupData {
-  float: right;
-  margin: 2%;
-  text-align: right;
-  width: 70%;
-}
 
 .imageGroup .displayName {
-
-  margin: 0;
-  padding: 0;
   font-family: sans-serif;
   font-size: 150%;
   font-weight: bold;
-
 }
 
 .imageGroup .imageCount {
-
-  margin: 0;
-  margin-top: 1ex;
-/*  margin-left: 2%; */
-  margin-left: 2em;
-  padding: 0;
-
   font-size: 85%;
-
 }
 
 .imageGroup .description {
   text-align: justify;
-  width: 55%;
-  margin-right: 40%;
-  margin-left: 5%;
-  padding-right: 0pt;
-}
-
-.imageGroup .preview {
-}
-
-.imageGroup .preview a {
-  
-}
-
-.imageGroup .preview img {
-  border-width: 1px;
 }
 
 .ads {
@@ -274,7 +221,7 @@ clear: both;
 #imageGroupDisplay .groupData,#image .groupData {
     float: none;
     margin-right: 0pt;
-    width: 98%;
+//    width: 98%;
 }
 
 #image .imageGroup .displayName a {
@@ -286,8 +233,103 @@ clear: both;
     background-color: #759fe3;
 }
 
+#imageGroupDisplay .imageGroup .description {
+    margin-left: 2em;
+}
+
 .imageGroup .owner {
     float: right;
-    padding-right: 1ex;
-    width: 20%;
+//    padding-right: 1ex;
+//    width: 20%;
+    text-align: right;
+}
+
+.imageGroup {
+    clear: both;
+    width: 100%;
+//    overflow: auto;
+}
+
+.preview {
+//    width: 240px;
+    float: left;
+//    border: 1px solid black;
+//    display: block;
+    margin-right: 10%;
+}
+
+.preview img {
+    border: 1px solid black;
+}
+
+.groupData {
+//    border: 1px solid blue;
+    display: block;
+//    height: 100%;
+
+}
+
+.groupData .displayName, .groupData .imageCount {
+    display: block;
+    text-align: right;
+    float: right;
+    clear: right;
+//    background-color: red;
+//    margin: 0px 5em;
+}
+
+.groupData .displayName {
+//    margin-top: 1em;
+}
+
+.groupData .description {
+    display: block;
+//    margin-top: 2em;
+    clear: right;
+}
+
+
+a.bigLink {
+    text-decoration: none;
+    color: black;
+    display: block;
+ //   overflow: auto;
+//    background-color: red;
+    padding: 2em;
+ //   background-color: #eeeeee;
+    margin: 1%;
+}
+
+a.bigLink:hover {
+    text-decoration: none;
+    color: black;
+    display: block;
+ //   overflow: auto;
+//    background-color: red;
+    padding: 2em;
+ //   margin: 1%;
+    background-color: #759fe3;
+}
+
+#imageGroupList .imageGroups {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+#imageGroupList .imageGroup {
+    margin: 0;
+    width: 100%;
+}
+
+#imageGroupList .bigLink {
+    margin: 0 5%;
+    padding: 2em 5%;
+}
+
+.imageGroups .groupData :after {
+    content: "&nbsp;";
+    visibility: hidden;
+    height: 0px;
+    display: block;
+    clear: both;
 }

@@ -94,6 +94,13 @@ owner: the current albums' owner
             <tm:imageGroupLink styleClass="bigLink" owner="${owner}"
               groupType="${snapper.type}" imageGroup="${snapper}">            
 
+              <span class="preview">
+                <c:if test="${!empty previewImages[snapper]}">
+                  <tm:image image="${previewImages[snapper]}"
+                    sizeLabel="thumbnail"/>
+                </c:if>
+              </span>
+
               <span class="groupData">
                 <span class="displayName">
                   ${snapper.displayName}
@@ -104,13 +111,7 @@ owner: the current albums' owner
                 <span class="description">
                   ${snapper.description}
                 </span>
-              </span>
-              
-              <span class="preview">
-                <c:if test="${!empty previewImages[snapper]}">
-                  <tm:image image="${previewImages[snapper]}"
-                    sizeLabel="thumbnail"/>
-                </c:if>
+
               </span>
             </tm:imageGroupLink>
           </div>
