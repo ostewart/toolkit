@@ -69,6 +69,8 @@ body {
 
 #header #pageDescription {
   font-variant: small-caps;
+  font-family: sans-serif;
+  font-size: 125%;
 }
 
 #header .thingDescription {
@@ -320,6 +322,10 @@ a.bigLink:hover {
 #imageGroupList .imageGroup {
     margin: 0;
     width: 100%;
+}
+
+#imageGroupList .groupData {
+    margin-left: 240px;
 }
 
 #imageGroupList .bigLink {
