@@ -49,5 +49,7 @@ groupTypeDisplay: the (singular) display name of the type
         </li>
       </c:forEach>
     </ul>
+    <jsp:include page="google-analytics.jspx"/>
+
   </body>
 </html>

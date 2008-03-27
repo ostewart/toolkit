@@ -60,6 +60,8 @@ groupsContainingImage: ImageGroups that contain frame.image
     <c:forEach var="image" items="${command.imageIds}">
       ${image}
     </c:forEach>
+    <jsp:include page="google-analytics.jspx"/>
+
 
   </body>
 </html>

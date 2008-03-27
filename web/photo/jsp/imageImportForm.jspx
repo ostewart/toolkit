@@ -64,5 +64,6 @@ imageImportBean.imagesData is empty
       <input name="imagesData" type="file"/>
       <input name="submit" type="submit"/>
     </form>
+    <jsp:include page="google-analytics.jspx"/>
   </body>
 </html>

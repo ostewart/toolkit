@@ -117,5 +117,6 @@ owner: the current albums' owner
           </div>
         </c:forEach>
       </div>
+    <jsp:include page="google-analytics.jspx"/>
     </body>
   </html>

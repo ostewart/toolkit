@@ -64,5 +64,7 @@ groupsContainingImage: ImageGroups that contain frame.image
         private.
       </c:otherwise>
     </c:choose>
+
+    <jsp:include page="google-analytics.jspx"/>
   </body>
 </html>

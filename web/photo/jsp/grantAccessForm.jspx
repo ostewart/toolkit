@@ -158,5 +158,6 @@ frames: List of ImageFrames for this group
         To the right.
       </div>
     </div>
+    <jsp:include page="google-analytics.jspx"/>
   </body>
 </html>

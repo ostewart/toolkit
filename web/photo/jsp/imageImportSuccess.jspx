@@ -39,5 +39,8 @@ none
   <body>
     <h1>Import Images</h1>
         It worked.
+
+    <jsp:include page="google-analytics.jspx"/>
+
   </body>
 </html>
