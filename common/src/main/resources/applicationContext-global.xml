@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+  http://www.springframework.org/schema/tx
+  http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+  http://www.springframework.org/schema/aop
+  http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+  http://www.springframework.org/schema/util
+  http://www.springframework.org/schema/util/spring-util-2.0.xsd">
+
+<!--
+ Copyright (c) 2006, 2007 Oliver Stewart.  All Rights Reserved.
+
+ This file is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2, or (at your option)
+ any later version.
+
+ This file is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+-->
+  <!-- bring in jdbc settings from external jdbc.properties -->
+  <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <property name="locations" value="classpath:jdbc.properties"/>
+  </bean>
+  
+  <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+    <property name="driverClassName" value="${jdbc.driverClassName}"/>
+    <property name="url" value="${jdbc.url}"/>
+    <property name="username" value="${jdbc.username}"/>
+    <property name="password" value="${jdbc.password}"/>
+    <property name="defaultAutoCommit" value="false"/>
+  </bean>
+
+  <bean id="sessionFactory"
+    class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+    <property name="dataSource"><ref local="dataSource"/></property>
+    <property name="hibernateProperties">
+    	<util:properties location="classpath:com/trailmagic/common/hibernate.properties"/>
+    </property>
+    <property name="mappingResources">
+    	<util:list>
+    		<value>Image.hbm.xml</value>
+    		<value>ImageCD.hbm.xml</value>
+    		<value>ImageManifestation.hbm.xml</value>
+    		<value>ImageGroup.hbm.xml</value>
+    		<value>Camera.hbm.xml</value>
+    		<value>Lens.hbm.xml</value>
+    		<value>User.hbm.xml</value>
+    		<value>Group.hbm.xml</value>
+    	</util:list>
+    </property>
+  </bean>
+
+  <bean id="transactionManager"
+    class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+    <property name="dataSource"><ref local="dataSource"/></property>
+    <property name="sessionFactory"><ref local="sessionFactory"/></property>
+  </bean>
+  
+  <tx:annotation-driven transaction-manager="transactionManager"/>
+
+  <bean id="hibernateTemplate"
+    class="org.springframework.orm.hibernate3.HibernateTemplate">
+    <property name="sessionFactory">
+      <ref bean="sessionFactory"/>
+    </property>
+  </bean>
+
+  <bean id="jdbcTemplate"
+    class="org.springframework.jdbc.core.JdbcTemplate">
+    <property name="dataSource">
+      <ref bean="dataSource"/>
+    </property>
+  </bean>
+
+  <bean id="simpleJdbcTemplate"
+    class="org.springframework.jdbc.core.simple.SimpleJdbcTemplate">
+    <constructor-arg ref="dataSource"/>
+  </bean>
+
+  <bean class="org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor"/>
+
+</beans>

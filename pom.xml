@@ -1,0 +1,42 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.trailmagic</groupId>
+  <version>0.0.1-SNAPSHOT</version>
+  <artifactId>toolkit</artifactId>
+  <packaging>pom</packaging>
+
+  <scm>
+    <developerConnection>scm:svn:svn+ssh://trailmagic.com/usr/local/svn/toolkit/trunk</developerConnection>
+  </scm>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+
+
+      <plugin>
+        <artifactId>maven-release-plugin</artifactId>
+        <configuration>
+          <tagBase>svn+ssh://trailmagic.com/usr/local/svn/toolkit/tags</tagBase>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+
+  <modules>
+    <module>common</module>
+    <module>user</module>
+    <module>image</module>
+    <module>photo</module>
+  </modules>
+</project>

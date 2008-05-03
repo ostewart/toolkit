@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ Copyright (c) 2006 Oliver Stewart.  All Rights Reserved.
+
+ This file is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2, or (at your option)
+ any later version.
+
+ This file is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+-->
+
+<!--
+View for Album Frame display.  Displays a single ImageFrame of an
+Album.
+
+Model Requirements:
+user: currently logged in user
+owners: list of Users who own image groups of groupType
+groupType: the type of ImageGroup
+groupTypeDisplay: the (singular) display name of the type
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"
+  xmlns:jsp="http://java.sun.com/JSP/Page"
+  xmlns:c="http://java.sun.com/jsp/jstl/core"
+  xmlns:fmt="http://java.sun.com/jsp/jstl/fmt"
+  xmlns:tm="http://trailmagic.com/taglibs/image">
+  <head>
+    <title><c:out value="${groupTypeDisplay}"/> Owners</title>
+  </head>
+
+  <body>
+    <h1><c:out value="${groupTypeDisplay}"/> Owners:</h1>
+
+    <ul>
+      <c:forEach var="owner" items="${owners}">
+        <li>
+          <tm:imageGroupLink owner="${owner}"
+             groupType="${groupType}">${owner.screenName}</tm:imageGroupLink>
+        </li>
+      </c:forEach>
+    </ul>
+    <jsp:include page="google-analytics.jspx"/>
+
+  </body>
+</html>
