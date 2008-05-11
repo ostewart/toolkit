@@ -2,21 +2,21 @@ package com.trailmagic.image.util;
 
 import com.trailmagic.image.Image;
 import com.trailmagic.image.ImageGroup;
-import com.trailmagic.image.ImageGroupFactory;
+import com.trailmagic.image.ImageGroupRepository;
 import java.util.List;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class SetPreviewImageImpl implements SetPreviewImage {
-    private ImageGroupFactory imageGroupFactory;
+    private ImageGroupRepository imageGroupRepository;
 
     private static Logger s_log =
         Logger.getLogger(SetPreviewImageImpl.class);
 
     @Required
-    public void setImageGroupFactory(ImageGroupFactory imageGroupFactory) {
-        this.imageGroupFactory = imageGroupFactory;
+    public void setImageGroupRepository(ImageGroupRepository imageGroupRepository) {
+        this.imageGroupRepository = imageGroupRepository;
     }
 
     public void setDefaultPreviewImage(ImageGroup group) {
@@ -28,7 +28,7 @@ public class SetPreviewImageImpl implements SetPreviewImage {
     }
     
     public void setAllDefault() {
-        List<ImageGroup> allGroups = imageGroupFactory.getAll();
+        List<ImageGroup> allGroups = imageGroupRepository.getAll();
         for (ImageGroup group : allGroups) {
             s_log.info("Setting preview image for " + group.getName());
             setDefaultPreviewImage(group);

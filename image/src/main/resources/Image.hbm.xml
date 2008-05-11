@@ -63,7 +63,7 @@
 
     <many-to-one name="owner"
       class="com.trailmagic.user.User"
-      cascade="none">
+      cascade="none" lazy="false">
       <column name="owner_id" not-null="true"/>
     </many-to-one>
 
@@ -78,10 +78,10 @@
       name="manifestations"
       cascade="all-delete-orphan"
       sort="natural"
-      lazy="true"
+      lazy="false"
       inverse="true">
       <key column="image_id"/>
-      <one-to-many class="ImageManifestation"/>
+      <one-to-many class="ImageManifestation" />
     </set>
 
     <joined-subclass

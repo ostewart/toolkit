@@ -5,7 +5,7 @@ package com.trailmagic.image.util;
 
 import com.trailmagic.image.ImageFrame;
 import com.trailmagic.image.ImageGroup;
-import com.trailmagic.image.ImageGroupFactory;
+import com.trailmagic.image.ImageGroupRepository;
 import com.trailmagic.user.UserFactory;
 import java.util.Iterator;
 import java.util.SortedSet;
@@ -28,7 +28,7 @@ public class MakeAlbumFromRoll implements ApplicationContextAware {
     private Transaction m_transaction;
     private ApplicationContext m_appContext;
 
-    private static final String GROUP_FACTORY_BEAN = "imageGroupFactory";
+    private static final String GROUP_FACTORY_BEAN = "imageGroupRepository";
     private static final String USER_FACTORY_BEAN = "userFactory";
     private static final String SESS_FACTORY_BEAN = "sessionFactory";
     private static final String MAFR_BEAN = "makeAlbumFromRoll";
@@ -52,8 +52,8 @@ public class MakeAlbumFromRoll implements ApplicationContextAware {
         try {
             m_transaction = m_session.beginTransaction();
 
-            ImageGroupFactory gf =
-                (ImageGroupFactory)m_appContext.getBean(GROUP_FACTORY_BEAN);
+            ImageGroupRepository gf =
+                (ImageGroupRepository)m_appContext.getBean(GROUP_FACTORY_BEAN);
             UserFactory uf =
                 (UserFactory)m_appContext.getBean(USER_FACTORY_BEAN);
 

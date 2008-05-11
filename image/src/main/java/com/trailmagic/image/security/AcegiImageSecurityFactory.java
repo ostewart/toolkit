@@ -16,7 +16,7 @@ package com.trailmagic.image.security;
 import com.trailmagic.image.Image;
 import com.trailmagic.image.ImageFrame;
 import com.trailmagic.image.ImageGroup;
-import com.trailmagic.image.ImageGroupFactory;
+import com.trailmagic.image.ImageGroupRepository;
 import com.trailmagic.image.ImageManifestation;
 import com.trailmagic.user.Owned;
 import com.trailmagic.user.User;
@@ -38,7 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class AcegiImageSecurityFactory implements ImageSecurityFactory {
     private BasicAclExtendedDao m_aclDao;
-    private ImageGroupFactory m_imageGroupFactory;
+    private ImageGroupRepository imageGroupRepository;
     private AclManager m_aclManager;
     private static Logger s_log = Logger.getLogger(AcegiImageSecurityFactory.class);
     private static final String ROLE_EVERYONE = "ROLE_EVERYONE";
@@ -58,8 +58,8 @@ public class AcegiImageSecurityFactory implements ImageSecurityFactory {
         m_aclDao = dao;
     }
 
-    public void setImageGroupFactory(ImageGroupFactory factory) {
-        m_imageGroupFactory = factory;
+    public void setImageGroupRepository(ImageGroupRepository imageGroupRepository) {
+        this.imageGroupRepository = imageGroupRepository;
     }
 
     public void setAclManager(AclManager aclManager) {
@@ -67,12 +67,12 @@ public class AcegiImageSecurityFactory implements ImageSecurityFactory {
     }
 
     public void makePublic(Image image) {
-        ImageGroup roll = m_imageGroupFactory.getRollForImage(image);
+        ImageGroup roll = imageGroupRepository.getRollForImage(image);
         makePublic(image, roll);
 
         // also try to make all the frames public
         List<ImageFrame> frames =
-            m_imageGroupFactory.getFramesContainingImage(image);
+            imageGroupRepository.getFramesContainingImage(image);
         for (ImageFrame frame : frames) {
             try {
                 makePublic(frame);
@@ -94,7 +94,7 @@ public class AcegiImageSecurityFactory implements ImageSecurityFactory {
         /*
         try {
             // also try to make the roll frame public
-            makePublic(m_imageGroupFactory
+            makePublic(imageGroupRepository
                        .getImageFrameByImageGroupAndImageId(roll,
                                                             image.getId()));
         } catch (AccessDeniedException e) {
@@ -133,7 +133,7 @@ public class AcegiImageSecurityFactory implements ImageSecurityFactory {
     }
 
     public void addOwnerAcl(Image image) {
-        addOwnerAcl(image, m_imageGroupFactory.getRollForImage(image));
+        addOwnerAcl(image, imageGroupRepository.getRollForImage(image));
     }
 
     public void addOwnerAcl(ImageFrame frame) {
@@ -185,7 +185,7 @@ public class AcegiImageSecurityFactory implements ImageSecurityFactory {
      * Adds permission to the image and the frames it's in.
      **/
     public void addPermission(Image image, Object recipient, int mask) {
-        ImageGroup parent = m_imageGroupFactory.getRollForImage(image);
+        ImageGroup parent = imageGroupRepository.getRollForImage(image);
 
         addPermission(image, parent, recipient, mask);
 
@@ -193,7 +193,7 @@ public class AcegiImageSecurityFactory implements ImageSecurityFactory {
         // ADMIN should be transitive from the group
         if ((SimpleAclEntry.READ & mask) == SimpleAclEntry.READ) {
             for (ImageFrame frame
-                     : m_imageGroupFactory.getFramesContainingImage(image)) {
+                     : imageGroupRepository.getFramesContainingImage(image)) {
                 addPermission(frame, image, recipient, SimpleAclEntry.READ);
             }
         }
@@ -282,12 +282,12 @@ public class AcegiImageSecurityFactory implements ImageSecurityFactory {
     }
 
     public void makePrivate(Image image) {
-        ImageGroup roll = m_imageGroupFactory.getRollForImage(image);
+        ImageGroup roll = imageGroupRepository.getRollForImage(image);
         makePrivate(image, roll);
 
         // also try to make all the frames private
         List<ImageFrame> frames =
-            m_imageGroupFactory.getFramesContainingImage(image);
+            imageGroupRepository.getFramesContainingImage(image);
         for (ImageFrame frame : frames) {
             try {
                 makePrivate(frame);

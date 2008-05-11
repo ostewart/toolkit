@@ -17,7 +17,7 @@ import com.trailmagic.image.Image;
 import com.trailmagic.image.ImageFactory;
 import com.trailmagic.image.ImageFrame;
 import com.trailmagic.image.ImageGroup;
-import com.trailmagic.image.ImageGroupFactory;
+import com.trailmagic.image.ImageGroupRepository;
 import com.trailmagic.user.UserFactory;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -43,7 +43,7 @@ public class MakeAlbum implements ApplicationContextAware {
     private Transaction m_transaction;
     private ApplicationContext m_appContext;
 
-    private static final String GROUP_FACTORY_BEAN = "imageGroupFactory";
+    private static final String GROUP_FACTORY_BEAN = "imageGroupRepository";
     private static final String USER_FACTORY_BEAN = "userFactory";
     private static final String SESS_FACTORY_BEAN = "sessionFactory";
     private static final String IMAGE_FACTORY_BEAN = "imageFactory";
@@ -71,8 +71,8 @@ public class MakeAlbum implements ApplicationContextAware {
 
             m_transaction = m_session.beginTransaction();
 
-            ImageGroupFactory gf =
-                (ImageGroupFactory)m_appContext.getBean(GROUP_FACTORY_BEAN);
+            ImageGroupRepository gf =
+                (ImageGroupRepository)m_appContext.getBean(GROUP_FACTORY_BEAN);
             UserFactory uf =
                 (UserFactory)m_appContext.getBean(USER_FACTORY_BEAN);
 

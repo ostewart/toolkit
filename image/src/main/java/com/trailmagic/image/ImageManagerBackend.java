@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 public class ImageManagerBackend implements ImageManager {
-    private ImageGroupFactory m_imageGroupFactory;
+    private ImageGroupRepository imageGroupRepository;
     private ImageFactory m_imageFactory;
     private ImageSecurityFactory m_imageSecurityFactory;
     private UserFactory m_userFactory;
@@ -31,8 +31,8 @@ public class ImageManagerBackend implements ImageManager {
     private static Logger s_log =
         Logger.getLogger(ImageManagerBackend.class);
 
-    public void setImageGroupFactory(ImageGroupFactory factory) {
-        m_imageGroupFactory = factory;
+    public void setImageGroupRepository(ImageGroupRepository imageGroupRepository) {
+        this.imageGroupRepository = imageGroupRepository;
     }
 
     public void setImageFactory(ImageFactory factory) {
@@ -49,12 +49,12 @@ public class ImageManagerBackend implements ImageManager {
 
     public ImageGroup createImageGroup(ImageGroup.Type type,
                                        User owner, String name) {
-        ImageGroup newGroup = m_imageGroupFactory.createImageGroup(type);
+        ImageGroup newGroup = imageGroupRepository.createImageGroup(type);
         newGroup.setOwner(owner);
         m_imageSecurityFactory.addOwnerAcl(newGroup);
         newGroup.setName(name);
 
-        m_imageGroupFactory.saveGroup(newGroup);
+        imageGroupRepository.saveGroup(newGroup);
         return newGroup;
     }
 
@@ -69,11 +69,11 @@ public class ImageManagerBackend implements ImageManager {
     
     public ImageGroup addImageGroup(User owner, ImageGroup.Type type,
                                     String name) {
-        ImageGroup group = m_imageGroupFactory.createImageGroup(type);
+        ImageGroup group = imageGroupRepository.createImageGroup(type);
         group.setOwner(owner);
         m_imageSecurityFactory.addOwnerAcl(group);
         group.setName(name);
-        m_imageGroupFactory.saveGroup(group);
+        imageGroupRepository.saveGroup(group);
         return group;
     }
 
@@ -90,7 +90,7 @@ public class ImageManagerBackend implements ImageManager {
 
             // this might happen twice, but i think that's okay
         m_imageSecurityFactory.addOwnerAcl(image);
-        m_imageGroupFactory.saveFrame(frame);
+        imageGroupRepository.saveFrame(frame);
         m_imageSecurityFactory.addOwnerAcl(frame);
 
         return frame;
@@ -138,7 +138,7 @@ public class ImageManagerBackend implements ImageManager {
     public void makeImageGroupPublic(String ownerName, Type type, String imageGroupName) {
         User owner = m_userFactory.getByScreenName(ownerName);
         ImageGroup group =
-            m_imageGroupFactory.getByOwnerNameAndType(owner,
+            imageGroupRepository.getByOwnerNameAndTypeWithFrames(owner,
                                                       imageGroupName,
                                                       type);
         if (group == null) {

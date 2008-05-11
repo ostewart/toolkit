@@ -17,7 +17,7 @@ import com.trailmagic.image.HeavyImageManifestation;
 import com.trailmagic.image.Image;
 import com.trailmagic.image.ImageFrame;
 import com.trailmagic.image.ImageGroup;
-import com.trailmagic.image.ImageGroupFactory;
+import com.trailmagic.image.ImageGroupRepository;
 import com.trailmagic.image.Photo;
 import com.trailmagic.image.ImageGroup.Type;
 import com.trailmagic.image.security.ImageSecurityFactory;
@@ -64,20 +64,20 @@ public class ImagesParserImpl extends DefaultHandler implements ImagesParser {
     private File m_baseDir;
     private StringBuffer m_characterData;
     private ImageSecurityFactory m_imageSecurityFactory;
-    private ImageGroupFactory m_imageGroupFactory;
-    private UserFactory m_userFactory;
+    private ImageGroupRepository imageGroupRepository;
+    private UserFactory userFactory;
     private HibernateTemplate m_hibernateTemplate;
 
-    public void setImageGroupFactory(ImageGroupFactory imageGroupFactory) {
-        m_imageGroupFactory = imageGroupFactory;
+    public void setImageGroupRepository(ImageGroupRepository imageGroupRepository) {
+        this.imageGroupRepository = imageGroupRepository;
     }
 
     public void setUserFactory(UserFactory userFactory) {
-        m_userFactory = userFactory;
+        this.userFactory = userFactory;
     }
 
     public void setHibernateTemplate(HibernateTemplate template) {
-        m_hibernateTemplate = template;
+        this.m_hibernateTemplate = template;
     }
 
     public ImagesParserImpl() {
@@ -85,7 +85,7 @@ public class ImagesParserImpl extends DefaultHandler implements ImagesParser {
     }
 
     public void setImageSecurityFactory(ImageSecurityFactory factory) {
-        m_imageSecurityFactory = factory;
+        this.m_imageSecurityFactory = factory;
     }
 
     public File getBaseDir() {
@@ -93,7 +93,7 @@ public class ImagesParserImpl extends DefaultHandler implements ImagesParser {
     }
 
     public void setBaseDir(File baseDir) {
-        m_baseDir = baseDir;
+        this.m_baseDir = baseDir;
     }
 
     public void startDocument() {
@@ -203,7 +203,7 @@ public class ImagesParserImpl extends DefaultHandler implements ImagesParser {
     }
 
     public void startRoll() {
-        m_roll = m_imageGroupFactory.createImageGroup(Type.ROLL);
+        m_roll = imageGroupRepository.createImageGroup(Type.ROLL);
         m_roll.setType(ImageGroup.Type.ROLL);
         m_roll.setSupergroup(null);
         m_roll.setUploadDate(new Date());
@@ -303,7 +303,7 @@ public class ImagesParserImpl extends DefaultHandler implements ImagesParser {
                     }
 
                     m_photoRoll =
-                        m_imageGroupFactory.getRollByOwnerAndName(m_image.getOwner(),
+                        imageGroupRepository.getRollByOwnerAndName(m_image.getOwner(),
                                                  characterData.trim());
                     if ( m_photoRoll == null ) {
                         s_logger.info("No roll by the given name and owner "
@@ -344,7 +344,7 @@ public class ImagesParserImpl extends DefaultHandler implements ImagesParser {
                     m_image.setCreator(characterData);
                 } else if ( "owner".equals(currentElt) ) {
                     String ownerName = characterData;
-                    m_image.setOwner(m_userFactory.getByScreenName(ownerName));
+                    m_image.setOwner(userFactory.getByScreenName(ownerName));
                 } else if ( "number".equals(currentElt) ) {
                     m_image.setNumber(new Integer(characterData));
                 }
@@ -358,7 +358,7 @@ public class ImagesParserImpl extends DefaultHandler implements ImagesParser {
                 m_roll.setDescription(characterData);
             } else if ( "owner".equals(currentElt) ) {
                 String ownerName = characterData;
-                m_roll.setOwner(m_userFactory.getByScreenName(ownerName));
+                m_roll.setOwner(userFactory.getByScreenName(ownerName));
                 s_logger.debug("set roll " + m_roll.getName() + " owner to: "
                                + m_roll.getOwner());
             }

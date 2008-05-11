@@ -26,8 +26,8 @@
     <param-value>
       classpath:applicationContext-global.xml
       classpath:applicationContext-user.xml
-      classpath:applicationContext-imagestore.xml
       classpath:applicationContext-imagestore-authorization.xml
+      classpath:applicationContext-imagestore.xml
       classpath:applicationContext-photo.xml
     </param-value>
   </context-param>
@@ -46,7 +46,7 @@
   <listener>
     <listener-class>org.acegisecurity.ui.session.HttpSessionEventPublisher</listener-class>
   </listener>
-
+<!-- 
   <filter>
     <filter-name>Session Request Binder</filter-name>
     <filter-class>org.springframework.orm.hibernate3.support.OpenSessionInViewFilter</filter-class>
@@ -54,10 +54,9 @@
 
   <filter-mapping>
     <filter-name>Session Request Binder</filter-name>
-    <!--    <url-pattern>/*</url-pattern>-->
     <servlet-name>images</servlet-name>
   </filter-mapping>
-
+-->
   <filter>
     <filter-name>Acegi Filter Chain Proxy</filter-name>
     <filter-class>org.acegisecurity.util.FilterToBeanProxy</filter-class>

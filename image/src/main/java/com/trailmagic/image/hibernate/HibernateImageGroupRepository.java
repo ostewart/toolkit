@@ -13,24 +13,25 @@
  */
 package com.trailmagic.image.hibernate;
 
+import com.trailmagic.image.Image;
+import com.trailmagic.image.ImageFrame;
+import com.trailmagic.image.ImageGroup;
+import com.trailmagic.image.ImageGroupRepository;
+import com.trailmagic.image.ImageGroup.Type;
+import com.trailmagic.user.User;
+import java.util.List;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Query;
-import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
-import org.hibernate.HibernateException;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.SortedSet;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.trailmagic.user.User;
-import com.trailmagic.image.*;
-import com.trailmagic.image.ImageGroup.Type;
-
+@Transactional(readOnly=true)
 @SuppressWarnings("unchecked") // for query.list()
-public class HibernateImageGroupFactory implements ImageGroupFactory {
+public class HibernateImageGroupRepository implements ImageGroupRepository {
     private static final String ALBUM_BY_OWNER_AND_NAME_QRY =
         "albumByOwnerAndName";
     private static final String IMGFRAME_BY_IMG_GROUP_AND_IMAGE_QRY =
@@ -62,7 +63,6 @@ public class HibernateImageGroupFactory implements ImageGroupFactory {
 
     private SessionFactory m_sessionFactory;
     private HibernateTemplate m_hibernateTemplate;
-    private SimpleJdbcTemplate m_jdbcTemplate;
 
     public SessionFactory getSessionFactory() {
         return m_sessionFactory;
@@ -74,10 +74,6 @@ public class HibernateImageGroupFactory implements ImageGroupFactory {
 
     public void setHibernateTemplate(HibernateTemplate template) {
         m_hibernateTemplate = template;
-    }
-
-    public void setJdbcTemplate(SimpleJdbcTemplate jdbcTemplate) {
-        m_jdbcTemplate = jdbcTemplate;
     }
 
     public ImageGroup newInstance(int type) {
@@ -210,8 +206,8 @@ public class HibernateImageGroupFactory implements ImageGroupFactory {
         }
     }
 
-    public ImageGroup getByOwnerNameAndType(User owner, String groupName,
-                                            Type groupType) {
+    public ImageGroup getByOwnerNameAndTypeWithFrames(User owner, String groupName,
+                                                      Type groupType) {
         try {
             Session session =
                 SessionFactoryUtils.getSession(m_sessionFactory, false);
@@ -280,11 +276,13 @@ public class HibernateImageGroupFactory implements ImageGroupFactory {
         return new ImageGroup();
     }
 
+    @Transactional(readOnly=false)
     public void saveFrame(ImageFrame frame) {
         m_hibernateTemplate.saveOrUpdate(frame);
 
     }
 
+    @Transactional(readOnly=false)
     public void saveGroup(ImageGroup newGroup) {
         m_hibernateTemplate.saveOrUpdate(newGroup);
     }

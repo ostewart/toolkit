@@ -95,37 +95,22 @@
       </property>
   </bean>
   
-    <tx:advice id="imageEditAdvice" transaction-manager="transactionManager">
-        <tx:attributes>
-          <tx:method name="handleRequest" propagation="REQUIRED"
-          isolation="READ_COMMITTED" timeout="-1" read-only="false"/>
-        </tx:attributes>
-    </tx:advice>
-
-  <aop:config>
-    <aop:pointcut id="imageEditTransactions" expression="execution(* com.trailmagic.image.ui.ImageEditController.handleRequest(..))"/>
-        <aop:advisor advice-ref="imageEditAdvice" pointcut-ref="imageEditTransactions"/>
-        
-    </aop:config>
+<!--    <tx:advice id="imageEditAdvice" transaction-manager="transactionManager">-->
+<!--        <tx:attributes>-->
+<!--          <tx:method name="handleRequest" propagation="REQUIRED"-->
+<!--          isolation="READ_COMMITTED" timeout="-1" read-only="false"/>-->
+<!--        </tx:attributes>-->
+<!--    </tx:advice>-->
+<!---->
+<!--  <aop:config>-->
+<!--    <aop:pointcut id="imageEditTransactions" expression="execution(* com.trailmagic.image.ui.ImageEditController.handleRequest(..))"/>-->
+<!--        <aop:advisor advice-ref="imageEditAdvice" pointcut-ref="imageEditTransactions"/>-->
+<!--        -->
+<!--    </aop:config>-->
 
   <bean id="imageGroupController"
-    class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-    <property name="transactionManager">
-      <ref bean="transactionManager"/>
-    </property>
-    <property name="target">
-      <ref local="imageGroupControllerTarget"/>
-    </property>
-    <property name="transactionAttributes">
-      <props>
-        <prop key="handleRequest">PROPAGATION_REQUIRED,readOnly</prop>
-      </props>
-    </property>
-  </bean>
-
-  <bean id="imageGroupControllerTarget"
     class="com.trailmagic.image.ui.ImageGroupController">
-    <property name="imageGroupFactory" ref="imageGroupFactory"/>
+    <property name="imageGroupRepository" ref="imageGroupRepository"/>
     <property name="imageSecurityFactory" ref="imageSecurityFactory"/>
     <property name="userFactory" ref="userFactory"/>
   </bean>
@@ -218,8 +203,8 @@
     <property name="imageFactory">
       <ref bean="imageFactory"/>
     </property>
-    <property name="imageGroupFactory">
-      <ref bean="imageGroupFactory"/>
+    <property name="imageGroupRepository">
+      <ref bean="imageGroupRepository"/>
     </property>
     <property name="imageSecurityFactory">
       <ref bean="imageSecurityFactory"/>
@@ -243,8 +228,8 @@
     <property name="imageFactory">
       <ref bean="imageFactory"/>
     </property>
-    <property name="imageGroupFactory">
-      <ref bean="imageGroupFactory"/>
+    <property name="imageGroupRepository">
+      <ref bean="imageGroupRepository"/>
     </property>
     <property name="imageSecurityFactory">
       <ref bean="imageSecurityFactory"/>
@@ -279,17 +264,6 @@
     </property>
   </bean>
 
-  <bean id="transactionInterceptor" 
-    class="org.springframework.transaction.interceptor.TransactionInterceptor">
-    <property name="transactionManager">
-      <ref bean="transactionManager"/>
-    </property>
-    <property name="transactionAttributeSource">
-      <value>
-        com.trailmagic.image.ui.ImageGroupController.handleRequest=PROPAGATION_REQUIRED
-      </value>
-    </property>
-  </bean>
   <!--
   <bean id="albumController"
     class="org.springframework.aop.framework.ProxyFactoryBean">

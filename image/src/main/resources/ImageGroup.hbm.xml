@@ -60,7 +60,7 @@
     </property>
 
     <many-to-one name="previewImage" column="preview_image"
-        cascade="none"/>    
+        cascade="none" lazy="false"/>    
 
     <property name="description">
       <column name="description" sql-type="varchar(2048)"/>
@@ -72,7 +72,8 @@
 
     <many-to-one name="owner"
       class="com.trailmagic.user.User"
-      cascade="none">
+      cascade="none"
+      lazy="false">
       <column name="owner_id" not-null="true"
         unique-key="image_groups_name_owner_type"/>
     </many-to-one>
@@ -115,7 +116,7 @@
     <property name="caption">
       <column name="caption" sql-type="varchar(4000)"/>
     </property>
-    <many-to-one name="image" class="Image" cascade="none">
+    <many-to-one name="image" class="Image" cascade="none" lazy="false">
       <column name="image_id" not-null="true"/>
     </many-to-one>
   </class>
@@ -171,7 +172,8 @@
 
   <query name="groupByOwnerGroupNameAndType">
     FROM com.trailmagic.image.ImageGroup
-    AS grp WHERE grp.owner = :owner
+    AS grp JOIN FETCH grp.frames
+    WHERE grp.owner = :owner
     AND grp.name = :groupName
     AND grp.type = :groupType
   </query>

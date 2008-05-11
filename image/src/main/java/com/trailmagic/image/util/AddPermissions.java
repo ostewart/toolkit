@@ -17,15 +17,15 @@ import com.trailmagic.image.Image;
 import com.trailmagic.image.ImageFactory;
 import com.trailmagic.image.ImageFrame;
 import com.trailmagic.image.ImageGroup;
-import com.trailmagic.image.ImageGroupFactory;
+import com.trailmagic.image.ImageGroupRepository;
 import com.trailmagic.image.ImageManager;
 import com.trailmagic.image.ImageManifestation;
 import com.trailmagic.image.security.ImageSecurityFactory;
+import com.trailmagic.user.Group;
+import com.trailmagic.user.GroupFactory;
 import com.trailmagic.user.User;
 import com.trailmagic.user.UserFactory;
 import com.trailmagic.user.UserLoginModule;
-import com.trailmagic.user.Group;
-import com.trailmagic.user.GroupFactory;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -34,91 +34,59 @@ import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.acegisecurity.acl.basic.SimpleAclEntry;
 import org.apache.log4j.Logger;
+import org.hibernate.Session;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
-import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(propagation=Propagation.REQUIRED,readOnly=false)
 public class AddPermissions {
-    private ImageFactory m_imageFactory;
-    private ImageGroupFactory m_imageGroupFactory;
-    private ImageSecurityFactory m_imageSecurityFactory;
-    private UserFactory m_userFactory;
-    private GroupFactory m_groupFactory;
-    private SessionFactory m_sessionFactory;
-    private HibernateTemplate m_hibernateTemplate;
+    private ImageFactory imageFactory;
+    private ImageGroupRepository imageGroupRepository;
+    private ImageSecurityFactory imageSecurityFactory;
+    private UserFactory userFactory;
+    private GroupFactory groupFactory;
+    private HibernateTemplate hibernateTemplate;
 
     private static Logger s_log = Logger.getLogger(AddPermissions.class);
 
-    private static final String ADD_PERMISSIONS_BEAN = "addPermissions";
     private static final String EVERYONE_GROUP_NAME = "everyone";
 
-    public ImageGroupFactory getImageGroupFactory() {
-        return m_imageGroupFactory;
-    }
-
-    public void setImageGroupFactory(ImageGroupFactory factory) {
-        m_imageGroupFactory = factory;
-    }
-
-    public ImageSecurityFactory getImageSecurityFactory() {
-        return m_imageSecurityFactory;
+    public void setImageGroupRepository(ImageGroupRepository imageGroupRepository) {
+        this.imageGroupRepository = imageGroupRepository;
     }
 
     public void setImageSecurityFactory(ImageSecurityFactory factory) {
-        m_imageSecurityFactory = factory;
+        this.imageSecurityFactory = factory;
     }
 
     public void setImageFactory(ImageFactory factory) {
-        m_imageFactory = factory;
-    }
-
-    public UserFactory getUserFactory() {
-        return m_userFactory;
+        this.imageFactory = factory;
     }
 
     public void setUserFactory(UserFactory factory) {
-        m_userFactory = factory;
-    }
-
-    public SessionFactory getSessionFactory() {
-        return m_sessionFactory;
-    }
-
-    public void setSessionFactory(SessionFactory sf) {
-        m_sessionFactory = sf;
-    }
-
-    public HibernateTemplate getHibernateTemplate() {
-        return m_hibernateTemplate;
+        this.userFactory = factory;
     }
 
     public void setHibernateTemplate(HibernateTemplate template) {
-        m_hibernateTemplate = template;
+        this.hibernateTemplate = template;
     }
 
-    public void setGroupFactory(GroupFactory factory) {
-        m_groupFactory = factory;
+    public void setGroupFactory(GroupFactory groupFactory) {
+        this.groupFactory = groupFactory;
     }
 
     public void makeEverythingPublic(final String ownerName) {
-        m_hibernateTemplate.execute(new HibernateCallback() {
+        hibernateTemplate.execute(new HibernateCallback() {
                 public Object doInHibernate(Session session) {
-                    User owner = m_userFactory.getByScreenName(ownerName);
-
                     Collection<ImageGroup> imageGroups =
-                        m_imageGroupFactory
+                        imageGroupRepository
                         .getAlbumsByOwnerScreenName(ownerName);
-                    imageGroups.addAll(m_imageGroupFactory
+                    imageGroups.addAll(imageGroupRepository
                                        .getRollsByOwnerScreenName(ownerName));
 
                     for (ImageGroup group : imageGroups) {
@@ -131,25 +99,25 @@ public class AddPermissions {
 
     // assumes within a session
     private void makeGroupPublic(ImageGroup group) {
-        m_imageSecurityFactory.makePublic(group);
+        imageSecurityFactory.makePublic(group);
         s_log.info("Added public permission for group: "
                    + group.getName());
 
         Collection<ImageFrame> frames = group.getFrames();
 
         for (ImageFrame frame : frames) {
-            m_imageSecurityFactory.makePublic(frame);
+            imageSecurityFactory.makePublic(frame);
             s_log.info("Added public permission for frame: "
                        + frame.getPosition() + " of group "
                        + group.getName());
 
             Image image = frame.getImage();
-            m_imageSecurityFactory.makePublic(image);
+            imageSecurityFactory.makePublic(image);
             s_log.info("Added public permission for image: "
                        + image.getDisplayName());
 
             for (ImageManifestation mf : image.getManifestations()) {
-                m_imageSecurityFactory.makePublic(mf);
+                imageSecurityFactory.makePublic(mf);
                 s_log.info("Added public permission for "
                            + "manifestation: "
                            + mf.getHeight() + "x" + mf.getWidth());
@@ -160,14 +128,14 @@ public class AddPermissions {
     public void makeImageGroupsPublic(final String ownerName, final String type,
                                       final Collection<String> groupNames) {
 
-        m_hibernateTemplate.execute(new HibernateCallback() {
+        hibernateTemplate.execute(new HibernateCallback() {
             public Object doInHibernate(Session session) {
-                User owner = m_userFactory.getByScreenName(ownerName);
+                User owner = userFactory.getByScreenName(ownerName);
                 for (String groupName : groupNames) {
                     ImageGroup group;
                     if ("roll".equals(type)) {
                         group =
-                            m_imageGroupFactory.getRollByOwnerAndName(owner,
+                            imageGroupRepository.getRollByOwnerAndName(owner,
                                                                       groupName);
                         if (group == null) {
                             s_log.error("No roll found with name " + groupName
@@ -175,7 +143,7 @@ public class AddPermissions {
                         }
                     } else if ("album".equals(type)) {
                         group =
-                            m_imageGroupFactory.getAlbumByOwnerAndName(owner,
+                            imageGroupRepository.getAlbumByOwnerAndName(owner,
                                                                        groupName);
                         s_log.error("No album found with name " + groupName
                                     + " owned by " + owner);
@@ -190,22 +158,22 @@ public class AddPermissions {
     }
 
     public void addAllOwnerPermissions(final String ownerName) {
-        m_hibernateTemplate.execute(new HibernateCallback() {
+        hibernateTemplate.execute(new HibernateCallback() {
                 public Object doInHibernate(Session session) {
                     List<ImageGroup> groups =
-                        m_imageGroupFactory
+                        imageGroupRepository
                         .getRollsByOwnerScreenName(ownerName);
-                    groups.addAll(m_imageGroupFactory
+                    groups.addAll(imageGroupRepository
                                   .getAlbumsByOwnerScreenName(ownerName));
                     for (ImageGroup group : groups) {
-                        m_imageSecurityFactory.addOwnerAcl(group);
+                        imageSecurityFactory.addOwnerAcl(group);
                         for (ImageFrame frame : group.getFrames()) {
-                            m_imageSecurityFactory.addOwnerAcl(frame);
+                            imageSecurityFactory.addOwnerAcl(frame);
                             Image image = frame.getImage();
-                            m_imageSecurityFactory.addOwnerAcl(image);
+                            imageSecurityFactory.addOwnerAcl(image);
                             for (ImageManifestation mf
                                      : image.getManifestations()) {
-                                m_imageSecurityFactory.addOwnerAcl(mf);
+                                imageSecurityFactory.addOwnerAcl(mf);
                             }
                         }
                     }
@@ -216,20 +184,20 @@ public class AddPermissions {
 
     public void addOwnerPermissions(final String ownerName,
 				    final String albumName) {
-        m_hibernateTemplate.execute(new HibernateCallback() {
+        hibernateTemplate.execute(new HibernateCallback() {
                 public Object doInHibernate(Session session) {
-                    User user = m_userFactory.getByScreenName(ownerName);
+                    User user = userFactory.getByScreenName(ownerName);
 		    ImageGroup group =
-			m_imageGroupFactory.getAlbumByOwnerAndName(user,
+			imageGroupRepository.getAlbumByOwnerAndName(user,
 								   albumName);
-		    m_imageSecurityFactory.addOwnerAcl(group);
+		    imageSecurityFactory.addOwnerAcl(group);
 		    for (ImageFrame frame : group.getFrames()) {
-			m_imageSecurityFactory.addOwnerAcl(frame);
+			imageSecurityFactory.addOwnerAcl(frame);
 			Image image = frame.getImage();
-			m_imageSecurityFactory.addOwnerAcl(image);
+			imageSecurityFactory.addOwnerAcl(image);
 			for (ImageManifestation mf
 				 : image.getManifestations()) {
-			    m_imageSecurityFactory.addOwnerAcl(mf);
+			    imageSecurityFactory.addOwnerAcl(mf);
 			}
 		    }
 		    return null;
@@ -238,20 +206,20 @@ public class AddPermissions {
     }
 
     public void fixFramePermissions() {
-        m_hibernateTemplate.execute(new HibernateCallback() {
+        hibernateTemplate.execute(new HibernateCallback() {
                 public Object doInHibernate(Session session) {
                     List<ImageGroup> groups =
-                        m_imageGroupFactory.getAll();
+                        imageGroupRepository.getAll();
 
                     for (ImageGroup group : groups) {
                         for (ImageFrame frame : group.getFrames()) {
-                            if (m_imageSecurityFactory.isPublic(frame
+                            if (imageSecurityFactory.isPublic(frame
                                                                 .getImage())) {
                                 s_log.info("Making frame public: " + frame);
-                                m_imageSecurityFactory.makePublic(frame);
+                                imageSecurityFactory.makePublic(frame);
                             } else {
                                 s_log.info("Making frame private: " + frame);
-                                m_imageSecurityFactory.makePrivate(frame);
+                                imageSecurityFactory.makePrivate(frame);
                             }
                         }
                     }
@@ -262,14 +230,14 @@ public class AddPermissions {
 
     public void makeAdminReadable(final String username,
                                   final Collection<Long> imageIds) {
-        m_hibernateTemplate.execute(new HibernateCallback() {
+        hibernateTemplate.execute(new HibernateCallback() {
                 public Object doInHibernate(Session session) {
-                    User user = m_userFactory.getByScreenName(username);
+                    User user = userFactory.getByScreenName(username);
                     for (Long id : imageIds) {
-                        Image image = m_imageFactory.getById(id);
+                        Image image = imageFactory.getById(id);
                         ImageGroup roll =
-                            m_imageGroupFactory.getRollForImage(image);
-                        m_imageSecurityFactory
+                            imageGroupRepository.getRollForImage(image);
+                        imageSecurityFactory
                             .addPermission(image, roll, user,
                                            SimpleAclEntry.READ
                                            | SimpleAclEntry.ADMINISTRATION);
@@ -281,14 +249,14 @@ public class AddPermissions {
 
     public void makeReadable(final String username,
                              final Collection<Long> imageIds) {
-        m_hibernateTemplate.execute(new HibernateCallback() {
+        hibernateTemplate.execute(new HibernateCallback() {
                 public Object doInHibernate(Session session) {
-                    User user = m_userFactory.getByScreenName(username);
+                    User user = userFactory.getByScreenName(username);
                     for (Long id : imageIds) {
-                        Image image = m_imageFactory.getById(id);
+                        Image image = imageFactory.getById(id);
                         ImageGroup roll =
-                            m_imageGroupFactory.getRollForImage(image);
-                        m_imageSecurityFactory
+                            imageGroupRepository.getRollForImage(image);
+                        imageSecurityFactory
                             .addPermission(image, roll, user,
                                            SimpleAclEntry.READ);
                     }
@@ -302,7 +270,7 @@ public class AddPermissions {
                                final String firstname,
                                final String lastname,
                                final String primaryEmail) {
-        m_hibernateTemplate.execute(new HibernateCallback() {
+        hibernateTemplate.execute(new HibernateCallback() {
                 public Object doInHibernate(Session session) {
                     try {
                         s_log.info("Adding account: " + username);
@@ -315,7 +283,7 @@ public class AddPermissions {
                                          .encodePassword(password.toCharArray()));
                         session.saveOrUpdate(user);
                         Group everyoneGroup =
-                            m_groupFactory.getByName(EVERYONE_GROUP_NAME);
+                            groupFactory.getByName(EVERYONE_GROUP_NAME);
                         everyoneGroup.addUser(user);
                     } catch (Exception e) {
                         s_log.error("Error adding account", e);
@@ -395,7 +363,6 @@ public class AddPermissions {
         } else if ("makeImageGroupsPublic".equals(command)) {
             ImageManager manager =
                 (ImageManager) appContext.getBean("imageManager");
-            ArrayList<String> groups = new ArrayList<String>();
             for (int i = 3; i < args.length; i++) {
                 manager.makeImageGroupPublic(args[1],
                                              ImageGroup.Type.fromString(args[2]),

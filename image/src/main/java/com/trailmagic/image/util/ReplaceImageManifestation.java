@@ -17,7 +17,7 @@ import com.trailmagic.image.HeavyImageManifestation;
 import com.trailmagic.image.Image;
 import com.trailmagic.image.ImageFrame;
 import com.trailmagic.image.ImageGroup;
-import com.trailmagic.image.ImageGroupFactory;
+import com.trailmagic.image.ImageGroupRepository;
 import com.trailmagic.image.ImageManifestation;
 import com.trailmagic.image.ImageManifestationFactory;
 import com.trailmagic.user.User;
@@ -28,16 +28,13 @@ import java.io.FileInputStream;
 import javax.imageio.ImageIO;
 import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 
 /**
@@ -46,48 +43,41 @@ import org.springframework.orm.hibernate3.SessionFactoryUtils;
  *
  * @author <a href="mailto:oliver@trailmagic.com">Oliver Stewart</a>
  **/
+@Transactional
 public class ReplaceImageManifestation {
-    private SessionFactory m_sessionFactory;
-    private ImageManifestationFactory m_imfFactory;
-    private HibernateTemplate m_hibernateTemplate;
-    private UserFactory m_userFactory;
-    private ImageGroupFactory m_imageGroupFactory;
+    private SessionFactory sessionFactory;
+    private ImageManifestationFactory imfFactory;
+    private HibernateTemplate hibernateTemplate;
+    private UserFactory userFactory;
+    private ImageGroupRepository imageGroupRepository;
 
     private static Logger s_log =
         Logger.getLogger(ReplaceImageManifestation.class);
     private static final String REPLACEIM_BEAN = "replaceImageManifestation";
 
     /**
-     * Gets the session factory to be used to get a session.
-     * @return session factory
-     **/
-    public SessionFactory getSessionFactory() {
-        return m_sessionFactory;
-    }
-
-    /**
      * Sets the session factory to be used to get a session.
      * @return session factory
      **/
     public void setSessionFactory(SessionFactory sf) {
-        m_sessionFactory = sf;
+        this.sessionFactory = sf;
     }
 
     public void setImageManifestationFactory(ImageManifestationFactory factory) {
-        m_imfFactory = factory;
+        imfFactory = factory;
         s_log.debug("setImageManifestationFactory called on "
-                    + this + " with " + m_imfFactory);
+                    + this + " with " + imfFactory);
     }
 
     public void setHibernateTemplate(HibernateTemplate template) {
-        m_hibernateTemplate = template;
+        this.hibernateTemplate = template;
     }
 
     public void setUserFactory(UserFactory factory) {
-        m_userFactory = factory;
+        this.userFactory = factory;
     }
-    public void setImageGroupFactory(ImageGroupFactory factory) {
-        m_imageGroupFactory = factory;
+    public void setImageGroupRepository(ImageGroupRepository imageGroupRepository) {
+        this.imageGroupRepository = imageGroupRepository;
     }
 
     /**
@@ -99,10 +89,10 @@ public class ReplaceImageManifestation {
                                      Integer height) {
         try {
             Session session =
-                SessionFactoryUtils.getSession(getSessionFactory(), false);
+                SessionFactoryUtils.getSession(sessionFactory, false);
 
             HeavyImageManifestation manifest =
-                m_imfFactory.getHeavyById(manifestationId.longValue());
+                imfFactory.getHeavyById(manifestationId.longValue());
             //            s_log.info("Got manifestation id " + manifest.getId());
 
             File srcFile = new File(filename);
@@ -129,7 +119,7 @@ public class ReplaceImageManifestation {
             }
 
             fis.close();
-            SessionFactoryUtils.releaseSession(session, getSessionFactory());
+            SessionFactoryUtils.releaseSession(session, sessionFactory);
 
             s_log.info("Finished importing " + srcFile.getPath());
         } catch (Exception e) {
@@ -141,12 +131,12 @@ public class ReplaceImageManifestation {
     public void replaceManifestations(final String ownerName,
                                       final String rollName,
                                       final String importDir) {
-        m_hibernateTemplate.execute(new HibernateCallback() {
+        hibernateTemplate.execute(new HibernateCallback() {
                 public Object doInHibernate(Session session) {
                     try {
-                        User owner = m_userFactory.getByScreenName(ownerName);
+                        User owner = userFactory.getByScreenName(ownerName);
                         ImageGroup roll =
-                            m_imageGroupFactory
+                            imageGroupRepository
                             .getRollByOwnerAndName(owner, rollName);
                         s_log.info("Processing roll: " + roll.getName());
                         for (ImageFrame frame : roll.getFrames()) {
@@ -178,7 +168,7 @@ public class ReplaceImageManifestation {
 
                                 fis = new FileInputStream(srcFile);
                                 HeavyImageManifestation heavyMf =
-                                    m_imfFactory.getHeavyById(mf.getId());
+                                    imfFactory.getHeavyById(mf.getId());
                                 heavyMf.setData(Hibernate.createBlob(fis));
                                 session.saveOrUpdate(heavyMf);
 
@@ -233,8 +223,8 @@ public class ReplaceImageManifestation {
             (ReplaceImageManifestation) appContext.getBean(REPLACEIM_BEAN);
 
         s_log.debug("got bean " + worker
-                    + "with sf: " + worker.getSessionFactory()
-                    + " and IMFactory: " + worker.m_imfFactory);
+                    + "with sf: " + worker.sessionFactory
+                    + " and IMFactory: " + worker.imfFactory);
 
         if (args.length == 3) {
             worker.replaceManifestations(args[0], args[1], args[2]);

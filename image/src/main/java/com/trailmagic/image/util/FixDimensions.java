@@ -22,7 +22,7 @@ import com.trailmagic.image.Image;
 import com.trailmagic.image.ImageFactory;
 import com.trailmagic.image.ImageFrame;
 import com.trailmagic.image.ImageGroup;
-import com.trailmagic.image.ImageGroupFactory;
+import com.trailmagic.image.ImageGroupRepository;
 import com.trailmagic.image.HeavyImageManifestation;
 import com.trailmagic.image.ImageManifestation;
 import com.trailmagic.image.ImageManifestationFactory;
@@ -34,7 +34,7 @@ import java.awt.image.BufferedImage;
 
 
 public class FixDimensions {
-    private ImageGroupFactory m_imageGroupFactory;
+    private ImageGroupRepository imageGroupRepository;
     private HibernateTemplate m_hibernateTemplate;
     private UserFactory m_userFactory;
     private ImageManifestationFactory m_imageManifestationFactory;
@@ -45,8 +45,8 @@ public class FixDimensions {
     public void setHibernateTemplate(HibernateTemplate template) {
         m_hibernateTemplate = template;
     }
-    public void setImageGroupFactory(ImageGroupFactory factory) {
-        m_imageGroupFactory = factory;
+    public void setImageGroupRepository(ImageGroupRepository factory) {
+        this.imageGroupRepository = factory;
     }
     public void setUserFactory(UserFactory factory) {
         m_userFactory = factory;
@@ -62,7 +62,7 @@ public class FixDimensions {
                     try {
                     User owner = m_userFactory.getByScreenName(ownerName);
                     ImageGroup roll =
-                        m_imageGroupFactory
+                        imageGroupRepository
                         .getRollByOwnerAndName(owner, rollName);
 
                         for (ImageFrame frame : roll.getFrames()) {

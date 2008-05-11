@@ -158,10 +158,10 @@ frames: List of ImageFrames for this group
 
       <div id="globalFooter">
         <div class="footerLeft">
-          To the left.
+<!--          To the left.-->
         </div>
         <div class="footerRight">
-          To the right.
+<!--          To the right.-->
         </div>
       </div>
     <jsp:include page="google-analytics.jspx"/>

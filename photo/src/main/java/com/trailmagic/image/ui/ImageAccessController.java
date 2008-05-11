@@ -16,9 +16,8 @@ package com.trailmagic.image.ui;
 import com.trailmagic.image.Image;
 import com.trailmagic.image.ImageFactory;
 import com.trailmagic.image.ImageGroup;
-import com.trailmagic.image.ImageGroupFactory;
+import com.trailmagic.image.ImageGroupRepository;
 import com.trailmagic.image.security.ImageSecurityFactory;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -30,9 +29,9 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 
 public class ImageAccessController extends SimpleFormController {
-    private ImageSecurityFactory m_imageSecurityFactory;
-    private ImageFactory m_imageFactory;
-    private ImageGroupFactory m_imageGroupFactory;
+    private ImageSecurityFactory imageSecurityFactory;
+    private ImageFactory imageFactory;
+    private ImageGroupRepository imageGroupRepository;
     private static Logger s_log =
         Logger.getLogger(ImageAccessController.class);
 
@@ -41,28 +40,16 @@ public class ImageAccessController extends SimpleFormController {
     private static final String IMAGE_TARGET = "image";
     private static final String IMAGE_GROUP_TARGET = "imageGroup";
 
-    public ImageSecurityFactory getImageSecurityFactory() {
-        return m_imageSecurityFactory;
-    }
-
     public void setImageSecurityFactory(ImageSecurityFactory factory) {
-        m_imageSecurityFactory = factory;
-    }
-
-    public ImageFactory getImageFactory() {
-        return m_imageFactory;
+        this.imageSecurityFactory = factory;
     }
 
     public void setImageFactory(ImageFactory factory) {
-        m_imageFactory = factory;
+        this.imageFactory = factory;
     }
 
-    public ImageGroupFactory getImageGroupFactory() {
-        return m_imageGroupFactory;
-    }
-
-    public void setImageGroupFactory(ImageGroupFactory factory) {
-        m_imageGroupFactory = factory;
+    public void setImageGroupRepository(ImageGroupRepository imageGroupRepository) {
+        this.imageGroupRepository = imageGroupRepository;
     }
 
     protected ModelAndView onSubmit(HttpServletRequest req,
@@ -76,30 +63,30 @@ public class ImageAccessController extends SimpleFormController {
         }
 
         if (IMAGE_TARGET.equals(bean.getTarget())) {
-            Image target = m_imageFactory.getById(bean.getId());
+            Image target = imageFactory.getById(bean.getId());
 
             if (MAKE_PUBLIC_ACTION.equals(bean.getAction())) {
                 s_log.info("Making image public" + target.getClass()
                            + "; " + target);
-                m_imageSecurityFactory.makePublic(target);
+                imageSecurityFactory.makePublic(target);
             } else if (MAKE_PRIVATE_ACTION.equals(bean.getAction())) {
                 s_log.info("Making image private: " + target.getClass()
                            + "; " + target);
-                m_imageSecurityFactory.makePrivate(target);
+                imageSecurityFactory.makePrivate(target);
             } else {
                 throw new Exception("Invalid action");
             }
         } else if (IMAGE_GROUP_TARGET.equals(bean.getTarget())) {
-            ImageGroup target = m_imageGroupFactory.getById(bean.getId());
+            ImageGroup target = imageGroupRepository.getById(bean.getId());
 
             if (MAKE_PUBLIC_ACTION.equals(bean.getAction())) {
                 s_log.info("Making " + target.getType() + " public: "
                            + target);
-                m_imageSecurityFactory.makePublic(target);
+                imageSecurityFactory.makePublic(target);
             } else if (MAKE_PRIVATE_ACTION.equals(bean.getAction())) {
                 s_log.info("Making " + target.getType() + " private: "
                            + target);
-                m_imageSecurityFactory.makePrivate(target);
+                imageSecurityFactory.makePrivate(target);
             } else {
                 throw new Exception("invalid action");
             }

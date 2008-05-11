@@ -17,7 +17,7 @@ import com.trailmagic.image.ImageGroup.Type;
 import com.trailmagic.user.User;
 import java.util.List;
 
-public interface ImageGroupFactory {
+public interface ImageGroupRepository {
     public int ROLL_TYPE = 0;
     public int ALBUM_TYPE = 1;
 
@@ -34,8 +34,8 @@ public interface ImageGroupFactory {
     public List<User> getOwnersByType(Type groupType);
     public List<ImageGroup> getByOwnerScreenNameAndType(String screenName,
                                                         Type groupType);
-    public ImageGroup getByOwnerNameAndType(User owner, String groupName,
-                                            Type groupType);
+    public ImageGroup getByOwnerNameAndTypeWithFrames(User owner, String groupName,
+                                                      Type groupType);
     public List<ImageGroup> getByImage(Image image);
     public ImageGroup getRollForImage(Image image);
     public ImageGroup getById(long id);

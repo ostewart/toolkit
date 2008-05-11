@@ -26,6 +26,7 @@
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
 -->
+
   <!-- bring in jdbc settings from external jdbc.properties -->
   <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
     <property name="locations" value="classpath:jdbc.properties"/>
@@ -64,7 +65,7 @@
     <property name="dataSource"><ref local="dataSource"/></property>
     <property name="sessionFactory"><ref local="sessionFactory"/></property>
   </bean>
-  
+
   <tx:annotation-driven transaction-manager="transactionManager"/>
 
   <bean id="hibernateTemplate"

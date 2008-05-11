@@ -33,6 +33,7 @@ public aspect ImageSecurityAspect implements InitializingBean {
 
     pointcut springAdvised(): !within(ImageSecurityAspect)
         && !within(org.hibernate.*)
+        && !within(com.trailmagic.image.hibernate.*)
         && (execution(public Image *(..))
             && (target(ImageFrame) || target(ImageGroup)))
         || (target(ImageGroup)

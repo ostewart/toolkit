@@ -14,9 +14,7 @@
 package com.trailmagic.image.security;
 
 import com.trailmagic.image.Image;
-import com.trailmagic.image.ImageGroup;
-import com.trailmagic.image.ImageGroupFactory;
-import com.trailmagic.user.User;
+import com.trailmagic.image.ImageGroupRepository;
 import com.trailmagic.user.Owned;
 import com.trailmagic.user.security.OwnerAclProvider;
 import org.apache.log4j.Logger;
@@ -25,15 +23,11 @@ import org.apache.log4j.Logger;
  * Creates an ACL with full permissions for the User owner of an Image.
  **/
 public class ImageOwnerAclProvider extends OwnerAclProvider {
-    private ImageGroupFactory m_imageGroupFactory;
+    private ImageGroupRepository imageGroupRepository;
     private static Logger s_log = Logger.getLogger(ImageOwnerAclProvider.class);
 
-    public void setImageGroupFactory(ImageGroupFactory factory) {
-        m_imageGroupFactory = factory;
-    }
-
-    public ImageGroupFactory getImageGroupFactory() {
-        return m_imageGroupFactory;
+    public void setImageGroupRepository(ImageGroupRepository factory) {
+        imageGroupRepository = factory;
     }
 
     /**
@@ -61,6 +55,6 @@ public class ImageOwnerAclProvider extends OwnerAclProvider {
 
     protected Object getParent(Owned ownedObj) {
         Image image = (Image) ownedObj;
-        return m_imageGroupFactory.getRollForImage(image);
+        return imageGroupRepository.getRollForImage(image);
     }
 }

@@ -59,8 +59,8 @@
 
   <bean id="imageOwnerAclProvider"
     class="com.trailmagic.image.security.ImageOwnerAclProvider">
-    <property name="imageGroupFactory">
-      <ref bean="imageGroupFactory"/>
+    <property name="imageGroupRepository">
+      <ref bean="imageGroupRepository"/>
     </property>
   </bean>
 
@@ -272,15 +272,15 @@
         com.trailmagic.image.ImageManifestationFactory.getById=AFTER_ACL_READ
         com.trailmagic.image.ImageManifestationFactory.getHeavyById=AFTER_ACL_READ
         com.trailmagic.image.ImageManifestationFactory.getAllForImageId=AFTER_ACL_COLLECTION_READ
-        com.trailmagic.image.ImageGroupFactory.getAlbumByOwnerAndName=AFTER_ACL_READ
-        com.trailmagic.image.ImageGroupFactory.getRollByOwnerAndName=AFTER_ACL_READ
-        com.trailmagic.image.ImageGroupFactory.getImageFrameByImageGroupAndImageId=AFTER_ACL_READ
-        com.trailmagic.image.ImageGroupFactory.getAlbumsByOwnerScreenName=AFTER_ACL_COLLECTION_READ
-        com.trailmagic.image.ImageGroupFactory.getRollsByOwnerScreenName=AFTER_ACL_COLLECTION_READ
-        com.trailmagic.image.ImageGroupFactory.getByOwnerScreenNameAndType=AFTER_ACL_COLLECTION_READ
-        com.trailmagic.image.ImageGroupFactory.getByOwnerNameAndType=AFTER_ACL_READ
-        com.trailmagic.image.ImageGroupFactory.getByImage=AFTER_ACL_COLLECTION_READ
-        com.trailmagic.image.ImageGroupFactory.getRollForImage=AFTER_ACL_READ
+        com.trailmagic.image.ImageGroupRepository.getAlbumByOwnerAndName=AFTER_ACL_READ
+        com.trailmagic.image.ImageGroupRepository.getRollByOwnerAndName=AFTER_ACL_READ
+        com.trailmagic.image.ImageGroupRepository.getImageFrameByImageGroupAndImageId=AFTER_ACL_READ
+        com.trailmagic.image.ImageGroupRepository.getAlbumsByOwnerScreenName=AFTER_ACL_COLLECTION_READ
+        com.trailmagic.image.ImageGroupRepository.getRollsByOwnerScreenName=AFTER_ACL_COLLECTION_READ
+        com.trailmagic.image.ImageGroupRepository.getByOwnerScreenNameAndType=AFTER_ACL_COLLECTION_READ
+        com.trailmagic.image.ImageGroupRepository.getByOwnerNameAndTypeWithFrames=AFTER_ACL_READ
+        com.trailmagic.image.ImageGroupRepository.getByImage=AFTER_ACL_COLLECTION_READ
+        com.trailmagic.image.ImageGroupRepository.getRollForImage=AFTER_ACL_READ
         com.trailmagic.image.ImageManifestationFactory.getById=AFTER_ACL_READ
         com.trailmagic.image.ImageManifestationFactory.getHeavyById=AFTER_ACL_READ
         com.trailmagic.image.ImageManifestationFactory.getAllForImageId=AFTER_ACL_COLLECTION_READ
@@ -294,23 +294,33 @@
     </property>
   </bean>
 
-  <bean id="imageSecurityFactory"
-    class="org.springframework.aop.framework.ProxyFactoryBean">
-    <property name="proxyInterfaces">
-      <value>com.trailmagic.image.security.ImageSecurityFactory</value>
-    </property>
-    <property name="targetName">
-      <value>imageSecurityFactoryTarget</value>
-    </property>
-    <property name="interceptorNames">
-      <list>
-<!--        <idref bean="transactionInterceptor"/>-->
-        <idref bean="imageFactorySecurity"/>
-      </list>
-    </property>
+  <!--  this with DefaultAdvisorAutoProxyCreator should advise everything without
+        having to explicitly proxy
+  -->
+  <bean id="methodDefinitionSourceAdvisor"
+  	class="org.acegisecurity.intercept.method.aopalliance.MethodDefinitionSourceAdvisor">
+  	<constructor-arg ref="imageFactorySecurity"/>
   </bean>
+  
+    <bean id="beanNameAutoProxyCreator"
+    class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
+    <property name="beanNames">
+    <list>
+	   <value>imageFactory</value>
+     <value>imageManifestationFactory</value>
+     <value>imageGroupRepository</value>
+     <value>imageFactory</value>
+     <value>imageSecurityFactory</value>
+    </list>
+</property>
+<property name="interceptorNames">
+	<value>methodDefinitionSourceAdvisor</value>
+</property>
+    </bean>
 
-  <bean id="imageSecurityFactoryTarget"
+  
+
+  <bean id="imageSecurityFactory"
     class="com.trailmagic.image.security.AcegiImageSecurityFactory"
     autowire="byName">
   </bean>

@@ -16,7 +16,7 @@ package com.trailmagic.image.ui;
 import com.trailmagic.image.Image;
 import com.trailmagic.image.ImageFactory;
 import com.trailmagic.image.ImageGroup;
-import com.trailmagic.image.ImageGroupFactory;
+import com.trailmagic.image.ImageGroupRepository;
 import com.trailmagic.image.security.ImageSecurityFactory;
 import com.trailmagic.user.User;
 import com.trailmagic.user.UserFactory;
@@ -30,10 +30,10 @@ import java.util.List;
 import java.util.HashMap;
 
 public class GrantAccessController extends SimpleFormController {
-    private ImageSecurityFactory m_imageSecurityFactory;
-    private ImageFactory m_imageFactory;
-    private ImageGroupFactory m_imageGroupFactory;
-    private UserFactory m_userFactory;
+    private ImageSecurityFactory imageSecurityFactory;
+    private ImageFactory imageFactory;
+    private ImageGroupRepository imageGroupRepository;
+    private UserFactory userFactory;
 
     private static Logger s_log =
         Logger.getLogger(GrantAccessController.class);
@@ -41,32 +41,20 @@ public class GrantAccessController extends SimpleFormController {
     private static final String GRANT_ACTION = "grant";
     private static final String MAKE_PUBLIC_ACTION = "makePublic";
 
-    public ImageSecurityFactory getImageSecurityFactory() {
-        return m_imageSecurityFactory;
-    }
-
     public void setImageSecurityFactory(ImageSecurityFactory factory) {
-        m_imageSecurityFactory = factory;
-    }
-
-    public ImageFactory getImageFactory() {
-        return m_imageFactory;
+        this.imageSecurityFactory = factory;
     }
 
     public void setImageFactory(ImageFactory factory) {
-        m_imageFactory = factory;
+        this.imageFactory = factory;
     }
 
-    public ImageGroupFactory getImageGroupFactory() {
-        return m_imageGroupFactory;
-    }
-
-    public void setImageGroupFactory(ImageGroupFactory factory) {
-        m_imageGroupFactory = factory;
+    public void setImageGroupRepository(ImageGroupRepository factory) {
+        this.imageGroupRepository = factory;
     }
 
     public void setUserFactory(UserFactory factory) {
-        m_userFactory = factory;
+        this.userFactory = factory;
     }
 
     protected ModelAndView showForm(HttpServletRequest req,
@@ -74,11 +62,11 @@ public class GrantAccessController extends SimpleFormController {
                                     BindException errors) throws Exception {
         String groupId = req.getParameter("groupId");
         ImageGroup group =
-            m_imageGroupFactory.getById(Long.parseLong(groupId));
+            imageGroupRepository.getById(Long.parseLong(groupId));
 
         HashMap<String,Object> model = new HashMap<String,Object>();
         model.put("imageGroupIsPublic",
-                  m_imageSecurityFactory.isPublic(group));
+                  imageSecurityFactory.isPublic(group));
         model.put("imageGroup", group);
         model.put("groupType", group.getType());
         model.put("groupTypeDisplay",
@@ -98,19 +86,19 @@ public class GrantAccessController extends SimpleFormController {
         List<String> imageIds = bean.getImageIds();
         for (String stringId : imageIds) {
             Long id = Long.parseLong(stringId);
-            Image image = m_imageFactory.getById(id);
+            Image image = imageFactory.getById(id);
             User recipient =
-                m_userFactory.getByScreenName(bean.getRecipient());
+                userFactory.getByScreenName(bean.getRecipient());
             if (GRANT_ACTION.equals(bean.getAction())) {
                 s_log.info("Adding permission " + bean.getMask()
                            + " for " + recipient.getScreenName()
                            + " to Image: " + image);
-                m_imageSecurityFactory.addPermission(image,
+                imageSecurityFactory.addPermission(image,
                                                      recipient.getScreenName(),
                                                      bean.getMask());
             } else if (MAKE_PUBLIC_ACTION.equals(bean.getAction())) {
                 s_log.info("Making Image public: " + image);
-                m_imageSecurityFactory.makePublic(image);
+                imageSecurityFactory.makePublic(image);
             } else {
                 throw new IllegalArgumentException("Unknown action");
             }

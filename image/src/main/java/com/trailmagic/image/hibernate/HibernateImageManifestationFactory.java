@@ -18,10 +18,12 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Query;
 import org.hibernate.HibernateException;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import com.trailmagic.image.*;
 
+@Transactional
 public class HibernateImageManifestationFactory
     implements ImageManifestationFactory {
 

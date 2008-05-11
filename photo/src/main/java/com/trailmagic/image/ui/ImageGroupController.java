@@ -16,7 +16,7 @@ package com.trailmagic.image.ui;
 import com.trailmagic.image.Image;
 import com.trailmagic.image.ImageFrame;
 import com.trailmagic.image.ImageGroup;
-import com.trailmagic.image.ImageGroupFactory;
+import com.trailmagic.image.ImageGroupRepository;
 import com.trailmagic.image.security.ImageSecurityFactory;
 import com.trailmagic.user.User;
 import com.trailmagic.user.UserFactory;
@@ -39,12 +39,7 @@ import org.acegisecurity.ui.savedrequest.SavedRequest;
 import org.acegisecurity.util.PortResolver;
 import org.acegisecurity.util.PortResolverImpl;
 import org.apache.log4j.Logger;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Required;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.util.Assert;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 import org.springframework.web.util.UrlPathHelper;
@@ -54,8 +49,6 @@ import org.springframework.web.util.UrlPathHelper;
  * "/<type-name>s/**" in the handlerMapping in images-servlet.xml
  **/
 public class ImageGroupController implements Controller {
-    private static final String USER_FACTORY_BEAN = "userFactory";
-    private static final String IMG_GROUP_FACTORY_BEAN = "imageGroupFactory";
     private static final String LIST_VIEW = "imageGroupList";
     private static final String USERS_VIEW = "imageGroupUsers";
     private static final String IMG_GROUP_VIEW = "imageGroup";
@@ -65,24 +58,24 @@ public class ImageGroupController implements Controller {
     private static Logger s_log =
         Logger.getLogger(ImageGroupController.class);
 
-    private ImageSecurityFactory m_imageSecurityFactory;
-    private PortResolver m_portResolver = new PortResolverImpl();
-    private ImageGroupFactory m_imageGroupFactory;
-    private UserFactory m_userFactory;
+    private ImageSecurityFactory imageSecurityFactory;
+    private PortResolver portResolver = new PortResolverImpl();
+    private ImageGroupRepository imageGroupRepository;
+    private UserFactory userFactory;
 
     @Required
-    public void setImageGroupFactory(ImageGroupFactory imageGroupFactory) {
-        m_imageGroupFactory = imageGroupFactory;
+    public void setImageGroupRepository(ImageGroupRepository imageGroupRepository) {
+        this.imageGroupRepository = imageGroupRepository;
     }
 
     @Required
     public void setUserFactory(UserFactory userFactory) {
-        m_userFactory = userFactory;
+        this.userFactory = userFactory;
     }
 
     @Required
-    public void setImageSecurityFactory(ImageSecurityFactory factory) {
-        m_imageSecurityFactory = factory;
+    public void setImageSecurityFactory(ImageSecurityFactory imageSecurityFactory) {
+        this.imageSecurityFactory = imageSecurityFactory;
     }
 
 
@@ -95,7 +88,7 @@ public class ImageGroupController implements Controller {
         res.setHeader("Cache-control", "private");
         // save the request in case someone clicks the sign in link
         SavedRequest savedRequest =
-            new SavedRequest(req, m_portResolver);
+            new SavedRequest(req, portResolver);
         if (s_log.isDebugEnabled()) {
             s_log.debug("SavedRequest added to Session: " + savedRequest);
         }
@@ -146,20 +139,25 @@ public class ImageGroupController implements Controller {
 
         // got no args: show users
         if ( !pathTokens.hasMoreTokens() ) {
-            model.put("owners", m_imageGroupFactory.getOwnersByType(groupType));
+            model.put("owners", imageGroupRepository.getOwnersByType(groupType));
             return new ModelAndView(USERS_VIEW, model);
         }
 
         // process first (owner) arg
         String ownerName = pathTokens.nextToken();
-        User owner = m_userFactory.getByScreenName(ownerName);
-        // check for null!
+        User owner = userFactory.getByScreenName(ownerName);
+        // XXX: handle this with an exception instead
+        if (owner == null) {
+            res.sendError(HttpServletResponse.SC_NOT_FOUND,
+                          "No such user");
+            return null;
+        }
         model.put("owner", owner);
 
         // got user arg: show his/her groups
         if ( !pathTokens.hasMoreTokens() ) {
             List<ImageGroup> imageGroups =
-                m_imageGroupFactory.getByOwnerScreenNameAndType(ownerName,
+                imageGroupRepository.getByOwnerScreenNameAndType(ownerName,
                                                             groupType);
 
             List<ImageGroup> filteredGroups = new ArrayList<ImageGroup>();
@@ -174,7 +172,7 @@ public class ImageGroupController implements Controller {
                     filteredGroups.add(group);
                     previewImages.put(group, group.getPreviewImage());
                     numImages.put(group,
-                                  m_imageGroupFactory
+                                  imageGroupRepository
                                   .getPublicFrameCount(group));
                 } catch (AccessDeniedException e) {
                     s_log.debug("Access Denied: not including group in "
@@ -213,7 +211,9 @@ public class ImageGroupController implements Controller {
         // process second (group name) arg
         String groupName = pathTokens.nextToken();
         ImageGroup group =
-            m_imageGroupFactory.getByOwnerNameAndType(owner, groupName, groupType);
+            imageGroupRepository.getByOwnerNameAndTypeWithFrames(owner,
+                                                                 groupName,
+                                                                 groupType);
         if (group == null) {
             res.sendError(HttpServletResponse.SC_NOT_FOUND,
                           "No such " + groupType);
@@ -221,7 +221,7 @@ public class ImageGroupController implements Controller {
         }
         model.put("imageGroup", group);
         model.put("imageGroupIsPublic",
-                  m_imageSecurityFactory.isPublic(group));
+                  imageSecurityFactory.isPublic(group));
 
         SortedSet<ImageFrame> frames = group.getFrames();
         s_log.debug("Frames contains " + frames.size() + " items.");
@@ -240,33 +240,39 @@ public class ImageGroupController implements Controller {
         }
 
         // process third (frame number) arg
+        long frameId;
         try {
-            long frameId = Long.parseLong(pathTokens.nextToken().trim());
-            ImageFrame frame =
-                m_imageGroupFactory.getImageFrameByImageGroupAndImageId(group,
-                                                                    frameId);
-            if ( frame == null ) {
-                // XXX: pure eeeeeevil
-                throw new NumberFormatException("No image found.");
-            }
-            model.put("frame", frame);
-            model.put("image", frame.getImage());
-            model.put("imageIsPublic",
-                      m_imageSecurityFactory.isPublic(frame.getImage()));
-            List<ImageGroup> groupsContainingImage =
-                m_imageGroupFactory.getByImage(frame.getImage());
-            List<ImageGroup> otherGroups = new ArrayList<ImageGroup>();
-            Iterator<ImageGroup> iter = groupsContainingImage.iterator();
-            ImageGroup containingGroup;
-            while (iter.hasNext()) {
-                containingGroup = iter.next();
-                if ( !group.equals(containingGroup) ) {
-                    otherGroups.add(containingGroup);
-                }
-            }
-            model.put("groupsContainingImage", otherGroups);
+            frameId = Long.parseLong(pathTokens.nextToken().trim());
+        } catch (NumberFormatException e) {
+            throw new JspException("Invalid frame number.");
+        }
 
-            SortedSet<ImageFrame> tmpSet = frames.headSet(frame);
+        ImageFrame frame =
+            imageGroupRepository.getImageFrameByImageGroupAndImageId(group,
+                                                                     frameId);
+        if ( frame == null ) {
+            // XXX: we could really do better than this
+            throw new JspException("No image found with ID: " + frameId);
+        }
+
+        model.put("frame", frame);
+        model.put("image", frame.getImage());
+        model.put("imageIsPublic",
+                  imageSecurityFactory.isPublic(frame.getImage()));
+        List<ImageGroup> groupsContainingImage =
+            imageGroupRepository.getByImage(frame.getImage());
+        List<ImageGroup> otherGroups = new ArrayList<ImageGroup>();
+        Iterator<ImageGroup> iter = groupsContainingImage.iterator();
+        ImageGroup containingGroup;
+        while (iter.hasNext()) {
+            containingGroup = iter.next();
+            if ( !group.equals(containingGroup) ) {
+                otherGroups.add(containingGroup);
+            }
+        }
+        model.put("groupsContainingImage", otherGroups);
+
+        SortedSet<ImageFrame> tmpSet = frames.headSet(frame);
 
 //             Iterator iter = tmpSet.iterator();
 //             iter.next();
@@ -275,23 +281,20 @@ public class ImageGroupController implements Controller {
 //             }
 
 
-            if ( !tmpSet.isEmpty() ) {
-                ImageFrame prevFrame = tmpSet.last();
-                model.put("prevFrame", prevFrame);
-            }
-
-            tmpSet = frames.tailSet(frame);
-            Iterator<ImageFrame> framesIter = tmpSet.iterator();
-            framesIter.next();
-            if ( framesIter.hasNext() ) {
-                ImageFrame nextFrame = framesIter.next();
-                model.put("nextFrame", nextFrame);
-            }
-
-            // got user, group, and frame number: show that frame
-            return new ModelAndView(IMAGE_DISPLAY_VIEW, model);
-        } catch (NumberFormatException e) {
-            throw new JspException("Invalid frame number.");
+        if ( !tmpSet.isEmpty() ) {
+            ImageFrame prevFrame = tmpSet.last();
+            model.put("prevFrame", prevFrame);
         }
+
+        tmpSet = frames.tailSet(frame);
+        Iterator<ImageFrame> framesIter = tmpSet.iterator();
+        framesIter.next();
+        if ( framesIter.hasNext() ) {
+            ImageFrame nextFrame = framesIter.next();
+            model.put("nextFrame", nextFrame);
+        }
+
+        // got user, group, and frame number: show that frame
+        return new ModelAndView(IMAGE_DISPLAY_VIEW, model);
     }
 }

@@ -19,7 +19,9 @@ import com.trailmagic.image.ImageGroup;
 import com.trailmagic.image.Photo;
 import java.util.List;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly=true)
 @SuppressWarnings("unchecked") // for query.list()
 public class HibernateImageFactory extends HibernateDaoSupport implements ImageFactory{
     private static final String ALL_IMAGES_QUERY_NAME = "allImages";
@@ -55,6 +57,7 @@ public class HibernateImageFactory extends HibernateDaoSupport implements ImageF
         return new Photo();
     }
 
+    @Transactional(readOnly=false)
     public void save(Photo newPhoto) {
         getHibernateTemplate().save(newPhoto);
     }
