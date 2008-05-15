@@ -21,7 +21,6 @@ user: currently logged in user
 imageGroup: the current ImageGroup
 groupType: the type of ImageGroup
 groupTypeDisplay: the (singular) display name of the type
-owner: the current album's owner
 frames: List of ImageFrames for this group
 
 -->
@@ -86,13 +85,13 @@ frames: List of ImageFrames for this group
         <div class="imageGroup">
           <span class="groupData">
             <span class="displayName">${imageGroup.displayName}</span>
-            <span class="imageCount">${fn:length(frames)} images in ${groupTypeDisplay}</span>
+            <span class="imageCount">${fn:length(frames)} images in ${imageGroup.type.displayString}</span>
             <span class="description">${imageGroup.description}</span>
             <span class="owner">
               Owned by:
-              <tm:imageGroupLink owner="${owner}"
+              <tm:imageGroupLink owner="${imageGroup.owner}"
                                  groupType="${imageGroup.type}">
-                ${owner.screenName}
+                ${imageGroup.owner.screenName}
               </tm:imageGroupLink>
             </span>
 

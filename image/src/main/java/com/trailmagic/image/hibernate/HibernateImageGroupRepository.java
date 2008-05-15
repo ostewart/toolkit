@@ -17,6 +17,7 @@ import com.trailmagic.image.Image;
 import com.trailmagic.image.ImageFrame;
 import com.trailmagic.image.ImageGroup;
 import com.trailmagic.image.ImageGroupRepository;
+import com.trailmagic.image.NoSuchImageFrameException;
 import com.trailmagic.image.ImageGroup.Type;
 import com.trailmagic.user.User;
 import java.util.List;
@@ -36,6 +37,8 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
         "albumByOwnerAndName";
     private static final String IMGFRAME_BY_IMG_GROUP_AND_IMAGE_QRY =
         "imageFrameByImageGroupAndImageId";
+    private static final String IMGFRAME_BY_GROUP_NAME_AND_IMAGE_ID_QRY =
+        "imageFrameByGroupNameAndImageId";
     private static final String ALBUMS_BY_OWNER_NAME_QRY =
         "albumsByOwnerScreenName";
     private static final String ALBUM_OWNERS_QRY =
@@ -108,7 +111,8 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
     }
 
     public ImageFrame getImageFrameByImageGroupAndImageId(ImageGroup group,
-                                                          long imageId) {
+                                                          long imageId)
+        throws NoSuchImageFrameException {
         try {
             Session session =
                 SessionFactoryUtils.getSession(m_sessionFactory, false);
@@ -116,9 +120,34 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
                 session.getNamedQuery(IMGFRAME_BY_IMG_GROUP_AND_IMAGE_QRY);
             qry.setEntity("imageGroup", group);
             qry.setLong("imageId", imageId);
-            return (ImageFrame)qry.uniqueResult();
+            ImageFrame result = (ImageFrame)qry.uniqueResult();
+            if (result == null) {
+                throw new NoSuchImageFrameException(group, imageId);
+            } else {
+                return result;
+            }
         } catch (HibernateException e) {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
+        }
+    }
+
+    public ImageFrame getImageFrameByGroupNameAndImageId(String groupName,
+                                                         long imageId)
+        throws NoSuchImageFrameException {
+        List results =
+            m_hibernateTemplate
+            .findByNamedQueryAndNamedParam(IMGFRAME_BY_GROUP_NAME_AND_IMAGE_ID_QRY,
+                                           new String[] {"groupName", "imageId"},
+                                           new Object[] {groupName, imageId});
+        if (results.size() == 0) {
+            throw new NoSuchImageFrameException(groupName, imageId);
+        } else {
+            // XXX: handle > 1 results
+            
+            // XXX: this seems pretty lame
+            ImageFrame frame = (ImageFrame) results.get(0);
+            frame.getImageGroup().getFrames();
+            return frame;
         }
     }
 

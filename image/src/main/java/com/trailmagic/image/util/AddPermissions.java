@@ -20,6 +20,7 @@ import com.trailmagic.image.ImageGroup;
 import com.trailmagic.image.ImageGroupRepository;
 import com.trailmagic.image.ImageManager;
 import com.trailmagic.image.ImageManifestation;
+import com.trailmagic.image.NoSuchImageGroupException;
 import com.trailmagic.image.security.ImageSecurityFactory;
 import com.trailmagic.user.Group;
 import com.trailmagic.user.GroupFactory;
@@ -364,9 +365,13 @@ public class AddPermissions {
             ImageManager manager =
                 (ImageManager) appContext.getBean("imageManager");
             for (int i = 3; i < args.length; i++) {
-                manager.makeImageGroupPublic(args[1],
-                                             ImageGroup.Type.fromString(args[2]),
-                                             args[i]);
+                try {
+                    manager.makeImageGroupPublic(args[1],
+                                                 ImageGroup.Type.fromString(args[2]),
+                                                 args[i]);
+                } catch (NoSuchImageGroupException e) {
+                    s_log.error("Couldn't make group public:", e);
+                }
             }
             // username, type, groups...
 //            ap.makeImageGroupsPublic(args[1], args[2], groups);

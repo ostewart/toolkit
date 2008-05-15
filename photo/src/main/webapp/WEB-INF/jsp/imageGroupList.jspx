@@ -40,7 +40,7 @@ owner: the current albums' owner
 
     <head>
       <title>
-        <c:out value="${groupTypeDisplay}"/>s for User:
+        ${groupType.pluralDisplayString} for User:
         <c:out value="${owner.screenName}"/>
       </title>
     <link rel="stylesheet"
@@ -79,7 +79,7 @@ owner: the current albums' owner
         <div id="pageDescription">
           <h2 class="thingDescription">
             <span class="bigThing">
-              <c:out value="${groupTypeDisplay}"/>s for User:
+              ${groupType.pluralDisplayString} for User:
             </span>
             <span class="subThing">
               <c:out value="${owner.screenName}"/>
@@ -91,7 +91,7 @@ owner: the current albums' owner
       <div class="imageGroups">
         <c:forEach var="snapper" items="${imageGroups}">
           <div class="imageGroup">
-            <tm:imageGroupLink styleClass="bigLink" owner="${owner}"
+            <tm:imageGroupLink styleClass="bigLink" owner="${snapper.owner}"
               groupType="${snapper.type}" imageGroup="${snapper}">            
 
               <span class="preview">

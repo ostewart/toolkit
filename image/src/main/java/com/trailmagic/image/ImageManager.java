@@ -25,5 +25,6 @@ public interface ImageManager {
     public void makeImageGroupPublic(ImageGroup group);
     public void makeImageGroupPublic(String ownerName,
                                      ImageGroup.Type type,
-                                     String imageGroupName);
+                                     String imageGroupName)
+        throws NoSuchImageGroupException;
 }

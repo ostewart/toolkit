@@ -106,7 +106,7 @@
         <param name="sequence">id_sequence</param>
       </generator>
     </id>
-    <many-to-one name="imageGroup" class="ImageGroup" cascade="none">
+    <many-to-one name="imageGroup" class="ImageGroup" cascade="none" lazy="false">
       <column name="group_id" not-null="true"/>
     </many-to-one>
     <property name="position">
@@ -181,6 +181,12 @@
   <query name="imageFrameByImageGroupAndImageId">
     FROM com.trailmagic.image.ImageFrame frame
     WHERE frame.imageGroup = :imageGroup
+    AND frame.image.id = :imageId
+  </query>
+
+  <query name="imageFrameByGroupNameAndImageId">
+    FROM com.trailmagic.image.ImageFrame frame
+    WHERE frame.imageGroup.name = :groupName
     AND frame.image.id = :imageId
   </query>
 

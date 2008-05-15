@@ -25,7 +25,11 @@ public interface ImageGroupRepository {
     public ImageGroup getAlbumByOwnerAndName(User owner, String albumName);
     public ImageGroup getRollByOwnerAndName(User owner, String rollName);
     public ImageFrame getImageFrameByImageGroupAndImageId(ImageGroup group,
-                                                          long imageId);
+                                                          long imageId)
+        throws NoSuchImageFrameException;
+    public ImageFrame getImageFrameByGroupNameAndImageId(String groupName,
+                                                         long imageId)
+        throws NoSuchImageFrameException;
     public List<ImageFrame> getFramesContainingImage(Image image);
     public List<ImageGroup> getAlbumsByOwnerScreenName(String screenName);
     public List<ImageGroup> getRollsByOwnerScreenName(String screenName);
@@ -35,7 +39,8 @@ public interface ImageGroupRepository {
     public List<ImageGroup> getByOwnerScreenNameAndType(String screenName,
                                                         Type groupType);
     public ImageGroup getByOwnerNameAndTypeWithFrames(User owner, String groupName,
-                                                      Type groupType);
+                                                      Type groupType)
+        throws NoSuchImageGroupException;
     public List<ImageGroup> getByImage(Image image);
     public ImageGroup getRollForImage(Image image);
     public ImageGroup getById(long id);

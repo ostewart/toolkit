@@ -17,6 +17,7 @@ import com.trailmagic.image.Image;
 import com.trailmagic.image.ImageFrame;
 import com.trailmagic.image.ImageGroup;
 import com.trailmagic.image.ImageGroupRepository;
+import com.trailmagic.image.NoSuchImageGroupException;
 import com.trailmagic.image.security.ImageSecurityFactory;
 import com.trailmagic.user.User;
 import com.trailmagic.user.UserFactory;
@@ -121,122 +122,38 @@ public class ImageGroupController implements Controller {
         if (pathTokens.countTokens() <= DIR_TOKENS) {
             if (WebSupport.handleDirectoryUrlRedirect(req, res)) {
                 // stop processing if we redirected
-                return new ModelAndView();
+                return null;
             }
         }
 
         String groupTypeString = pathTokens.nextToken();
-        ImageGroup.Type groupType;
         Map<String,Object> model = new HashMap<String,Object>();
 
         // depluralize
         groupTypeString = groupTypeString.substring(0, groupTypeString.length() - 1);
-        groupType = ImageGroup.Type.fromString(groupTypeString);
-        String groupTypeDisplay = groupTypeString.substring(0, 1).toUpperCase()
-            + groupTypeString.substring(1);
-        model.put("groupTypeDisplay", groupTypeDisplay);
+        ImageGroup.Type groupType = ImageGroup.Type.fromString(groupTypeString);
+
         model.put("groupType", groupTypeString);
 
         // got no args: show users
         if ( !pathTokens.hasMoreTokens() ) {
-            model.put("owners", imageGroupRepository.getOwnersByType(groupType));
-            return new ModelAndView(USERS_VIEW, model);
+            return handleListUsers(groupType, model);
         }
 
         // process first (owner) arg
         String ownerName = pathTokens.nextToken();
-        User owner = userFactory.getByScreenName(ownerName);
-        // XXX: handle this with an exception instead
-        if (owner == null) {
-            res.sendError(HttpServletResponse.SC_NOT_FOUND,
-                          "No such user");
-            return null;
-        }
-        model.put("owner", owner);
 
         // got user arg: show his/her groups
         if ( !pathTokens.hasMoreTokens() ) {
-            List<ImageGroup> imageGroups =
-                imageGroupRepository.getByOwnerScreenNameAndType(ownerName,
-                                                            groupType);
-
-            List<ImageGroup> filteredGroups = new ArrayList<ImageGroup>();
-
-            // show a preview image
-            Map<ImageGroup,Image> previewImages =
-                new HashMap<ImageGroup,Image>();
-            Map<ImageGroup,Integer> numImages =
-                new HashMap<ImageGroup,Integer>();
-            for (ImageGroup group : imageGroups) {
-                try {
-                    filteredGroups.add(group);
-                    previewImages.put(group, group.getPreviewImage());
-                    numImages.put(group,
-                                  imageGroupRepository
-                                  .getPublicFrameCount(group));
-                } catch (AccessDeniedException e) {
-                    s_log.debug("Access Denied: not including group in "
-                                + "collection: " + group);
-                }
-            }
-
-            // sort the groups by upload date (descending)
-            Collections.sort(filteredGroups, new Comparator<ImageGroup>() {
-                    public int compare(ImageGroup g1, ImageGroup g2) {
-                        Date g1Date = g1.getUploadDate();
-                        Date g2Date = g2.getUploadDate();
-                        if (g2Date == null && g1Date == null) {
-                            return 0;
-                        }
-                        
-                        if (g2Date == null) {
-                            return 1;
-                        }
-                        if (g2Date == null) {
-                            return -1;
-                        }
-                        
-                        return g2.getUploadDate()
-                            .compareTo(g1.getUploadDate());
-                    }
-                });
-
-            model.put("numImages", numImages);
-            model.put("imageGroups", filteredGroups);
-            model.put("previewImages", previewImages);
-
-            return new ModelAndView(LIST_VIEW, model);
+            return handleGroupList(groupType, ownerName, model);
         }
 
         // process second (group name) arg
         String groupName = pathTokens.nextToken();
-        ImageGroup group =
-            imageGroupRepository.getByOwnerNameAndTypeWithFrames(owner,
-                                                                 groupName,
-                                                                 groupType);
-        if (group == null) {
-            res.sendError(HttpServletResponse.SC_NOT_FOUND,
-                          "No such " + groupType);
-            return null;
-        }
-        model.put("imageGroup", group);
-        model.put("imageGroupIsPublic",
-                  imageSecurityFactory.isPublic(group));
-
-        SortedSet<ImageFrame> frames = group.getFrames();
-        s_log.debug("Frames contains " + frames.size() + " items.");
-        model.put("frames", frames);
-        /*
-        // XXX: This should be fixed
-        Iterator iter = frames.iterator();
-        while (iter.hasNext()) {
-            iter.next();
-        }*/
-        // XXX: end kludge
 
         // got user and group args: show one group
         if (!pathTokens.hasMoreTokens()) {
-            return new ModelAndView(IMG_GROUP_VIEW, model);
+            return handleDisplayGroup(model, groupType, ownerName, groupName);
         }
 
         // process third (frame number) arg
@@ -247,16 +164,40 @@ public class ImageGroupController implements Controller {
             throw new JspException("Invalid frame number.");
         }
 
+        return handleDisplayFrame(groupName, frameId, model);
+    }
+
+    private ModelAndView handleDisplayGroup(Map<String, Object> model,
+                                            ImageGroup.Type groupType,
+                                            String ownerName,
+                                            String groupName)
+            throws NoSuchImageGroupException {
+        User owner = userFactory.getByScreenName(ownerName);
+        ImageGroup group =
+            imageGroupRepository.getByOwnerNameAndTypeWithFrames(owner,
+                                                                 groupName,
+                                                                 groupType);
+        model.put("imageGroup", group);
+        model.put("imageGroupIsPublic",
+                  imageSecurityFactory.isPublic(group));
+
+        SortedSet<ImageFrame> frames = group.getFrames();
+        s_log.debug("Frames contains " + frames.size() + " items.");
+        model.put("frames", frames);
+
+        return new ModelAndView(IMG_GROUP_VIEW, model);
+    }
+
+    private ModelAndView handleDisplayFrame(String groupName,
+                                            long frameId,
+                                            Map<String, Object> model) {
         ImageFrame frame =
-            imageGroupRepository.getImageFrameByImageGroupAndImageId(group,
-                                                                     frameId);
-        if ( frame == null ) {
-            // XXX: we could really do better than this
-            throw new JspException("No image found with ID: " + frameId);
-        }
+            imageGroupRepository.getImageFrameByGroupNameAndImageId(groupName,
+                                                                    frameId);
 
         model.put("frame", frame);
         model.put("image", frame.getImage());
+        model.put("group", frame.getImageGroup());
         model.put("imageIsPublic",
                   imageSecurityFactory.isPublic(frame.getImage()));
         List<ImageGroup> groupsContainingImage =
@@ -266,12 +207,13 @@ public class ImageGroupController implements Controller {
         ImageGroup containingGroup;
         while (iter.hasNext()) {
             containingGroup = iter.next();
-            if ( !group.equals(containingGroup) ) {
+            if ( !frame.getImageGroup().equals(containingGroup) ) {
                 otherGroups.add(containingGroup);
             }
         }
         model.put("groupsContainingImage", otherGroups);
 
+        SortedSet<ImageFrame> frames = frame.getImageGroup().getFrames();
         SortedSet<ImageFrame> tmpSet = frames.headSet(frame);
 
 //             Iterator iter = tmpSet.iterator();
@@ -296,5 +238,70 @@ public class ImageGroupController implements Controller {
 
         // got user, group, and frame number: show that frame
         return new ModelAndView(IMAGE_DISPLAY_VIEW, model);
+    }
+
+    private ModelAndView handleListUsers(ImageGroup.Type groupType,
+                                         Map<String, Object> model) {
+        model.put("owners", imageGroupRepository.getOwnersByType(groupType));
+        return new ModelAndView(USERS_VIEW, model);
+    }
+
+    private ModelAndView handleGroupList(ImageGroup.Type groupType,
+                                         String ownerName,
+                                         Map<String, Object> model) {
+        List<ImageGroup> imageGroups =
+            imageGroupRepository.getByOwnerScreenNameAndType(ownerName,
+                                                             groupType);
+
+        List<ImageGroup> filteredGroups = new ArrayList<ImageGroup>();
+
+        // show a preview image
+        Map<ImageGroup,Image> previewImages =
+            new HashMap<ImageGroup,Image>();
+        Map<ImageGroup,Integer> numImages =
+            new HashMap<ImageGroup,Integer>();
+        for (ImageGroup group : imageGroups) {
+            try {
+                filteredGroups.add(group);
+                previewImages.put(group, group.getPreviewImage());
+                numImages.put(group,
+                              imageGroupRepository
+                              .getPublicFrameCount(group));
+            } catch (AccessDeniedException e) {
+                s_log.debug("Access Denied: not including group in "
+                            + "collection: " + group);
+            }
+        }
+
+        // sort the groups by upload date (descending)
+        Collections.sort(filteredGroups, new Comparator<ImageGroup>() {
+                public int compare(ImageGroup g1, ImageGroup g2) {
+                    Date g1Date = g1.getUploadDate();
+                    Date g2Date = g2.getUploadDate();
+                    if (g2Date == null && g1Date == null) {
+                        return 0;
+                    }
+                    
+                    if (g2Date == null) {
+                        return 1;
+                    }
+                    if (g2Date == null) {
+                        return -1;
+                    }
+                    
+                    return g2.getUploadDate()
+                        .compareTo(g1.getUploadDate());
+                }
+            });
+
+        User owner = userFactory.getByScreenName(ownerName);
+        model.put("owner", owner);
+        
+        model.put("groupType", groupType);
+        model.put("numImages", numImages);
+        model.put("imageGroups", filteredGroups);
+        model.put("previewImages", previewImages);
+
+        return new ModelAndView(LIST_VIEW, model);
     }
 }

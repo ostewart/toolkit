@@ -40,6 +40,18 @@
       </props>
     </property>
   </bean>
+  
+  <bean id="exceptionHandler"
+    class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+    <property name="exceptionMappings">
+      <props>
+        <prop key="com.trailmagic.user.NoSuchUserException">noUser</prop>
+        <prop key="com.trailmagic.image.NoSuchImageFrameException">noImageFrame</prop>
+        <prop key="com.trailmagic.image.NoSuchImageGroupException">noImageGroup</prop>
+      </props>
+    </property>
+
+  </bean>
 
   <bean id="jspxViewResolver"
     class="org.springframework.web.servlet.view.InternalResourceViewResolver">

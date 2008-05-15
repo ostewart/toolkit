@@ -135,7 +135,8 @@ public class ImageManagerBackend implements ImageManager {
         }
     }
 
-    public void makeImageGroupPublic(String ownerName, Type type, String imageGroupName) {
+    public void makeImageGroupPublic(String ownerName, Type type, String imageGroupName)
+            throws NoSuchImageGroupException {
         User owner = m_userFactory.getByScreenName(ownerName);
         ImageGroup group =
             imageGroupRepository.getByOwnerNameAndTypeWithFrames(owner,

@@ -21,7 +21,6 @@ user: currently logged in user
 image: Image to display
 
 Optional Attributes:
-imageGroup: ImageGroup
 frame: current ImageFrame
 nextFrame: ImageFrame
 prevFrame: ImageFrame
@@ -63,9 +62,7 @@ groupsContainingImage: ImageGroups that contain frame.image
   
   <head>
     <title>
-      <c:out value="${imageGroup.displayName}"/>
-      <c:if test="${!empty imageGroup}"> : </c:if>
-      <c:out value="${image.displayName}"/>
+      ${frame.imageGroup.displayName} : ${image.displayName}
     </title>
     <link rel="stylesheet"
       href="${pageContext.request.contextPath}/imagestore.css"
@@ -116,9 +113,9 @@ groupsContainingImage: ImageGroups that contain frame.image
         </div>
         <div class="imageGroup">
           <span class="groupData">
-            <span class="displayName"><tm:imageGroupLink imageGroup="${imageGroup}">${imageGroup.displayName}</tm:imageGroupLink></span>
-            <span class="imageCount">${fn:length(imageGroup.frames)}
-            images in ${imageGroup.type}</span>
+            <span class="displayName"><tm:imageGroupLink imageGroup="${frame.imageGroup}">${frame.imageGroup.displayName}</tm:imageGroupLink></span>
+            <span class="imageCount">${fn:length(frame.imageGroup.frames)}
+            images in ${frame.imageGroup.type.displayString}</span>
 <!--
             <span class="owner">
               Owned by:
@@ -201,7 +198,7 @@ groupsContainingImage: ImageGroups that contain frame.image
         <c:out value="${image.copyright} ${image.creator}"/>
         <br />
         Owned by <tm:imageGroupLink owner="${image.owner}"
-          groupType="${imageGroup.type}">${image.owner.screenName}</tm:imageGroupLink>
+          groupType="${frame.imageGroup.type}">${image.owner.screenName}</tm:imageGroupLink>
         <br />
       </div>
       
@@ -230,8 +227,7 @@ groupsContainingImage: ImageGroups that contain frame.image
         <br/>
         This image is also in: 
         <c:forEach var="group" items="${groupsContainingImage}">
-          <tm:imageGroupLink imageGroup="${group}"><c:out
-              value="${group.name} (${group.type})"/></tm:imageGroupLink>
+          <tm:imageGroupLink imageGroup="${group}">${group.name} (${group.type.displayString})</tm:imageGroupLink>
         </c:forEach>
       </c:if>
     </div>

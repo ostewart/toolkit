@@ -13,11 +13,13 @@
  */
 package com.trailmagic.user.hibernate;
 
+import com.trailmagic.user.NoSuchUserException;
 import com.trailmagic.user.User;
 import com.trailmagic.user.UserFactory;
 import java.util.List;
 import org.hibernate.SessionFactory;
 import org.springframework.dao.DataAccessException;
+import org.springframework.orm.ObjectRetrievalFailureException;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,7 +47,7 @@ public class HibernateUserFactory implements UserFactory {
         return new User();
     }
 
-    public User getByScreenName(String screenName) throws DataAccessException {
+    public User getByScreenName(String screenName) throws NoSuchUserException {
         List results = m_hibernateTemplate
             .findByNamedQueryAndNamedParam(BY_SN_QUERY_NAME,
                                            "screenName",
@@ -53,12 +55,16 @@ public class HibernateUserFactory implements UserFactory {
         if (results.size() > 0) {
             return (User) results.get(0);
         } else {
-            return null;
+            throw new NoSuchUserException(screenName);
         }
     }
 
-    public User getById(long id) {
-        return (User) m_hibernateTemplate.get(User.class, id);
+    public User getById(long userId) throws NoSuchUserException {
+        try {
+            return (User) m_hibernateTemplate.load(User.class, userId);
+        } catch (ObjectRetrievalFailureException e) {
+            throw new NoSuchUserException(userId);
+        }
     }
 
     @Transactional(readOnly=false)

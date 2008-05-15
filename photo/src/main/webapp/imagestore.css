@@ -181,6 +181,11 @@ clear: both;
   padding: 2.5%;
 }
 
+.imageDetails {
+  margin-left: 20%;
+  margin-right: 20%;
+}
+
 .photoProperties {
   text-align: center;
 }

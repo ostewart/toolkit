@@ -37,7 +37,7 @@ public class ImageGroup implements Owned, AclObjectIdentityAware {
         return this.typeName;
     }
     
-    public String toDisplayString() {
+    public String getDisplayString() {
         switch (this) {
         case ROLL:
             return ROLL_DISPLAY;
@@ -48,7 +48,7 @@ public class ImageGroup implements Owned, AclObjectIdentityAware {
         }
     }
     
-    public String toPluralDisplayString() {
+    public String getPluralDisplayString() {
         switch (this) {
         case ROLL:
             return ROLL_DISPLAY_PLURAL;
