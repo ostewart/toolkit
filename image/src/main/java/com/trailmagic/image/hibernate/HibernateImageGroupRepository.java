@@ -146,7 +146,7 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
             
             // XXX: this seems pretty lame
             ImageFrame frame = (ImageFrame) results.get(0);
-            frame.getImageGroup().getFrames();
+            frame.getImageGroup().getFrames().first();
             return frame;
         }
     }
@@ -301,19 +301,19 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
                 });
     }
 
-    public ImageGroup createImageGroup(Type type) {
-        return new ImageGroup();
-    }
-
     @Transactional(readOnly=false)
     public void saveFrame(ImageFrame frame) {
         m_hibernateTemplate.saveOrUpdate(frame);
-
     }
 
     @Transactional(readOnly=false)
-    public void saveGroup(ImageGroup newGroup) {
-        m_hibernateTemplate.saveOrUpdate(newGroup);
+    public void saveNewGroup(ImageGroup newGroup) {
+        m_hibernateTemplate.save(newGroup);
+    }
+
+    @Transactional(readOnly=false)
+    public ImageGroup saveGroup(ImageGroup imageGroup) {
+        return (ImageGroup) m_hibernateTemplate.merge(imageGroup);
     }
 
     public int getPublicFrameCount(ImageGroup group) {

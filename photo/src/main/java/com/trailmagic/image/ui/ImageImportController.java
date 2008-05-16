@@ -15,6 +15,7 @@ package com.trailmagic.image.ui;
 
 import com.trailmagic.image.util.ImagesParser;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,6 +36,15 @@ public class ImageImportController extends SimpleFormController {
         super();
         this.imagesParser = imagesParser;
     }
+    
+    @Override
+    protected Object formBackingObject(HttpServletRequest request)
+            throws Exception {
+        ImageImportBean command = new ImageImportBean();
+        
+        command.setBaseDir("/photo/import/");
+        return command;
+    }
 
     protected ModelAndView onSubmit(HttpServletRequest req,
                                     HttpServletResponse res,
@@ -48,12 +58,17 @@ public class ImageImportController extends SimpleFormController {
             if ( bean == null ) {
                 throw new Exception("null command in ImageImportController");
             }
+            
+            File baseDir = new File(bean.getBaseDir());
+            if (!baseDir.exists() || !baseDir.isDirectory()) {
+                errors.rejectValue("baseDir", "baseDir.noExistOrNotDirectory");
+            }
 
             byte[] data = bean.getImagesData();
             s_logger.debug("imagesData: " + data);
             ByteArrayInputStream bis = new ByteArrayInputStream(data);
 
-            imagesParser.parse(bis);
+            imagesParser.parse(bis, baseDir);
         } catch (Exception e) {
             s_logger.warn("Exception in onSubmit", e);
             throw e;

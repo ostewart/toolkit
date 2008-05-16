@@ -14,11 +14,11 @@
 package com.trailmagic.image.util;
 
 import com.trailmagic.image.Image;
-import com.trailmagic.image.ImageFactory;
+import com.trailmagic.image.ImageRepository;
 import com.trailmagic.image.ImageFrame;
 import com.trailmagic.image.ImageGroup;
 import com.trailmagic.image.ImageGroupRepository;
-import com.trailmagic.image.ImageManager;
+import com.trailmagic.image.ImageService;
 import com.trailmagic.image.ImageManifestation;
 import com.trailmagic.image.NoSuchImageGroupException;
 import com.trailmagic.image.security.ImageSecurityFactory;
@@ -46,7 +46,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(propagation=Propagation.REQUIRED,readOnly=false)
 public class AddPermissions {
-    private ImageFactory imageFactory;
+    private ImageRepository imageFactory;
     private ImageGroupRepository imageGroupRepository;
     private ImageSecurityFactory imageSecurityFactory;
     private UserFactory userFactory;
@@ -65,7 +65,7 @@ public class AddPermissions {
         this.imageSecurityFactory = factory;
     }
 
-    public void setImageFactory(ImageFactory factory) {
+    public void setImageFactory(ImageRepository factory) {
         this.imageFactory = factory;
     }
 
@@ -334,7 +334,7 @@ public class AddPermissions {
                  "applicationContext-standalone.xml"});
 
         // can't proxy becuase it's a class :(
-        // refactoring to ImageManager
+        // refactoring to ImageService
         AddPermissions ap = null;
 //            (AddPermissions) appContext.getBean(ADD_PERMISSIONS_BEAN);
 
@@ -362,8 +362,8 @@ public class AddPermissions {
         } else if ("addAccounts".equals(command)) {
             ap.addAccounts(args[1]);
         } else if ("makeImageGroupsPublic".equals(command)) {
-            ImageManager manager =
-                (ImageManager) appContext.getBean("imageManager");
+            ImageService manager =
+                (ImageService) appContext.getBean("imageService");
             for (int i = 3; i < args.length; i++) {
                 try {
                     manager.makeImageGroupPublic(args[1],

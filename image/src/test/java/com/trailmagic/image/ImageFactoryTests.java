@@ -6,7 +6,7 @@ import com.trailmagic.user.UserFactory;
 
 public class ImageFactoryTests extends
         AbstractHibernateTests {
-    private ImageFactory imageFactory;
+    private ImageRepository imageFactory;
     private UserFactory userFactory;
     private User testUser;
     private static final String TEST_PHOTO_NAME = "testPhoto";
@@ -16,7 +16,7 @@ public class ImageFactoryTests extends
         setAutowireMode(AUTOWIRE_BY_NAME);
     }
 
-    public ImageFactory getImageFactory() {
+    public ImageRepository getImageFactory() {
         return imageFactory;
     }
 
@@ -24,7 +24,7 @@ public class ImageFactoryTests extends
         this.userFactory = userFactory;
     }
 
-    public void setImageFactory(ImageFactory imageFactory) {
+    public void setImageFactory(ImageRepository imageFactory) {
         this.imageFactory = imageFactory;
     }
     
@@ -39,7 +39,7 @@ public class ImageFactoryTests extends
     }
 
     public void testNewInstance() {
-        Photo newPhoto = imageFactory.createPhoto();
+        Photo newPhoto = new Photo();
         assertNotNull("Should create a new Photo", newPhoto);
         newPhoto.setName(TEST_PHOTO_NAME);
         newPhoto.setDisplayName("Test photo");

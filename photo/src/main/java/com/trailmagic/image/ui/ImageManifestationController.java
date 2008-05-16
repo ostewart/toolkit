@@ -13,40 +13,36 @@
  */
 package com.trailmagic.image.ui;
 
+import com.trailmagic.image.HeavyImageManifestation;
+import com.trailmagic.image.ImageManifestationRepository;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.jsp.JspException;
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.apache.log4j.Logger;
-import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 import org.springframework.web.util.UrlPathHelper;
 
-import com.trailmagic.image.*;
-import com.trailmagic.user.*;
-
 public class ImageManifestationController extends AbstractController {
-    private static final String IMF_BEAN = "imageManifestationFactory";
-    private SessionFactory m_sessionFactory;
-    private String m_controllerPath;
+    private String controllerPath;
+    private ImageManifestationRepository imageManifestationRepository;
 
-    private static Logger s_logger =
+    private static Logger log =
         Logger.getLogger(ImageManifestationController.class);
 
+    public ImageManifestationController(ImageManifestationRepository imageManifestationRepository) {
+        super();
+        this.imageManifestationRepository = imageManifestationRepository;
+    }
+
     public String getControllerPath() {
-        return m_controllerPath;
+        return controllerPath;
     }
 
     public void setControllerPath(String path) {
-        m_controllerPath = path;
+        controllerPath = path;
     }
 
     public ModelAndView handleRequestInternal(HttpServletRequest req,
@@ -55,24 +51,20 @@ public class ImageManifestationController extends AbstractController {
 
         UrlPathHelper pathHelper = new UrlPathHelper();
         String myPath = pathHelper.getLookupPathForRequest(req);
-        s_logger.debug("Controller Path: " + m_controllerPath);
-        myPath = myPath.substring(m_controllerPath.length());
+        log.debug("Controller Path: " + controllerPath);
+        myPath = myPath.substring(controllerPath.length());
         StringTokenizer pathTokens = new StringTokenizer(myPath, "/");
-        int numTokens = pathTokens.countTokens();
 
         Map<String,Object> model = new HashMap<String,Object>();
 
         String method = pathTokens.nextToken();
 
-        ImageManifestationFactory imFactory =
-            (ImageManifestationFactory)getApplicationContext()
-            .getBean(IMF_BEAN);
         if ( method.equals("by-id") ) {
             HeavyImageManifestation mf =
-                imFactory.getHeavyById(Long.parseLong(pathTokens.nextToken()));
+                imageManifestationRepository.getHeavyById(Long.parseLong(pathTokens.nextToken()));
 
             java.io.InputStream dataStream = mf.getData().getBinaryStream();
-            s_logger.debug("Passing manifestation data stream to view (type: "
+            log.debug("Passing manifestation data stream to view (type: "
                            + dataStream.getClass() + ")");
             model.put(InputStreamView.STREAM_KEY, dataStream);
             model.put(InputStreamView.CONTENT_TYPE_KEY, mf.getFormat());

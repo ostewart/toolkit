@@ -14,24 +14,19 @@
 package com.trailmagic.image.hibernate;
 
 import com.trailmagic.image.Image;
-import com.trailmagic.image.ImageFactory;
 import com.trailmagic.image.ImageGroup;
-import com.trailmagic.image.Photo;
+import com.trailmagic.image.ImageRepository;
 import java.util.List;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly=true)
 @SuppressWarnings("unchecked") // for query.list()
-public class HibernateImageFactory extends HibernateDaoSupport implements ImageFactory{
+public class HibernateImageRepository extends HibernateDaoSupport implements ImageRepository{
     private static final String ALL_IMAGES_QUERY_NAME = "allImages";
     private static final String IMAGES_BY_NAME_QUERY_NAME = "imagesByName";
     private static final String IMAGES_BY_NAME_GROUP_QUERY_NAME =
         "imagesByNameAndGroup";
-
-    public Image newInstance() {
-        return new Image();
-    }
 
     public Image getById(long id) {
         return (Image) getHibernateTemplate().get(Image.class, new Long(id));
@@ -52,13 +47,13 @@ public class HibernateImageFactory extends HibernateDaoSupport implements ImageF
                                            new Object[] {name, group});
     }
 
-    public Photo createPhoto() {
-        // TODO Auto-generated method stub
-        return new Photo();
+    @Transactional(readOnly=false)
+    public void saveNew(Image image) {
+        getHibernateTemplate().save(image);
     }
 
     @Transactional(readOnly=false)
-    public void save(Photo newPhoto) {
-        getHibernateTemplate().save(newPhoto);
+    public Image save(Image image) {
+        return (Image) getHibernateTemplate().merge(image);
     }
 }

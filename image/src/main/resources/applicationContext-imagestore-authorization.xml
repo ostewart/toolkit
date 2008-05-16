@@ -265,13 +265,13 @@
     </property>
     <property name="objectDefinitionSource">
       <value>
-        com.trailmagic.image.ImageFactory.getById=AFTER_ACL_READ
-        com.trailmagic.image.ImageFactory.getAll=AFTER_ACL_COLLECTION_READ
-        com.trailmagic.image.ImageFactory.getByNameAndGroup=AFTER_ACL_COLLECTION_READ
-        com.trailmagic.image.ImageFactory.getByName=AFTER_ACL_COLLECTION_READ
-        com.trailmagic.image.ImageManifestationFactory.getById=AFTER_ACL_READ
-        com.trailmagic.image.ImageManifestationFactory.getHeavyById=AFTER_ACL_READ
-        com.trailmagic.image.ImageManifestationFactory.getAllForImageId=AFTER_ACL_COLLECTION_READ
+        com.trailmagic.image.ImageRepository.getById=AFTER_ACL_READ
+        com.trailmagic.image.ImageRepository.getAll=AFTER_ACL_COLLECTION_READ
+        com.trailmagic.image.ImageRepository.getByNameAndGroup=AFTER_ACL_COLLECTION_READ
+        com.trailmagic.image.ImageRepository.getByName=AFTER_ACL_COLLECTION_READ
+        com.trailmagic.image.ImageManifestationRepository.getById=AFTER_ACL_READ
+        com.trailmagic.image.ImageManifestationRepository.getHeavyById=AFTER_ACL_READ
+        com.trailmagic.image.ImageManifestationRepository.getAllForImageId=AFTER_ACL_COLLECTION_READ
         com.trailmagic.image.ImageGroupRepository.getAlbumByOwnerAndName=AFTER_ACL_READ
         com.trailmagic.image.ImageGroupRepository.getRollByOwnerAndName=AFTER_ACL_READ
         com.trailmagic.image.ImageGroupRepository.getImageFrameByImageGroupAndImageId=AFTER_ACL_READ
@@ -281,15 +281,11 @@
         com.trailmagic.image.ImageGroupRepository.getByOwnerNameAndTypeWithFrames=AFTER_ACL_READ
         com.trailmagic.image.ImageGroupRepository.getByImage=AFTER_ACL_COLLECTION_READ
         com.trailmagic.image.ImageGroupRepository.getRollForImage=AFTER_ACL_READ
-        com.trailmagic.image.ImageManifestationFactory.getById=AFTER_ACL_READ
-        com.trailmagic.image.ImageManifestationFactory.getHeavyById=AFTER_ACL_READ
-        com.trailmagic.image.ImageManifestationFactory.getAllForImageId=AFTER_ACL_COLLECTION_READ
         com.trailmagic.image.security.ImageSecurityFactory.makePublic=ACL_OBJECT_ADMIN
         com.trailmagic.image.security.ImageSecurityFactory.makePrivate=ACL_OBJECT_ADMIN
         com.trailmagic.image.security.ImageSecurityFactory.addPermission=ACL_OBJECT_ADMIN
         com.trailmagic.image.security.ImageSecurityFactory.addReadPermission=ACL_OBJECT_ADMIN
         com.trailmagic.image.security.ImageSecurityFactory.setPermission=ACL_OBJECT_ADMIN
-        com.trailmagic.image.security.ImageSecurityFactory.addOwnerAcl=ACL_OBJECT_ADMIN
       </value>
     </property>
   </bean>
@@ -306,8 +302,8 @@
     class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
     <property name="beanNames">
     <list>
-	   <value>imageFactory</value>
-     <value>imageManifestationFactory</value>
+	   <value>imageRepository</value>
+     <value>imageManifestationRepository</value>
      <value>imageGroupRepository</value>
      <value>imageFactory</value>
      <value>imageSecurityFactory</value>

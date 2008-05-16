@@ -106,7 +106,7 @@
         <param name="sequence">id_sequence</param>
       </generator>
     </id>
-    <many-to-one name="imageGroup" class="ImageGroup" cascade="none" lazy="false">
+    <many-to-one name="imageGroup" class="ImageGroup" cascade="persist,merge,save-update" lazy="false">
       <column name="group_id" not-null="true"/>
     </many-to-one>
     <property name="position">
@@ -116,7 +116,7 @@
     <property name="caption">
       <column name="caption" sql-type="varchar(4000)"/>
     </property>
-    <many-to-one name="image" class="Image" cascade="none" lazy="false">
+    <many-to-one name="image" class="Image" cascade="persist,merge,save-update" lazy="false">
       <column name="image_id" not-null="true"/>
     </many-to-one>
   </class>

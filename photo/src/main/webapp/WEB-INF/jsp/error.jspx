@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Copyright (c) 2006 Oliver Stewart.  All Rights Reserved.
+
+ This file is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2, or (at your option)
+ any later version.
+
+ This file is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+-->
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0">
+    <jsp:output 
+        omit-xml-declaration="false"
+        doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"
+        doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
+        doctype-root-element="html"/>
+  
+  <jsp:directive.page isErrorPage="true"/>
+  <html xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:jsp="http://java.sun.com/JSP/Page"
+        xmlns:c="http://java.sun.com/jsp/jstl/core"
+        xmlns:fmt="http://java.sun.com/jsp/jstl/fmt"
+        xmlns:tm="http://trailmagic.com/taglibs/image"
+        xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+        xmlns:authz="http://acegisecurity.org/authz">
+  <head>
+    <title>
+        Error
+    </title>
+    <link rel="stylesheet"
+      href="${pageContext.request.contextPath}/imagestore.css"
+      type="text/css" />
+    <link rel="stylesheet"
+      href="${pageContext.request.contextPath}/imagestore-color.css"
+      type="text/css" title="Standard"/>
+    <link rel="alternate stylesheet"
+      href="${pageContext.request.contextPath}/imagestore-debug.css"
+      type="text/css" title="Debug"/>
+  </head>
+  
+  <body id="image">
+    <jsp:include page="header.jspx"/>
+    <div class="main">
+    <h2>Error</h2>
+    <p>An application error occurred.  Sorry for the inconvenience.
+    Perhaps you could try again and it will work the next time.</p>
+    
+    <p>
+    Error details:
+    </p>
+    <code>
+    ${pageContext.exception}
+    ${exception}
+    <c:forEach var="line" items="${exception.stackTrace}">
+    ${line}
+    </c:forEach>
+    </code>
+</div>
+    <jsp:include page="google-ad.jspx"/>
+
+    <div class="navSection">
+      <div class="prevNav">
+
+      <c:if test="${!empty prev}">
+        <tm:imageFrameLink frame="${prev}">&amp;laquo;
+        Previous</tm:imageFrameLink>
+        </c:if>
+      </div>
+      <div class="nextNav">
+
+      <c:if test="${!empty next}">
+        <tm:imageFrameLink frame="${next}">Next &amp;raquo;</tm:imageFrameLink>
+        </c:if>
+     </div>
+    </div>
+    <jsp:include page="google-analytics.jspx"/>
+  </body>
+</html>
+</jsp:root>

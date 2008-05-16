@@ -19,7 +19,7 @@ import com.trailmagic.image.ImageFrame;
 import com.trailmagic.image.ImageGroup;
 import com.trailmagic.image.ImageGroupRepository;
 import com.trailmagic.image.ImageManifestation;
-import com.trailmagic.image.ImageManifestationFactory;
+import com.trailmagic.image.ImageManifestationRepository;
 import com.trailmagic.user.User;
 import com.trailmagic.user.UserFactory;
 import java.awt.image.BufferedImage;
@@ -46,7 +46,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class ReplaceImageManifestation {
     private SessionFactory sessionFactory;
-    private ImageManifestationFactory imfFactory;
+    private ImageManifestationRepository imfFactory;
     private HibernateTemplate hibernateTemplate;
     private UserFactory userFactory;
     private ImageGroupRepository imageGroupRepository;
@@ -63,7 +63,7 @@ public class ReplaceImageManifestation {
         this.sessionFactory = sf;
     }
 
-    public void setImageManifestationFactory(ImageManifestationFactory factory) {
+    public void setImageManifestationFactory(ImageManifestationRepository factory) {
         imfFactory = factory;
         s_log.debug("setImageManifestationFactory called on "
                     + this + " with " + imfFactory);

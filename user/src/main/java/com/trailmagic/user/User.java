@@ -13,8 +13,10 @@
  */
 package com.trailmagic.user;
 
+import java.io.Serializable;
 
-public class User {
+public class User implements Serializable {
+    private static final long serialVersionUID = 1L;
     private long m_id;
     private String m_screenName;
     private String m_firstName;

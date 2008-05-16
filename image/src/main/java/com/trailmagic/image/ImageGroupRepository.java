@@ -45,11 +45,9 @@ public interface ImageGroupRepository {
     public ImageGroup getRollForImage(Image image);
     public ImageGroup getById(long id);
     public List<ImageGroup> getAll();
-    /** Only need to call this on a new object **/
     public void saveFrame(ImageFrame frame);
-    /** Creates a new ImageGroup...call saveGroup() to persist **/
-    public ImageGroup createImageGroup(Type type);
-    public void saveGroup(ImageGroup newGroup);
+    public void saveNewGroup(ImageGroup newGroup);
+    public ImageGroup saveGroup(ImageGroup imageGroup);
     public int getPublicFrameCount(ImageGroup group);
     public int getAccurateFrameCount(ImageGroup group);
 }

@@ -13,14 +13,16 @@
  */
 package com.trailmagic.image.util;
 
+import com.sun.org.apache.xml.internal.resolver.Catalog;
+import com.sun.org.apache.xml.internal.resolver.CatalogManager;
+import com.sun.org.apache.xml.internal.resolver.tools.CatalogResolver;
 import com.trailmagic.image.HeavyImageManifestation;
 import com.trailmagic.image.Image;
 import com.trailmagic.image.ImageFrame;
 import com.trailmagic.image.ImageGroup;
 import com.trailmagic.image.ImageGroupRepository;
+import com.trailmagic.image.ImageService;
 import com.trailmagic.image.Photo;
-import com.trailmagic.image.ImageGroup.Type;
-import com.trailmagic.image.security.ImageSecurityFactory;
 import com.trailmagic.user.UserFactory;
 import java.io.File;
 import java.io.FileInputStream;
@@ -41,6 +43,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
+import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
 @Transactional(propagation=Propagation.REQUIRED,readOnly=false)
@@ -63,29 +66,19 @@ public class ImagesParserImpl extends DefaultHandler implements ImagesParser {
     private String m_photoFrameNum;
     private File m_baseDir;
     private StringBuffer m_characterData;
-    private ImageSecurityFactory m_imageSecurityFactory;
-    private ImageGroupRepository imageGroupRepository;
+        private ImageGroupRepository imageGroupRepository;
     private UserFactory userFactory;
-    private HibernateTemplate m_hibernateTemplate;
+    private HibernateTemplate hibernateTemplate;
+    private ImageService imageService;
 
-    public void setImageGroupRepository(ImageGroupRepository imageGroupRepository) {
+    public ImagesParserImpl(ImageGroupRepository imageGroupRepository,
+            UserFactory userFactory, HibernateTemplate hibernateTemplate,
+            ImageService imageService) {
+        super();
         this.imageGroupRepository = imageGroupRepository;
-    }
-
-    public void setUserFactory(UserFactory userFactory) {
         this.userFactory = userFactory;
-    }
-
-    public void setHibernateTemplate(HibernateTemplate template) {
-        this.m_hibernateTemplate = template;
-    }
-
-    public ImagesParserImpl() {
-        // nothing to do
-    }
-
-    public void setImageSecurityFactory(ImageSecurityFactory factory) {
-        this.m_imageSecurityFactory = factory;
+        this.hibernateTemplate = hibernateTemplate;
+        this.imageService = imageService;
     }
 
     public File getBaseDir() {
@@ -108,13 +101,6 @@ public class ImagesParserImpl extends DefaultHandler implements ImagesParser {
     }
 
     public void endDocument() {
-	if (m_roll != null && m_roll.getFrames() != null
-	    && m_roll.getFrames().first() != null) {
-	    m_roll.setPreviewImage(m_roll.getFrames().first().getImage());
-	    m_hibernateTemplate.saveOrUpdate(m_roll);
-	    s_logger.debug("Set preview image for roll: " + m_roll.getName());
-
-	}
         // nothing to do ...transaction MUST be committed or rolled back
         // by an interceptor
     }
@@ -169,16 +155,15 @@ public class ImagesParserImpl extends DefaultHandler implements ImagesParser {
 
     public void endImage() {
         s_logger.debug("endImage() called");
-        m_hibernateTemplate.saveOrUpdate(m_image);
-        synchronized (m_hibernateTemplate) {
-            m_hibernateTemplate.flush();
-            m_hibernateTemplate.clear();
+//        imageService.saveNewImage(m_image);
+
+        synchronized (hibernateTemplate) {
+            hibernateTemplate.flush();
+            hibernateTemplate.clear();
         }
-        m_imageSecurityFactory.addOwnerAcl(m_image);
+
         s_logger.debug("Image saved: " + m_image.getName() + " ("
                        + m_image.getId() + ")  Session cleared.");
-        System.gc();
-
         m_image = null;
         m_inImage = false;
     }
@@ -203,7 +188,7 @@ public class ImagesParserImpl extends DefaultHandler implements ImagesParser {
     }
 
     public void startRoll() {
-        m_roll = imageGroupRepository.createImageGroup(Type.ROLL);
+        m_roll = new ImageGroup();
         m_roll.setType(ImageGroup.Type.ROLL);
         m_roll.setSupergroup(null);
         m_roll.setUploadDate(new Date());
@@ -213,13 +198,7 @@ public class ImagesParserImpl extends DefaultHandler implements ImagesParser {
 
     public void endRoll() {
         s_logger.debug("endRoll() called");
-        m_hibernateTemplate.saveOrUpdate(m_roll);
-        m_imageSecurityFactory.addOwnerAcl(m_roll);
-        s_logger.debug("Roll saved: " + m_roll.getName() + " ("
-                       + m_roll.getId() + ") owner: " + m_roll.getOwner()
-                       + " (type: " + m_roll.getType());
-
-	//        m_roll = null;
+        imageService.saveNewImageGroup(m_roll);
         m_inRoll = false;
     }
 
@@ -235,30 +214,21 @@ public class ImagesParserImpl extends DefaultHandler implements ImagesParser {
         // add the photo to the m_photoRollName roll with frame number
         // m_photoFrameNum
 
-        // XXX: have to save the image first
-        m_hibernateTemplate.saveOrUpdate(m_image);
-
-        s_logger.debug("After save, image id is: " + m_image.getId());
-        // this might happen twice, but i think that's okay
-        m_imageSecurityFactory.addOwnerAcl(m_image);
-
-
+        imageService.saveNewImage(m_image);
         ImageFrame frame = new ImageFrame();
         frame.setImageGroup(m_photoRoll);
         frame.setImage(m_image);
         frame.setPosition(Integer.parseInt(m_photoFrameNum));
 
-        s_logger.debug("About to save frame: roll: " + frame.getImageGroup().getId()
-                       + " image: " + frame.getImage().getId() + " position: "
-                       + frame.getPosition());
+        s_logger.debug("About to save frame: " + frame);
 
-        m_hibernateTemplate.saveOrUpdate(frame);
-        m_imageSecurityFactory.addOwnerAcl(frame);
+        imageService.saveNewImageFrame(frame);
+
         s_logger.debug("After save, frame id is: " + frame.getId());
-        //      m_imageSecurityFactory.addOwnerAcl(frame);
-        synchronized (m_hibernateTemplate) {
-            m_hibernateTemplate.flush();
-            m_hibernateTemplate.evict(frame);
+
+        synchronized (hibernateTemplate) {
+            hibernateTemplate.flush();
+            hibernateTemplate.evict(frame);
         }
 
         s_logger.debug("Finished processing photo data for image "
@@ -298,8 +268,8 @@ public class ImagesParserImpl extends DefaultHandler implements ImagesParser {
                     // XXX: we should just use ImageGroup for this normally
                     // so make sure the roll exists as an IG, then
                     // XXX: borked if we don't have owner yet
-                    synchronized (m_hibernateTemplate) {
-                        m_hibernateTemplate.flush();
+                    synchronized (hibernateTemplate) {
+                        hibernateTemplate.flush();
                     }
 
                     m_photoRoll =
@@ -400,21 +370,9 @@ public class ImagesParserImpl extends DefaultHandler implements ImagesParser {
                 return;
             }
             FileInputStream fis = new FileInputStream(srcFile);
+
             m_manifestation.setData(Hibernate.createBlob(fis));
-            m_hibernateTemplate.saveOrUpdate(m_manifestation);
-
-            m_imageSecurityFactory.addOwnerAcl(m_manifestation);
-
-            s_logger.info("ImageManifestation saved: "
-                          + m_manifestation.getName()
-                          + " (" + m_manifestation.getId() + ")"
-                          + "...flushing session and evicting "
-                          + "manifestation.");
-
-            synchronized (m_hibernateTemplate) {
-                m_hibernateTemplate.flush();
-                m_hibernateTemplate.evict(m_manifestation);
-            }
+            imageService.saveNewImageManifestation(m_manifestation);
 
             fis.close();
             s_logger.info("Finished importing " + srcFile.getPath());
@@ -444,7 +402,7 @@ public class ImagesParserImpl extends DefaultHandler implements ImagesParser {
     }
 
     @Transactional(propagation=Propagation.REQUIRED,readOnly=false)
-    public void parseFile(File baseDir, File metadataFile) {
+    public void parseFile(File metadataFile, File baseDir) {
         setBaseDir(baseDir);
         parseFile(metadataFile);
     }
@@ -456,6 +414,13 @@ public class ImagesParserImpl extends DefaultHandler implements ImagesParser {
             SAXParserFactory factory = SAXParserFactory.newInstance();
             factory.setValidating(true);
             SAXParser parser = factory.newSAXParser();
+            XMLReader reader = parser.getXMLReader();
+            
+            CatalogManager cm = new CatalogManager();
+            Catalog catalog = cm.getCatalog();
+            catalog.parseCatalog(getClass().getClassLoader().getResource("CatalogManager.properties"));
+            reader.setEntityResolver(new CatalogResolver(cm));
+
 
             s_logger.info("Parsing input stream...");
             parser.parse(inputStream, this);
@@ -464,6 +429,11 @@ public class ImagesParserImpl extends DefaultHandler implements ImagesParser {
             t.printStackTrace();
             System.exit(1);
         }
+    }
+    
+    public void parse(InputStream inputStream, File baseDir) {
+        setBaseDir(baseDir);
+        parse(inputStream);
     }
 
     public static final void main(String[] args) {
@@ -504,5 +474,4 @@ public class ImagesParserImpl extends DefaultHandler implements ImagesParser {
 
         System.exit(0);
     }
-
 }

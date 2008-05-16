@@ -15,16 +15,11 @@ package com.trailmagic.image;
 
 import java.util.List;
 
-import com.trailmagic.user.User;
-
-public interface ImageFactory {
-
-    public Image newInstance();
+public interface ImageRepository {
     public Image getById(long id);
     public List<Image> getAll();
     public List<Image> getByName(String name);
     public List<Image> getByNameAndGroup(String name, ImageGroup group);
-    /** don't use this...use ImageManager.addPhoto(..) **/ 
-    public Photo createPhoto();
-	public void save(Photo newPhoto);
+    public void saveNew(Image image);
+    public Image save(Image image);
 }

@@ -15,7 +15,6 @@ package com.trailmagic.image;
 
 import com.trailmagic.user.Owned;
 import com.trailmagic.user.User;
-import java.util.SortedSet;
 import org.acegisecurity.acl.basic.AclObjectIdentity;
 import org.acegisecurity.acl.basic.AclObjectIdentityAware;
 import org.acegisecurity.acl.basic.NamedEntityObjectIdentity;
@@ -24,89 +23,87 @@ import org.acegisecurity.acl.basic.NamedEntityObjectIdentity;
  * This class maps the metadata of the manifestation, while its subclass,
  * the <code>HeavyImageManifestation</code> also maps the data.
  **/
-public class ImageManifestation implements Comparable, Owned,
+public class ImageManifestation implements Comparable<ImageManifestation>, Owned,
                                            AclObjectIdentityAware {
-    private long m_id;
-    private Image m_image;
-    private int m_height;
-    private int m_width;
-    private String m_format;
-    private boolean m_original;
-    private String m_name;
+    private long id;
+    private Image image;
+    private int height;
+    private int width;
+    private String format;
+    private boolean original;
+    private String name;
 
     public ImageManifestation() {
     }
 
     public long getId() {
-        return m_id;
+        return id;
     }
 
     public void setId(long id) {
-        m_id = id;
+        this.id = id;
     }
 
     public Image getImage() {
-        return m_image;
+        return image;
     }
 
     public void setImage(Image image) {
-        m_image = image;
+        this.image = image;
         // this would be redundant if we added to the other collection
         //        SortedSet mfs = image.getManifestations();
         //        mfs.add(this);
     }
 
     public int getHeight() {
-        return m_height;
+        return height;
     }
 
     public void setHeight(int height) {
-        m_height = height;
+        this.height = height;
     }
 
     public int getWidth() {
-        return m_width;
+        return width;
     }
 
     public void setWidth(int width) {
-        m_width = width;
+        this.width = width;
     }
 
     public String getFormat() {
-        return m_format;
+        return format;
     }
 
     public void setFormat(String format) {
-        m_format = format;
+        this.format = format;
     }
 
     public boolean isOriginal() {
-        return m_original;
+        return original;
     }
 
     public void setOriginal(boolean original) {
-        m_original = original;
+        this.original = original;
     }
 
     public String getName() {
-        return m_name;
+        return name;
     }
 
     public void setName(String name) {
-        m_name = name;
+        this.name = name;
     }
 
     public int getArea() {
-        return m_height * m_width;
+        return height * width;
     }
 
     public User getOwner() {
-        return m_image.getOwner();
+        return image.getOwner();
     }
 
-    public int compareTo(Object obj) throws ClassCastException {
-        ImageManifestation other = (ImageManifestation) obj;
-
+    public int compareTo(ImageManifestation other) {
         int difference = this.getArea() - other.getArea();
         if (difference == 0) {
             return (int)(this.getId() - other.getId());
@@ -131,5 +128,16 @@ public class ImageManifestation implements Comparable, Owned,
         return new NamedEntityObjectIdentity(ImageManifestation.class
                                              .getName(),
                                              Long.toString(getId()));
+    }
+    
+    @Override
+    public String toString() {
+        return getClass() + "(id=" + id
+            + "; name=" + name
+            + "; height=" + height
+            + "; width=" + width
+            + "; format=" + format
+            + "; original=" + original;
+            
     }
 }

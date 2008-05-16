@@ -32,14 +32,14 @@ public aspect ImageSecurityAspect implements InitializingBean {
         //        && (target(Image) || target(ImageFrame));
 
     pointcut springAdvised(): !within(ImageSecurityAspect)
-        && !within(org.hibernate.*)
-        && !within(com.trailmagic.image.hibernate.*)
-        && (execution(public Image *(..))
-            && (target(ImageFrame) || target(ImageGroup)))
-        || (target(ImageGroup)
-            && execution(public SortedSet<ImageFrame> *(..)))
-        || (target(Image)
-            && execution(public SortedSet<ImageManifestation> *(..)));
+        && !cflow(within(com.trailmagic.image.hibernate.*))
+        && !cflow(call(* com.trailmagic.image.security.ImageSecurityFactory.addOwnerAcl(..)))
+        && ((execution(public Image *(..))
+             && (target(ImageFrame) || target(ImageGroup)))
+            || (target(ImageGroup)
+                && execution(public SortedSet<ImageFrame> *(..)))
+            || (target(Image)
+                && execution(public SortedSet<ImageManifestation> *(..))));
 
     Object around(): springAdvised() {
         if (m_securityInterceptor != null) {

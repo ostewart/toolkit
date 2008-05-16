@@ -14,7 +14,7 @@
 package com.trailmagic.image.ui;
 
 import com.trailmagic.image.Image;
-import com.trailmagic.image.ImageFactory;
+import com.trailmagic.image.ImageRepository;
 import com.trailmagic.image.ImageGroup;
 import com.trailmagic.image.ImageGroupRepository;
 import com.trailmagic.image.security.ImageSecurityFactory;
@@ -30,7 +30,7 @@ import org.springframework.web.servlet.mvc.SimpleFormController;
 
 public class ImageAccessController extends SimpleFormController {
     private ImageSecurityFactory imageSecurityFactory;
-    private ImageFactory imageFactory;
+    private ImageRepository imageRepository;
     private ImageGroupRepository imageGroupRepository;
     private static Logger s_log =
         Logger.getLogger(ImageAccessController.class);
@@ -44,8 +44,8 @@ public class ImageAccessController extends SimpleFormController {
         this.imageSecurityFactory = factory;
     }
 
-    public void setImageFactory(ImageFactory factory) {
-        this.imageFactory = factory;
+    public void setImageRepository(ImageRepository repository) {
+        this.imageRepository = repository;
     }
 
     public void setImageGroupRepository(ImageGroupRepository imageGroupRepository) {
@@ -63,7 +63,7 @@ public class ImageAccessController extends SimpleFormController {
         }
 
         if (IMAGE_TARGET.equals(bean.getTarget())) {
-            Image target = imageFactory.getById(bean.getId());
+            Image target = imageRepository.getById(bean.getId());
 
             if (MAKE_PUBLIC_ACTION.equals(bean.getAction())) {
                 s_log.info("Making image public" + target.getClass()

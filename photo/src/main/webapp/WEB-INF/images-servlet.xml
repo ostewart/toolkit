@@ -50,7 +50,8 @@
         <prop key="com.trailmagic.image.NoSuchImageGroupException">noImageGroup</prop>
       </props>
     </property>
-
+    <property name="defaultErrorView" value="error" />
+    <property name="defaultStatusCode" value="500" />
   </bean>
 
   <bean id="jspxViewResolver"
@@ -95,7 +96,7 @@
 
   <bean id="imageEditController"
     class="com.trailmagic.image.ui.ImageEditController">
-    <constructor-arg ref="imageFactory"/>
+    <constructor-arg ref="imageRepository"/>
       <property name="commandClass" value="com.trailmagic.image.Image"/>
       <property name="commandName" value="image"/>
       <property name="formView" value="imageDisplay"/>
@@ -148,22 +149,8 @@
   </bean>
 
   <bean id="imageManifestationController"
-    class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-    <property name="transactionManager">
-      <ref bean="transactionManager"/>
-    </property>
-    <property name="target">
-      <ref local="imageManifestationControllerTarget"/>
-    </property>
-    <property name="transactionAttributes">
-      <props>
-        <prop key="handleRequest">PROPAGATION_REQUIRED,readOnly</prop>
-      </props>
-    </property>
-  </bean>
-
-  <bean id="imageManifestationControllerTarget"
     class="com.trailmagic.image.ui.ImageManifestationController">
+    <constructor-arg ref="imageManifestationRepository"/>
     <property name="supportedMethods">
       <value>GET,HEAD</value>
     </property>
@@ -212,8 +199,8 @@
     <property name="successView">
       <value>imageAccessSuccess</value>
     </property>
-    <property name="imageFactory">
-      <ref bean="imageFactory"/>
+    <property name="imageRepository">
+      <ref bean="imageRepository"/>
     </property>
     <property name="imageGroupRepository">
       <ref bean="imageGroupRepository"/>
@@ -237,8 +224,8 @@
     <property name="successView">
       <value>grantAccessSuccess</value>
     </property>
-    <property name="imageFactory">
-      <ref bean="imageFactory"/>
+    <property name="imageRepository">
+      <ref bean="imageRepository"/>
     </property>
     <property name="imageGroupRepository">
       <ref bean="imageGroupRepository"/>

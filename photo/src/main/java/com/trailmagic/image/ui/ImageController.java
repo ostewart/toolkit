@@ -59,8 +59,8 @@ public class ImageController extends AbstractController {
 
         Map<String,Object> model =
             new HashMap<String,Object>();
-        ImageFactory imageFactory =
-            (ImageFactory)getApplicationContext().getBean(IMAGE_FACTORY_BEAN);
+        ImageRepository imageFactory =
+            (ImageRepository)getApplicationContext().getBean(IMAGE_FACTORY_BEAN);
 
         // got no args: show random images
         if ( !pathTokens.hasMoreTokens() ) {

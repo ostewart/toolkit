@@ -13,14 +13,11 @@
  */
 package com.trailmagic.image;
 
-import com.trailmagic.user.User;
-
-public interface ImageManager {
-    public ImageGroup createImageGroup(ImageGroup.Type type,
-                                       User owner, String name);
-    public Photo addPhoto(User owner, ImageGroup roll, String name);
-    public ImageGroup addImageGroup(User owner, ImageGroup.Type type, String name);
-    //    public void addImageToGroup(Image image, ImageGroup group);
+public interface ImageService {
+    public void saveNewImage(Image image);
+    public void saveNewImageGroup(ImageGroup imageGroup);
+    public void saveNewImageFrame(ImageFrame imageFrame);
+    public void saveNewImageManifestation(HeavyImageManifestation imageManifestation);
     public ImageFrame addImageToGroup(Image image, ImageGroup group, int position);
     public void makeImageGroupPublic(ImageGroup group);
     public void makeImageGroupPublic(String ownerName,

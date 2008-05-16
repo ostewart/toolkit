@@ -14,7 +14,7 @@
 package com.trailmagic.image.util;
 
 import com.trailmagic.image.Image;
-import com.trailmagic.image.ImageFactory;
+import com.trailmagic.image.ImageRepository;
 import com.trailmagic.image.ImageFrame;
 import com.trailmagic.image.ImageGroup;
 import com.trailmagic.image.ImageGroupRepository;
@@ -100,8 +100,8 @@ public class MakeAlbum implements ApplicationContextAware {
             // read each image name from keepers file, get the image from
             // the roll, and add it to the album
 
-            ImageFactory imgFactory =
-                (ImageFactory)m_appContext.getBean(IMAGE_FACTORY_BEAN);
+            ImageRepository imgFactory =
+                (ImageRepository)m_appContext.getBean(IMAGE_FACTORY_BEAN);
             String name = keepers.readLine();
             int position = 0;
 

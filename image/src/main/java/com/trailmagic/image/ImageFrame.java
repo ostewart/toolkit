@@ -19,7 +19,7 @@ import org.acegisecurity.acl.basic.AclObjectIdentity;
 import org.acegisecurity.acl.basic.AclObjectIdentityAware;
 import org.acegisecurity.acl.basic.NamedEntityObjectIdentity;
 
-public class ImageFrame implements Owned, Comparable, AclObjectIdentityAware {
+public class ImageFrame implements Owned, Comparable<ImageFrame>, AclObjectIdentityAware {
     private long m_id;
     private ImageGroup m_imageGroup;
     private int m_position;
@@ -92,8 +92,7 @@ public class ImageFrame implements Owned, Comparable, AclObjectIdentityAware {
     }
 
 
-    public int compareTo(Object obj) throws ClassCastException {
-        ImageFrame other = (ImageFrame) obj;
+    public int compareTo(ImageFrame other) {
         // XXX: need to add something to this to make it consistent with equals
         return (this.m_position - other.m_position);
     }
@@ -116,5 +115,13 @@ public class ImageFrame implements Owned, Comparable, AclObjectIdentityAware {
     public AclObjectIdentity getAclObjectIdentity() {
         return new NamedEntityObjectIdentity(ImageFrame.class.getName(),
                                              Long.toString(getId()));
+    }
+    
+    @Override
+    public String toString() {
+        return getClass() + "(id=" + m_id
+            + "; position=" + m_position
+            + "; image=" + m_image
+            + ")";
     }
 }

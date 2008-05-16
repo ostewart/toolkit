@@ -33,7 +33,7 @@
 
   <!-- override to disable security checks? -->
   <bean id="imageFactory"
-    class="com.trailmagic.image.hibernate.HibernateImageFactory">
+    class="com.trailmagic.image.hibernate.HibernateImageRepository">
     <property name="hibernateTemplate"><ref bean="hibernateTemplate"/></property>
   </bean>
 
@@ -46,14 +46,6 @@
           <ref bean="hibernateTemplate" />
       </property>
   </bean>
-
-  <bean id="imageManifestationFactory"
-    class="com.trailmagic.image.hibernate.HibernateImageManifestationFactory">
-    <property name="sessionFactory">
-      <ref bean="sessionFactory"/>
-    </property>
-  </bean>
-
 
 <!--  
   <bean id="imagesParser"
@@ -123,7 +115,7 @@
       <ref bean="sessionFactory"/>
     </property>
     <property name="imageManifestationFactory">
-      <ref local="imageManifestationFactory"/>
+      <ref bean="imageManifestationFactory"/>
     </property>
     <property name="userFactory">
       <ref bean="userFactory"/>

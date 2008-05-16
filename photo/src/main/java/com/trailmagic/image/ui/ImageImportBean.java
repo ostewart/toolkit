@@ -15,6 +15,7 @@ package com.trailmagic.image.ui;
 
 public class ImageImportBean {
     private byte[] m_imagesData;
+    private String baseDir;
 
     public byte[] getImagesData() {
         return m_imagesData;
@@ -22,5 +23,13 @@ public class ImageImportBean {
 
     public void setImagesData(byte[] imagesData) {
         m_imagesData = imagesData;
+    }
+
+    public String getBaseDir() {
+        return baseDir;
+    }
+
+    public void setBaseDir(String baseDir) {
+        this.baseDir = baseDir;
     }
 }

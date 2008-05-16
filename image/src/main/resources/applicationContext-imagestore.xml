@@ -35,47 +35,38 @@
     </property>
   </bean>
 
-  <bean id="imageManifestationFactory"
-    class="com.trailmagic.image.hibernate.HibernateImageManifestationFactory">
-    <property name="sessionFactory">
-      <ref bean="sessionFactory" />
-    </property>
+  <bean id="imageManifestationRepository"
+    class="com.trailmagic.image.hibernate.HibernateImageManifestationRepository">
+    <constructor-arg ref="hibernateTemplate" />
   </bean>
 
   <tx:annotation-driven transaction-manager="transactionManager" />
 
   <bean id="imagesParser"
     class="com.trailmagic.image.util.ImagesParserImpl">
-    <property name="hibernateTemplate">
-      <ref bean="hibernateTemplate" />
-    </property>
-    <property name="imageSecurityFactory">
-      <ref bean="imageSecurityFactory" />
-    </property>
-    <property name="imageGroupRepository">
-      <ref bean="imageGroupRepository" />
-    </property>
-    <property name="userFactory">
-      <ref bean="userFactory" />
-    </property>
+    <constructor-arg ref="hibernateTemplate"/>
+    <constructor-arg ref="imageGroupRepository"/>
+    <constructor-arg ref="userFactory"/>
+    <constructor-arg ref="imageService"/>
   </bean>
 
   <bean id="testInterceptor"
     class="com.trailmagic.image.security.TestMethodInterceptor" />
 
 
-  <bean id="imageFactory"
-    class="com.trailmagic.image.hibernate.HibernateImageFactory">
+  <bean id="imageRepository"
+    class="com.trailmagic.image.hibernate.HibernateImageRepository">
     <property name="hibernateTemplate">
       <ref bean="hibernateTemplate" />
     </property>
   </bean>
 
-  <bean id="imageManager"
-    class="com.trailmagic.image.ImageManagerBackend">
-    <property name="imageFactory" ref="imageFactory" />
-    <property name="imageGroupRepository" ref="imageGroupRepository" />
-    <property name="imageSecurityFactory" ref="imageSecurityFactory" />
-    <property name="userFactory" ref="userFactory" />
+  <bean id="imageService"
+    class="com.trailmagic.image.ImageServiceImpl">
+    <constructor-arg ref="imageRepository" />
+    <constructor-arg ref="imageGroupRepository" />
+    <constructor-arg ref="imageSecurityFactory" />
+    <constructor-arg ref="userFactory" />
+    <constructor-arg ref="imageManifestationRepository"/>
   </bean>
 </beans>

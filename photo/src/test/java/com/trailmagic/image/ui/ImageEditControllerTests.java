@@ -1,6 +1,6 @@
 package com.trailmagic.image.ui;
 
-import com.trailmagic.image.ImageFactory;
+import com.trailmagic.image.ImageRepository;
 import junit.framework.TestCase;
 import org.easymock.EasyMock;
 
@@ -12,7 +12,7 @@ public class ImageEditControllerTests extends TestCase {
         // TODO Auto-generated method stub
         super.setUp();
 
-        ImageFactory imageFactory = EasyMock.createMock(ImageFactory.class);
+        ImageRepository imageFactory = EasyMock.createMock(ImageRepository.class);
         controller = new ImageEditController(imageFactory);
     }
 

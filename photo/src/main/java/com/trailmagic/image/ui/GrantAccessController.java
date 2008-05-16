@@ -14,7 +14,7 @@
 package com.trailmagic.image.ui;
 
 import com.trailmagic.image.Image;
-import com.trailmagic.image.ImageFactory;
+import com.trailmagic.image.ImageRepository;
 import com.trailmagic.image.ImageGroup;
 import com.trailmagic.image.ImageGroupRepository;
 import com.trailmagic.image.security.ImageSecurityFactory;
@@ -31,7 +31,7 @@ import java.util.HashMap;
 
 public class GrantAccessController extends SimpleFormController {
     private ImageSecurityFactory imageSecurityFactory;
-    private ImageFactory imageFactory;
+    private ImageRepository imageRepository;
     private ImageGroupRepository imageGroupRepository;
     private UserFactory userFactory;
 
@@ -45,8 +45,8 @@ public class GrantAccessController extends SimpleFormController {
         this.imageSecurityFactory = factory;
     }
 
-    public void setImageFactory(ImageFactory factory) {
-        this.imageFactory = factory;
+    public void setImageRepository(ImageRepository factory) {
+        this.imageRepository = factory;
     }
 
     public void setImageGroupRepository(ImageGroupRepository factory) {
@@ -86,7 +86,7 @@ public class GrantAccessController extends SimpleFormController {
         List<String> imageIds = bean.getImageIds();
         for (String stringId : imageIds) {
             Long id = Long.parseLong(stringId);
-            Image image = imageFactory.getById(id);
+            Image image = imageRepository.getById(id);
             User recipient =
                 userFactory.getByScreenName(bean.getRecipient());
             if (GRANT_ACTION.equals(bean.getAction())) {

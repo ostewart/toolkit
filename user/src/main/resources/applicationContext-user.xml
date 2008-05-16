@@ -227,6 +227,7 @@
         /j_acegi_switch_user=ROLE_SUPERVISOR
         /acegilogin.jsp*=ROLE_ANONYMOUS,ROLE_USER
         /login=ROLE_ANONYMOUS,ROLE_USER
+        /import=ROLE_USER
         /**=ROLE_ANONYMOUS,ROLE_USER
       </value>
     </property>

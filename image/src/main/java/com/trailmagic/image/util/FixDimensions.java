@@ -19,13 +19,13 @@ import org.springframework.orm.hibernate3.HibernateTemplate;
 import com.trailmagic.user.User;
 import com.trailmagic.user.UserFactory;
 import com.trailmagic.image.Image;
-import com.trailmagic.image.ImageFactory;
+import com.trailmagic.image.ImageRepository;
 import com.trailmagic.image.ImageFrame;
 import com.trailmagic.image.ImageGroup;
 import com.trailmagic.image.ImageGroupRepository;
 import com.trailmagic.image.HeavyImageManifestation;
 import com.trailmagic.image.ImageManifestation;
-import com.trailmagic.image.ImageManifestationFactory;
+import com.trailmagic.image.ImageManifestationRepository;
 import java.util.List;
 import org.hibernate.Session;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -37,7 +37,7 @@ public class FixDimensions {
     private ImageGroupRepository imageGroupRepository;
     private HibernateTemplate m_hibernateTemplate;
     private UserFactory m_userFactory;
-    private ImageManifestationFactory m_imageManifestationFactory;
+    private ImageManifestationRepository m_imageManifestationFactory;
     private static Logger s_log = Logger.getLogger(FixDimensions.class);
 
     private static final String FIX_DIMENSIONS_BEAN = "fixDimensions";
@@ -52,7 +52,7 @@ public class FixDimensions {
         m_userFactory = factory;
     }
 
-    public void setImageManifestationFactory(ImageManifestationFactory factory) {
+    public void setImageManifestationFactory(ImageManifestationRepository factory) {
         m_imageManifestationFactory = factory;
     }
 

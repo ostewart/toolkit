@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0"
+          xmlns:authz="http://acegisecurity.org/authz">
+    
+    <jsp:directive.page language="java"
+        contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" />
+
+    <div id="globalHeader" xmlns="http://www.w3.org/1999/xhtml">
+      <div class="breadcrumbs">
+&amp;nbsp;
+<!--        trailmagic : testing : some : places-->
+      </div>
+      
+      <div class="userAuth">
+        <authz:authorize ifAllGranted="ROLE_USER">
+          <authz:authentication operation="username"/> |
+          <a href="/photo/logout">Sign Out</a>
+        </authz:authorize>
+        <authz:authorize ifNotGranted="ROLE_USER">
+          <a href="/photo/login">Sign in</a>
+        </authz:authorize>
+      </div>
+    </div>
+    
+    
+    <div id="header">
+        <div id="sitename">
+          <h1>trailmagic.com</h1>
+        </div>
+    </div>
+</jsp:root>
