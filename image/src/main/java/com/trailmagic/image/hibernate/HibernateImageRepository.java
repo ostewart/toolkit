@@ -16,7 +16,9 @@ package com.trailmagic.image.hibernate;
 import com.trailmagic.image.Image;
 import com.trailmagic.image.ImageGroup;
 import com.trailmagic.image.ImageRepository;
+import com.trailmagic.image.NoSuchImageException;
 import java.util.List;
+import org.springframework.orm.ObjectRetrievalFailureException;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +32,14 @@ public class HibernateImageRepository extends HibernateDaoSupport implements Ima
 
     public Image getById(long id) {
         return (Image) getHibernateTemplate().get(Image.class, new Long(id));
+    }
+    
+    public Image loadById(long imageId) {
+        try {
+            return (Image) getHibernateTemplate().load(Image.class, imageId);
+        } catch (ObjectRetrievalFailureException e) {
+            throw new NoSuchImageException(imageId, e);
+        }
     }
 
     public List<Image> getAll() {

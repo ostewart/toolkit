@@ -21,6 +21,7 @@ import com.trailmagic.image.NoSuchImageGroupException;
 import com.trailmagic.image.security.ImageSecurityFactory;
 import com.trailmagic.user.User;
 import com.trailmagic.user.UserFactory;
+import com.trailmagic.web.util.WebRequestTools;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -35,12 +36,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
 import org.acegisecurity.AccessDeniedException;
-import org.acegisecurity.ui.AbstractProcessingFilter;
-import org.acegisecurity.ui.savedrequest.SavedRequest;
-import org.acegisecurity.util.PortResolver;
-import org.acegisecurity.util.PortResolverImpl;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Required;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 import org.springframework.web.util.UrlPathHelper;
@@ -60,25 +56,20 @@ public class ImageGroupController implements Controller {
         Logger.getLogger(ImageGroupController.class);
 
     private ImageSecurityFactory imageSecurityFactory;
-    private PortResolver portResolver = new PortResolverImpl();
     private ImageGroupRepository imageGroupRepository;
     private UserFactory userFactory;
+    private WebRequestTools webRequestTools;
 
-    @Required
-    public void setImageGroupRepository(ImageGroupRepository imageGroupRepository) {
-        this.imageGroupRepository = imageGroupRepository;
-    }
-
-    @Required
-    public void setUserFactory(UserFactory userFactory) {
-        this.userFactory = userFactory;
-    }
-
-    @Required
-    public void setImageSecurityFactory(ImageSecurityFactory imageSecurityFactory) {
+    public ImageGroupController(ImageSecurityFactory imageSecurityFactory,
+                                ImageGroupRepository imageGroupRepository,
+                                UserFactory userFactory,
+                                WebRequestTools webRequestTools) {
+        super();
         this.imageSecurityFactory = imageSecurityFactory;
+        this.imageGroupRepository = imageGroupRepository;
+        this.userFactory = userFactory;
+        this.webRequestTools = webRequestTools;
     }
-
 
     public ModelAndView handleRequest(HttpServletRequest req,
                                       HttpServletResponse res)
@@ -88,16 +79,8 @@ public class ImageGroupController implements Controller {
         // to authorized users
         res.setHeader("Cache-control", "private");
         // save the request in case someone clicks the sign in link
-        SavedRequest savedRequest =
-            new SavedRequest(req, portResolver);
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("SavedRequest added to Session: " + savedRequest);
-        }
-        // Store the HTTP request itself. Used by AbstractProcessingFilter
-        // for redirection after successful authentication (SEC-29)
-        req.getSession().setAttribute(AbstractProcessingFilter
-                                      .ACEGI_SAVED_REQUEST_KEY, savedRequest);
-
+        webRequestTools.saveCurrentRequest(req);
+        
         /*
          * Model Requirements:
          * user: currently logged in user
@@ -128,6 +111,7 @@ public class ImageGroupController implements Controller {
 
         String groupTypeString = pathTokens.nextToken();
         Map<String,Object> model = new HashMap<String,Object>();
+        model.put("thisRequestUrl", webRequestTools.getFullRequestUrl(req));
 
         // depluralize
         groupTypeString = groupTypeString.substring(0, groupTypeString.length() - 1);

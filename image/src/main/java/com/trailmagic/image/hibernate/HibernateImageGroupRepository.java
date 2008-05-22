@@ -18,6 +18,7 @@ import com.trailmagic.image.ImageFrame;
 import com.trailmagic.image.ImageGroup;
 import com.trailmagic.image.ImageGroupRepository;
 import com.trailmagic.image.NoSuchImageFrameException;
+import com.trailmagic.image.NoSuchImageGroupException;
 import com.trailmagic.image.ImageGroup.Type;
 import com.trailmagic.user.User;
 import java.util.List;
@@ -25,6 +26,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.springframework.orm.ObjectRetrievalFailureException;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
@@ -288,6 +290,15 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
             return (ImageGroup)session.get(ImageGroup.class, new Long(id));
         } catch (HibernateException e) {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
+        }
+    }
+    
+    public ImageGroup loadById(long imageGroupId) throws NoSuchImageGroupException {
+        try {
+            return (ImageGroup)
+                m_hibernateTemplate.load(ImageGroup.class, imageGroupId);
+        } catch (ObjectRetrievalFailureException e) {
+            throw new NoSuchImageGroupException(imageGroupId, e);
         }
     }
 

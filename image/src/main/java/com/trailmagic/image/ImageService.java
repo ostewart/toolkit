@@ -24,4 +24,6 @@ public interface ImageService {
                                      ImageGroup.Type type,
                                      String imageGroupName)
         throws NoSuchImageGroupException;
+    public void setImageGroupPreview(long imageGroupId, long imageId)
+        throws NoSuchImageGroupException;
 }

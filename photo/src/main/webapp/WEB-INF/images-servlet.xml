@@ -37,6 +37,7 @@
         <prop key="/changePermission">imageAccessController</prop>
         <prop key="/grantAccess">accessGrantController</prop>
         <prop key="/testing/**">imageEditController</prop>
+        <prop key="/set-preview-image">setPreviewImageController</prop>
       </props>
     </property>
   </bean>
@@ -87,6 +88,8 @@
     </property>
   </bean>
 
+  <bean id="portResolver" class="org.acegisecurity.util.PortResolverImpl"/>
+  
   <bean id="fileController"
     class="org.springframework.web.servlet.mvc.ServletForwardingController">
     <property name="servletName">
@@ -121,11 +124,17 @@
 <!--        -->
 <!--    </aop:config>-->
 
+  <bean id="webRequestTools"
+    class="com.trailmagic.web.util.WebRequestTools">
+    <constructor-arg ref="portResolver"/>
+  </bean>
+
   <bean id="imageGroupController"
     class="com.trailmagic.image.ui.ImageGroupController">
-    <property name="imageGroupRepository" ref="imageGroupRepository"/>
-    <property name="imageSecurityFactory" ref="imageSecurityFactory"/>
-    <property name="userFactory" ref="userFactory"/>
+    <constructor-arg ref="imageGroupRepository"/>
+    <constructor-arg ref="imageSecurityFactory"/>
+    <constructor-arg ref="userFactory"/>
+    <constructor-arg ref="webRequestTools"/>
   </bean>
 
   <bean id="logoutController"
@@ -276,4 +285,9 @@
     </property>
   </bean>
   -->
+  
+  <bean id="setPreviewImageController"
+    class="com.trailmagic.image.ui.SetPreviewImageController">
+    <constructor-arg ref="imageService"/>
+  </bean>
 </beans>

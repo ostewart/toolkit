@@ -165,4 +165,12 @@ public class ImageServiceImpl implements ImageService {
         }
         makeImageGroupPublic(group);
     }
+    
+    public void setImageGroupPreview(long imageGroupId, long imageId)
+            throws NoSuchImageGroupException, NoSuchImageException {
+        ImageGroup imageGroup = imageGroupRepository.loadById(imageGroupId);
+        Image image = imageRepository.loadById(imageId); 
+        imageGroup.setPreviewImage(image);
+        imageGroupRepository.saveGroup(imageGroup);
+    }
 }

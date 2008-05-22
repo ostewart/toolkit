@@ -53,10 +53,10 @@
     Error details:
     </p>
     <code>
-    ${pageContext.exception}
-    ${exception}
+    ${fn:escapeXml(pageContext.exception)}
+    ${fn:escapeXml(exception)}
     <c:forEach var="line" items="${exception.stackTrace}">
-    ${line}
+    ${fn:escapeXml(line)}
     </c:forEach>
     </code>
 </div>

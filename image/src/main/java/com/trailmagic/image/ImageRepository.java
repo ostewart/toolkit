@@ -17,6 +17,7 @@ import java.util.List;
 
 public interface ImageRepository {
     public Image getById(long id);
+    public Image loadById(long imageId) throws NoSuchImageException;
     public List<Image> getAll();
     public List<Image> getByName(String name);
     public List<Image> getByNameAndGroup(String name, ImageGroup group);

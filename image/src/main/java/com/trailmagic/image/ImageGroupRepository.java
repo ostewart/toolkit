@@ -44,6 +44,7 @@ public interface ImageGroupRepository {
     public List<ImageGroup> getByImage(Image image);
     public ImageGroup getRollForImage(Image image);
     public ImageGroup getById(long id);
+    public ImageGroup loadById(long imageGroupId);
     public List<ImageGroup> getAll();
     public void saveFrame(ImageFrame frame);
     public void saveNewGroup(ImageGroup newGroup);

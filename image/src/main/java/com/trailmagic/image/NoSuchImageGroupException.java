@@ -10,4 +10,9 @@ public class NoSuchImageGroupException extends RuntimeException {
         super("No image group owned by " + owner + " with the name "
               + groupName + " and of type " + groupType);
     }
+    
+    public NoSuchImageGroupException(long imageGroupId, Throwable cause) {
+        super("ImageGroup not found with id: " + imageGroupId);
+    }
+    
 }

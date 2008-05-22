@@ -27,9 +27,14 @@ prevFrame: ImageFrame
 nextImage: Image
 prevImage: Image
 groupsContainingImage: ImageGroups that contain frame.image
+thisRequestUrl: the full client-requested URL for this request
 
 -->
 <jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0">
+    <jsp:output 
+        doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"
+        doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
+        doctype-root-element="html"/>
   <html xmlns="http://www.w3.org/1999/xhtml"
         xmlns:jsp="http://java.sun.com/JSP/Page"
         xmlns:c="http://java.sun.com/jsp/jstl/core"
@@ -38,11 +43,6 @@ groupsContainingImage: ImageGroups that contain frame.image
         xmlns:fn="http://java.sun.com/jsp/jstl/functions"
         xmlns:authz="http://acegisecurity.org/authz">
 
-    <jsp:output 
-        omit-xml-declaration="false"
-        doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"
-        doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
-        doctype-root-element="html"/>
   
   <c:set var="datePattern" value="hh:mm a dd-MMM-yyyy"/>
   <!-- Previous Image/Frame Link -->
@@ -165,6 +165,14 @@ groupsContainingImage: ImageGroups that contain frame.image
             </c:choose>
           </jsp:body>
         </jsp:element>
+
+		<c:url var="setPreviewLink" value="/set-preview-image">
+            <c:param name="imageGroupId" value="${frame.imageGroup.id}"/>
+            <c:param name="imageId" value="${image.id}"/>
+            <c:param name="returnToUrl" value="${thisRequestUrl}"/>
+          </c:url>
+          <a href="${fn:escapeXml(setPreviewLink)}">[make preview image for ${frame.imageGroup.name} (${frame.imageGroup.type.displayString})]</a> 
+        
       </authz:acl>
         
     </div>
