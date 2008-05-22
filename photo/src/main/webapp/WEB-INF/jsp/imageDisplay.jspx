@@ -93,19 +93,19 @@ thisRequestUrl: the full client-requested URL for this request
       </div>
     </div>
     
-    <div class="navSection">
-      <span class="prevNav">
-        <c:if test="${!empty prev}">
-          <tm:imageFrameLink frame="${prev}">&amp;laquo;
-            Previous</tm:imageFrameLink>
-        </c:if>
-      </span>
-      <span class="nextNav">
-        <c:if test="${!empty next}">
-          <tm:imageFrameLink frame="${next}">Next &amp;raquo;</tm:imageFrameLink>
-        </c:if>
-      </span>
-    </div>
+<!--    <div class="navSection">-->
+<!--      <span class="prevNav">-->
+<!--        <c:if test="${!empty prev}">-->
+<!--          <tm:imageFrameLink frame="${prev}">&amp;laquo;-->
+<!--            Previous</tm:imageFrameLink>-->
+<!--        </c:if>-->
+<!--      </span>-->
+<!--      <span class="nextNav">-->
+<!--        <c:if test="${!empty next}">-->
+<!--          <tm:imageFrameLink frame="${next}">Next &amp;raquo;</tm:imageFrameLink>-->
+<!--        </c:if>-->
+<!--      </span>-->
+<!--    </div>-->
     
     <div id="header">
         <div id="sitename">
@@ -246,14 +246,13 @@ thisRequestUrl: the full client-requested URL for this request
       <div class="prevNav">
 
       <c:if test="${!empty prev}">
-        <tm:imageFrameLink frame="${prev}">&amp;laquo;
-        Previous</tm:imageFrameLink>
+        <tm:imageFrameLink frame="${prev}"><img title="Previous Image" alt="Previous Image" src="${pageContext.request.contextPath}/left-arrow.png"/></tm:imageFrameLink>
         </c:if>
       </div>
       <div class="nextNav">
 
       <c:if test="${!empty next}">
-        <tm:imageFrameLink frame="${next}">Next &amp;raquo;</tm:imageFrameLink>
+        <tm:imageFrameLink frame="${next}"><img title="Next Image" alt="Next Image" src="${pageContext.request.contextPath}/right-arrow.png"/></tm:imageFrameLink>
         </c:if>
      </div>
     </div>

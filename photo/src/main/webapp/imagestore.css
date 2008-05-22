@@ -146,7 +146,7 @@ body {
 }
 
 .navSection {
-clear: both;
+  clear: both;
   margin-left: auto;
   margin-right: auto;
   float: left;
@@ -157,15 +157,30 @@ clear: both;
 }
 
 .prevNav {
-  float: left;
+  /*float: left;*/
 /*  width: 50%; */
   text-align: left;
+  position: fixed;
+  bottom: 5px;
+  left: 5px;
 }
 
 .nextNav {
-  float: right;
+  /*float: right;*/
 /*  width: 50%; */
   text-align: right;
+  position: fixed;
+  right: 5px;
+  bottom: 5px;
+}
+
+.navSection img {
+	opacity: 0.2;
+	border-width: 0;
+}
+
+.navSection img:hover {
+    opacity: 0.8;
 }
 
 .imageDisplay {
