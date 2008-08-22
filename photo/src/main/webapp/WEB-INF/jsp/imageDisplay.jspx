@@ -62,7 +62,7 @@ thisRequestUrl: the full client-requested URL for this request
   
   <head>
     <title>
-      ${fn:escapeXML(frame.imageGroup.displayName)} : ${fn:escapeXml(image.displayName)}
+      ${fn:escapeXml(frame.imageGroup.displayName)} : ${fn:escapeXml(image.displayName)}
     </title>
     <link rel="stylesheet"
       href="${pageContext.request.contextPath}/imagestore.css"
