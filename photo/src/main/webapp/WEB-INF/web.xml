@@ -82,12 +82,6 @@
     <servlet-name>login</servlet-name>
     <servlet-class>com.trailmagic.user.ui.LoginServlet</servlet-class>
   </servlet>
-
-  <servlet>
-    <servlet-name>fileServlet</servlet-name>
-    <servlet-class>com.caucho.servlets.FileServlet</servlet-class>
-  </servlet>
-
   
   <!-- Servlet Mappings -->
 
@@ -136,5 +130,10 @@
       <form-error-page>/login</form-error-page>
     </form-login-config>
   </login-config>
+-->
+<!--
+<error-page>
+  <location>/WEB-INF/jsp/error.jspx</location>
+</error-page>
 -->
 </web-app>

@@ -24,14 +24,14 @@ groupTypeDisplay: the (singular) display name of the type
 frames: List of ImageFrames for this group
 
 -->
-<html xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:jsp="http://java.sun.com/JSP/Page"
-  xmlns:c="http://java.sun.com/jsp/jstl/core"
-  xmlns:fmt="http://java.sun.com/jsp/jstl/fmt"
-  xmlns:tm="http://trailmagic.com/taglibs/image"
-  xmlns:fn="http://java.sun.com/jsp/jstl/functions"
-  xmlns:authz="http://acegisecurity.org/authz">
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0"
+          xmlns:c="http://java.sun.com/jsp/jstl/core"
+          xmlns:fmt="http://java.sun.com/jsp/jstl/fmt"
+          xmlns:tm="http://trailmagic.com/taglibs/image"
+          xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+          xmlns:authz="http://acegisecurity.org/authz">
 
+<html xmlns="http://www.w3.org/1999/xhtml">
   <jsp:output 
     omit-xml-declaration="false"
     doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"
@@ -39,7 +39,7 @@ frames: List of ImageFrames for this group
     doctype-root-element="html"/>
 
     <head>
-      <title><c:out value="${imageGroup.displayName}"/></title>
+      <title>${fn:escapeXml(imageGroup.displayName)}</title>
       <!-- XXX: must make this path flexible -->
     <link rel="stylesheet"
       href="${pageContext.request.contextPath}/imagestore.css"
@@ -84,14 +84,14 @@ frames: List of ImageFrames for this group
 -->
         <div class="imageGroup">
           <span class="groupData">
-            <span class="displayName">${imageGroup.displayName}</span>
+            <span class="displayName">${fn:escapeXml(imageGroup.displayName)}</span>
             <span class="imageCount">${fn:length(frames)} images in ${imageGroup.type.displayString}</span>
-            <span class="description">${imageGroup.description}</span>
+            <span class="description">${fn:escapeXml(imageGroup.description)}</span>
             <span class="owner">
               Owned by:
               <tm:imageGroupLink owner="${imageGroup.owner}"
                                  groupType="${imageGroup.type}">
-                ${imageGroup.owner.screenName}
+                ${fn:escapeXml(imageGroup.owner.screenName)}
               </tm:imageGroupLink>
             </span>
 
@@ -111,7 +111,7 @@ frames: List of ImageFrames for this group
             <c:if test="${!empty imageGroup.description}">
 
           <div id="imageGroupDescription">
-            <c:out value="${imageGroup.description}"/>
+            <c:out value="${fn:escapeXml(imageGroup.description)}"/>
           </div>
       </c:if>
 -->
@@ -166,3 +166,4 @@ frames: List of ImageFrames for this group
     <jsp:include page="google-analytics.jspx"/>
     </body>
 </html>
+</jsp:root>

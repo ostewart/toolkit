@@ -61,22 +61,6 @@
     </code>
 </div>
     <jsp:include page="google-ad.jspx"/>
-
-    <div class="navSection">
-      <div class="prevNav">
-
-      <c:if test="${!empty prev}">
-        <tm:imageFrameLink frame="${prev}">&amp;laquo;
-        Previous</tm:imageFrameLink>
-        </c:if>
-      </div>
-      <div class="nextNav">
-
-      <c:if test="${!empty next}">
-        <tm:imageFrameLink frame="${next}">Next &amp;raquo;</tm:imageFrameLink>
-        </c:if>
-     </div>
-    </div>
     <jsp:include page="google-analytics.jspx"/>
   </body>
 </html>

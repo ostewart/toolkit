@@ -62,7 +62,7 @@ thisRequestUrl: the full client-requested URL for this request
   
   <head>
     <title>
-      ${frame.imageGroup.displayName} : ${image.displayName}
+      ${fn:escapeXML(frame.imageGroup.displayName)} : ${fn:escapeXml(image.displayName)}
     </title>
     <link rel="stylesheet"
       href="${pageContext.request.contextPath}/imagestore.css"
@@ -113,7 +113,7 @@ thisRequestUrl: the full client-requested URL for this request
         </div>
         <div class="imageGroup">
           <span class="groupData">
-            <span class="displayName"><tm:imageGroupLink imageGroup="${frame.imageGroup}">${frame.imageGroup.displayName}</tm:imageGroupLink></span>
+            <span class="displayName"><tm:imageGroupLink imageGroup="${frame.imageGroup}">${fn:escapeXml(frame.imageGroup.displayName)}</tm:imageGroupLink></span>
             <span class="imageCount">${fn:length(frame.imageGroup.frames)}
             images in ${frame.imageGroup.type.displayString}</span>
 <!--
@@ -121,7 +121,7 @@ thisRequestUrl: the full client-requested URL for this request
               Owned by:
               <tm:imageGroupLink owner="${owner}"
                                  groupType="${imageGroup.type}">
-                ${owner.screenName}
+                ${fn:escapeXml(owner.screenName)}
               </tm:imageGroupLink>
             </span>
 -->
@@ -132,12 +132,12 @@ thisRequestUrl: the full client-requested URL for this request
       <h1 class="thingDescription">
         <span class="bigThing">
           <tm:imageGroupLink imageGroup="${imageGroup}">
-            <c:out value="${imageGroup.displayName}"/>
+            <c:out value="${fn:escapeXml(imageGroup.displayName)}"/>
           </tm:imageGroupLink>
         </span>
         <span class="subThing">
           <c:if test="${!empty imageGroup}"> : </c:if>
-          <c:out value="${image.displayName}"/>
+          <c:out value="${fn:escapeXml(image.displayName)}"/>
         </span>
       </h1>
 -->  
@@ -171,7 +171,7 @@ thisRequestUrl: the full client-requested URL for this request
             <c:param name="imageId" value="${image.id}"/>
             <c:param name="returnToUrl" value="${thisRequestUrl}"/>
           </c:url>
-          <a href="${fn:escapeXml(setPreviewLink)}">[make preview image for ${frame.imageGroup.name} (${frame.imageGroup.type.displayString})]</a> 
+          <a href="${fn:escapeXml(setPreviewLink)}">[make preview image for ${fn:escapeXml(frame.imageGroup.name)} (${frame.imageGroup.type.displayString})]</a> 
         
       </authz:acl>
         
@@ -199,14 +199,14 @@ thisRequestUrl: the full client-requested URL for this request
       </div>
       <div class="imageDetails">
         <br/>
-        ${image.displayName}
+        ${fn:escapeXml(image.displayName)}
         <br/>
-        <c:out value="${image.caption}"/><br />
+        ${fn:escapeXml(image.caption)}<br />
         <br />
-        <c:out value="${image.copyright} ${image.creator}"/>
+        ${fn:escapeXml(image.copyright)} ${fn:escapeXml(image.creator)}
         <br />
         Owned by <tm:imageGroupLink owner="${image.owner}"
-          groupType="${frame.imageGroup.type}">${image.owner.screenName}</tm:imageGroupLink>
+          groupType="${frame.imageGroup.type}">${fn:escapeXml(image.owner.screenName)}</tm:imageGroupLink>
         <br />
       </div>
       
@@ -214,7 +214,7 @@ thisRequestUrl: the full client-requested URL for this request
       <c:if test="${image.class.name eq 'com.trailmagic.image.Photo'}">
         <div class="photoProperties">
           <c:if test="${!empty image.notes}">
-            Image Notes: <c:out value="${image.notes}"/><br/>
+            Image Notes: ${fn:escapeXml(image.notes)}<br/>
           </c:if>
           <c:if test="${!empty image.captureDate}">
             Capture Date: <fmt:formatDate value="${image.captureDate}"
@@ -235,7 +235,7 @@ thisRequestUrl: the full client-requested URL for this request
         <br/>
         This image is also in: 
         <c:forEach var="group" items="${groupsContainingImage}">
-          <tm:imageGroupLink imageGroup="${group}">${group.name} (${group.type.displayString})</tm:imageGroupLink>
+          <tm:imageGroupLink imageGroup="${group}">${fn:escapeXml(group.name)} (${group.type.displayString})</tm:imageGroupLink>
         </c:forEach>
       </c:if>
     </div>

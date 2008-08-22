@@ -13,9 +13,9 @@
  */
 package com.trailmagic.image.util;
 
-import com.sun.org.apache.xml.internal.resolver.Catalog;
-import com.sun.org.apache.xml.internal.resolver.CatalogManager;
-import com.sun.org.apache.xml.internal.resolver.tools.CatalogResolver;
+//import com.sun.org.apache.xml.internal.resolver.Catalog;
+//import com.sun.org.apache.xml.internal.resolver.CatalogManager;
+//import com.sun.org.apache.xml.internal.resolver.tools.CatalogResolver;
 import com.trailmagic.image.HeavyImageManifestation;
 import com.trailmagic.image.Image;
 import com.trailmagic.image.ImageFrame;
@@ -416,10 +416,10 @@ public class ImagesParserImpl extends DefaultHandler implements ImagesParser {
             SAXParser parser = factory.newSAXParser();
             XMLReader reader = parser.getXMLReader();
             
-            CatalogManager cm = new CatalogManager();
-            Catalog catalog = cm.getCatalog();
-            catalog.parseCatalog(getClass().getClassLoader().getResource("CatalogManager.properties"));
-            reader.setEntityResolver(new CatalogResolver(cm));
+//            CatalogManager cm = new CatalogManager();
+//            Catalog catalog = cm.getCatalog();
+//            catalog.parseCatalog(getClass().getClassLoader().getResource("CatalogManager.properties"));
+//            reader.setEntityResolver(new CatalogResolver(cm));
 
 
             s_logger.info("Parsing input stream...");
