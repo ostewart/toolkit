@@ -79,7 +79,8 @@
       <version>1.4</version>
     </dependency>
   </dependencies>
-    <build>
+  <build>
+    <finalName>photo</finalName>
     <plugins>
       <plugin>
       	<groupId>org.codehaus.mojo</groupId>

@@ -13,6 +13,8 @@
   </scm>
 
   <build>
+    <outputDirectory>${basedir}/${target.dir}/classes</outputDirectory>
+    <testOutputDirectory>${basedir}/${target.dir}/test-classes</testOutputDirectory>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -32,6 +34,18 @@
     </plugins>
   </build>
 
+  <properties>
+    <target.dir>target</target.dir>
+  </properties>
+
+  <profiles>
+    <profile>
+      <id>eclipse</id>
+      <properties>
+        <target.dir>target-eclipse</target.dir>
+      </properties>
+    </profile>
+  </profiles>
 
   <modules>
     <module>common</module>

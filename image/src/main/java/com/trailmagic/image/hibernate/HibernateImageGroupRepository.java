@@ -293,6 +293,12 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
         }
     }
     
+    public ImageGroup getByIdWithFrames(long id) {
+        ImageGroup imageGroup = getById(id);
+        imageGroup.getFrames().first();
+        return imageGroup;
+    }
+    
     public ImageGroup loadById(long imageGroupId) throws NoSuchImageGroupException {
         try {
             return (ImageGroup)

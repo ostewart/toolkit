@@ -13,6 +13,8 @@
  */
 package com.trailmagic.image.ui;
 
+import com.trailmagic.image.ImageFrame;
+
 import com.trailmagic.image.Image;
 import com.trailmagic.image.ImageRepository;
 import com.trailmagic.image.ImageGroup;
@@ -37,6 +39,8 @@ public class ImageAccessController extends SimpleFormController {
 
     private static final String MAKE_PUBLIC_ACTION = "makePublic";
     private static final String MAKE_PRIVATE_ACTION = "makePrivate";
+    private static final String MAKE_FRAMES_PUBLIC_ACTION = "makeFramesPublic";
+    private static final String MAKE_FRAMES_PRIVATE_ACTION = "makeFramesPrivate";
     private static final String IMAGE_TARGET = "image";
     private static final String IMAGE_GROUP_TARGET = "imageGroup";
 
@@ -77,7 +81,7 @@ public class ImageAccessController extends SimpleFormController {
                 throw new Exception("Invalid action");
             }
         } else if (IMAGE_GROUP_TARGET.equals(bean.getTarget())) {
-            ImageGroup target = imageGroupRepository.getById(bean.getId());
+            ImageGroup target = imageGroupRepository.getByIdWithFrames(bean.getId());
 
             if (MAKE_PUBLIC_ACTION.equals(bean.getAction())) {
                 s_log.info("Making " + target.getType() + " public: "
@@ -87,6 +91,20 @@ public class ImageAccessController extends SimpleFormController {
                 s_log.info("Making " + target.getType() + " private: "
                            + target);
                 imageSecurityFactory.makePrivate(target);
+            } else if (MAKE_FRAMES_PUBLIC_ACTION.equals(bean.getAction())) {
+                s_log.info("Making all images in " + target.getType()
+                           + " public: " + target);
+                for (ImageFrame frame : target.getFrames()) {
+                    s_log.info("Making image public: " + frame.getImage());
+                    imageSecurityFactory.makePublic(frame.getImage());
+                }
+            } else if (MAKE_FRAMES_PRIVATE_ACTION.equals(bean.getAction())) {
+                s_log.info("Making all images in " + target.getType()
+                           + " private: " + target);
+                for (ImageFrame frame : target.getFrames()) {
+                    s_log.info("Making image private: " + frame.getImage());
+                    imageSecurityFactory.makePrivate(frame.getImage());
+                }
             } else {
                 throw new Exception("invalid action");
             }

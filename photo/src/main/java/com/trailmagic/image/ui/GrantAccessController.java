@@ -62,7 +62,7 @@ public class GrantAccessController extends SimpleFormController {
                                     BindException errors) throws Exception {
         String groupId = req.getParameter("groupId");
         ImageGroup group =
-            imageGroupRepository.getById(Long.parseLong(groupId));
+            imageGroupRepository.getByIdWithFrames(Long.parseLong(groupId));
 
         HashMap<String,Object> model = new HashMap<String,Object>();
         model.put("imageGroupIsPublic",

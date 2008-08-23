@@ -119,6 +119,7 @@ frames: List of ImageFrames for this group
 </div>
     <div class="imageGroupAdmin">
       <authz:acl domainObject="${imageGroup}" hasPermission="1">
+        <!-- change group permission -->
         <jsp:element name="form">
           <jsp:attribute name="method">POST</jsp:attribute>
           <jsp:attribute
@@ -134,6 +135,27 @@ frames: List of ImageFrames for this group
               <c:otherwise>
                 <input name="action" type="hidden" value="makePublic"/>
                 <input type="submit" name="submit" value="Make ${imageGroup.type} Public"/>
+              </c:otherwise>
+            </c:choose>
+          </jsp:body>
+        </jsp:element>
+
+        <!--  change all the frames permission -->
+        <jsp:element name="form">
+          <jsp:attribute name="method">POST</jsp:attribute>
+          <jsp:attribute
+            name="action">${pageContext.request.contextPath}/changePermission</jsp:attribute>
+          <jsp:body>
+            <input name="id" type="hidden" value="${imageGroup.id}"/>
+            <input name="target" type="hidden" value="imageGroup"/>
+            <c:choose>
+              <c:when test="${imageGroupIsPublic}">
+                <input name="action" type="hidden" value="makeFramesPublic"/>
+                <input type="submit" name="submit" value="Make Frames Public"/>
+              </c:when>
+              <c:otherwise>
+                <input name="action" type="hidden" value="makeFramesPrivate"/>
+                <input type="submit" name="submit" value="Make Frames Private"/>
               </c:otherwise>
             </c:choose>
           </jsp:body>
