@@ -17,16 +17,17 @@ import com.trailmagic.image.Image;
 import com.trailmagic.image.ImageFrame;
 import com.trailmagic.image.ImageGroup;
 import com.trailmagic.image.ImageManifestation;
-import com.trailmagic.user.Owned;
 
 public interface ImageSecurityFactory {
     public void makePublic(Image image);
     public void makePublic(ImageFrame frame);
     public void makePublic(ImageGroup group);
+    public void makeFramesPublic(ImageGroup group);
     public void makePublic(ImageManifestation mf);
     public void makePrivate(Image image);
     public void makePrivate(ImageFrame frame);
     public void makePrivate(ImageGroup group);
+    public void makeFramesPrivate(ImageGroup group);
     public void makePrivate(ImageManifestation mf);
     public void addOwnerAcl(Image image);
     public void addOwnerAcl(ImageFrame frame);

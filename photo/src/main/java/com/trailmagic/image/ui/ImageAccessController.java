@@ -13,19 +13,16 @@
  */
 package com.trailmagic.image.ui;
 
-import com.trailmagic.image.ImageFrame;
-
 import com.trailmagic.image.Image;
-import com.trailmagic.image.ImageRepository;
 import com.trailmagic.image.ImageGroup;
 import com.trailmagic.image.ImageGroupRepository;
+import com.trailmagic.image.ImageRepository;
 import com.trailmagic.image.security.ImageSecurityFactory;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.acegisecurity.ui.AbstractProcessingFilter;
 import org.acegisecurity.ui.savedrequest.SavedRequest;
-import org.apache.log4j.Logger;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
@@ -34,8 +31,6 @@ public class ImageAccessController extends SimpleFormController {
     private ImageSecurityFactory imageSecurityFactory;
     private ImageRepository imageRepository;
     private ImageGroupRepository imageGroupRepository;
-    private static Logger s_log =
-        Logger.getLogger(ImageAccessController.class);
 
     private static final String MAKE_PUBLIC_ACTION = "makePublic";
     private static final String MAKE_PRIVATE_ACTION = "makePrivate";
@@ -62,6 +57,18 @@ public class ImageAccessController extends SimpleFormController {
                                     BindException errors) throws Exception {
         ImageAccessBean bean = (ImageAccessBean) command;
 
+        // save the request for later...if this takes a long time, maybe
+        // the session could time out
+        final HttpSession session = req.getSession(false);
+        final SavedRequest savedRequest;
+        if (session == null) {
+            savedRequest = null;
+        } else {
+            savedRequest =
+                (SavedRequest) session.getAttribute(AbstractProcessingFilter
+                                                    .ACEGI_SAVED_REQUEST_KEY);
+        }
+
         if (bean == null) {
             throw new Exception("null command");
         }
@@ -70,12 +77,8 @@ public class ImageAccessController extends SimpleFormController {
             Image target = imageRepository.getById(bean.getId());
 
             if (MAKE_PUBLIC_ACTION.equals(bean.getAction())) {
-                s_log.info("Making image public" + target.getClass()
-                           + "; " + target);
                 imageSecurityFactory.makePublic(target);
             } else if (MAKE_PRIVATE_ACTION.equals(bean.getAction())) {
-                s_log.info("Making image private: " + target.getClass()
-                           + "; " + target);
                 imageSecurityFactory.makePrivate(target);
             } else {
                 throw new Exception("Invalid action");
@@ -84,37 +87,19 @@ public class ImageAccessController extends SimpleFormController {
             ImageGroup target = imageGroupRepository.getByIdWithFrames(bean.getId());
 
             if (MAKE_PUBLIC_ACTION.equals(bean.getAction())) {
-                s_log.info("Making " + target.getType() + " public: "
-                           + target);
                 imageSecurityFactory.makePublic(target);
             } else if (MAKE_PRIVATE_ACTION.equals(bean.getAction())) {
-                s_log.info("Making " + target.getType() + " private: "
-                           + target);
                 imageSecurityFactory.makePrivate(target);
             } else if (MAKE_FRAMES_PUBLIC_ACTION.equals(bean.getAction())) {
-                s_log.info("Making all images in " + target.getType()
-                           + " public: " + target);
-                for (ImageFrame frame : target.getFrames()) {
-                    s_log.info("Making image public: " + frame.getImage());
-                    imageSecurityFactory.makePublic(frame.getImage());
-                }
+                imageSecurityFactory.makeFramesPublic(target);
             } else if (MAKE_FRAMES_PRIVATE_ACTION.equals(bean.getAction())) {
-                s_log.info("Making all images in " + target.getType()
-                           + " private: " + target);
-                for (ImageFrame frame : target.getFrames()) {
-                    s_log.info("Making image private: " + frame.getImage());
-                    imageSecurityFactory.makePrivate(frame.getImage());
-                }
+                imageSecurityFactory.makeFramesPrivate(target);
             } else {
                 throw new Exception("invalid action");
             }
         }
 
         // if all goes well, redirect back to the last page
-        HttpSession session = req.getSession(false);
-        SavedRequest savedRequest =
-            (SavedRequest) session.getAttribute(AbstractProcessingFilter
-                                                .ACEGI_SAVED_REQUEST_KEY);
         if (savedRequest != null) {
             res.sendRedirect(savedRequest.getFullRequestUrl());
             return null;

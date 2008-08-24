@@ -37,10 +37,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 public class AcegiImageSecurityFactory implements ImageSecurityFactory {
-    private BasicAclExtendedDao m_aclDao;
+    private BasicAclExtendedDao aclDao;
     private ImageGroupRepository imageGroupRepository;
-    private AclManager m_aclManager;
-    private static Logger s_log = Logger.getLogger(AcegiImageSecurityFactory.class);
+    private AclManager aclManager;
+    private static Logger log = Logger.getLogger(AcegiImageSecurityFactory.class);
     private static final String ROLE_EVERYONE = "ROLE_EVERYONE";
     private static final int OWNER_ACL_MASK =
         (SimpleAclEntry.ADMINISTRATION
@@ -51,11 +51,11 @@ public class AcegiImageSecurityFactory implements ImageSecurityFactory {
     }
 
     public BasicAclExtendedDao getBasicAclExtendedDao() {
-        return m_aclDao;
+        return aclDao;
     }
 
     public void setBasicAclExtendedDao(BasicAclExtendedDao dao) {
-        m_aclDao = dao;
+        this.aclDao = dao;
     }
 
     public void setImageGroupRepository(ImageGroupRepository imageGroupRepository) {
@@ -63,7 +63,7 @@ public class AcegiImageSecurityFactory implements ImageSecurityFactory {
     }
 
     public void setAclManager(AclManager aclManager) {
-        m_aclManager = aclManager;
+        this.aclManager = aclManager;
     }
 
     public void makePublic(Image image) {
@@ -77,7 +77,7 @@ public class AcegiImageSecurityFactory implements ImageSecurityFactory {
             try {
                 makePublic(frame);
             } catch (AccessDeniedException e) {
-                s_log.warn("No admin access to frame " + frame
+                log.warn("No admin access to frame " + frame
                            + " for image: " + image);
             }
         }
@@ -113,6 +113,25 @@ public class AcegiImageSecurityFactory implements ImageSecurityFactory {
         makePublic(group, null);
     }
 
+    public void makeFramesPublic(ImageGroup group) {
+        log.info("Making all images in " + group.getType()
+                   + " public: " + group);
+
+        for (ImageFrame frame : group.getFrames()) {
+            log.info("Making image public: " + frame.getImage());
+            makePublic(frame.getImage());
+        }
+    }
+    
+    public void makeFramesPrivate(ImageGroup group) {
+        log.info("Making all images in " + group.getType()
+                   + " private: " + group);
+        for (ImageFrame frame : group.getFrames()) {
+            log.info("Making image private: " + frame.getImage());
+            makePrivate(frame.getImage());
+        }
+    }
+    
     public void makePublic(ImageManifestation mf) {
         makePublic(mf, mf.getImage());
     }
@@ -129,7 +148,7 @@ public class AcegiImageSecurityFactory implements ImageSecurityFactory {
         m_aclDao.create(entry);
         */
         addReadPermission(obj, parent, ROLE_EVERYONE);
-        s_log.info("Added access to " + obj + " by ROLE_EVERYONE");
+        log.info("Added access to " + obj + " by ROLE_EVERYONE");
     }
 
     public void addOwnerAcl(Image image) {
@@ -156,11 +175,11 @@ public class AcegiImageSecurityFactory implements ImageSecurityFactory {
     }
 
     public boolean isPublic(Object obj) {
-        s_log.debug("isPublic called");
-        AclEntry[] entries = m_aclManager.getAcls(obj);
+        log.debug("isPublic called");
+        AclEntry[] entries = aclManager.getAcls(obj);
         for (AclEntry entry : entries) {
             if (!(entry instanceof BasicAclEntry)) {
-                s_log.debug("skipping entry: " + entry);
+                log.debug("skipping entry: " + entry);
                 continue;
             }
 
@@ -168,7 +187,7 @@ public class AcegiImageSecurityFactory implements ImageSecurityFactory {
             if (ROLE_EVERYONE.equals(basicEntry.getRecipient())) {
                 boolean result = ((basicEntry.getMask() & SimpleAclEntry.READ)
                                   == SimpleAclEntry.READ);
-                s_log.debug(basicEntry + " mask is " + basicEntry.getMask()
+                log.debug(basicEntry + " mask is " + basicEntry.getMask()
                             + "evaluates to: " + result);
                 return result;
             }
@@ -211,10 +230,10 @@ public class AcegiImageSecurityFactory implements ImageSecurityFactory {
             findExistingEntry(objIdentity, recipient);
         if (existingEntry != null) {
             int oldPerm = existingEntry.getMask();
-            m_aclDao.changeMask(objIdentity, recipient,
+            aclDao.changeMask(objIdentity, recipient,
                                 oldPerm | mask);
-            if (s_log.isDebugEnabled()) {
-                s_log.debug("Added permission " + mask + " on "
+            if (log.isDebugEnabled()) {
+                log.debug("Added permission " + mask + " on "
                            + objIdentity + " for recipient: "
                            + recipient);
             }
@@ -234,10 +253,10 @@ public class AcegiImageSecurityFactory implements ImageSecurityFactory {
             findExistingEntry(objIdentity, recipient);
         if (existingEntry != null) {
             int oldPerm = existingEntry.getMask();
-            m_aclDao.changeMask(objIdentity, recipient,
+            aclDao.changeMask(objIdentity, recipient,
                                 mask);
-            if (s_log.isDebugEnabled()) {
-                s_log.debug("Set permission " + mask + " on "
+            if (log.isDebugEnabled()) {
+                log.debug("Set permission " + mask + " on "
                            + objIdentity + " for recipient: "
                            + recipient);
             }
@@ -249,7 +268,7 @@ public class AcegiImageSecurityFactory implements ImageSecurityFactory {
 
     private BasicAclEntry findExistingEntry(AclObjectIdentity objIdentity,
                                             Object recipient) {
-        BasicAclEntry[] entries = m_aclDao.getAcls(objIdentity);
+        BasicAclEntry[] entries = aclDao.getAcls(objIdentity);
         BasicAclEntry existingEntry = null;
 
         // search for existing entries
@@ -273,9 +292,9 @@ public class AcegiImageSecurityFactory implements ImageSecurityFactory {
                                    objIdentity,
                                    parentIdentity,
                                    mask);
-            m_aclDao.create(entry);
-            if (s_log.isDebugEnabled()) {
-                s_log.debug("Created permission " + mask + " on "
+            aclDao.create(entry);
+            if (log.isDebugEnabled()) {
+                log.debug("Created permission " + mask + " on "
                             + objIdentity + " for recipient: "
                             + recipient);
             }
@@ -292,7 +311,7 @@ public class AcegiImageSecurityFactory implements ImageSecurityFactory {
             try {
                 makePrivate(frame);
             } catch (AccessDeniedException e) {
-                s_log.warn("No admin access to frame " + frame
+                log.warn("No admin access to frame " + frame
                            + " for image: " + image);
             }
         }
@@ -321,7 +340,7 @@ public class AcegiImageSecurityFactory implements ImageSecurityFactory {
         // instead of deleting the acl entry, set it to nothing so
         // we're sure not to inherit any positive permissions
         setPermission(obj, parent, ROLE_EVERYONE, SimpleAclEntry.NOTHING);
-        s_log.info("Removed access to " + obj + " by ROLE_EVERYONE");
+        log.info("Removed access to " + obj + " by ROLE_EVERYONE");
     }
 
     private AclObjectIdentity getIdentity(Object obj) {
