@@ -2,7 +2,10 @@
 <jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0">
     <div class="ads">
       <div class="adbox" style="width: 728px; height: 90px;">
-	<script type="text/javascript">&lt;!--
+	<script type="text/javascript">
+	<![CDATA[
+// <![CDATA[
+//	<!--
 	google_ad_client = "pub-3553420280912760";
 	google_ad_width = 728;
 	google_ad_height = 90;
@@ -14,7 +17,10 @@
 	google_color_bg = "ffffff";
 	google_color_text = "333333";
 	google_color_url = "666666";
-	//--&gt;</script>
+	//-->
+	]]>
+    // ]]&gt;
+</script>
 	<script type="text/javascript"
 	  src="http://pagead2.googlesyndication.com/pagead/show_ads.js"><jsp:text>
         </jsp:text>
