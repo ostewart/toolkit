@@ -7,6 +7,9 @@
 	</configSuffixes>
 	<enableImports><![CDATA[false]]></enableImports>
 	<configs>
+		<config>src/main/resources/applicationContext-imagestore-authorization.xml</config>
+		<config>src/main/resources/applicationContext-imagestore.xml</config>
+		<config>src/main/resources/applicationContext-standalone.xml</config>
 	</configs>
 	<configSets>
 	</configSets>

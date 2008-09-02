@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0"
+          xmlns:c="http://java.sun.com/jsp/jstl/core"
+          xmlns:fmt="http://java.sun.com/jsp/jstl/fmt"
+          xmlns:tm="http://trailmagic.com/taglibs/image"
+          xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+          xmlns:authz="http://acegisecurity.org/authz"
+          xmlns:form="http://www.springframework.org/tags/form">
+  
+      <div xmlns="http://www.w3.org/1999/xhtml" class="imageDetails">
+        <authz:acl hasPermission="4,1" domainObject="${image}">
+            <c:url var="editImageMetadataUrl" value="">
+<!--                <c:param name="imageId" value="${image.id}"/>-->
+                <c:param name="mode" value="edit"/>
+            </c:url>
+            <a class="edit" id="imageDetailsEdit" href="${editImageMetadataUrl}">edit</a>
+        </authz:acl>
+        <br/>
+        ${fn:escapeXml(image.displayName)}
+        <br/>
+        ${fn:escapeXml(image.caption)}<br />
+        <br />
+        ${fn:escapeXml(image.copyright)} ${fn:escapeXml(image.creator)}
+        <br />
+      
+      <!-- Photo properties -->
+      <c:if test="${image.class.name eq 'com.trailmagic.image.Photo'}">
+        <div class="photoProperties">
+          <c:if test="${!empty image.notes}">
+            Image Notes: ${fn:escapeXml(image.notes)}<br/>
+          </c:if>
+          <c:if test="${!empty image.captureDate}">
+            Capture Date: <fmt:formatDate value="${image.captureDate}"
+              pattern="${datePattern}"/>
+          </c:if>
+        </div>
+      </c:if>
+      </div>
+</jsp:root>
+

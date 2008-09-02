@@ -175,7 +175,7 @@ frames: List of ImageFrames for this group
         </c:forEach>
       </ul>
       
-    <jsp:include page="google-ad.jspx"/>
+    <!--<jsp:include page="google-ad.jspx"/>-->
 
       <div id="globalFooter">
         <div class="footerLeft">

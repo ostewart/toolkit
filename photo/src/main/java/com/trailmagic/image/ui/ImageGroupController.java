@@ -13,6 +13,10 @@
  */
 package com.trailmagic.image.ui;
 
+import javax.servlet.ServletException;
+
+import org.springframework.web.bind.ServletRequestUtils;
+
 import com.trailmagic.image.Image;
 import com.trailmagic.image.ImageFrame;
 import com.trailmagic.image.ImageGroup;
@@ -99,7 +103,7 @@ public class ImageGroupController implements Controller {
         s_log.debug("Lookup path: " +
                     pathHelper.getLookupPathForRequest(req));
         StringTokenizer pathTokens = new StringTokenizer(myPath, "/");
-
+        
         // if this is a "directory" request, make sure there's a trailing
         // slash
         if (pathTokens.countTokens() <= DIR_TOKENS) {
@@ -148,7 +152,17 @@ public class ImageGroupController implements Controller {
             throw new JspException("Invalid frame number.");
         }
 
-        return handleDisplayFrame(groupName, frameId, model);
+        return handleDisplayFrame(groupName, frameId, model, isEditMode(req),
+                                  req.getServletPath());
+    }
+    
+    private boolean isEditMode(HttpServletRequest request) throws ServletException {
+        String mode = ServletRequestUtils.getStringParameter(request, "mode");
+        if ("edit".equals(mode)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private ModelAndView handleDisplayGroup(Map<String, Object> model,
@@ -174,11 +188,14 @@ public class ImageGroupController implements Controller {
 
     private ModelAndView handleDisplayFrame(String groupName,
                                             long frameId,
-                                            Map<String, Object> model) {
+                                            Map<String, Object> model,
+                                            boolean isEditView,
+                                            String requestUri) {
         ImageFrame frame =
             imageGroupRepository.getImageFrameByGroupNameAndImageId(groupName,
                                                                     frameId);
-
+        model.put("requestUri", requestUri);
+        model.put("isEditView", isEditView);
         model.put("frame", frame);
         model.put("image", frame.getImage());
         model.put("group", frame.getImageGroup());
