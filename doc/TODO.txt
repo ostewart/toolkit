@@ -1,14 +1,19 @@
+* Add upload/replace/edit API (web service or REST)
+ * Create roll/album
+ * Upload photo (with metadata, etc.)
+ * Upload/replace manifestation (or do we only deal with original)
+ * Change permissions of album/photo
+* Tags
+* Trevor-info
+* Server-side resizing
+* Add image edit UI (comments, metadata)
+* Add image group edit UI (comments, metadata)
 * add support for modified images, linked to original
-* Speed up/denormalize image count
 * Add RSS/new groups/images api
 * Add stats reporting (image views, navigation, etc.)...JMX?
 * Add error handling (email on exceptions)
 * Finish productization (add test data with InitializingBean?)
-* Refactor to acegi 1.0.3 api
 * Add persistent preferences
-* Add upload/replace/edit API (web service)
-* Add image edit UI (comments, metadata)
-* Add image group edit UI (comments, metadata)
 * Integrate permissions UI
 * Group permissions
 * Resize images based on megapixel model rather than by geometry
@@ -19,7 +24,6 @@
 * implement upload UI (don't forget height/width detection)
 * ADD SALT to password encoding
 * ImageGroupLinkTag needs to support all combinations of options!
-* Put resin.conf into svn
 * handle images where the max size is less than large by not making a
   huge copy in gather-images
 
@@ -28,6 +32,8 @@
 
 WONTFIX: refactor user, group to descend from Party
 
+DONE: Refactor to acegi 1.0.3 api
+DONE: Speed up/denormalize image count
 DONE: implement Roll, roll UI
 DONE: Use CSS instead of <center>
 DONE: Add preview images to album list page
@@ -49,3 +55,6 @@ maybe the two should be split up
 in java space, could have two different objects descendent from
 ImageGroup
 slightly different semantics
+
+
+WONTFIX: Put resin.conf into svn

@@ -8,9 +8,12 @@
           xmlns:authz="http://acegisecurity.org/authz"
           xmlns:form="http://www.springframework.org/tags/form">
 
-    <c:url var="formActionUrl" value="/edit-image-metadata">
-        <c:param name="redirectUri" value="${requestUri}"/>
+<!--    <c:url var="formActionUrl" value="/edit-image-metadata">-->
+<!--        <c:param name="redirectUri" value="${requestUri}"/>-->
+<!--    </c:url>-->
+    <c:url var="formActionUrl" value="">
     </c:url>
+
       <form:form commandName="image" method="post" action="${formActionUrl}">
         <fieldset>
           <form:errors path="*"/>

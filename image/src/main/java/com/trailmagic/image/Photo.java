@@ -20,11 +20,11 @@ import org.acegisecurity.acl.basic.NamedEntityObjectIdentity;
 
 
 public class Photo extends Image implements AclObjectIdentityAware {
-    private Lens m_lens;
-    private Camera m_camera;
-    private String m_notes;
-    private Date m_captureDate;
-    private ImageGroup m_roll;
+    private Lens lens;
+    private Camera camera;
+    private String notes;
+    private Date captureDate;
+    private ImageGroup roll;
 
     public Photo(long id) {
         super(id);
@@ -49,44 +49,44 @@ public class Photo extends Image implements AclObjectIdentityAware {
     }
 
     public Lens getLens() {
-        return m_lens;
+        return lens;
     }
 
     public void setLens(Lens lens) {
-        m_lens = lens;
+        this.lens = lens;
     }
 
     public Camera getCamera() {
-        return m_camera;
+        return camera;
     }
 
     public void setCamera(Camera camera) {
-        m_camera = camera;
+        this.camera = camera;
     }
 
     public String getNotes() {
-        return m_notes;
+        return notes;
     }
 
     public void setNotes(String notes) {
-        m_notes = notes;
+        this.notes = notes;
     }
 
     public Date getCaptureDate() {
-        return m_captureDate;
+        return captureDate;
     }
 
     public void setCaptureDate(Date date) {
-        m_captureDate = date;
+        this.captureDate = date;
     }
 
     public ImageGroup getRoll() {
-        return m_roll;
+        return roll;
     }
 
     // XXX: assert(m_imageGroup.getType().equals("roll"));
     public void setRoll(ImageGroup group) {
-        m_roll = group;
+        this.roll = group;
     }
 
     public AclObjectIdentity getAclObjectIdentity() {

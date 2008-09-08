@@ -147,6 +147,7 @@
     <constructor-arg ref="imageSecurityFactory"/>
     <constructor-arg ref="userFactory"/>
     <constructor-arg ref="webRequestTools"/>
+    <constructor-arg ref="imageDisplayController"/>
   </bean>
 
   <bean id="logoutController"
@@ -307,7 +308,18 @@
     <constructor-arg ref="imageRepository"/>
     <property name="commandName" value="image" />
     <property name="commandClass" value="com.trailmagic.image.Image" />
-	<property name="formView" value="imageMetadataEditForm" />
+	<property name="formView" value="imageDisplay" />
     <property name="successView" value="imageDetails" />
+  </bean>
+  
+  <bean id="imageDisplayController" class="com.trailmagic.image.ui.ImageDisplayController">
+    <constructor-arg ref="imageRepository"/>
+    <constructor-arg ref="imageGroupRepository"/>
+    <constructor-arg ref="imageSecurityFactory" />
+    <constructor-arg ref="webRequestTools"/>
+    <property name="commandName" value="image" />
+    <property name="commandClass" value="com.trailmagic.image.Image" />
+    <property name="formView" value="imageDisplay" />
+    <property name="successView" value="imageDisplay" />
   </bean>
 </beans>

@@ -1,5 +1,11 @@
 package com.trailmagic.web.util;
 
+import com.trailmagic.image.ImageGroup;
+
+import java.util.StringTokenizer;
+
+import org.springframework.web.util.UrlPathHelper;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import org.acegisecurity.ui.AbstractProcessingFilter;
@@ -60,5 +66,60 @@ public class WebRequestTools {
             sb.append(request.getQueryString());
         }
         return sb.toString();
+    }
+    
+    public ImageRequestInfo getImageRequestInfo(HttpServletRequest request)
+        throws MalformedUrlException {
+        ImageRequestInfo iri = new ImageRequestInfo();
+        UrlPathHelper pathHelper = new UrlPathHelper();
+        String myPath = pathHelper.getLookupPathForRequest(request);
+        if (log.isDebugEnabled()) {
+            log.debug("Lookup path: " +
+                      pathHelper.getLookupPathForRequest(request));
+        }
+        StringTokenizer pathTokens = new StringTokenizer(myPath, "/");
+        if (!pathTokens.hasMoreTokens()) {
+            throw new MalformedUrlException("no group type");
+        }
+        String groupTypeString = pathTokens.nextToken();
+        if (groupTypeString.length() < 1) {
+            throw new MalformedUrlException("0 length group type");
+        }
+
+        // depluralize
+        groupTypeString = groupTypeString.substring(0, groupTypeString.length() - 1);
+        try {
+            iri.setImageGroupType(ImageGroup.Type.fromString(groupTypeString));
+        } catch(IllegalArgumentException e) {
+            throw new MalformedUrlException("invalid group type", e);
+        }
+
+        if ( !pathTokens.hasMoreTokens() ) {
+            return iri;
+        }
+
+        // process first (owner) arg
+        iri.setScreenName(pathTokens.nextToken());
+
+        // got user arg: show his/her groups
+        if ( !pathTokens.hasMoreTokens() ) {
+            return iri;
+        }
+
+        // process second (group name) arg
+        iri.setImageGroupName(pathTokens.nextToken());
+
+        // got user and group args: show one group
+        if (!pathTokens.hasMoreTokens()) {
+            return iri;
+        }
+
+        // process third (frame number) arg
+        try {
+            iri.setImageId(Long.parseLong(pathTokens.nextToken().trim()));
+        } catch (NumberFormatException e) {
+            throw new MalformedUrlException("Invalid frame number.", e);
+        }
+        return iri;
     }
 }

@@ -13,10 +13,6 @@
  */
 package com.trailmagic.image.ui;
 
-import javax.servlet.ServletException;
-
-import org.springframework.web.bind.ServletRequestUtils;
-
 import com.trailmagic.image.Image;
 import com.trailmagic.image.ImageFrame;
 import com.trailmagic.image.ImageGroup;
@@ -25,6 +21,7 @@ import com.trailmagic.image.NoSuchImageGroupException;
 import com.trailmagic.image.security.ImageSecurityFactory;
 import com.trailmagic.user.User;
 import com.trailmagic.user.UserFactory;
+import com.trailmagic.web.util.ImageRequestInfo;
 import com.trailmagic.web.util.WebRequestTools;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,15 +32,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
-import java.util.StringTokenizer;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.jsp.JspException;
 import org.acegisecurity.AccessDeniedException;
 import org.apache.log4j.Logger;
+import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
-import org.springframework.web.util.UrlPathHelper;
 
 /**
  * to add a new group type, simply add a new mapping to this controller as
@@ -54,18 +50,19 @@ public class ImageGroupController implements Controller {
     private static final String USERS_VIEW = "imageGroupUsers";
     private static final String IMG_GROUP_VIEW = "imageGroup";
     private static final String IMAGE_DISPLAY_VIEW = "imageDisplay";
-    private static final int DIR_TOKENS = 3;
 
-    private static Logger s_log =
+    private static Logger log =
         Logger.getLogger(ImageGroupController.class);
 
     private ImageSecurityFactory imageSecurityFactory;
     private ImageGroupRepository imageGroupRepository;
+    private ImageDisplayController imageDisplayController;
     private UserFactory userFactory;
     private WebRequestTools webRequestTools;
 
     public ImageGroupController(ImageSecurityFactory imageSecurityFactory,
                                 ImageGroupRepository imageGroupRepository,
+                                ImageDisplayController imageDisplayController,
                                 UserFactory userFactory,
                                 WebRequestTools webRequestTools) {
         super();
@@ -73,6 +70,7 @@ public class ImageGroupController implements Controller {
         this.imageGroupRepository = imageGroupRepository;
         this.userFactory = userFactory;
         this.webRequestTools = webRequestTools;
+        this.imageDisplayController = imageDisplayController;
     }
 
     public ModelAndView handleRequest(HttpServletRequest req,
@@ -98,62 +96,39 @@ public class ImageGroupController implements Controller {
          * a skipTokens arg
          */
 
-        UrlPathHelper pathHelper = new UrlPathHelper();
-        String myPath = pathHelper.getLookupPathForRequest(req);
-        s_log.debug("Lookup path: " +
-                    pathHelper.getLookupPathForRequest(req));
-        StringTokenizer pathTokens = new StringTokenizer(myPath, "/");
+        ImageRequestInfo iri = webRequestTools.getImageRequestInfo(req);
         
-        // if this is a "directory" request, make sure there's a trailing
-        // slash
-        if (pathTokens.countTokens() <= DIR_TOKENS) {
+        // redirect if necessary unless we have an image (not a directory url)
+        if (iri.getImageId() == null) {
             if (WebSupport.handleDirectoryUrlRedirect(req, res)) {
                 // stop processing if we redirected
                 return null;
             }
         }
-
-        String groupTypeString = pathTokens.nextToken();
         Map<String,Object> model = new HashMap<String,Object>();
         model.put("thisRequestUrl", webRequestTools.getFullRequestUrl(req));
+        
+        model.put("groupType", iri.getImageGroupType());
 
-        // depluralize
-        groupTypeString = groupTypeString.substring(0, groupTypeString.length() - 1);
-        ImageGroup.Type groupType = ImageGroup.Type.fromString(groupTypeString);
-
-        model.put("groupType", groupTypeString);
-
-        // got no args: show users
-        if ( !pathTokens.hasMoreTokens() ) {
-            return handleListUsers(groupType, model);
+        
+        // dispatch according to /[groupType]/[screenName]/[imageGroupName]/[imageId]
+        if (iri.getScreenName() == null) {
+            return handleListUsers(iri.getImageGroupType(), model);   
         }
 
-        // process first (owner) arg
-        String ownerName = pathTokens.nextToken();
-
-        // got user arg: show his/her groups
-        if ( !pathTokens.hasMoreTokens() ) {
-            return handleGroupList(groupType, ownerName, model);
+        if (iri.getImageGroupName() == null) {
+            return handleGroupList(iri.getImageGroupType(), iri.getScreenName(), model);
         }
-
-        // process second (group name) arg
-        String groupName = pathTokens.nextToken();
 
         // got user and group args: show one group
-        if (!pathTokens.hasMoreTokens()) {
-            return handleDisplayGroup(model, groupType, ownerName, groupName);
+        if (iri.getImageId() == null) {
+            return handleDisplayGroup(model, iri.getImageGroupType(),
+                                      iri.getScreenName(), iri.getImageGroupName());
         }
-
-        // process third (frame number) arg
-        long frameId;
-        try {
-            frameId = Long.parseLong(pathTokens.nextToken().trim());
-        } catch (NumberFormatException e) {
-            throw new JspException("Invalid frame number.");
-        }
-
-        return handleDisplayFrame(groupName, frameId, model, isEditMode(req),
-                                  req.getServletPath());
+        
+//        return handleDisplayFrame(iri.getImageGroupName(), iri.getImageId(),
+//                                  model, isEditMode(req), req.getServletPath());
+        return imageDisplayController.handleRequest(req, res);
     }
     
     private boolean isEditMode(HttpServletRequest request) throws ServletException {
@@ -180,7 +155,7 @@ public class ImageGroupController implements Controller {
                   imageSecurityFactory.isPublic(group));
 
         SortedSet<ImageFrame> frames = group.getFrames();
-        s_log.debug("Frames contains " + frames.size() + " items.");
+        log.debug("Frames contains " + frames.size() + " items.");
         model.put("frames", frames);
 
         return new ModelAndView(IMG_GROUP_VIEW, model);
@@ -269,7 +244,7 @@ public class ImageGroupController implements Controller {
                               imageGroupRepository
                               .getPublicFrameCount(group));
             } catch (AccessDeniedException e) {
-                s_log.debug("Access Denied: not including group in "
+                log.debug("Access Denied: not including group in "
                             + "collection: " + group);
             }
         }

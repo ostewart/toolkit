@@ -33,7 +33,7 @@ public class ImageMetadataEditController extends SimpleFormController {
         super.initBinder(request, binder);
         
         binder.registerCustomEditor(Date.class, "captureDate",
-                                    new CustomDateEditor(SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT), true));
+                                    new CustomDateEditor(SimpleDateFormat.getDateInstance(), true));
     }
 
     @Override
@@ -48,13 +48,13 @@ public class ImageMetadataEditController extends SimpleFormController {
         return image;
     }
     
-    @Override
-    protected ModelAndView showForm(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    BindException errors) throws Exception {
-        return new ModelAndView(getRedirectView(request) + "?mode=edit",
-                                errors.getModel());
-    }
+//    @Override
+//    protected ModelAndView showForm(HttpServletRequest request,
+//                                    HttpServletResponse response,
+//                                    BindException errors) throws Exception {
+//        return new ModelAndView(getRedirectView(request) + "?mode=edit",
+//                                errors.getModel());
+//    }
     
     private String getRedirectView(HttpServletRequest request) throws Exception {
         return "redirect:"
