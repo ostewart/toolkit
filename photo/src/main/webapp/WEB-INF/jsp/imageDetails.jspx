@@ -30,8 +30,7 @@
             Image Notes: ${fn:escapeXml(image.notes)}<br/>
           </c:if>
           <c:if test="${!empty image.captureDate}">
-            Capture Date: <fmt:formatDate value="${image.captureDate}"
-              pattern="${datePattern}"/>
+            Capture Date: <fmt:formatDate value="${image.captureDate}" dateStyle="SHORT"/>
           </c:if>
         </div>
       </c:if>

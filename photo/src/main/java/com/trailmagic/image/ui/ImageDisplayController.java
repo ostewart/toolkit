@@ -1,5 +1,7 @@
 package com.trailmagic.image.ui;
 
+import java.text.DateFormat;
+
 import com.trailmagic.image.Image;
 import com.trailmagic.image.ImageFrame;
 import com.trailmagic.image.ImageGroup;
@@ -49,7 +51,7 @@ public class ImageDisplayController extends SimpleFormController {
         super.initBinder(request, binder);
         
         binder.registerCustomEditor(Date.class, "captureDate",
-                                    new CustomDateEditor(SimpleDateFormat.getDateInstance(), true));
+                                    new CustomDateEditor(SimpleDateFormat.getDateInstance(DateFormat.SHORT), true));
     }
 
     @Override
