@@ -20,30 +20,27 @@ import java.util.TreeSet;
 import org.acegisecurity.acl.basic.AclObjectIdentity;
 import org.acegisecurity.acl.basic.AclObjectIdentityAware;
 import org.acegisecurity.acl.basic.NamedEntityObjectIdentity;
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
 
 public class Image implements Owned, AclObjectIdentityAware {
-    private long m_id;
-    private String m_name;
-    private String m_displayName;
-    private String m_caption;
-    private String m_copyright;
-    private String m_creator;
-    private SortedSet<ImageManifestation> m_manifestations;
-    private User m_owner;
-    private ImageCD m_imageCD;
-    private Integer m_number;
+    private long id;
+    private String name;
+    private String displayName;
+    private String caption;
+    private String copyright;
+    private String creator;
+    private SortedSet<ImageManifestation> manifestations;
+    private User owner;
+    private ImageCD imageCD;
+    private Integer number;
 
     public Image(long id) {
         super();
         // nothing for now
-        m_id = id;
+        this.id = id;
     }
 
     public Image() {
-        m_manifestations = new TreeSet<ImageManifestation>();
+        this.manifestations = new TreeSet<ImageManifestation>();
     }
 
     public Image(Image image) {
@@ -59,89 +56,89 @@ public class Image implements Owned, AclObjectIdentityAware {
     }
 
     public long getId() {
-        return m_id;
+        return this.id;
     }
 
     public void setId(long id) {
-        m_id = id;
+        this.id = id;
     }
 
     public String getName() {
-        return m_name;
+        return name;
     }
 
     public void setName(String name) {
-        m_name = name;
+        this.name = name;
     }
 
     public String getDisplayName() {
-        return m_displayName;
+        return displayName;
     }
 
     public void setDisplayName(String name) {
-        m_displayName = name;
+        this.displayName = name;
     }
 
     public String getCaption() {
-        return m_caption;
+        return caption;
     }
 
     public void setCaption(String caption) {
-        m_caption = caption;
+        this.caption = caption;
     }
 
     public String getCopyright() {
-        return m_copyright;
+        return copyright;
     }
 
     public void setCopyright(String copyright) {
-        m_copyright = copyright;
+        this.copyright = copyright;
     }
 
     public String getCreator() {
-        return m_creator;
+        return creator;
     }
 
     public void setCreator(String creator) {
-        m_creator = creator;
+        this.creator = creator;
     }
 
     public User getOwner() {
-        return m_owner;
+        return owner;
     }
 
     public void setOwner(User owner) {
-        m_owner = owner;
+        this.owner = owner;
     }
 
     public ImageCD getImageCD() {
-        return m_imageCD;
+        return imageCD;
     }
 
     public void setImageCD(ImageCD cd) {
-        m_imageCD = cd;
+        this.imageCD = cd;
     }
 
     public SortedSet<ImageManifestation> getManifestations() {
-        return m_manifestations;
+        return manifestations;
     }
 
     public void setManifestations(SortedSet<ImageManifestation>
                                   manifestations) {
-        m_manifestations = manifestations;
+        this.manifestations = manifestations;
     }
 
     public void addManifestation(ImageManifestation im) {
         im.setImage(this);
-        m_manifestations.add(im);
+        manifestations.add(im);
     }
 
     public Integer getNumber() {
-        return m_number;
+        return number;
     }
 
     public void setNumber(Integer number) {
-        m_number = number;
+        this.number = number;
     }
 
     public boolean equals(Object obj) {
