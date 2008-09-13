@@ -1,3 +1,4 @@
+* paging
 * Add upload/replace/edit API (web service or REST)
  * Create roll/album
  * Upload photo (with metadata, etc.)

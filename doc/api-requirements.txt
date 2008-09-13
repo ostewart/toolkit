@@ -1,0 +1,31 @@
+support the following operations:
+
+create image group
+Create a new image group owned by the acting user
+
+list image groups
+list all the image groups owned by the acting user by type (roll/album)
+
+upload image to a roll
+upload an image, specifying which roll it will go in and an optional
+position
+
+
+add image to album
+add an existing image (in a roll) to an existing album
+
+
+
+ERROR HANDLING/PREVENTION:
+
+user creates an album -> empty album
+
+failed image upload -> image is not created
+image metadata/data must be atomic
+(i.e. image and manifestation must be joined)
+HTTP PUT w/metadata in headers, image "original" in body
+stores original, schedules resize operations on server
+upload is successful if the original is stored properly
+need an error status for an image manifestation if the resize doesn't
+work?
+
