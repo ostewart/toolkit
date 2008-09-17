@@ -142,9 +142,9 @@
   </bean>
 
   <bean id="imageGroupController"
-    class="com.trailmagic.image.ui.ImageGroupController">
+    class="com.trailmagic.image.ui.ImageGroupDispatcherController">
+    <constructor-arg ref="imageGroupDisplayController"/>
     <constructor-arg ref="imageGroupRepository"/>
-    <constructor-arg ref="imageSecurityFactory"/>
     <constructor-arg ref="userFactory"/>
     <constructor-arg ref="webRequestTools"/>
     <constructor-arg ref="imageDisplayController"/>
@@ -321,5 +321,12 @@
     <property name="commandClass" value="com.trailmagic.image.Image" />
     <property name="formView" value="imageDisplay" />
     <property name="successView" value="imageDisplay" />
+  </bean>
+  
+  <bean id="imageGroupDisplayController" class="com.trailmagic.image.ui.ImageGroupDisplayController">
+    <constructor-arg ref="imageGroupRepository"/>
+    <constructor-arg ref="imageSecurityFactory"/>
+    <constructor-arg ref="userFactory"/>
+    <constructor-arg ref="webRequestTools"/>
   </bean>
 </beans>
