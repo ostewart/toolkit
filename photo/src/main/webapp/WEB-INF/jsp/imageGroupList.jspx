@@ -32,7 +32,7 @@ owner: the current albums' owner
   xmlns:tm="http://trailmagic.com/taglibs/image"
   xmlns:authz="http://acegisecurity.org/authz"
   xmlns:fn="http://java.sun.com/jsp/jstl/functions">
-
+    <jsp:directive.page contentType="text/html"/>
     <jsp:output 
       omit-xml-declaration="false"
       doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"

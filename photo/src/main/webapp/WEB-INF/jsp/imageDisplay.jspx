@@ -35,7 +35,8 @@ thisRequestUrl: the full client-requested URL for this request
         doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"
         doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
         doctype-root-element="html"/>
-    <jsp:directive.page contentType="application/xhtml+xml"/>
+<!--    <jsp:directive.page contentType="application/xhtml+xml"/>-->
+    <jsp:directive.page contentType="text/html"/>
   <html xmlns="http://www.w3.org/1999/xhtml"
         xmlns:jsp="http://java.sun.com/JSP/Page"
         xmlns:c="http://java.sun.com/jsp/jstl/core"

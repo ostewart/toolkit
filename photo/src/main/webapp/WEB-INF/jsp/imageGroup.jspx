@@ -30,7 +30,8 @@ frames: List of ImageFrames for this group
           xmlns:tm="http://trailmagic.com/taglibs/image"
           xmlns:fn="http://java.sun.com/jsp/jstl/functions"
           xmlns:authz="http://acegisecurity.org/authz">
-
+<!--    <jsp:directive.page contentType="application/xhtml+xml"/>-->
+        <jsp:directive.page contentType="text/html"/>
 <html xmlns="http://www.w3.org/1999/xhtml">
   <jsp:output 
     omit-xml-declaration="false"

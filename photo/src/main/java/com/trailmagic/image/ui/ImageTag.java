@@ -13,6 +13,8 @@
  */
 package com.trailmagic.image.ui;
 
+import org.apache.taglibs.standard.tag.common.core.Util;
+
 import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -109,9 +111,9 @@ public class ImageTag extends TagSupport {
                 if (m_alt != null) {
                     html.append(m_alt);
                 } else if (m_image.getCaption() != null) {
-                    html.append(m_image.getCaption());
+                    html.append(Util.escapeXml(m_image.getCaption()));
                 } else {
-                    html.append(m_image.getDisplayName());
+                    html.append(Util.escapeXml(m_image.getDisplayName()));
                 }
 
                 html.append("\" class=\"");
