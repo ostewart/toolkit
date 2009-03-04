@@ -7,7 +7,7 @@ import com.trailmagic.image.ImageFrame;
 import com.trailmagic.image.ImageGroup;
 import com.trailmagic.image.ImageGroupRepository;
 import com.trailmagic.image.ImageRepository;
-import com.trailmagic.image.security.ImageSecurityFactory;
+import com.trailmagic.image.security.ImageSecurityService;
 import com.trailmagic.web.util.ImageRequestInfo;
 import com.trailmagic.web.util.MalformedUrlException;
 import com.trailmagic.web.util.WebRequestTools;
@@ -31,17 +31,17 @@ import org.springframework.web.servlet.mvc.SimpleFormController;
 public class ImageDisplayController extends SimpleFormController {
     private ImageRepository imageRepository;
     private ImageGroupRepository imageGroupRepository;
-    private ImageSecurityFactory imageSecurityFactory;
+    private ImageSecurityService imageSecurityService;
     private WebRequestTools webRequestTools;
-    
+
     public ImageDisplayController(ImageRepository imageRepository,
                                   ImageGroupRepository imageGroupRepository,
-                                  ImageSecurityFactory imageSecurityFactory,
+                                  ImageSecurityService imageSecurityService,
                                   WebRequestTools webRequestTools) {
         super();
         this.imageRepository = imageRepository;
         this.imageGroupRepository = imageGroupRepository;
-        this.imageSecurityFactory = imageSecurityFactory;
+        this.imageSecurityService = imageSecurityService;
         this.webRequestTools = webRequestTools;
     }
 
@@ -67,11 +67,7 @@ public class ImageDisplayController extends SimpleFormController {
     
     private boolean isEditMode(HttpServletRequest request) throws ServletRequestBindingException {
         String mode = ServletRequestUtils.getStringParameter(request, "mode");
-        if ("edit".equals(mode)) {
-            return true;
-        } else {
-            return false;
-        }
+        return "edit".equals(mode);
     }
 
     @Override
@@ -80,7 +76,7 @@ public class ImageDisplayController extends SimpleFormController {
                                     BindException errors) throws Exception {
         @SuppressWarnings("unchecked")
         Map<String, Object> model = errors.getModel();
-        model.put("isEditView", errors.hasErrors() ? true : isEditMode(request));
+        model.put("isEditView", errors.hasErrors() || isEditMode(request));
         return setupModel(request, model);
     }
     
@@ -109,45 +105,43 @@ public class ImageDisplayController extends SimpleFormController {
         model.put("frame", frame);
         model.put("image", frame.getImage());
         model.put("group", frame.getImageGroup());
-        model.put("imageIsPublic",
-                  imageSecurityFactory.isPublic(frame.getImage()));
-        List<ImageGroup> groupsContainingImage =
-            imageGroupRepository.getByImage(frame.getImage());
-        List<ImageGroup> otherGroups = new ArrayList<ImageGroup>();
-        Iterator<ImageGroup> iter = groupsContainingImage.iterator();
-        ImageGroup containingGroup;
-        while (iter.hasNext()) {
-            containingGroup = iter.next();
-            if ( !frame.getImageGroup().equals(containingGroup) ) {
-                otherGroups.add(containingGroup);
-            }
-        }
-        model.put("groupsContainingImage", otherGroups);
+        model.put("imageIsPublic", imageSecurityService.isPublic(frame.getImage()));
+        model.put("groupsContainingImage", findGroupsContainingImage(frame));
+        model.put("prevFrame", findPreviousFrame(frame));
+        model.put("nextFrame", findNextFrame(frame));
 
-        SortedSet<ImageFrame> frames = frame.getImageGroup().getFrames();
-        SortedSet<ImageFrame> tmpSet = frames.headSet(frame);
-
-//             Iterator iter = tmpSet.iterator();
-//             iter.next();
-//             if ( iter.hasNext() ) {
-//                 ImageFrame prevFrame = (ImageFrame)iter.next();
-//             }
-
-
-        if ( !tmpSet.isEmpty() ) {
-            ImageFrame prevFrame = tmpSet.last();
-            model.put("prevFrame", prevFrame);
-        }
-
-        tmpSet = frames.tailSet(frame);
-        Iterator<ImageFrame> framesIter = tmpSet.iterator();
-        framesIter.next();
-        if ( framesIter.hasNext() ) {
-            ImageFrame nextFrame = framesIter.next();
-            model.put("nextFrame", nextFrame);
-        }
 
         // got user, group, and frame number: show that frame
         return new ModelAndView(getFormView(), model);
+    }
+
+    private List<ImageGroup> findGroupsContainingImage(ImageFrame frame) {
+        List<ImageGroup> groupsContainingImage = new ArrayList<ImageGroup>();
+        for (ImageGroup group : imageGroupRepository.getByImage(frame.getImage())) {
+            if (!frame.getImageGroup().equals(group)) {
+                groupsContainingImage.add(group);
+            }
+        }
+        return groupsContainingImage;
+    }
+
+    private ImageFrame findPreviousFrame(ImageFrame startingFrame) {
+        SortedSet<ImageFrame> frames = startingFrame.getImageGroup().getFrames();
+        final SortedSet<ImageFrame> headSet = frames.headSet(startingFrame);
+
+        if ( !headSet.isEmpty() ) {
+            return headSet.last();
+        }
+        return null;
+    }
+
+    private ImageFrame findNextFrame(ImageFrame startingFrame) {
+        SortedSet<ImageFrame> frames = startingFrame.getImageGroup().getFrames();
+        Iterator<ImageFrame> framesIter = frames.tailSet(startingFrame).iterator();
+        framesIter.next();
+        if ( framesIter.hasNext() ) {
+            return framesIter.next();
+        }
+        return null;
     }
 }

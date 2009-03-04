@@ -65,7 +65,7 @@
     class="com.trailmagic.image.ImageServiceImpl">
     <constructor-arg ref="imageRepository" />
     <constructor-arg ref="imageGroupRepository" />
-    <constructor-arg ref="imageSecurityFactory" />
+    <constructor-arg ref="imageSecurityService" />
     <constructor-arg ref="userFactory" />
     <constructor-arg ref="imageManifestationRepository"/>
   </bean>

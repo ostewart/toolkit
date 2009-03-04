@@ -17,7 +17,8 @@ import com.trailmagic.image.Image;
 import com.trailmagic.image.ImageGroup;
 import com.trailmagic.image.ImageGroupRepository;
 import com.trailmagic.image.ImageRepository;
-import com.trailmagic.image.security.ImageSecurityFactory;
+import com.trailmagic.image.security.ImageSecurityService;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -28,7 +29,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 
 public class ImageAccessController extends SimpleFormController {
-    private ImageSecurityFactory imageSecurityFactory;
+    private ImageSecurityService imageSecurityService;
     private ImageRepository imageRepository;
     private ImageGroupRepository imageGroupRepository;
 
@@ -39,8 +40,8 @@ public class ImageAccessController extends SimpleFormController {
     private static final String IMAGE_TARGET = "image";
     private static final String IMAGE_GROUP_TARGET = "imageGroup";
 
-    public void setImageSecurityFactory(ImageSecurityFactory factory) {
-        this.imageSecurityFactory = factory;
+    public void setImageSecurityService(ImageSecurityService imageSecurityService) {
+        this.imageSecurityService = imageSecurityService;
     }
 
     public void setImageRepository(ImageRepository repository) {
@@ -77,9 +78,9 @@ public class ImageAccessController extends SimpleFormController {
             Image target = imageRepository.getById(bean.getId());
 
             if (MAKE_PUBLIC_ACTION.equals(bean.getAction())) {
-                imageSecurityFactory.makePublic(target);
+                imageSecurityService.makePublic(target);
             } else if (MAKE_PRIVATE_ACTION.equals(bean.getAction())) {
-                imageSecurityFactory.makePrivate(target);
+                imageSecurityService.makePrivate(target);
             } else {
                 throw new Exception("Invalid action");
             }
@@ -87,13 +88,13 @@ public class ImageAccessController extends SimpleFormController {
             ImageGroup target = imageGroupRepository.getByIdWithFrames(bean.getId());
 
             if (MAKE_PUBLIC_ACTION.equals(bean.getAction())) {
-                imageSecurityFactory.makePublic(target);
+                imageSecurityService.makePublic(target);
             } else if (MAKE_PRIVATE_ACTION.equals(bean.getAction())) {
-                imageSecurityFactory.makePrivate(target);
+                imageSecurityService.makePrivate(target);
             } else if (MAKE_FRAMES_PUBLIC_ACTION.equals(bean.getAction())) {
-                imageSecurityFactory.makeFramesPublic(target);
+                imageSecurityService.makeFramesPublic(target);
             } else if (MAKE_FRAMES_PRIVATE_ACTION.equals(bean.getAction())) {
-                imageSecurityFactory.makeFramesPrivate(target);
+                imageSecurityService.makeFramesPrivate(target);
             } else {
                 throw new Exception("invalid action");
             }

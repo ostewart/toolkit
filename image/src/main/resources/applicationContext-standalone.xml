@@ -24,8 +24,8 @@
 -->
   <!-- override standard definition to bypass security for standalone
   operation -->
-  <bean id="imageSecurityFactory"
-    class="com.trailmagic.image.security.AcegiImageSecurityFactory"
+  <bean id="imageSecurityService"
+    class="com.trailmagic.image.security.AcegiImageSecurityService"
     autowire="byName">
   </bean>
 
@@ -218,8 +218,8 @@
     <property name="target">
       <bean
         class="com.trailmagic.image.util.AddPermissions">
-        <property name="imageSecurityFactory">
-          <ref bean="imageSecurityFactory"/>
+        <property name="imageSecurityService">
+          <ref bean="imageSecurityService"/>
         </property>
         <property name="imageGroupRepository">
           <ref bean="imageGroupRepository"/>

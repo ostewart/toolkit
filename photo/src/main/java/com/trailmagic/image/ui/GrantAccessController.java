@@ -17,7 +17,7 @@ import com.trailmagic.image.Image;
 import com.trailmagic.image.ImageRepository;
 import com.trailmagic.image.ImageGroup;
 import com.trailmagic.image.ImageGroupRepository;
-import com.trailmagic.image.security.ImageSecurityFactory;
+import com.trailmagic.image.security.ImageSecurityService;
 import com.trailmagic.user.User;
 import com.trailmagic.user.UserFactory;
 import org.springframework.web.servlet.mvc.SimpleFormController;
@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.HashMap;
 
 public class GrantAccessController extends SimpleFormController {
-    private ImageSecurityFactory imageSecurityFactory;
+    private ImageSecurityService imageSecurityService;
     private ImageRepository imageRepository;
     private ImageGroupRepository imageGroupRepository;
     private UserFactory userFactory;
@@ -41,8 +41,8 @@ public class GrantAccessController extends SimpleFormController {
     private static final String GRANT_ACTION = "grant";
     private static final String MAKE_PUBLIC_ACTION = "makePublic";
 
-    public void setImageSecurityFactory(ImageSecurityFactory factory) {
-        this.imageSecurityFactory = factory;
+    public void setImageSecurityService(ImageSecurityService imageSecurityService) {
+        this.imageSecurityService = imageSecurityService;
     }
 
     public void setImageRepository(ImageRepository factory) {
@@ -66,7 +66,7 @@ public class GrantAccessController extends SimpleFormController {
 
         HashMap<String,Object> model = new HashMap<String,Object>();
         model.put("imageGroupIsPublic",
-                  imageSecurityFactory.isPublic(group));
+                  imageSecurityService.isPublic(group));
         model.put("imageGroup", group);
         model.put("groupType", group.getType());
         model.put("groupTypeDisplay",
@@ -93,12 +93,12 @@ public class GrantAccessController extends SimpleFormController {
                 s_log.info("Adding permission " + bean.getMask()
                            + " for " + recipient.getScreenName()
                            + " to Image: " + image);
-                imageSecurityFactory.addPermission(image,
+                imageSecurityService.addPermission(image,
                                                      recipient.getScreenName(),
                                                      bean.getMask());
             } else if (MAKE_PUBLIC_ACTION.equals(bean.getAction())) {
                 s_log.info("Making Image public: " + image);
-                imageSecurityFactory.makePublic(image);
+                imageSecurityService.makePublic(image);
             } else {
                 throw new IllegalArgumentException("Unknown action");
             }

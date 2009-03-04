@@ -4,7 +4,7 @@ import com.trailmagic.image.ImageFrame;
 import com.trailmagic.image.ImageGroup;
 import com.trailmagic.image.ImageGroupRepository;
 import com.trailmagic.image.NoSuchImageGroupException;
-import com.trailmagic.image.security.ImageSecurityFactory;
+import com.trailmagic.image.security.ImageSecurityService;
 import com.trailmagic.user.User;
 import com.trailmagic.user.UserFactory;
 import com.trailmagic.web.util.ImageRequestInfo;
@@ -24,21 +24,21 @@ import org.springframework.web.servlet.ModelAndView;
 public class ImageGroupDisplayController {
     private UserFactory userFactory;
     private ImageGroupRepository imageGroupRepository;
-    private ImageSecurityFactory imageSecurityFactory;
+    private ImageSecurityService imageSecurityService;
     private WebRequestTools webRequestTools;
     
     private static final String IMG_GROUP_VIEW = "imageGroup";
     private static Logger log =
         Logger.getLogger(ImageGroupDisplayController.class);
-    
-    
+
+
     public ImageGroupDisplayController(ImageGroupRepository imageGroupRepository,
-                                       ImageSecurityFactory imageSecurityFactory,
+                                       ImageSecurityService imageSecurityService,
                                        UserFactory userFactory,
                                        WebRequestTools webRequestTools) {
         super();
         this.imageGroupRepository = imageGroupRepository;
-        this.imageSecurityFactory = imageSecurityFactory;
+        this.imageSecurityService = imageSecurityService;
         this.userFactory = userFactory;
         this.webRequestTools = webRequestTools;
     }
@@ -56,7 +56,7 @@ public class ImageGroupDisplayController {
                                                                  iri.getImageGroupType());
         model.addAttribute("imageGroup", group);
         model.addAttribute("imageGroupIsPublic",
-                           imageSecurityFactory.isPublic(group));
+                           imageSecurityService.isPublic(group));
 
         SortedSet<ImageFrame> frames = group.getFrames();
         log.debug("Frames contains " + frames.size() + " items.");

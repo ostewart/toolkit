@@ -18,7 +18,7 @@ import com.trailmagic.image.ImageFrame;
 import com.trailmagic.image.ImageGroup;
 import com.trailmagic.image.ImageManifestation;
 
-public interface ImageSecurityFactory {
+public interface ImageSecurityService {
     public void makePublic(Image image);
     public void makePublic(ImageFrame frame);
     public void makePublic(ImageGroup group);

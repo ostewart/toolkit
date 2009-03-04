@@ -51,7 +51,7 @@ imageImportBean.imagesData is empty
     <form:form method="post"
         enctype="multipart/form-data"
         commandName="imageImportBean">
-      <form:errors path="*" />
+      <form:errors path="*"></form:errors>
       
       <label for="imagesData">Images Data File:</label>
       <input name="imagesData" type="file"/>

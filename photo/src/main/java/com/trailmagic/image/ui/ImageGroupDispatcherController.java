@@ -158,25 +158,7 @@ public class ImageGroupDispatcherController implements Controller {
         }
 
         // sort the groups by upload date (descending)
-        Collections.sort(filteredGroups, new Comparator<ImageGroup>() {
-                public int compare(ImageGroup g1, ImageGroup g2) {
-                    Date g1Date = g1.getUploadDate();
-                    Date g2Date = g2.getUploadDate();
-                    if (g2Date == null && g1Date == null) {
-                        return 0;
-                    }
-                    
-                    if (g2Date == null) {
-                        return 1;
-                    }
-                    if (g2Date == null) {
-                        return -1;
-                    }
-                    
-                    return g2.getUploadDate()
-                        .compareTo(g1.getUploadDate());
-                }
-            });
+        Collections.sort(filteredGroups, new ImageGroupUploadDateDescendingComparator());
 
         User owner = userFactory.getByScreenName(ownerName);
         model.put("owner", owner);
@@ -187,5 +169,25 @@ public class ImageGroupDispatcherController implements Controller {
         model.put("previewImages", previewImages);
 
         return new ModelAndView(LIST_VIEW, model);
+    }
+
+    private static class ImageGroupUploadDateDescendingComparator implements Comparator<ImageGroup> {
+        public int compare(ImageGroup g1, ImageGroup g2) {
+            Date g1Date = g1.getUploadDate();
+            Date g2Date = g2.getUploadDate();
+            if (g2Date == null && g1Date == null) {
+                return 0;
+            }
+
+            if (g2Date == null) {
+                return 1;
+            }
+            if (g1Date == null) {
+                return -1;
+            }
+
+            return g2.getUploadDate()
+                .compareTo(g1.getUploadDate());
+        }
     }
 }

@@ -21,7 +21,7 @@ import com.trailmagic.image.ImageGroupRepository;
 import com.trailmagic.image.ImageService;
 import com.trailmagic.image.ImageManifestation;
 import com.trailmagic.image.NoSuchImageGroupException;
-import com.trailmagic.image.security.ImageSecurityFactory;
+import com.trailmagic.image.security.ImageSecurityService;
 import com.trailmagic.user.Group;
 import com.trailmagic.user.GroupFactory;
 import com.trailmagic.user.User;
@@ -48,7 +48,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class AddPermissions {
     private ImageRepository imageFactory;
     private ImageGroupRepository imageGroupRepository;
-    private ImageSecurityFactory imageSecurityFactory;
+    private ImageSecurityService imageSecurityService;
     private UserFactory userFactory;
     private GroupFactory groupFactory;
     private HibernateTemplate hibernateTemplate;
@@ -61,8 +61,8 @@ public class AddPermissions {
         this.imageGroupRepository = imageGroupRepository;
     }
 
-    public void setImageSecurityFactory(ImageSecurityFactory factory) {
-        this.imageSecurityFactory = factory;
+    public void setImageSecurityService(ImageSecurityService imageSecurityService) {
+        this.imageSecurityService = imageSecurityService;
     }
 
     public void setImageFactory(ImageRepository factory) {
@@ -100,25 +100,25 @@ public class AddPermissions {
 
     // assumes within a session
     private void makeGroupPublic(ImageGroup group) {
-        imageSecurityFactory.makePublic(group);
+        imageSecurityService.makePublic(group);
         s_log.info("Added public permission for group: "
                    + group.getName());
 
         Collection<ImageFrame> frames = group.getFrames();
 
         for (ImageFrame frame : frames) {
-            imageSecurityFactory.makePublic(frame);
+            imageSecurityService.makePublic(frame);
             s_log.info("Added public permission for frame: "
                        + frame.getPosition() + " of group "
                        + group.getName());
 
             Image image = frame.getImage();
-            imageSecurityFactory.makePublic(image);
+            imageSecurityService.makePublic(image);
             s_log.info("Added public permission for image: "
                        + image.getDisplayName());
 
             for (ImageManifestation mf : image.getManifestations()) {
-                imageSecurityFactory.makePublic(mf);
+                imageSecurityService.makePublic(mf);
                 s_log.info("Added public permission for "
                            + "manifestation: "
                            + mf.getHeight() + "x" + mf.getWidth());
@@ -167,14 +167,14 @@ public class AddPermissions {
                     groups.addAll(imageGroupRepository
                                   .getAlbumsByOwnerScreenName(ownerName));
                     for (ImageGroup group : groups) {
-                        imageSecurityFactory.addOwnerAcl(group);
+                        imageSecurityService.addOwnerAcl(group);
                         for (ImageFrame frame : group.getFrames()) {
-                            imageSecurityFactory.addOwnerAcl(frame);
+                            imageSecurityService.addOwnerAcl(frame);
                             Image image = frame.getImage();
-                            imageSecurityFactory.addOwnerAcl(image);
+                            imageSecurityService.addOwnerAcl(image);
                             for (ImageManifestation mf
                                      : image.getManifestations()) {
-                                imageSecurityFactory.addOwnerAcl(mf);
+                                imageSecurityService.addOwnerAcl(mf);
                             }
                         }
                     }
@@ -191,14 +191,14 @@ public class AddPermissions {
 		    ImageGroup group =
 			imageGroupRepository.getAlbumByOwnerAndName(user,
 								   albumName);
-		    imageSecurityFactory.addOwnerAcl(group);
+		    imageSecurityService.addOwnerAcl(group);
 		    for (ImageFrame frame : group.getFrames()) {
-			imageSecurityFactory.addOwnerAcl(frame);
+			imageSecurityService.addOwnerAcl(frame);
 			Image image = frame.getImage();
-			imageSecurityFactory.addOwnerAcl(image);
+			imageSecurityService.addOwnerAcl(image);
 			for (ImageManifestation mf
 				 : image.getManifestations()) {
-			    imageSecurityFactory.addOwnerAcl(mf);
+			    imageSecurityService.addOwnerAcl(mf);
 			}
 		    }
 		    return null;
@@ -214,13 +214,13 @@ public class AddPermissions {
 
                     for (ImageGroup group : groups) {
                         for (ImageFrame frame : group.getFrames()) {
-                            if (imageSecurityFactory.isPublic(frame
+                            if (imageSecurityService.isPublic(frame
                                                                 .getImage())) {
                                 s_log.info("Making frame public: " + frame);
-                                imageSecurityFactory.makePublic(frame);
+                                imageSecurityService.makePublic(frame);
                             } else {
                                 s_log.info("Making frame private: " + frame);
-                                imageSecurityFactory.makePrivate(frame);
+                                imageSecurityService.makePrivate(frame);
                             }
                         }
                     }
@@ -238,7 +238,7 @@ public class AddPermissions {
                         Image image = imageFactory.getById(id);
                         ImageGroup roll =
                             imageGroupRepository.getRollForImage(image);
-                        imageSecurityFactory
+                        imageSecurityService
                             .addPermission(image, roll, user,
                                            SimpleAclEntry.READ
                                            | SimpleAclEntry.ADMINISTRATION);
@@ -257,7 +257,7 @@ public class AddPermissions {
                         Image image = imageFactory.getById(id);
                         ImageGroup roll =
                             imageGroupRepository.getRollForImage(image);
-                        imageSecurityFactory
+                        imageSecurityService
                             .addPermission(image, roll, user,
                                            SimpleAclEntry.READ);
                     }

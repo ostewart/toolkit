@@ -36,17 +36,17 @@ import org.apache.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
-public class AcegiImageSecurityFactory implements ImageSecurityFactory {
+public class AcegiImageSecurityService implements ImageSecurityService {
     private BasicAclExtendedDao aclDao;
     private ImageGroupRepository imageGroupRepository;
     private AclManager aclManager;
-    private static Logger log = Logger.getLogger(AcegiImageSecurityFactory.class);
+    private static Logger log = Logger.getLogger(AcegiImageSecurityService.class);
     private static final String ROLE_EVERYONE = "ROLE_EVERYONE";
     private static final int OWNER_ACL_MASK =
         (SimpleAclEntry.ADMINISTRATION
          |SimpleAclEntry.READ_WRITE_CREATE_DELETE);
 
-    public AcegiImageSecurityFactory() {
+    public AcegiImageSecurityService() {
         // do nothing
     }
 

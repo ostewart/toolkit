@@ -16,7 +16,7 @@
 
       <form:form commandName="image" method="post" action="${formActionUrl}">
         <fieldset>
-          <form:errors path="*"/>
+          <form:errors path="*"></form:errors>
           <input type="hidden" name="imageId" value="${image.id}"/>
     <div class="imageDetails edit">
           <form:label path="name"><fmt:message key="imageMetadataEdit.name"/></form:label>

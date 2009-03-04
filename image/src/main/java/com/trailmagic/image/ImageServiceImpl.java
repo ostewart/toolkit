@@ -14,7 +14,7 @@
 package com.trailmagic.image;
 
 import com.trailmagic.image.ImageGroup.Type;
-import com.trailmagic.image.security.ImageSecurityFactory;
+import com.trailmagic.image.security.ImageSecurityService;
 import com.trailmagic.user.User;
 import com.trailmagic.user.UserFactory;
 import com.trailmagic.util.SecurityUtil;
@@ -26,7 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ImageServiceImpl implements ImageService {
     private ImageGroupRepository imageGroupRepository;
     private ImageRepository imageRepository;
-    private ImageSecurityFactory imageSecurityFactory;
+    private ImageSecurityService imageSecurityService;
     private ImageManifestationRepository imageManifestationRepository;
     private UserFactory userFactory;
     
@@ -35,13 +35,13 @@ public class ImageServiceImpl implements ImageService {
 
     public ImageServiceImpl(ImageGroupRepository imageGroupRepository,
             ImageRepository imageRepository,
-            ImageSecurityFactory imageSecurityFactory,
+            ImageSecurityService imageSecurityService,
             ImageManifestationRepository imageManifestationRepository,
             UserFactory userFactory) {
         super();
         this.imageGroupRepository = imageGroupRepository;
         this.imageRepository = imageRepository;
-        this.imageSecurityFactory = imageSecurityFactory;
+        this.imageSecurityService = imageSecurityService;
         this.imageManifestationRepository = imageManifestationRepository;
         this.userFactory = userFactory;
     }
@@ -57,7 +57,7 @@ public class ImageServiceImpl implements ImageService {
         }
 
         imageRepository.saveNew(image);
-        imageSecurityFactory.addOwnerAcl(image);
+        imageSecurityService.addOwnerAcl(image);
     }
 
     public void saveNewImageGroup(ImageGroup imageGroup) {
@@ -81,17 +81,17 @@ public class ImageServiceImpl implements ImageService {
         }
 
         imageGroupRepository.saveNewGroup(imageGroup);
-        imageSecurityFactory.addOwnerAcl(imageGroup);
+        imageSecurityService.addOwnerAcl(imageGroup);
     }
     
     public void saveNewImageFrame(ImageFrame imageFrame) {
         imageGroupRepository.saveFrame(imageFrame);
-        imageSecurityFactory.addOwnerAcl(imageFrame);
+        imageSecurityService.addOwnerAcl(imageFrame);
     }
     
     public void saveNewImageManifestation(HeavyImageManifestation imageManifestation) {
         imageManifestationRepository.saveNewImageManifestation(imageManifestation);
-        imageSecurityFactory.addOwnerAcl(imageManifestation);
+        imageSecurityService.addOwnerAcl(imageManifestation);
         
         log.info("Saved image manifestation (before flush/evict): "
                  + imageManifestation);
@@ -108,7 +108,7 @@ public class ImageServiceImpl implements ImageService {
         frame.setPosition(position);
 
         imageGroupRepository.saveFrame(frame);
-        imageSecurityFactory.addOwnerAcl(frame);
+        imageSecurityService.addOwnerAcl(frame);
 
         return frame;
     }
@@ -126,25 +126,25 @@ public class ImageServiceImpl implements ImageService {
     
     
     public void makeImageGroupPublic(ImageGroup group) {
-        imageSecurityFactory.makePublic(group);
+        imageSecurityService.makePublic(group);
         log.info("Added public permission for group: "
                    + group.getName());
 
         Collection<ImageFrame> frames = group.getFrames();
 
         for (ImageFrame frame : frames) {
-            imageSecurityFactory.makePublic(frame);
+            imageSecurityService.makePublic(frame);
             log.info("Added public permission for frame: "
                        + frame.getPosition() + " of group "
                        + group.getName());
 
             Image image = frame.getImage();
-            imageSecurityFactory.makePublic(image);
+            imageSecurityService.makePublic(image);
             log.info("Added public permission for image: "
                        + image.getDisplayName());
 
             for (ImageManifestation mf : image.getManifestations()) {
-                imageSecurityFactory.makePublic(mf);
+                imageSecurityService.makePublic(mf);
                 log.info("Added public permission for "
                            + "manifestation: "
                            + mf.getHeight() + "x" + mf.getWidth());

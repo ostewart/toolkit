@@ -26,15 +26,15 @@
   <image>
     <name>oliver-suit-1</name>
     <display-name>Me in a suit</display-name>
+    <owner>oliver</owner>
     <caption>lookin' snazzy</caption>
     <copyright>Copyright 2004</copyright>
     <creator>Oliver Stewart</creator>
-    <owner>oliver</owner>
     <photo-data>
-      <notes></notes>
-      <capture-date>2004-06-12</capture-date>
       <roll-name>vanity</roll-name>
       <frame-number>1</frame-number>
+      <notes></notes>
+      <capture-date>2004-06-12</capture-date>
     </photo-data>
   </image>
 </images>
