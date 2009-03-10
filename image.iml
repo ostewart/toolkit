@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module relativePaths="true" MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
+  <component name="FacetManager">
+    <facet type="hibernate" name="Hibernate">
+      <configuration>
+        <datasource-map />
+        <deploymentDescriptor name="hibernate.cfg.xml" url="file://$MODULE_DIR$/image/src/main/resources/trailmagic-image.cfg.xml" optional="false" version="3.0" />
+      </configuration>
+    </facet>
+    <facet type="Spring" name="Spring">
+      <configuration />
+    </facet>
+  </component>
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_5" inherit-compiler-output="false">
+    <output url="file://$MODULE_DIR$/image/target-eclipse/classes" />
+    <output-test url="file://$MODULE_DIR$/image/target-eclipse/test-classes" />
+    <exclude-output />
+    <content url="file://$MODULE_DIR$/image">
+      <sourceFolder url="file://$MODULE_DIR$/image/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/image/src/main/resources" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/image/src/test/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/image/src/test/resources" isTestSource="true" />
+      <excludeFolder url="file://$MODULE_DIR$/image/target" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" exported="" name="Maven: org.springframework:spring:2.5.1" level="project" />
+    <orderEntry type="library" exported="" name="Maven: commons-logging:commons-logging:1.1" level="project" />
+    <orderEntry type="library" exported="" name="Maven: org.springframework:spring-test:2.5.1" level="project" />
+    <orderEntry type="library" exported="" name="Maven: junit:junit:3.8.1" level="project" />
+    <orderEntry type="library" exported="" name="Maven: org.hibernate:hibernate:3.2.5.ga" level="project" />
+    <orderEntry type="library" exported="" name="Maven: net.sf.ehcache:ehcache:1.2.3" level="project" />
+    <orderEntry type="library" exported="" name="Maven: commons-collections:commons-collections:2.1.1" level="project" />
+    <orderEntry type="library" exported="" name="Maven: javax.transaction:jta:1.0.1B" level="project" />
+    <orderEntry type="library" exported="" name="Maven: asm:asm-attrs:1.5.3" level="project" />
+    <orderEntry type="library" exported="" name="Maven: dom4j:dom4j:1.6.1" level="project" />
+    <orderEntry type="library" exported="" name="Maven: antlr:antlr:2.7.6" level="project" />
+    <orderEntry type="library" exported="" name="Maven: cglib:cglib:2.1_3" level="project" />
+    <orderEntry type="library" exported="" name="Maven: asm:asm:1.5.3" level="project" />
+    <orderEntry type="library" exported="" name="Maven: org.acegisecurity:acegi-security:1.0.5" level="project" />
+    <orderEntry type="library" exported="" name="Maven: commons-lang:commons-lang:2.1" level="project" />
+    <orderEntry type="library" exported="" name="Maven: commons-codec:commons-codec:1.3" level="project" />
+    <orderEntry type="library" exported="" name="Maven: oro:oro:2.0.8" level="project" />
+    <orderEntry type="library" exported="" name="Maven: log4j:log4j:1.2.9" level="project" />
+    <orderEntry type="module" module-name="user" exported="" />
+    <orderEntry type="library" exported="" name="Maven: org.aspectj:aspectjrt:1.5.4" level="project" />
+    <orderEntry type="library" exported="" name="Maven: org.aspectj:aspectjweaver:1.5.4" level="project" />
+  </component>
+</module>
+
