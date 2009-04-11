@@ -5,6 +5,8 @@ import com.trailmagic.image.ImageGroup;
 import java.util.StringTokenizer;
 
 import org.springframework.web.util.UrlPathHelper;
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -14,10 +16,12 @@ import org.acegisecurity.util.PortResolver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+@Service
 public class WebRequestTools {
     private PortResolver portResolver;
     private static Log log = LogFactory.getLog(WebRequestTools.class);
-    
+
+    @Autowired
     public WebRequestTools(PortResolver portResolver) {
         super();
         this.portResolver = portResolver;

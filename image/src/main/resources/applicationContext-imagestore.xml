@@ -3,12 +3,15 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns:tx="http://www.springframework.org/schema/tx"
   xmlns:aop="http://www.springframework.org/schema/aop"
+  xmlns:context="http://www.springframework.org/schema/context"
   xsi:schemaLocation="http://www.springframework.org/schema/beans
-							http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+							http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
 							http://www.springframework.org/schema/tx
-							http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+							http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+							http://www.springframework.org/schema/context
+							http://www.springframework.org/schema/context/spring-context-2.5.xsd
                             http://www.springframework.org/schema/aop
-                            http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+                            http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
 
   <!--
     Copyright (c) 2006, 2007 Oliver Stewart.  All Rights Reserved.
@@ -25,14 +28,13 @@
   -->
 
   <!-- basic stuff is setup in applicationContext-global.xml -->
+    <context:component-scan base-package="com.trailmagic.util"/>
+    <context:component-scan base-package="com.trailmagic.image.impl"/>
+
   <bean id="imageGroupRepository"
     class="com.trailmagic.image.hibernate.HibernateImageGroupRepository">
-    <property name="sessionFactory">
-      <ref bean="sessionFactory" />
-    </property>
-    <property name="hibernateTemplate">
-      <ref bean="hibernateTemplate" />
-    </property>
+    <property name="sessionFactory" ref="sessionFactory"/>
+    <property name="hibernateTemplate" ref="hibernateTemplate"/>
   </bean>
 
   <bean id="imageManifestationRepository"
@@ -56,17 +58,6 @@
 
   <bean id="imageRepository"
     class="com.trailmagic.image.hibernate.HibernateImageRepository">
-    <property name="hibernateTemplate">
-      <ref bean="hibernateTemplate" />
-    </property>
-  </bean>
-
-  <bean id="imageService"
-    class="com.trailmagic.image.ImageServiceImpl">
-    <constructor-arg ref="imageRepository" />
-    <constructor-arg ref="imageGroupRepository" />
-    <constructor-arg ref="imageSecurityService" />
-    <constructor-arg ref="userFactory" />
-    <constructor-arg ref="imageManifestationRepository"/>
+    <property name="hibernateTemplate" ref="hibernateTemplate"/>
   </bean>
 </beans>

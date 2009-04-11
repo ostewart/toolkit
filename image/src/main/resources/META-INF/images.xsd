@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://trailmagic.com/images/1.0" xmlns="http://trailmagic.com/images/1.0" elementFormDefault="qualified">
+    <xs:element name="images" type="imagesType"/>
+
+    <xs:complexType name="imagesType">
+        <xs:sequence>
+          <xs:element ref="image-group" minOccurs="0" maxOccurs="unbounded"/>
+          <xs:element ref="image" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:element name="image-group" type="imageGroupType"/>
+    <xs:element name="image" type="imageType"/>
+
+    <xs:complexType name="imageGroupType">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="display-name" type="xs:string"/>
+            <xs:element name="description" type="xs:string"/>
+            <xs:element name="owner" type="xs:string"/>
+        </xs:sequence>
+        <xs:attribute name="type" type="imageGroupTypeEnum"/>
+    </xs:complexType>
+
+    <xs:complexType name="imageType">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="display-name" type="xs:string"/>
+            <xs:element name="owner" type="xs:string"/>
+            <xs:element name="caption" type="xs:string"/>
+            <xs:element name="copyright" type="xs:string"/>
+            <xs:element name="creator" type="xs:string"/>
+            <xs:element name="number" type="xs:string"/>
+            <xs:element name="photo-data" type="photoDataType" minOccurs="0"/>
+            <xs:element name="cd" type="xs:string" minOccurs="0"/>
+            <xs:element name="image-manifestation" type="imageManifestationType" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="photoDataType">
+        <xs:sequence>
+            <xs:element name="roll-name" type="xs:string"/>
+            <xs:element name="frame-number" type="xs:string"/>
+            <xs:element name="notes" type="xs:string"/>
+            <xs:element name="capture-date" type="xs:string"/>
+        </xs:sequence>
+
+    </xs:complexType>
+    <xs:complexType name="imageManifestationType">
+        <xs:sequence>
+        <xs:element name="name" type="xs:string"/>
+        <xs:element name="height" type="xs:integer" minOccurs="0"/>
+        <xs:element name="width" type="xs:integer" minOccurs="0"/>
+        <xs:element name="format" type="xs:string"/>
+        <xs:element name="original" type="xs:boolean"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:simpleType name="imageGroupTypeEnum">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="roll"/>
+            <xs:enumeration value="album"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

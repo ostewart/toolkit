@@ -8,10 +8,14 @@
       </configuration>
     </facet>
     <facet type="Spring" name="Spring">
-      <configuration />
+      <configuration>
+        <fileset id="fileset1" name="My Fileset" removed="false">
+          <file>file://$MODULE_DIR$/user/src/main/resources/applicationContext-user.xml</file>
+        </fileset>
+      </configuration>
     </facet>
   </component>
-  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_5" inherit-compiler-output="false">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_6" inherit-compiler-output="false">
     <output url="file://$MODULE_DIR$/user/target-eclipse/classes" />
     <output-test url="file://$MODULE_DIR$/user/target-eclipse/test-classes" />
     <exclude-output />
@@ -38,8 +42,8 @@
     <orderEntry type="library" exported="" name="Maven: antlr:antlr:2.7.6" level="project" />
     <orderEntry type="library" exported="" name="Maven: cglib:cglib:2.1_3" level="project" />
     <orderEntry type="library" exported="" name="Maven: asm:asm:1.5.3" level="project" />
-    <orderEntry type="library" exported="" name="Maven: org.springframework:spring:2.5.1" level="project" />
-    <orderEntry type="library" exported="" name="Maven: org.springframework:spring-test:2.5.1" level="project" />
+    <orderEntry type="library" exported="" name="Maven: org.springframework:spring:2.5.6" level="project" />
+    <orderEntry type="library" exported="" name="Maven: org.springframework:spring-test:2.5.6" level="project" />
     <orderEntry type="library" name="Maven: junit:junit:4.4" level="project" />
     <orderEntry type="library" name="Maven: javax.servlet:servlet-api:2.5" level="project" />
     <orderEntry type="library" exported="" name="Maven: org.aspectj:aspectjrt:1.5.4" level="project" />

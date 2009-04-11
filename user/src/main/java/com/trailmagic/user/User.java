@@ -17,68 +17,72 @@ import java.io.Serializable;
 
 public class User implements Serializable {
     private static final long serialVersionUID = 1L;
-    private long m_id;
-    private String m_screenName;
-    private String m_firstName;
-    private String m_lastName;
-    private String m_primaryEmail;
-    private String m_password;
+    private long id;
+    private String screenName;
+    private String firstName;
+    private String lastName;
+    private String primaryEmail;
+    private String password;
 
     public User() {
     }
 
+    public User(String screenName) {
+        this.screenName = screenName;
+    }
+
     public long getId() {
-        return m_id;
+        return id;
     }
 
     public void setId(long id) {
-        m_id = id;
+        this.id = id;
     }
 
     public String getScreenName() {
-        return m_screenName;
+        return screenName;
     }
 
     public void setScreenName(String sn) {
-        m_screenName = sn;
+        screenName = sn;
     }
 
     public String getFirstName() {
-        return m_firstName;
+        return firstName;
     }
 
     public void setFirstName(String name) {
-        m_firstName = name;
+        firstName = name;
     }
 
     public String getLastName() {
-        return m_lastName;
+        return lastName;
     }
 
     public void setLastName(String name) {
-        m_lastName = name;
+        lastName = name;
     }
 
     public String getPrimaryEmail() {
-        return m_primaryEmail;
+        return primaryEmail;
     }
 
     public void setPrimaryEmail(String email) {
-        m_primaryEmail = email;
+        primaryEmail = email;
     }
 
     /**
      * MD5 password digest - stored in hex chars
      **/
     public String getPassword() {
-        return m_password;
+        return password;
     }
 
     /**
      * MD5 password digest
      **/
     public void setPassword(String pass) {
-        m_password = pass;
+        password = pass;
     }
 
     public boolean equals(Object obj) {

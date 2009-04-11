@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<images xmlns="http://trailmagic.com/images/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://trailmagic.com/images/1.0 META-INF/images.xsd">
+    <images>
+        <image-group type="roll" id="monkeys">
+            <name>test</name>
+            <display-name>Test</display-name>
+            <description>pretty nice</description>
+            <owner>oliver</owner>
+        </image-group>
+
+        <image>
+            <name>image1</name>
+            <display-name>Image 1</display-name>
+            <owner>oliver</owner>
+            <caption>blah blah drivel</caption>
+            <copyright>Copyright 2008</copyright>
+            <creator>Oliver Stewart</creator>
+            <number>1</number>
+        </image>
+
+
+
+
+        <image-manifestation>
+            <name>128x230</name>
+            <height>128</height>
+            <width>240</width>
+            <format>image/jpeg</format>
+            <original>true</original>
+        </image-manifestation>
+
+        <image-manifestation name="yourmom" height="128" width="280" format="image/jpeg" original="true"/>
+    </images>
+</images>

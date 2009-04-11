@@ -23,6 +23,14 @@ import org.acegisecurity.acl.basic.AclObjectIdentityAware;
 import org.acegisecurity.acl.basic.NamedEntityObjectIdentity;
 
 public class ImageGroup implements Owned, AclObjectIdentityAware {
+    public static final String DEFAULT_ROLL_NAME = "uploads";
+
+    public ImageGroup(String name, User owner, Type type) {
+        this.name = name;
+        this.owner = owner;
+        this.type = type;
+    }
+
     public enum Type {
         ROLL("roll"), ALBUM("album");
         private String typeName;
@@ -71,17 +79,17 @@ public class ImageGroup implements Owned, AclObjectIdentityAware {
         }
     }
 
-    private long m_id;
-    private Type m_type;
-    private String m_name;
-    private String m_displayName;
-    private String m_description;
-    private Date m_uploadDate;
-    private SortedSet<ImageFrame> m_frames;
-    private Collection<ImageGroup> m_subgroups;
-    private ImageGroup m_supergroup;
-    private User m_owner;
-    private Image m_previewImage;
+    private long id;
+    private Type type;
+    private String name;
+    private String displayName;
+    private String description;
+    private Date uploadDate;
+    private SortedSet<ImageFrame> frames;
+    private Collection<ImageGroup> subgroups;
+    private ImageGroup supergroup;
+    private User owner;
+    private Image previewImage;
 
     public static final String ROLL_TYPE = "roll";
     public static final String ALBUM_TYPE = "album";
@@ -90,57 +98,57 @@ public class ImageGroup implements Owned, AclObjectIdentityAware {
     }
 
     public long getId() {
-        return m_id;
+        return id;
     }
 
     public void setId(long id) {
-        m_id = id;
+        this.id = id;
     }
 
     /** URL worthy name **/
     public String getName() {
-        return m_name;
+        return name;
     }
 
     public void setName(String name) {
-        m_name = name;
+        this.name = name;
     }
 
     /** name to be displayed to the user **/
     public String getDisplayName() {
-        return m_displayName;
+        return displayName;
     }
 
     public void setDisplayName(String name) {
-        m_displayName = name;
+        displayName = name;
     }
 
     public String getDescription() {
-        return m_description;
+        return description;
     }
 
     public void setDescription(String desc) {
-        m_description = desc;
+        description = desc;
     }
 
     public Date getUploadDate() {
-        return m_uploadDate;
+        return uploadDate;
     }
 
     public void setUploadDate(Date uploadDate) {
-        m_uploadDate = uploadDate;
+        this.uploadDate = uploadDate;
     }
 
     public Type getType() {
-        return m_type;
+        return type;
     }
 
     public void setType(Type type) {
-        m_type = type;
+        this.type = type;
     }
     
     public String getTypeDisplay() {
-    	switch (m_type) {
+    	switch (type) {
     	case ROLL:
     		return "Roll";
     	case ALBUM:
@@ -151,49 +159,49 @@ public class ImageGroup implements Owned, AclObjectIdentityAware {
     }
 
     public void addFrame(ImageFrame frame) {
-        m_frames.add(frame);
+        frames.add(frame);
     }
 
     public SortedSet<ImageFrame> getFrames() {
-        return m_frames;
+        return frames;
     }
 
     public void setFrames(SortedSet<ImageFrame> frames) {
-        m_frames = frames;
+        this.frames = frames;
     }
 
     public int getNextFrameNumber() {
-        ImageFrame lastFrame = m_frames.last();
+        ImageFrame lastFrame = frames.last();
         return lastFrame.getPosition() + 1;
     }
 
     public ImageGroup getSupergroup() {
-        return m_supergroup;
+        return supergroup;
     }
 
     public void setSupergroup(ImageGroup group) {
-        m_supergroup = group;
+        supergroup = group;
     }
 
     public void addSubgroup(ImageGroup group) {
         group.setSupergroup(this);
-        m_subgroups.add(group);
+        subgroups.add(group);
     }
 
     public Collection<ImageGroup> getSubgroups() {
-        return m_subgroups;
+        return subgroups;
     }
 
     public void setSubgroups(Collection<ImageGroup> subgroups) {
-        m_subgroups = subgroups;
+        this.subgroups = subgroups;
     }
 
     public User getOwner() {
-        return m_owner;
+        return owner;
     }
 
     public void setOwner(User owner) {
-        m_owner = owner;
+        this.owner = owner;
     }
 
     public boolean equals(Object obj) {
@@ -209,19 +217,19 @@ public class ImageGroup implements Owned, AclObjectIdentityAware {
     }
 
     public Image getPreviewImage() {
-        return m_previewImage;
+        return previewImage;
     }
 
     public void setPreviewImage(Image previewImage) {
-        m_previewImage = previewImage;
+        this.previewImage = previewImage;
     }
     
     @Override
     public String toString() {
-        return "ImageGroup(id=" + m_id
-            + "type=" + m_type
-            + "; name=" + m_name
-            + "; owner=" + m_owner
+        return "ImageGroup(id=" + id
+            + "; type=" + type
+            + "; name=" + name
+            + "; owner=" + owner
             + ")";
     }
 }

@@ -11,46 +11,92 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package com.trailmagic.image;
+package com.trailmagic.image.impl;
 
 import com.trailmagic.image.ImageGroup.Type;
 import com.trailmagic.image.security.ImageSecurityService;
+import com.trailmagic.image.*;
 import com.trailmagic.user.User;
 import com.trailmagic.user.UserFactory;
 import com.trailmagic.util.SecurityUtil;
 import java.util.Collection;
+import java.util.Date;
+
 import org.apache.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Transactional
+@Service("imageService")
 public class ImageServiceImpl implements ImageService {
     private ImageGroupRepository imageGroupRepository;
     private ImageRepository imageRepository;
     private ImageSecurityService imageSecurityService;
     private ImageManifestationRepository imageManifestationRepository;
     private UserFactory userFactory;
+    private SecurityUtil securityUtil;
     
     private static Logger log =
         Logger.getLogger(ImageServiceImpl.class);
 
+    @Autowired
     public ImageServiceImpl(ImageGroupRepository imageGroupRepository,
-            ImageRepository imageRepository,
-            ImageSecurityService imageSecurityService,
-            ImageManifestationRepository imageManifestationRepository,
-            UserFactory userFactory) {
+                            ImageRepository imageRepository,
+                            ImageSecurityService imageSecurityService,
+                            ImageManifestationRepository imageManifestationRepository,
+                            UserFactory userFactory,
+                            SecurityUtil securityUtil) {
         super();
         this.imageGroupRepository = imageGroupRepository;
         this.imageRepository = imageRepository;
         this.imageSecurityService = imageSecurityService;
         this.imageManifestationRepository = imageManifestationRepository;
         this.userFactory = userFactory;
+        this.securityUtil = securityUtil;
     }
-    
+
+    public Photo createImage(ImageMetadata imageData) throws IllegalStateException {
+        Photo photo = new Photo();
+        photo.setCaption(imageData.getCaption());
+        photo.setName(imageData.getShortName());
+        photo.setDisplayName(imageData.getDisplayName());
+        photo.setCopyright(imageData.getCopyright());
+        photo.setCreator(imageData.getCreator());
+        final User currentUser = securityUtil.getCurrentUser();
+        photo.setOwner(currentUser);
+        if (imageData.getRollName() == null) {
+            photo.setRoll(getDefaultRollForUser(currentUser));
+
+        } else {
+            photo.setRoll(imageGroupRepository.getRollByOwnerAndName(currentUser, imageData.getRollName()));
+        }
+        saveNewImage(photo);
+
+        return photo;
+    }
+
+    private ImageGroup getDefaultRollForUser(User currentUser) {
+        ImageGroup defaultRoll = imageGroupRepository.getRollByOwnerAndName(currentUser, ImageGroup.DEFAULT_ROLL_NAME);
+        if (defaultRoll == null) {
+            defaultRoll = new ImageGroup();
+            defaultRoll.setType(ImageGroup.Type.ROLL);
+            defaultRoll.setOwner(currentUser);
+            defaultRoll.setSupergroup(null);
+            defaultRoll.setUploadDate(new Date());
+            defaultRoll.setName("uploads");
+            defaultRoll.setDisplayName("Uploads");
+            defaultRoll.setDescription("Uploaded images");
+            imageGroupRepository.saveNewGroup(defaultRoll);
+        }
+        return defaultRoll;
+    }
+
     public void saveNewImage(Image image) {
         log.info("Saving image: " + image);
         if (image.getOwner() == null) {
-            if (SecurityUtil.getCurrentUser() != null) {
-                image.setOwner(SecurityUtil.getCurrentUser());
+            if (securityUtil.getCurrentUser() != null) {
+                image.setOwner(securityUtil.getCurrentUser());
             } else {
                 throw new IllegalStateException("Can't save an image with no owner");
             }
@@ -60,11 +106,11 @@ public class ImageServiceImpl implements ImageService {
         imageSecurityService.addOwnerAcl(image);
     }
 
-    public void saveNewImageGroup(ImageGroup imageGroup) {
+    public void saveNewImageGroup(ImageGroup imageGroup) throws IllegalStateException {
         log.info("Saving image group: " + imageGroup);
         if (imageGroup.getOwner() == null) {
-            if (SecurityUtil.getCurrentUser() != null) {
-                imageGroup.setOwner(SecurityUtil.getCurrentUser());
+            if (securityUtil.getCurrentUser() != null) {
+                imageGroup.setOwner(securityUtil.getCurrentUser());
             } else {
                 throw new IllegalStateException("Can't save a roll with no owner");
             }

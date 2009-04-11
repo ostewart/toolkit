@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:tx="http://www.springframework.org/schema/tx"
-    xmlns:aop="http://www.springframework.org/schema/aop"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
   http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
   http://www.springframework.org/schema/tx
   http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
   http://www.springframework.org/schema/aop
-  http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
-<!--
+  http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+  http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+    <!--
  Copyright (c) 2006, 2007 Oliver Stewart.  All Rights Reserved.
 
  This file is free software; you can redistribute it and/or modify
@@ -22,32 +24,35 @@
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
 -->
-  <!-- override standard definition to bypass security for standalone
+    <!-- override standard definition to bypass security for standalone
   operation -->
-  <bean id="imageSecurityService"
-    class="com.trailmagic.image.security.AcegiImageSecurityService"
-    autowire="byName">
-  </bean>
+    <bean id="imageSecurityService"
+          class="com.trailmagic.image.security.AcegiImageSecurityService"
+          autowire="byName">
+    </bean>
+
+    <context:component-scan base-package="com.trailmagic.image"/>
 
 
+    <!-- override to disable security checks? -->
+    <!--<bean id="imageFactory"-->
+          <!--class="com.trailmagic.image.hibernate.HibernateImageRepository">-->
+        <!--<property name="hibernateTemplate">-->
+            <!--<ref bean="hibernateTemplate"/>-->
+        <!--</property>-->
+    <!--</bean>-->
 
-  <!-- override to disable security checks? -->
-  <bean id="imageFactory"
-    class="com.trailmagic.image.hibernate.HibernateImageRepository">
-    <property name="hibernateTemplate"><ref bean="hibernateTemplate"/></property>
-  </bean>
+    <!--<bean id="imageGroupRepository"-->
+          <!--class="com.trailmagic.image.hibernate.HibernateImageGroupRepository">-->
+        <!--<property name="sessionFactory">-->
+            <!--<ref bean="sessionFactory"/>-->
+        <!--</property>-->
+        <!--<property name="hibernateTemplate">-->
+            <!--<ref bean="hibernateTemplate"/>-->
+        <!--</property>-->
+    <!--</bean>-->
 
-  <bean id="imageGroupRepository"
-      class="com.trailmagic.image.hibernate.HibernateImageGroupRepository">
-      <property name="sessionFactory">
-          <ref bean="sessionFactory" />
-      </property>
-      <property name="hibernateTemplate">
-          <ref bean="hibernateTemplate" />
-      </property>
-  </bean>
-
-<!--  
+    <!--
   <bean id="imagesParser"
     class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
     <property name="proxyTargetClass"><value>true</value></property>
@@ -64,191 +69,149 @@
     </property>
   </bean>
 -->
-  <bean id="hibernateInterceptor"
-    class="org.springframework.orm.hibernate3.HibernateInterceptor">
-    <property name="sessionFactory">
-      <ref bean="sessionFactory"/>
-    </property>
-  </bean>
+    <bean id="hibernateInterceptor"
+          class="org.springframework.orm.hibernate3.HibernateInterceptor">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
 
-  <!-- Wrap the MakeAlbumFromRoll with a session -->
-  <bean id="makeAlbumFromRoll"
-    class="org.springframework.aop.framework.ProxyFactoryBean">
-<!--    <property name="proxyTargetClass"><value>true</value></property>-->
-    <property name="target">
-      <bean
-        class="com.trailmagic.image.util.MakeAlbumFromRoll">
-        <property name="sessionFactory">
-          <ref bean="sessionFactory"/>
+    <!-- Wrap the MakeAlbumFromRoll with a session -->
+    <bean id="makeAlbumFromRoll"
+          class="org.springframework.aop.framework.ProxyFactoryBean">
+        <!--    <property name="proxyTargetClass"><value>true</value></property>-->
+        <property name="target">
+            <bean
+                    class="com.trailmagic.image.util.MakeAlbumFromRoll">
+                <property name="sessionFactory" ref="sessionFactory"/>
+            </bean>
         </property>
-      </bean>
-    </property>
-    <property name="interceptorNames">
-      <list>
-        <value>hibernateInterceptor</value>
-      </list>
-    </property>
-  </bean>
+        <property name="interceptorNames">
+            <list>
+                <value>hibernateInterceptor</value>
+            </list>
+        </property>
+    </bean>
 
 
     <!-- Wrap the MakeAlbum with a session -->
-  <bean id="makeAlbum"
-    class="org.springframework.aop.framework.ProxyFactoryBean">
-    <property name="target">
-      <bean
-        class="com.trailmagic.image.util.MakeAlbum">
-        <property name="sessionFactory">
-          <ref bean="sessionFactory"/>
+    <bean id="makeAlbum"
+          class="org.springframework.aop.framework.ProxyFactoryBean">
+        <property name="target">
+            <bean
+                    class="com.trailmagic.image.util.MakeAlbum">
+                <property name="sessionFactory" ref="sessionFactory"/>
+            </bean>
         </property>
-      </bean>
-    </property>
-    <property name="interceptorNames">
-      <list>
-        <value>hibernateInterceptor</value>
-      </list>
-    </property>
-  </bean>
+        <property name="interceptorNames">
+            <list>
+                <value>hibernateInterceptor</value>
+            </list>
+        </property>
+    </bean>
 
-  <bean id="replaceImageManifestation"
-    class="com.trailmagic.image.util.ReplaceImageManifestation">
-    <property name="sessionFactory">
-      <ref bean="sessionFactory"/>
-    </property>
-    <property name="imageManifestationFactory">
-      <ref bean="imageManifestationFactory"/>
-    </property>
-    <property name="userFactory">
-      <ref bean="userFactory"/>
-    </property>
-    <property name="hibernateTemplate">
-      <ref bean="hibernateTemplate"/>
-    </property>
-    <property name="imageGroupRepository">
-      <ref bean="imageGroupRepository"/>
-    </property>
-  </bean>
+    <bean id="replaceImageManifestation"
+          class="com.trailmagic.image.util.ReplaceImageManifestation">
+        <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="imageManifestationFactory" ref="imageManifestationFactory"/>
+        <property name="userFactory" ref="userFactory"/>
+        <property name="hibernateTemplate" ref="hibernateTemplate"/>
+        <property name="imageGroupRepository" ref="imageGroupRepository"/>
+    </bean>
 
-  <bean id="basicAclExtendedDao"
-    class="org.acegisecurity.acl.basic.jdbc.JdbcExtendedDaoImpl">
-    <property name="dataSource"><ref bean="dataSource"/></property>
-    <!--
+    <bean id="basicAclExtendedDao"
+          class="org.acegisecurity.acl.basic.jdbc.JdbcExtendedDaoImpl">
+        <property name="dataSource" ref="dataSource"/>
+        <!--
     <property name="basicAclEntryCache">
       <ref local="aclEntryCache"/>
   </property>
     -->
-  </bean>
+    </bean>
 
-  <bean id="imageAspectSecurity"
-    class="org.acegisecurity.intercept.method.aspectj.AspectJSecurityInterceptor">
-    <property name="validateConfigAttributes">
-      <value>true</value>
-    </property>
-    <property name="authenticationManager">
-      <ref bean="authenticationManager"/>
-    </property>
-    <property name="accessDecisionManager">
-      <ref bean="imageAccessDecisionManager"/>
-    </property>
-    <property name="afterInvocationManager">
-      <ref bean="afterInvocationManager"/>
-    </property>
+    <bean id="imageAspectSecurity"
+          class="org.acegisecurity.intercept.method.aspectj.AspectJSecurityInterceptor">
+        <property name="validateConfigAttributes" value="true"/>
+        <property name="authenticationManager" ref="authenticationManager"/>
+        <property name="accessDecisionManager" ref="imageAccessDecisionManager"/>
+        <property name="afterInvocationManager" ref="afterInvocationManager"/>
 
-    <property name="objectDefinitionSource">
-      <value>
-        <!-- bypass security in this environment
+        <property name="objectDefinitionSource">
+            <value>
+                <!-- bypass security in this environment
         com.trailmagic.image.ImageFrame.getImage=AFTER_ACL_READ
         com.trailmagic.image.ImageGroup.getFrames=AFTER_ACL_COLLECTION_READ
         com.trailmagic.image.Image.getManifestations=AFTER_ACL_COLLECTION_READ
         -->
-      </value>
-    </property>
-  </bean>
-
-  <bean id="imageInstanceSecurityAspect"
-    class="com.trailmagic.image.ImageSecurityAspect"
-    factory-method="aspectOf">
-    <property name="securityInterceptor">
-      <ref bean="imageAspectSecurity"/>
-    </property>
-  </bean>
-
-  <!-- override because jaas.config isn't in the right place -->
-  <bean id="jaasAuthenticationProvider"
-    class="org.acegisecurity.providers.jaas.JaasAuthenticationProvider">
-    <property name="loginConfig">
-      <value>jaas.config</value>
-    </property>
-    <property name="loginContextName">
-      <value>ImageStore</value>
-    </property>
-    <property name="callbackHandlers">
-      <list>
-        <bean class="org.acegisecurity.providers.jaas.JaasNameCallbackHandler"/>
-        <bean class="org.acegisecurity.providers.jaas.JaasPasswordCallbackHandler"/>
-      </list>
-    </property>
-    <property name="authorityGranters">
-      <list>
-        <bean class="com.trailmagic.user.UserGroupAuthorityGranter"/>
-      </list>
-    </property>
-  </bean>
-
-  <bean id="transactionInterceptor"
-    class="org.springframework.transaction.interceptor.TransactionInterceptor">
-    <property name="transactionManager">
-      <ref bean="transactionManager"/>
-    </property>
-    <property name="transactionAttributeSource">
-      <value>
-        com.trailmagic.image.hibernate.HibernateImageFactory.getById=PROPAGATION_REQUIRED,readOnly
-        com.trailmagic.image.hibernate.HibernateImageFactory.getByName=PROPAGATION_REQUIRED,readOnly
-        com.trailmagic.image.hibernate.HibernateImageFactory.getAll=PROPAGATION_REQUIRED,readOnly
-        com.trailmagic.image.hibernate.HibernateImageFactory.getByNameAndGroup=PROPAGATION_REQUIRED,readOnly
-        com.trailmagic.image.util.AddPermissions.add*=PROPAGATION_REQUIRED
-          com.trailmagic.image.util.AddPermissions.make*=PROPAGATION_REQUIRED
-          com.trailmagic.image.util.FixDimensions.fixDimensions=PROPAGATION_REQUIRED
-      </value>
-    </property>
-  </bean>
-
-  <!-- Wrap the MakeAlbum with a session -->
-  <bean id="addPermissions"
-    class="org.springframework.aop.framework.ProxyFactoryBean">
-    <property name="target">
-      <bean
-        class="com.trailmagic.image.util.AddPermissions">
-        <property name="imageSecurityService">
-          <ref bean="imageSecurityService"/>
+            </value>
         </property>
-        <property name="imageGroupRepository">
-          <ref bean="imageGroupRepository"/>
-        </property>
-        <property name="userFactory">
-          <ref bean="userFactory"/>
-        </property>
-        <property name="hibernateTemplate">
-          <ref bean="hibernateTemplate"/>
-        </property>
-        <property name="groupFactory">
-          <ref bean="groupFactory"/>
-        </property>
-      </bean>
-    </property>
-    <property name="interceptorNames">
-      <list>
-        <value>transactionInterceptor</value>
-        <value>hibernateInterceptor</value>
-      </list>
-    </property>
-  </bean>
-  
-  <bean id="setPreviewImage"
-      class="com.trailmagic.image.util.SetPreviewImageImpl">
-      <property name="imageGroupRepository" ref="imageGroupRepository"/>
-  </bean>
+    </bean>
 
-  <!--
+    <bean id="imageInstanceSecurityAspect"
+          class="com.trailmagic.image.ImageSecurityAspect"
+          factory-method="aspectOf">
+        <property name="securityInterceptor" ref="imageAspectSecurity"/>
+    </bean>
+
+    <!-- override because jaas.config isn't in the right place -->
+    <bean id="jaasAuthenticationProvider"
+          class="org.acegisecurity.providers.jaas.JaasAuthenticationProvider">
+        <property name="loginConfig" value="jaas.config"/>
+        <property name="loginContextName" value="ImageStore"/>
+        <property name="callbackHandlers">
+            <list>
+                <bean class="org.acegisecurity.providers.jaas.JaasNameCallbackHandler"/>
+                <bean class="org.acegisecurity.providers.jaas.JaasPasswordCallbackHandler"/>
+            </list>
+        </property>
+        <property name="authorityGranters">
+            <list>
+                <bean class="com.trailmagic.user.UserGroupAuthorityGranter"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="transactionInterceptor"
+          class="org.springframework.transaction.interceptor.TransactionInterceptor">
+        <property name="transactionManager" ref="transactionManager"/>
+        <property name="transactionAttributeSource">
+            <value>
+                com.trailmagic.image.hibernate.HibernateImageFactory.getById=PROPAGATION_REQUIRED,readOnly
+                com.trailmagic.image.hibernate.HibernateImageFactory.getByName=PROPAGATION_REQUIRED,readOnly
+                com.trailmagic.image.hibernate.HibernateImageFactory.getAll=PROPAGATION_REQUIRED,readOnly
+                com.trailmagic.image.hibernate.HibernateImageFactory.getByNameAndGroup=PROPAGATION_REQUIRED,readOnly
+                com.trailmagic.image.util.AddPermissions.add*=PROPAGATION_REQUIRED
+                com.trailmagic.image.util.AddPermissions.make*=PROPAGATION_REQUIRED
+                com.trailmagic.image.util.FixDimensions.fixDimensions=PROPAGATION_REQUIRED
+            </value>
+        </property>
+    </bean>
+
+    <!-- Wrap the MakeAlbum with a session -->
+    <bean id="addPermissions"
+          class="org.springframework.aop.framework.ProxyFactoryBean">
+        <property name="target">
+            <bean
+                    class="com.trailmagic.image.util.AddPermissions">
+                <property name="imageSecurityService" ref="imageSecurityService"/>
+                <property name="imageGroupRepository" ref="imageGroupRepository"/>
+                <property name="userFactory" ref="userFactory"/>
+                <property name="hibernateTemplate" ref="hibernateTemplate"/>
+                <property name="groupFactory" ref="groupFactory"/>
+            </bean>
+        </property>
+        <property name="interceptorNames">
+            <list>
+                <value>transactionInterceptor</value>
+                <value>hibernateInterceptor</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="setPreviewImage"
+          class="com.trailmagic.image.util.SetPreviewImageImpl">
+        <property name="imageGroupRepository" ref="imageGroupRepository"/>
+    </bean>
+
+    <!--
   <bean id="fixDimensions"
     class="org.springframework.aop.framework.ProxyFactoryBean">
     <property name="target">

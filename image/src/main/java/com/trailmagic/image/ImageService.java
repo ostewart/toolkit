@@ -14,8 +14,11 @@
 package com.trailmagic.image;
 
 public interface ImageService {
+    public Photo createImage(ImageMetadata imageData) throws IllegalStateException;
+
+
     public void saveNewImage(Image image);
-    public void saveNewImageGroup(ImageGroup imageGroup);
+    public void saveNewImageGroup(ImageGroup imageGroup) throws IllegalStateException;
     public void saveNewImageFrame(ImageFrame imageFrame);
     public void saveNewImageManifestation(HeavyImageManifestation imageManifestation);
     public ImageFrame addImageToGroup(Image image, ImageGroup group, int position);

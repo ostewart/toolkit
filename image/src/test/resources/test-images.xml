@@ -16,6 +16,11 @@
  GNU General Public License for more details.
 -->
 
+        <image-group type="album">
+            <name>hi</name>
+            <name>hi</name>
+        </image-group>
+
 <images>
   <roll>
     <name>import-roll</name>

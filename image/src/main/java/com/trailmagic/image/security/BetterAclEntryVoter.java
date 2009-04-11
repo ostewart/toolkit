@@ -79,7 +79,7 @@ public class BetterAclEntryVoter extends BasicAclEntryVoter {
                 Class targetClass = joinPoint.getTarget().getClass();
 
                 params = signature.getParameterTypes();
-                method = targetClass.getMethod(signature.getName(), params);
+                targetClass.getMethod(signature.getName(), params);
 
                 for (int i = 0; i < params.length; i++) {
                     if (getProcessDomainObjectClass()

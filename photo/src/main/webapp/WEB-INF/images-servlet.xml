@@ -14,73 +14,77 @@
 -->
 
 <beans xmlns="http://www.springframework.org/schema/beans"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns:tx="http://www.springframework.org/schema/tx"
-  xmlns:aop="http://www.springframework.org/schema/aop"
-  xsi:schemaLocation="http://www.springframework.org/schema/beans
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
   http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
   http://www.springframework.org/schema/aop
   http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
   http://www.springframework.org/schema/tx
-  http://www.springframework.org/schema/tx/spring-tx-2.0.xsd">
-  
-  <bean id="messageSource"
-        class="org.springframework.context.support.ResourceBundleMessageSource">
-    <property name="basenames">
-      <list>
-        <value>messages</value>
-        <value>com.trailmagic.image.ui.messages</value>
-      </list>
-    </property>
-  </bean>
-  
-    
-  <bean id="handlerMapping" 
-    class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">            
-    <property name="mappings">
-      <props>
-        <prop key="/albums/**">imageGroupController</prop>
-        <prop key="/rolls/**">imageGroupController</prop>
-        <prop key="/images/**">imageController</prop>
-        <prop key="/import">imageImportController</prop>
-        <prop key="/mf/**">imageManifestationController</prop>
-        <prop key="/logout">logoutController</prop>
-        <prop key="/changePermission">imageAccessController</prop>
-        <prop key="/grantAccess">accessGrantController</prop>
-        <prop key="/testing/**">imageEditController</prop>
-        <prop key="/set-preview-image">setPreviewImageController</prop>
-        <prop key="/edit-image-metadata">imageMetadataEditController</prop>
-      </props>
-    </property>
-  </bean>
-  
-  <bean id="exceptionHandler"
-    class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
-    <property name="exceptionMappings">
-      <props>
-        <prop key="com.trailmagic.user.NoSuchUserException">noUser</prop>
-        <prop key="com.trailmagic.image.NoSuchImageFrameException">noImageFrame</prop>
-        <prop key="com.trailmagic.image.NoSuchImageGroupException">noImageGroup</prop>
-      </props>
-    </property>
-    <property name="defaultErrorView" value="error" />
-    <property name="defaultStatusCode" value="500" />
-  </bean>
+  http://www.springframework.org/schema/tx/spring-tx-2.0.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-  <bean id="jspxViewResolver"
-    class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-    <property name="prefix"><value>/WEB-INF/jsp/</value></property>
-    <property name="suffix"><value>.jspx</value></property>
-    <property name="viewClass">
-      <value>org.springframework.web.servlet.view.JstlView</value>
-    </property>
-  </bean>
-  
-  <bean id="urlPathHelper"
-  	class="org.springframework.web.util.UrlPathHelper">
-  </bean>
+    <bean id="portResolver" class="org.acegisecurity.util.PortResolverImpl"/>
 
-  <!--
+    <context:component-scan base-package="com.trailmagic.web"/>
+    <context:component-scan base-package="com.trailmagic.image.ui"/>
+
+    <bean id="messageSource"
+          class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="basenames">
+            <list>
+                <value>messages</value>
+                <value>com.trailmagic.image.ui.messages</value>
+            </list>
+        </property>
+    </bean>
+
+
+    <bean id="handlerMapping"
+          class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="mappings">
+            <props>
+                <prop key="/albums/**">imageGroupController</prop>
+                <prop key="/rolls/**">imageGroupController</prop>
+                <prop key="/images/**">imageController</prop>
+                <prop key="/import">imageImportController</prop>
+                <prop key="/mf/**">imageManifestationController</prop>
+                <prop key="/logout">logoutController</prop>
+                <prop key="/changePermission">imageAccessController</prop>
+                <prop key="/grantAccess">accessGrantController</prop>
+                <prop key="/testing/**">imageEditController</prop>
+                <prop key="/set-preview-image">setPreviewImageController</prop>
+                <prop key="/edit-image-metadata">imageMetadataEditController</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="exceptionHandler"
+          class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+        <property name="exceptionMappings">
+            <props>
+                <prop key="com.trailmagic.user.NoSuchUserException">noUser</prop>
+                <prop key="com.trailmagic.image.NoSuchImageFrameException">noImageFrame</prop>
+                <prop key="com.trailmagic.image.NoSuchImageGroupException">noImageGroup</prop>
+            </props>
+        </property>
+        <property name="defaultErrorView" value="error"/>
+        <property name="defaultStatusCode" value="500"/>
+    </bean>
+
+    <bean id="jspxViewResolver"
+          class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/jsp/"/>
+        <property name="suffix" value=".jspx"/>
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+    </bean>
+
+    <bean id="urlPathHelper"
+          class="org.springframework.web.util.UrlPathHelper">
+    </bean>
+
+    <!--
   <bean id="jspViewResolver"
     class="org.springframework.web.servlet.view.UrlBasedViewResolver">
     <property name="prefix"><value>/WEB-INF/jsp/</value></property>
@@ -91,201 +95,137 @@
   </bean>
   -->
 
-  <bean id="multipartResolver" 
-    class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-    
-    <!-- one of the properties available; the maximum file size in bytes -->
-    <property name="maxUploadSize">
-      <value>10000000</value>
-    </property>
-  </bean>
+    <bean id="multipartResolver"
+          class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
 
-  <bean id="portResolver" class="org.acegisecurity.util.PortResolverImpl"/>
-  
-  <bean id="fileController"
-    class="org.springframework.web.servlet.mvc.ServletForwardingController">
-    <property name="servletName">
-      <value>fileServlet</value> <!-- set in web.xml -->
-    </property>
-  </bean>
+        <!-- one of the properties available; the maximum file size in bytes -->
+        <property name="maxUploadSize" value="10000000"/>
+    </bean>
 
-  <bean id="imageEditController"
-    class="com.trailmagic.image.ui.ImageEditController">
-    <constructor-arg ref="imageRepository"/>
-      <property name="commandClass" value="com.trailmagic.image.Image"/>
-      <property name="commandName" value="image"/>
-      <property name="formView" value="imageDisplay"/>
-      <property name="validators">
-        <list>
-        <bean id="imageValidator"
-          class="com.trailmagic.image.ImageValidator"/>
-        </list>
-      </property>
-  </bean>
-  
-<!--    <tx:advice id="imageEditAdvice" transaction-manager="transactionManager">-->
-<!--        <tx:attributes>-->
-<!--          <tx:method name="handleRequest" propagation="REQUIRED"-->
-<!--          isolation="READ_COMMITTED" timeout="-1" read-only="false"/>-->
-<!--        </tx:attributes>-->
-<!--    </tx:advice>-->
-<!---->
-<!--  <aop:config>-->
-<!--    <aop:pointcut id="imageEditTransactions" expression="execution(* com.trailmagic.image.ui.ImageEditController.handleRequest(..))"/>-->
-<!--        <aop:advisor advice-ref="imageEditAdvice" pointcut-ref="imageEditTransactions"/>-->
-<!--        -->
-<!--    </aop:config>-->
 
-  <bean id="webRequestTools"
-    class="com.trailmagic.web.util.WebRequestTools">
-    <constructor-arg ref="portResolver"/>
-  </bean>
+    <bean id="fileController"
+          class="org.springframework.web.servlet.mvc.ServletForwardingController">
+        <property name="servletName" value="fileServlet"/>
+    </bean>
 
-  <bean id="imageGroupController"
-    class="com.trailmagic.image.ui.ImageGroupDispatcherController">
-    <constructor-arg ref="imageGroupDisplayController"/>
-    <constructor-arg ref="imageGroupRepository"/>
-    <constructor-arg ref="userFactory"/>
-    <constructor-arg ref="webRequestTools"/>
-    <constructor-arg ref="imageDisplayController"/>
-  </bean>
+    <bean id="imageEditController"
+          class="com.trailmagic.image.ui.ImageEditController">
+        <constructor-arg ref="imageRepository"/>
+        <property name="commandClass" value="com.trailmagic.image.Image"/>
+        <property name="commandName" value="image"/>
+        <property name="formView" value="imageDisplay"/>
+        <property name="validators">
+            <list>
+                <bean id="imageValidator"
+                      class="com.trailmagic.image.ImageValidator"/>
+            </list>
+        </property>
+    </bean>
 
-  <bean id="logoutController"
-    class="com.trailmagic.image.ui.LogoutController">
-  </bean>
+    <!--    <tx:advice id="imageEditAdvice" transaction-manager="transactionManager">-->
+    <!--        <tx:attributes>-->
+    <!--          <tx:method name="handleRequest" propagation="REQUIRED"-->
+    <!--          isolation="READ_COMMITTED" timeout="-1" read-only="false"/>-->
+    <!--        </tx:attributes>-->
+    <!--    </tx:advice>-->
+    <!---->
+    <!--  <aop:config>-->
+    <!--    <aop:pointcut id="imageEditTransactions" expression="execution(* com.trailmagic.image.ui.ImageEditController.handleRequest(..))"/>-->
+    <!--        <aop:advisor advice-ref="imageEditAdvice" pointcut-ref="imageEditTransactions"/>-->
+    <!--        -->
+    <!--    </aop:config>-->
 
-  <bean id="imageController"
-    class="com.trailmagic.image.ui.ImageController">
-    <property name="supportedMethods">
-      <value>GET</value>
-    </property>
-    <property name="requireSession">
-      <value>false</value>
-    </property>
-    <property name="cacheSeconds">
-      <value>-1</value>
-    </property>
-    <property name="controllerPath">
-      <value>/images</value>
-    </property>
-  </bean>
 
-  <bean id="imageManifestationController"
-    class="com.trailmagic.image.ui.ImageManifestationController">
-    <constructor-arg ref="imageManifestationRepository"/>
-    <property name="supportedMethods">
-      <value>GET,HEAD</value>
-    </property>
-    <property name="requireSession">
-      <value>false</value>
-    </property>
-    <property name="cacheSeconds">
-      <value>864000</value>
-    </property>
-    <property name="controllerPath">
-      <value>/mf</value>
-    </property>
-  </bean>
+    <bean id="imageGroupController"
+          class="com.trailmagic.image.ui.ImageGroupDispatcherController">
+        <constructor-arg ref="imageGroupDisplayController"/>
+        <constructor-arg ref="imageGroupRepository"/>
+        <constructor-arg ref="userFactory"/>
+        <constructor-arg ref="webRequestTools"/>
+        <constructor-arg ref="imageDisplayController"/>
+    </bean>
 
-  <bean id="imageImportController"
-    class="com.trailmagic.image.ui.ImageImportController">
-    <constructor-arg ref="imagesParser"/>
-    <property name="commandName">
-      <value>imageImportBean</value>
-    </property>
-    <property name="commandClass">
-      <value>com.trailmagic.image.ui.ImageImportBean</value>
-    </property>
-    <property name="formView">
-      <value>imageImportForm</value>
-    </property>
-    <property name="successView">
-      <value>imageImportSuccess</value>
-    </property>
-    <property name="validateOnBinding">
-      <value>false</value>
-    </property>
-  </bean>
+    <bean id="logoutController"
+          class="com.trailmagic.image.ui.LogoutController">
+    </bean>
 
-  <bean id="imageAccessController"
-    class="com.trailmagic.image.ui.ImageAccessController">
-    <property name="commandName">
-      <value>imageAccessBean</value>
-    </property>
-    <property name="commandClass">
-      <value>com.trailmagic.image.ui.ImageAccessBean</value>
-    </property>
-    <property name="formView">
-      <value>imageAccessForm</value>
-    </property>
-    <property name="successView">
-      <value>imageAccessSuccess</value>
-    </property>
-    <property name="imageRepository">
-      <ref bean="imageRepository"/>
-    </property>
-    <property name="imageGroupRepository">
-      <ref bean="imageGroupRepository"/>
-    </property>
-    <property name="imageSecurityService">
-      <ref bean="imageSecurityService"/>
-    </property>
-  </bean>
+    <bean id="imageController"
+          class="com.trailmagic.image.ui.ImageController">
+        <property name="supportedMethods" value="GET"/>
+        <property name="requireSession" value="false"/>
+        <property name="cacheSeconds" value="-1"/>
+        <property name="controllerPath" value="/images"/>
+    </bean>
 
-  <bean id="accessGrantController"
-    class="com.trailmagic.image.ui.GrantAccessController">
-    <property name="commandName">
-      <value>grantAccessBean</value>
-    </property>
-    <property name="commandClass">
-      <value>com.trailmagic.image.ui.GrantAccessBean</value>
-    </property>
-    <property name="formView">
-      <value>grantAccessForm</value>
-    </property>
-    <property name="successView">
-      <value>grantAccessSuccess</value>
-    </property>
-    <property name="imageRepository">
-      <ref bean="imageRepository"/>
-    </property>
-    <property name="imageGroupRepository">
-      <ref bean="imageGroupRepository"/>
-    </property>
-    <property name="imageSecurityService">
-      <ref bean="imageSecurityService"/>
-    </property>
-    <property name="userFactory">
-      <ref bean="userFactory"/>
-    </property>
-  </bean>
+    <bean id="imageManifestationController"
+          class="com.trailmagic.image.ui.ImageManifestationController">
+        <constructor-arg ref="imageManifestationRepository"/>
+        <property name="supportedMethods" value="GET,HEAD"/>
+        <property name="requireSession" value="false"/>
+        <property name="cacheSeconds" value="864000"/>
+        <property name="controllerPath" value="/mf"/>
+    </bean>
 
-  <bean id="imageGroupAddForm"
-    class="com.trailmagic.image.ui.ImageGroupAddForm">
-    <property name="commandName">
-      <value>imageGroup</value>
-    </property>
-    <property name="commandClass">
-      <value>com.trailmagic.image.ImageGroup</value>
-    </property>
-    <property name="formView">
-      <value>imageGroupAdd</value>
-    </property>
-    <property name="successView">
-      <value>imageGroupAddSuccess</value>
-    </property>
-    <property name="validateOnBinding">
-      <value>false</value>
-    </property>
-    <property name="sessionFactory">
-      <ref bean="sessionFactory"/>
-    </property>
-    <property name="userFactory">
-      <ref bean="userFactory"/>
-    </property>
-  </bean>
+    <bean id="imageImportController"
+          class="com.trailmagic.image.ui.ImageImportController" p:validateOnBinding="false">
+        <constructor-arg ref="imagesParser"/>
+        <property name="commandName" value="imageImportBean"/>
+        <property name="commandClass" value="com.trailmagic.image.ui.ImageImportBean"/>
+        <property name="formView" value="imageImportForm"/>
+        <property name="successView" value="imageImportSuccess"/>
+    </bean>
 
-  <!--
+    <bean id="imageAccessController"
+          class="com.trailmagic.image.ui.ImageAccessController">
+        <property name="commandName" value="imageAccessBean"/>
+        <property name="commandClass" value="com.trailmagic.image.ui.ImageAccessBean"/>
+        <property name="formView" value="imageAccessForm"/>
+        <property name="successView" value="imageAccessSuccess"/>
+        <property name="imageRepository" ref="imageRepository"/>
+        <property name="imageGroupRepository" ref="imageGroupRepository"/>
+        <property name="imageSecurityService" ref="imageSecurityService"/>
+    </bean>
+
+    <bean id="accessGrantController"
+          class="com.trailmagic.image.ui.GrantAccessController">
+        <property name="commandName" value="grantAccessBean"/>
+        <property name="commandClass" value="com.trailmagic.image.ui.GrantAccessBean"/>
+        <property name="formView" value="grantAccessForm"/>
+        <property name="successView">
+            <value>grantAccessSuccess</value>
+        </property>
+        <property name="imageRepository">
+            <ref bean="imageRepository"/>
+        </property>
+        <property name="imageGroupRepository">
+            <ref bean="imageGroupRepository"/>
+        </property>
+        <property name="imageSecurityService">
+            <ref bean="imageSecurityService"/>
+        </property>
+        <property name="userFactory" ref="userFactory"/>
+    </bean>
+
+    <bean id="imageGroupAddForm"
+          class="com.trailmagic.image.ui.ImageGroupAddForm">
+        <property name="commandName">
+            <value>imageGroup</value>
+        </property>
+        <property name="commandClass">
+            <value>com.trailmagic.image.ImageGroup</value>
+        </property>
+        <property name="formView">
+            <value>imageGroupAdd</value>
+        </property>
+        <property name="successView">
+            <value>imageGroupAddSuccess</value>
+        </property>
+        <property name="validateOnBinding" value="false"/>
+        <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="userFactory" ref="userFactory"/>
+    </bean>
+
+    <!--
   <bean id="albumController"
     class="org.springframework.aop.framework.ProxyFactoryBean">
     <property name="target">
@@ -298,35 +238,23 @@
     </property>
   </bean>
   -->
-  
-  <bean id="setPreviewImageController"
-    class="com.trailmagic.image.ui.SetPreviewImageController">
-    <constructor-arg ref="imageService"/>
-  </bean>
-  
-  <bean id="imageMetadataEditController" class="com.trailmagic.image.ui.ImageMetadataEditController">
-    <constructor-arg ref="imageRepository"/>
-    <property name="commandName" value="image" />
-    <property name="commandClass" value="com.trailmagic.image.Image" />
-	<property name="formView" value="imageDisplay" />
-    <property name="successView" value="imageDetails" />
-  </bean>
-  
-  <bean id="imageDisplayController" class="com.trailmagic.image.ui.ImageDisplayController">
-    <constructor-arg ref="imageRepository"/>
-    <constructor-arg ref="imageGroupRepository"/>
-    <constructor-arg ref="imageSecurityService" />
-    <constructor-arg ref="webRequestTools"/>
-    <property name="commandName" value="image" />
-    <property name="commandClass" value="com.trailmagic.image.Image" />
-    <property name="formView" value="imageDisplay" />
-    <property name="successView" value="imageDisplay" />
-  </bean>
-  
-  <bean id="imageGroupDisplayController" class="com.trailmagic.image.ui.ImageGroupDisplayController">
-    <constructor-arg ref="imageGroupRepository"/>
-    <constructor-arg ref="imageSecurityService"/>
-    <constructor-arg ref="userFactory"/>
-    <constructor-arg ref="webRequestTools"/>
-  </bean>
+
+    <bean id="imageMetadataEditController" class="com.trailmagic.image.ui.ImageMetadataEditController">
+        <constructor-arg ref="imageRepository"/>
+        <property name="commandName" value="image"/>
+        <property name="commandClass" value="com.trailmagic.image.Image"/>
+        <property name="formView" value="imageDisplay"/>
+        <property name="successView" value="imageDetails"/>
+    </bean>
+
+    <bean id="imageDisplayController" class="com.trailmagic.image.ui.ImageDisplayController">
+        <constructor-arg ref="imageRepository"/>
+        <constructor-arg ref="imageGroupRepository"/>
+        <constructor-arg ref="imageSecurityService"/>
+        <constructor-arg ref="webRequestTools"/>
+        <property name="commandName" value="image"/>
+        <property name="commandClass" value="com.trailmagic.image.Image"/>
+        <property name="formView" value="imageDisplay"/>
+        <property name="successView" value="imageDisplay"/>
+    </bean>
 </beans>

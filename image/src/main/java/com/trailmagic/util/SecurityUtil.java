@@ -4,9 +4,11 @@ import com.trailmagic.user.User;
 import com.trailmagic.user.security.ToolkitUserDetails;
 import org.acegisecurity.context.SecurityContext;
 import org.acegisecurity.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
 
+@Service("securityUtil")
 public class SecurityUtil {
-    public static User getCurrentUser() {
+    public User getCurrentUser() {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         ToolkitUserDetails userDetails =
             (ToolkitUserDetails) securityContext.getAuthentication().getPrincipal();
