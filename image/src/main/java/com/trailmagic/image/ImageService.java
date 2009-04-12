@@ -13,7 +13,11 @@
  */
 package com.trailmagic.image;
 
+import java.io.InputStream;
+import java.io.IOException;
+
 public interface ImageService {
+    public Photo createImage(ImageMetadata imageMetadata, InputStream inputStream, String contentType) throws IllegalStateException, IOException;
     public Photo createImage(ImageMetadata imageData) throws IllegalStateException;
 
 
@@ -29,4 +33,5 @@ public interface ImageService {
         throws NoSuchImageGroupException;
     public void setImageGroupPreview(long imageGroupId, long imageId)
         throws NoSuchImageGroupException;
+
 }

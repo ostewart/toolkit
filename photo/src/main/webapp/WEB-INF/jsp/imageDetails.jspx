@@ -4,7 +4,7 @@
           xmlns:fmt="http://java.sun.com/jsp/jstl/fmt"
           xmlns:tm="http://trailmagic.com/taglibs/image"
           xmlns:fn="http://java.sun.com/jsp/jstl/functions"
-          xmlns:authz="http://acegisecurity.org/authz"
+          xmlns:authz="http://www.springframework.org/security/tags"
           xmlns:form="http://www.springframework.org/tags/form">
   
       <div xmlns="http://www.w3.org/1999/xhtml" class="imageDetails">

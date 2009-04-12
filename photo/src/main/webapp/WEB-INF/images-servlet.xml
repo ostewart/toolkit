@@ -25,7 +25,7 @@
   http://www.springframework.org/schema/tx
   http://www.springframework.org/schema/tx/spring-tx-2.0.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <bean id="portResolver" class="org.acegisecurity.util.PortResolverImpl"/>
+    <bean id="portResolver" class="org.springframework.security.util.PortResolverImpl"/>
 
     <context:component-scan base-package="com.trailmagic.web"/>
     <context:component-scan base-package="com.trailmagic.image.ui"/>
@@ -54,7 +54,6 @@
                 <prop key="/changePermission">imageAccessController</prop>
                 <prop key="/grantAccess">accessGrantController</prop>
                 <prop key="/testing/**">imageEditController</prop>
-                <prop key="/set-preview-image">setPreviewImageController</prop>
                 <prop key="/edit-image-metadata">imageMetadataEditController</prop>
             </props>
         </property>

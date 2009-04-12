@@ -30,7 +30,7 @@ frames: List of ImageFrames for this group
   xmlns:c="http://java.sun.com/jsp/jstl/core"
   xmlns:fmt="http://java.sun.com/jsp/jstl/fmt"
   xmlns:tm="http://trailmagic.com/taglibs/image"
-  xmlns:authz="http://acegisecurity.org/authz">
+  xmlns:authz="http://www.springframework.org/security/tags">
 
   <jsp:output 
     omit-xml-declaration="false"
@@ -60,7 +60,7 @@ frames: List of ImageFrames for this group
 
         <div class="userAuth">
           <authz:authorize ifAllGranted="ROLE_USER">
-            <authz:authentication operation="username"/> |
+            <authz:authentication property="principal.username"/> |
               <a href="/photo/logout">Sign Out</a>
           </authz:authorize>
           <authz:authorize ifNotGranted="ROLE_USER">

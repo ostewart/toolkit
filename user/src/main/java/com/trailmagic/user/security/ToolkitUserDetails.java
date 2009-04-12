@@ -14,8 +14,8 @@
 package com.trailmagic.user.security;
 
 import com.trailmagic.user.User;
-import org.acegisecurity.GrantedAuthority;
-import org.acegisecurity.userdetails.UserDetails;
+import org.springframework.security.GrantedAuthority;
+import org.springframework.security.userdetails.UserDetails;
 
 public class ToolkitUserDetails implements UserDetails {
     private User user;

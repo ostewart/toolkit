@@ -10,9 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import org.acegisecurity.ui.AbstractProcessingFilter;
-import org.acegisecurity.ui.savedrequest.SavedRequest;
-import org.acegisecurity.util.PortResolver;
+import org.springframework.security.ui.AbstractProcessingFilter;
+import org.springframework.security.ui.savedrequest.SavedRequest;
+import org.springframework.security.util.PortResolver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -41,8 +41,7 @@ public class WebRequestTools {
 
         // Store the HTTP request itself. Used by AbstractProcessingFilter
         // for redirection after successful authentication (SEC-29)
-        request.getSession().setAttribute(AbstractProcessingFilter
-                                          .ACEGI_SAVED_REQUEST_KEY, savedRequest);
+        request.getSession().setAttribute(AbstractProcessingFilter.SPRING_SECURITY_SAVED_REQUEST_KEY, savedRequest);
     }
 
     /**
@@ -52,8 +51,7 @@ public class WebRequestTools {
      * @return a saved request object, or <code>null</code> if none is stored
      */
     public SavedRequest getSavedRequest(HttpSession session) {
-        return (SavedRequest) session.getAttribute(AbstractProcessingFilter
-                                                   .ACEGI_SAVED_REQUEST_KEY);
+        return (SavedRequest) session.getAttribute(AbstractProcessingFilter.SPRING_SECURITY_SAVED_REQUEST_KEY);
     }
 
     /**

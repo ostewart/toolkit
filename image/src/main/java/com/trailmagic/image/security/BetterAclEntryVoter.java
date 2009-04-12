@@ -14,15 +14,15 @@
 package com.trailmagic.image.security;
 
 import java.lang.reflect.Method;
-import org.acegisecurity.AuthorizationServiceException;
-import org.acegisecurity.vote.BasicAclEntryVoter;
+import org.springframework.security.AuthorizationServiceException;
+import org.springframework.security.vote.BasicAclEntryVoter;
 import org.aopalliance.intercept.MethodInvocation;
 import org.apache.log4j.Logger;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.reflect.CodeSignature;
 
-import org.acegisecurity.ConfigAttributeDefinition;
-import org.acegisecurity.Authentication;
+import org.springframework.security.ConfigAttributeDefinition;
+import org.springframework.security.Authentication;
 
 
 public class BetterAclEntryVoter extends BasicAclEntryVoter {

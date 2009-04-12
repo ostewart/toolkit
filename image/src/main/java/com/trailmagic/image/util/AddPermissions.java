@@ -35,7 +35,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
-import org.acegisecurity.acl.basic.SimpleAclEntry;
+import org.springframework.security.acl.basic.SimpleAclEntry;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.springframework.context.support.ClassPathXmlApplicationContext;

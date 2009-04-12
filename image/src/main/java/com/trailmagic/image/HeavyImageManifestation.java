@@ -4,9 +4,9 @@
 package com.trailmagic.image;
 
 import java.sql.Blob;
-import org.acegisecurity.acl.basic.AclObjectIdentity;
-import org.acegisecurity.acl.basic.AclObjectIdentityAware;
-import org.acegisecurity.acl.basic.NamedEntityObjectIdentity;
+import org.springframework.security.acl.basic.AclObjectIdentity;
+import org.springframework.security.acl.basic.AclObjectIdentityAware;
+import org.springframework.security.acl.basic.NamedEntityObjectIdentity;
 
 public class HeavyImageManifestation extends ImageManifestation
     implements AclObjectIdentityAware {

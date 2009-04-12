@@ -18,9 +18,9 @@ import com.trailmagic.user.User;
 import java.util.Collection;
 import java.util.Date;
 import java.util.SortedSet;
-import org.acegisecurity.acl.basic.AclObjectIdentity;
-import org.acegisecurity.acl.basic.AclObjectIdentityAware;
-import org.acegisecurity.acl.basic.NamedEntityObjectIdentity;
+import org.springframework.security.acl.basic.AclObjectIdentity;
+import org.springframework.security.acl.basic.AclObjectIdentityAware;
+import org.springframework.security.acl.basic.NamedEntityObjectIdentity;
 
 public class ImageGroup implements Owned, AclObjectIdentityAware {
     public static final String DEFAULT_ROLL_NAME = "uploads";

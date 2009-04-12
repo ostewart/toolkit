@@ -17,7 +17,7 @@
 -->
 
 <beans>
-  <bean id="filterChainProxy" class="org.acegisecurity.util.FilterChainProxy">
+  <bean id="filterChainProxy" class="org.springframework.security.util.FilterChainProxy">
     <property name="filterInvocationDefinitionSource">
       <value>
         CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
@@ -27,10 +27,10 @@
       </property>
   </bean>
 
-  <bean id="httpSessionContextIntegrationFilter" class="org.acegisecurity.context.HttpSessionContextIntegrationFilter">
+  <bean id="httpSessionContextIntegrationFilter" class="org.springframework.security.context.HttpSessionContextIntegrationFilter">
   </bean>
 
-  <bean id="authenticationManager" class="org.acegisecurity.providers.ProviderManager">
+  <bean id="authenticationManager" class="org.springframework.security.providers.ProviderManager">
     <property name="providers">
       <list>
         <!--        <ref local="jaasAuthenticationProvider"/>-->
@@ -42,21 +42,17 @@
   </bean>
 
   <bean id="daoAuthenticationProvider"
-    class="org.acegisecurity.providers.dao.DaoAuthenticationProvider">
-    <property name="userDetailsService">
-      <ref bean="hibernateUserDetailsService"/>
-    </property>
-    <property name="passwordEncoder">
-      <ref bean="passwordEncoder"/>
-    </property>
+    class="org.springframework.security.providers.dao.DaoAuthenticationProvider">
+    <property name="userDetailsService" ref="hibernateUserDetailsService"/>
+    <property name="passwordEncoder" ref="passwordEncoder"/>
   </bean>
 
   <bean id="passwordEncoder"
-    class="org.acegisecurity.providers.encoding.Md5PasswordEncoder">
+    class="org.springframework.security.providers.encoding.Md5PasswordEncoder">
   </bean>
   
 <!--
-  <bean id="jaasAuthenticationProvider" class="org.acegisecurity.providers.jaas.JaasAuthenticationProvider">
+  <bean id="jaasAuthenticationProvider" class="org.springframework.security.providers.jaas.JaasAuthenticationProvider">
     <property name="loginConfig">
       <value>classpath:jaas.config</value>
     </property>
@@ -65,8 +61,8 @@
     </property>
     <property name="callbackHandlers">
       <list>
-        <bean class="org.acegisecurity.providers.jaas.JaasNameCallbackHandler"/>
-        <bean class="org.acegisecurity.providers.jaas.JaasPasswordCallbackHandler"/>
+        <bean class="org.springframework.security.providers.jaas.JaasNameCallbackHandler"/>
+        <bean class="org.springframework.security.providers.jaas.JaasPasswordCallbackHandler"/>
       </list>
     </property>
     <property name="authorityGranters">
@@ -77,35 +73,31 @@
   </bean>
 -->
   <bean id="authenticationProcessingFilter"
-    class="org.acegisecurity.ui.webapp.AuthenticationProcessingFilter">
+    class="org.springframework.security.ui.webapp.AuthenticationProcessingFilter">
     <property name="authenticationManager">
       <ref local="authenticationManager"/>
     </property>
-    <property name="defaultTargetUrl"><value>/albums/</value></property>
-    <property name="authenticationFailureUrl">
-      <value>/login?failure=true</value>
-    </property>
-    <property name="alwaysUseDefaultTargetUrl">
-      <value>false</value>
-    </property>
+    <property name="defaultTargetUrl" value="/albums/"/>
+    <property name="authenticationFailureUrl" value="/login?failure=true"/>
+    <property name="alwaysUseDefaultTargetUrl" value="false"/>
     <property name="rememberMeServices">
       <ref local="rememberMeServices"/>
     </property>
   </bean>
 
   <bean id="anonymousProcessingFilter"
-    class="org.acegisecurity.providers.anonymous.AnonymousProcessingFilter">
-    <property name="key"><value>foobar</value></property>
-    <property name="userAttribute"><value>anonymous,ROLE_ANONYMOUS,ROLE_EVERYONE</value></property>
+    class="org.springframework.security.providers.anonymous.AnonymousProcessingFilter">
+    <property name="key" value="foobar"/>
+    <property name="userAttribute" value="anonymous,ROLE_ANONYMOUS,ROLE_EVERYONE"/>
   </bean>
 
   <bean id="anonymousAuthenticationProvider"
-    class="org.acegisecurity.providers.anonymous.AnonymousAuthenticationProvider">
-    <property name="key"><value>foobar</value></property>
+    class="org.springframework.security.providers.anonymous.AnonymousAuthenticationProvider">
+    <property name="key" value="foobar"/>
   </bean>
 
   <bean id="rememberMeProcessingFilter"
-    class="org.acegisecurity.ui.rememberme.RememberMeProcessingFilter">
+    class="org.springframework.security.ui.rememberme.RememberMeProcessingFilter">
     <property name="rememberMeServices">
       <ref local="rememberMeServices"/>
     </property>
@@ -115,33 +107,27 @@
   </bean>
 
   <bean id="rememberMeServices"
-    class="org.acegisecurity.ui.rememberme.TokenBasedRememberMeServices">
+    class="org.springframework.security.ui.rememberme.TokenBasedRememberMeServices">
     <property name="userDetailsService">
       <ref local="hibernateUserDetailsService"/>
     </property>
-    <property name="key"><value>springRocks</value></property>
+    <property name="key" value="springRocks"/>
   </bean>
   
   <bean id="rememberMeAuthenticationProvider"
-    class="org.acegisecurity.providers.rememberme.RememberMeAuthenticationProvider">
-    <property name="key"><value>springRocks</value></property>
+    class="org.springframework.security.providers.rememberme.RememberMeAuthenticationProvider">
+    <property name="key" value="springRocks"/>
   </bean>
 
   <bean id="userFactory"
     class="com.trailmagic.user.hibernate.HibernateUserFactory">
-    <property name="sessionFactory">
-      <ref bean="sessionFactory"/>
-    </property>
-    <property name="hibernateTemplate">
-      <ref bean="hibernateTemplate"/>
-    </property>
+    <property name="sessionFactory" ref="sessionFactory"/>
+    <property name="hibernateTemplate" ref="hibernateTemplate"/>
   </bean>
 
   <bean id="groupFactory"
     class="com.trailmagic.user.hibernate.HibernateGroupFactory">
-    <property name="hibernateTemplate">
-      <ref bean="hibernateTemplate"/>
-    </property>
+    <property name="hibernateTemplate" ref="hibernateTemplate"/>
   </bean>
 
   <bean id="hibernateUserDetailsService"
@@ -149,17 +135,15 @@
     <property name="userFactory">
       <ref local="userFactory"/>
     </property>
-    <property name="groupFactory">
-      <ref bean="groupFactory"/>
-    </property>
+    <property name="groupFactory" ref="groupFactory"/>
 
   </bean>
 
-  <!-- You will need to uncomment the "Acegi Channel Processing Filter"
+  <!-- You will need to uncomment the "Spring Security Channel Processing Filter"
   <filter-mapping> in web.xml for the following beans to be used -->
 
   <bean id="channelProcessingFilter"
-    class="org.acegisecurity.securechannel.ChannelProcessingFilter">
+    class="org.springframework.security.securechannel.ChannelProcessingFilter">
     <property name="channelDecisionManager">
       <ref local="channelDecisionManager"/>
     </property>
@@ -167,9 +151,9 @@
       <value>
         CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
         \A/secure/.*\Z=REQUIRES_SECURE_CHANNEL
-        \A/acegilogin.jsp.*\Z=REQUIRES_SECURE_CHANNEL
+        \A/login.jsp.*\Z=REQUIRES_SECURE_CHANNEL
         \A/login.*\Z=REQUIRES_SECURE_CHANNEL
-        \A/j_acegi_security_check.*\Z=REQUIRES_SECURE_CHANNEL
+        \A/j_spring_security_check.*\Z=REQUIRES_SECURE_CHANNEL
         \A.*\Z=REQUIRES_INSECURE_CHANNEL
       </value>
       </property>
@@ -178,7 +162,7 @@
   -->
 
   <bean id="channelDecisionManager"
-    class="org.acegisecurity.securechannel.ChannelDecisionManagerImpl">
+    class="org.springframework.security.securechannel.ChannelDecisionManagerImpl">
     <property name="channelProcessors">
       <list>
         <ref local="secureChannelProcessor"/>
@@ -188,31 +172,27 @@
   </bean>
 
   <bean id="secureChannelProcessor"
-    class="org.acegisecurity.securechannel.SecureChannelProcessor"/>
+    class="org.springframework.security.securechannel.SecureChannelProcessor"/>
   <bean id="insecureChannelProcessor"
-    class="org.acegisecurity.securechannel.InsecureChannelProcessor"/>
+    class="org.springframework.security.securechannel.InsecureChannelProcessor"/>
 
   <bean id="exceptionTranslationFilter"
-    class="org.acegisecurity.ui.ExceptionTranslationFilter">
+    class="org.springframework.security.ui.ExceptionTranslationFilter">
     <property name="authenticationEntryPoint">
       <ref local="authenticationProcessingFilterEntryPoint"/>
     </property>
   </bean>
 
   <bean id="authenticationProcessingFilterEntryPoint"
-    class="org.acegisecurity.ui.webapp.AuthenticationProcessingFilterEntryPoint">
-    <property name="forceHttps"><value>false</value></property>
-    <property name="loginFormUrl">
-      <value>/login</value>
-    </property>
+    class="org.springframework.security.ui.webapp.AuthenticationProcessingFilterEntryPoint">
+    <property name="forceHttps" value="false"/>
+    <property name="loginFormUrl" value="/login"/>
   </bean>
 
   
   <bean id="filterSecurityInterceptor"
-    class="org.acegisecurity.intercept.web.FilterSecurityInterceptor">
-    <property name="authenticationManager">
-      <ref bean="authenticationManager"/>
-    </property>
+    class="org.springframework.security.intercept.web.FilterSecurityInterceptor">
+    <property name="authenticationManager" ref="authenticationManager"/>
     <property name="accessDecisionManager">
       <ref local="httpRequestAccessDecisionManager"/>
     </property>
@@ -224,8 +204,8 @@
         /hello.htm=ROLE_ANONYMOUS,ROLE_USER
         /logoff.jsp=ROLE_ANONYMOUS,ROLE_USER
         /switchuser.jsp=ROLE_SUPERVISOR
-        /j_acegi_switch_user=ROLE_SUPERVISOR
-        /acegilogin.jsp*=ROLE_ANONYMOUS,ROLE_USER
+        /j_spring_security_switch_user=ROLE_SUPERVISOR
+        /login.jsp*=ROLE_ANONYMOUS,ROLE_USER
         /login=ROLE_ANONYMOUS,ROLE_USER
         /import=ROLE_USER
         /**=ROLE_ANONYMOUS,ROLE_USER
@@ -234,10 +214,8 @@
   </bean>
 
   <bean id="httpRequestAccessDecisionManager"
-    class="org.acegisecurity.vote.AffirmativeBased">
-    <property name="allowIfAllAbstainDecisions">
-      <value>false</value>
-    </property>
+    class="org.springframework.security.vote.AffirmativeBased">
+    <property name="allowIfAllAbstainDecisions" value="false"/>
     <property name="decisionVoters">
       <list>
         <ref bean="roleVoter"/>
@@ -246,6 +224,6 @@
   </bean>
 
   <!-- An access decision voter that reads ROLE_* configuration settings -->
-  <bean id="roleVoter" class="org.acegisecurity.vote.RoleVoter"/>
+  <bean id="roleVoter" class="org.springframework.security.vote.RoleVoter"/>
 
 </beans>

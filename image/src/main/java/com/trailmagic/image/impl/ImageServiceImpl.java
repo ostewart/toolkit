@@ -21,11 +21,14 @@ import com.trailmagic.user.UserFactory;
 import com.trailmagic.util.SecurityUtil;
 import java.util.Collection;
 import java.util.Date;
+import java.io.InputStream;
+import java.io.IOException;
 
 import org.apache.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.hibernate.Hibernate;
 
 @Transactional
 @Service("imageService")
@@ -40,6 +43,7 @@ public class ImageServiceImpl implements ImageService {
     private static Logger log =
         Logger.getLogger(ImageServiceImpl.class);
 
+    @SuppressWarnings({"SpringJavaAutowiringInspection"})
     @Autowired
     public ImageServiceImpl(ImageGroupRepository imageGroupRepository,
                             ImageRepository imageRepository,
@@ -54,6 +58,29 @@ public class ImageServiceImpl implements ImageService {
         this.imageManifestationRepository = imageManifestationRepository;
         this.userFactory = userFactory;
         this.securityUtil = securityUtil;
+    }
+
+    public Photo createImage(ImageMetadata imageMetadata, InputStream inputStream, String contentType) throws IllegalStateException, IOException {
+        Photo photo = createImage(imageMetadata);
+
+        final HeavyImageManifestation manifestation = new HeavyImageManifestation();
+        manifestation.setData(Hibernate.createBlob(inputStream));
+        manifestation.setImage(photo);
+        manifestation.setOriginal(true);
+        manifestation.setFormat(contentType);
+        photo.addManifestation(manifestation);
+
+        saveNewImageManifestation(manifestation);
+        imageRepository.save(photo);
+
+        scheduleResize(photo);
+
+        return photo;
+    }
+
+    private void scheduleResize(Photo photo) {
+        log.info("Scheduling resize of image: " + photo.getDisplayName() + " (id=" + photo.getId() + ")");
+        //TODO: implement
     }
 
     public Photo createImage(ImageMetadata imageData) throws IllegalStateException {

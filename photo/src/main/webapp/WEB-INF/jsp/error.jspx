@@ -20,48 +20,49 @@
         doctype-root-element="html"/>
   
   <jsp:directive.page isErrorPage="true"/>
-  <html xmlns="http://www.w3.org/1999/xhtml"
-        xmlns:jsp="http://java.sun.com/JSP/Page"
-        xmlns:c="http://java.sun.com/jsp/jstl/core"
-        xmlns:fmt="http://java.sun.com/jsp/jstl/fmt"
-        xmlns:tm="http://trailmagic.com/taglibs/image"
-        xmlns:fn="http://java.sun.com/jsp/jstl/functions"
-        xmlns:authz="http://acegisecurity.org/authz">
-  <head>
-    <title>
-        Error
-    </title>
-    <link rel="stylesheet"
-      href="${pageContext.request.contextPath}/imagestore.css"
-      type="text/css" />
-    <link rel="stylesheet"
-      href="${pageContext.request.contextPath}/imagestore-color.css"
-      type="text/css" title="Standard"/>
-    <link rel="alternate stylesheet"
-      href="${pageContext.request.contextPath}/imagestore-debug.css"
-      type="text/css" title="Debug"/>
-  </head>
-  
-  <body id="image">
+    <html xmlns="http://www.w3.org/1999/xhtml"
+          xmlns:jsp="http://java.sun.com/JSP/Page"
+          xmlns:c="http://java.sun.com/jsp/jstl/core"
+          xmlns:fmt="http://java.sun.com/jsp/jstl/fmt"
+          xmlns:tm="http://trailmagic.com/taglibs/image"
+          xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+          xmlns:authz="http://www.springframework.org/security/tags">
+    <head>
+        <title>
+            Error
+        </title>
+        <link rel="stylesheet"
+              href="${pageContext.request.contextPath}/imagestore.css"
+              type="text/css"/>
+        <link rel="stylesheet"
+              href="${pageContext.request.contextPath}/imagestore-color.css"
+              type="text/css" title="Standard"/>
+        <link rel="alternate stylesheet"
+              href="${pageContext.request.contextPath}/imagestore-debug.css"
+              type="text/css" title="Debug"/>
+    </head>
+
+    <body id="image">
     <jsp:include page="header.jspx"/>
     <div class="main">
-    <h2>Error</h2>
-    <p>An application error occurred.  Sorry for the inconvenience.
-    Perhaps you could try again and it will work the next time.</p>
-    
-    <p>
-    Error details:
-    </p>
-    <code>
-    ${fn:escapeXml(pageContext.exception)}
-    ${fn:escapeXml(exception)}
-    <c:forEach var="line" items="${exception.stackTrace}">
-    ${fn:escapeXml(line)}
-    </c:forEach>
-    </code>
-</div>
+        <h2>Error</h2>
+
+        <p>An application error occurred. Sorry for the inconvenience.
+            Perhaps you could try again and it will work the next time.</p>
+
+        <p>
+            Error details:
+        </p>
+        <code>
+            ${fn:escapeXml(pageContext.exception)}
+            ${fn:escapeXml(exception)}
+            <c:forEach var="line" items="${exception.stackTrace}">
+                ${fn:escapeXml(line)}
+            </c:forEach>
+        </code>
+    </div>
     <jsp:include page="google-ad.jspx"/>
     <jsp:include page="google-analytics.jspx"/>
-  </body>
-</html>
+    </body>
+    </html>
 </jsp:root>

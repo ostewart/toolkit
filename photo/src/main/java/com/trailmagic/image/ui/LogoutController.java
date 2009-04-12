@@ -17,30 +17,23 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import org.acegisecurity.ui.AbstractProcessingFilter;
-import org.acegisecurity.ui.rememberme.TokenBasedRememberMeServices;
-import org.acegisecurity.ui.savedrequest.SavedRequest;
+import org.springframework.security.ui.AbstractProcessingFilter;
+import org.springframework.security.ui.rememberme.TokenBasedRememberMeServices;
+import org.springframework.security.ui.savedrequest.SavedRequest;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
 public class LogoutController extends AbstractController {
-    private static final String LOGOUT_VIEW = "logout";
-
     public ModelAndView handleRequestInternal(HttpServletRequest req,
                                               HttpServletResponse res)
         throws Exception {
 
         HttpSession session = req.getSession(false);
         SavedRequest savedRequest =
-            (SavedRequest) session.getAttribute(AbstractProcessingFilter
-                                                .ACEGI_SAVED_REQUEST_KEY);
-        if (session != null) {
-            session.invalidate();
-        }
+            (SavedRequest) session.getAttribute(AbstractProcessingFilter.SPRING_SECURITY_SAVED_REQUEST_KEY);
+        session.invalidate();
         Cookie terminate =
-            new Cookie(TokenBasedRememberMeServices
-                       .ACEGI_SECURITY_HASHED_REMEMBER_ME_COOKIE_KEY,
-                       null);
+            new Cookie(TokenBasedRememberMeServices.SPRING_SECURITY_REMEMBER_ME_COOKIE_KEY, null);
         terminate.setMaxAge(0);
         res.addCookie(terminate);
 

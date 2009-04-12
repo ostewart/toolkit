@@ -23,30 +23,30 @@ import com.trailmagic.user.User;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.SortedSet;
-import org.acegisecurity.AccessDeniedException;
-import org.acegisecurity.acl.AclEntry;
-import org.acegisecurity.acl.AclManager;
-import org.acegisecurity.acl.basic.AclObjectIdentity;
-import org.acegisecurity.acl.basic.AclObjectIdentityAware;
-import org.acegisecurity.acl.basic.BasicAclEntry;
-import org.acegisecurity.acl.basic.BasicAclExtendedDao;
-import org.acegisecurity.acl.basic.NamedEntityObjectIdentity;
-import org.acegisecurity.acl.basic.SimpleAclEntry;
+import org.springframework.security.AccessDeniedException;
+import org.springframework.security.acl.AclEntry;
+import org.springframework.security.acl.AclManager;
+import org.springframework.security.acl.basic.AclObjectIdentity;
+import org.springframework.security.acl.basic.AclObjectIdentityAware;
+import org.springframework.security.acl.basic.BasicAclEntry;
+import org.springframework.security.acl.basic.BasicAclExtendedDao;
+import org.springframework.security.acl.basic.NamedEntityObjectIdentity;
+import org.springframework.security.acl.basic.SimpleAclEntry;
 import org.apache.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
-public class AcegiImageSecurityService implements ImageSecurityService {
+public class SpringSecurityImageSecurityService implements ImageSecurityService {
     private BasicAclExtendedDao aclDao;
     private ImageGroupRepository imageGroupRepository;
     private AclManager aclManager;
-    private static Logger log = Logger.getLogger(AcegiImageSecurityService.class);
+    private static Logger log = Logger.getLogger(SpringSecurityImageSecurityService.class);
     private static final String ROLE_EVERYONE = "ROLE_EVERYONE";
     private static final int OWNER_ACL_MASK =
         (SimpleAclEntry.ADMINISTRATION
          |SimpleAclEntry.READ_WRITE_CREATE_DELETE);
 
-    public AcegiImageSecurityService() {
+    public SpringSecurityImageSecurityService() {
         // do nothing
     }
 

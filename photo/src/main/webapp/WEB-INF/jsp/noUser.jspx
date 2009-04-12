@@ -5,7 +5,7 @@
   xmlns:c="http://java.sun.com/jsp/jstl/core"
   xmlns:fmt="http://java.sun.com/jsp/jstl/fmt"
   xmlns:tm="http://trailmagic.com/taglibs/image"
-  xmlns:authz="http://acegisecurity.org/authz">
+  xmlns:authz="http://www.springframework.org/security/tags">
   <head>
     <title>Photo Database</title>
   </head>

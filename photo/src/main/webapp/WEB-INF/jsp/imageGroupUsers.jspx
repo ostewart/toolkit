@@ -28,7 +28,7 @@ groupTypeDisplay: the (singular) display name of the type
           xmlns:fmt="http://java.sun.com/jsp/jstl/fmt"
           xmlns:tm="http://trailmagic.com/taglibs/image"
           xmlns:fn="http://java.sun.com/jsp/jstl/functions"
-          xmlns:authz="http://acegisecurity.org/authz">
+          xmlns:authz="http://www.springframework.org/security/tags">
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>

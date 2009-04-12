@@ -16,11 +16,11 @@ package com.trailmagic.user.security;
 import com.trailmagic.user.User;
 import com.trailmagic.user.Owned;
 import java.lang.reflect.InvocationTargetException;
-import org.acegisecurity.Authentication;
-import org.acegisecurity.acl.AclEntry;
-import org.acegisecurity.acl.AclProvider;
-import org.acegisecurity.acl.basic.NamedEntityObjectIdentity;
-import org.acegisecurity.acl.basic.SimpleAclEntry;
+import org.springframework.security.Authentication;
+import org.springframework.security.acl.AclEntry;
+import org.springframework.security.acl.AclProvider;
+import org.springframework.security.acl.basic.NamedEntityObjectIdentity;
+import org.springframework.security.acl.basic.SimpleAclEntry;
 import org.apache.log4j.Logger;
 
 /**

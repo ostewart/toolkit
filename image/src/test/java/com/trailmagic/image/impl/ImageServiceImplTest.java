@@ -4,11 +4,19 @@ import org.junit.Test;
 import org.junit.Before;
 import org.junit.Assert;
 import org.mockito.Mockito;
+import org.aspectj.lang.Aspects;
+import org.springframework.security.intercept.method.aspectj.AspectJAnnotationSecurityInterceptor;
+import org.springframework.security.intercept.method.MapBasedMethodDefinitionSource;
 import com.trailmagic.user.UserFactory;
 import com.trailmagic.user.User;
 import com.trailmagic.image.security.ImageSecurityService;
 import com.trailmagic.image.*;
 import com.trailmagic.util.MockSecurityUtil;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ByteArrayInputStream;
+import java.sql.SQLException;
 
 public class ImageServiceImplTest {
     private UserFactory userFactory;
@@ -112,6 +120,29 @@ public class ImageServiceImplTest {
         Assert.assertNotNull(assignedGroup);
         Assert.assertEquals(ImageGroup.DEFAULT_ROLL_NAME, assignedGroup.getName());
         Assert.assertEquals(ImageGroup.Type.ROLL, assignedGroup.getType());
+    }
+
+    @Test
+    public void testSavesImageMetaData() throws IOException, SQLException {
+        final AspectJAnnotationSecurityInterceptor interceptor = new AspectJAnnotationSecurityInterceptor();
+        interceptor.setObjectDefinitionSource(new MapBasedMethodDefinitionSource());
+        Aspects.aspectOf(ImageSecurityAspect.class).setSecurityInterceptor(interceptor);
+        User currentUser = new User(TEST_USER_SCREEN_NAME);
+        withCurrentUser(currentUser, true);
+
+        ImageMetadata imageMetadata = setupImageMetadata();
+        final byte[] testBytes = "this is not actual image data but it ought to work for now".getBytes();
+        final InputStream imageInputStream = new ByteArrayInputStream(testBytes);
+        final Photo photo = imageService.createImage(imageMetadata, imageInputStream, "image/jpeg");
+
+        Assert.assertEquals(1, photo.getManifestations().size());
+        final HeavyImageManifestation mf = (HeavyImageManifestation) photo.getManifestations().first();
+        Assert.assertEquals("image/jpeg", mf.getFormat());
+        Assert.assertEquals(photo, mf.getImage());
+        Assert.assertEquals(testBytes.length, mf.getData().getBinaryStream().available());
+
+        Mockito.verify(imageSecurityService).addOwnerAcl(mf);
+        Mockito.verify(imageSecurityService).addOwnerAcl(photo);
     }
 
     private ImageGroup setupDefaultGroup(User currentUser) {

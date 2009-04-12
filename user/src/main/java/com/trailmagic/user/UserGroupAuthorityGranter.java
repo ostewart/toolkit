@@ -16,7 +16,7 @@ package com.trailmagic.user;
 import java.security.Principal;
 import java.util.HashSet;
 import java.util.Set;
-import org.acegisecurity.providers.jaas.AuthorityGranter;
+import org.springframework.security.providers.jaas.AuthorityGranter;
 import org.apache.log4j.Logger;
 
 /**

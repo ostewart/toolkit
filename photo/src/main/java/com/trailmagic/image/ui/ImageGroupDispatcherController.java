@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.acegisecurity.AccessDeniedException;
+import org.springframework.security.AccessDeniedException;
 import org.apache.log4j.Logger;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.ModelAndView;

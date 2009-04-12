@@ -15,9 +15,9 @@ package com.trailmagic.image;
 
 import com.trailmagic.user.Owned;
 import com.trailmagic.user.User;
-import org.acegisecurity.acl.basic.AclObjectIdentity;
-import org.acegisecurity.acl.basic.AclObjectIdentityAware;
-import org.acegisecurity.acl.basic.NamedEntityObjectIdentity;
+import org.springframework.security.acl.basic.AclObjectIdentity;
+import org.springframework.security.acl.basic.AclObjectIdentityAware;
+import org.springframework.security.acl.basic.NamedEntityObjectIdentity;
 
 /**
  * This class maps the metadata of the manifestation, while its subclass,

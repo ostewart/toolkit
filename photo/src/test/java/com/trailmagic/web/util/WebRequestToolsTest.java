@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import com.trailmagic.image.ImageGroup;
-import org.acegisecurity.util.PortResolverImpl;
+import org.springframework.security.util.PortResolverImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;

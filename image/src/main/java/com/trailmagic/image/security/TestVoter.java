@@ -13,10 +13,10 @@
  */
 package com.trailmagic.image.security;
 
-import org.acegisecurity.vote.AccessDecisionVoter;
-import org.acegisecurity.ConfigAttribute;
-import org.acegisecurity.ConfigAttributeDefinition;
-import org.acegisecurity.Authentication;
+import org.springframework.security.vote.AccessDecisionVoter;
+import org.springframework.security.ConfigAttribute;
+import org.springframework.security.ConfigAttributeDefinition;
+import org.springframework.security.Authentication;
 import org.apache.log4j.Logger;
 
 public class TestVoter implements AccessDecisionVoter {

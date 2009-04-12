@@ -4,6 +4,7 @@
     <facet type="hibernate" name="Hibernate">
       <configuration>
         <datasource-map>
+          <unit-entry name="sessionFactory" value="dataSource" />
           <unit-entry name="src/main/resources/trailmagic-image.cfg.xml" />
         </datasource-map>
         <deploymentDescriptor name="hibernate.cfg.xml" url="file://$MODULE_DIR$/image/src/main/resources/trailmagic-image.cfg.xml" optional="false" version="3.0" />
@@ -37,6 +38,7 @@
       <sourceFolder url="file://$MODULE_DIR$/image/src/test/java" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/image/src/test/resources" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/image/target" />
+      <excludeFolder url="file://$MODULE_DIR$/image/target-eclipse" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
@@ -62,16 +64,20 @@
     <orderEntry type="library" exported="" name="Maven: antlr:antlr:2.7.6" level="project" />
     <orderEntry type="library" exported="" name="Maven: cglib:cglib:2.1_3" level="project" />
     <orderEntry type="library" exported="" name="Maven: asm:asm:1.5.3" level="project" />
-    <orderEntry type="library" exported="" name="Maven: org.acegisecurity:acegi-security:1.0.5" level="project" />
-    <orderEntry type="library" exported="" name="Maven: commons-lang:commons-lang:2.1" level="project" />
-    <orderEntry type="library" exported="" name="Maven: commons-codec:commons-codec:1.3" level="project" />
-    <orderEntry type="library" exported="" name="Maven: oro:oro:2.0.8" level="project" />
-    <orderEntry type="library" exported="" name="Maven: log4j:log4j:1.2.9" level="project" />
     <orderEntry type="module" module-name="user" exported="" />
+    <orderEntry type="library" exported="" name="Maven: commons-codec:commons-codec:1.3" level="project" />
+    <orderEntry type="library" exported="" name="Maven: log4j:log4j:1.2.9" level="project" />
     <orderEntry type="library" exported="" name="Maven: org.aspectj:aspectjrt:1.5.4" level="project" />
     <orderEntry type="library" exported="" name="Maven: org.aspectj:aspectjweaver:1.5.4" level="project" />
+    <orderEntry type="library" exported="" name="Maven: org.springframework.security:spring-security-core:2.0.4" level="project" />
+    <orderEntry type="library" exported="" name="Maven: org.springframework:spring-core:2.0.8" level="project" />
+    <orderEntry type="library" exported="" name="Maven: org.springframework:spring-context:2.0.8" level="project" />
+    <orderEntry type="library" exported="" name="Maven: aopalliance:aopalliance:1.0" level="project" />
+    <orderEntry type="library" exported="" name="Maven: org.springframework:spring-beans:2.0.8" level="project" />
+    <orderEntry type="library" exported="" name="Maven: org.springframework:spring-aop:2.0.8" level="project" />
+    <orderEntry type="library" exported="" name="Maven: org.springframework:spring-support:2.0.8" level="project" />
     <orderEntry type="library" exported="" name="Maven: org.mockito:mockito-all:1.7" level="project" />
-    <orderEntry type="module" module-name="common" />
+    <orderEntry type="library" exported="" name="Maven: org.springframework.security:spring-security-core-tiger:2.0.4" level="project" />
   </component>
 </module>
 

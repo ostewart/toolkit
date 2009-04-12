@@ -22,8 +22,8 @@ import com.trailmagic.image.security.ImageSecurityService;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import org.acegisecurity.ui.AbstractProcessingFilter;
-import org.acegisecurity.ui.savedrequest.SavedRequest;
+import org.springframework.security.ui.AbstractProcessingFilter;
+import org.springframework.security.ui.savedrequest.SavedRequest;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
@@ -66,8 +66,7 @@ public class ImageAccessController extends SimpleFormController {
             savedRequest = null;
         } else {
             savedRequest =
-                (SavedRequest) session.getAttribute(AbstractProcessingFilter
-                                                    .ACEGI_SAVED_REQUEST_KEY);
+                (SavedRequest) session.getAttribute(AbstractProcessingFilter.SPRING_SECURITY_SAVED_REQUEST_KEY);
         }
 
         if (bean == null) {

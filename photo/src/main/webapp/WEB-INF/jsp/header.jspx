@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0"
-          xmlns:authz="http://acegisecurity.org/authz">
+          xmlns:authz="http://www.springframework.org/security/tags">
     
     <jsp:directive.page language="java"
         contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" />
@@ -13,7 +13,7 @@
       
       <div class="userAuth">
         <authz:authorize ifAllGranted="ROLE_USER">
-          <authz:authentication operation="username"/> |
+          <authz:authentication property="principal.username"/> |
           <a href="/photo/logout">Sign Out</a>
         </authz:authorize>
         <authz:authorize ifNotGranted="ROLE_USER">

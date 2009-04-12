@@ -27,7 +27,7 @@
     <!-- override standard definition to bypass security for standalone
   operation -->
     <bean id="imageSecurityService"
-          class="com.trailmagic.image.security.AcegiImageSecurityService"
+          class="com.trailmagic.image.security.SpringSecurityImageSecurityService"
           autowire="byName">
     </bean>
 
@@ -118,7 +118,7 @@
     </bean>
 
     <bean id="basicAclExtendedDao"
-          class="org.acegisecurity.acl.basic.jdbc.JdbcExtendedDaoImpl">
+          class="org.springframework.security.acl.basic.jdbc.JdbcExtendedDaoImpl">
         <property name="dataSource" ref="dataSource"/>
         <!--
     <property name="basicAclEntryCache">
@@ -128,7 +128,7 @@
     </bean>
 
     <bean id="imageAspectSecurity"
-          class="org.acegisecurity.intercept.method.aspectj.AspectJSecurityInterceptor">
+          class="org.springframework.security.intercept.method.aspectj.AspectJAnnotationSecurityInterceptor">
         <property name="validateConfigAttributes" value="true"/>
         <property name="authenticationManager" ref="authenticationManager"/>
         <property name="accessDecisionManager" ref="imageAccessDecisionManager"/>
@@ -153,13 +153,13 @@
 
     <!-- override because jaas.config isn't in the right place -->
     <bean id="jaasAuthenticationProvider"
-          class="org.acegisecurity.providers.jaas.JaasAuthenticationProvider">
+          class="org.springframework.security.providers.jaas.JaasAuthenticationProvider">
         <property name="loginConfig" value="jaas.config"/>
         <property name="loginContextName" value="ImageStore"/>
         <property name="callbackHandlers">
             <list>
-                <bean class="org.acegisecurity.providers.jaas.JaasNameCallbackHandler"/>
-                <bean class="org.acegisecurity.providers.jaas.JaasPasswordCallbackHandler"/>
+                <bean class="org.springframework.security.providers.jaas.JaasNameCallbackHandler"/>
+                <bean class="org.springframework.security.providers.jaas.JaasPasswordCallbackHandler"/>
             </list>
         </property>
         <property name="authorityGranters">

@@ -26,7 +26,7 @@ none
           xmlns:fn="http://java.sun.com/jsp/jstl/functions"
           xmlns:fmt="http://java.sun.com/jsp/jstl/fmt"
           xmlns:tm="http://trailmagic.com/taglibs/image"
-          xmlns:authz="http://acegisecurity.org/authz">
+          xmlns:authz="http://www.springframework.org/security/tags">
 
   <jsp:output 
     doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"

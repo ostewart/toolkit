@@ -16,7 +16,7 @@
     </c:if>
     
     <h1>Please login:</h1>
-    <form method="POST" action="j_acegi_security_check">
+    <form method="POST" action="j_spring_security_check">
       <table>
           <tr>
             <td><label for="j_username">Username:</label></td>

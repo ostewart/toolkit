@@ -14,13 +14,15 @@ import java.util.SortedSet;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.beans.factory.annotation.Autowired;
 
-@Controller
+@Service
 public class ImageGroupDisplayController {
     private UserFactory userFactory;
     private ImageGroupRepository imageGroupRepository;
@@ -31,7 +33,7 @@ public class ImageGroupDisplayController {
     private static Logger log =
         Logger.getLogger(ImageGroupDisplayController.class);
 
-
+    @Autowired
     public ImageGroupDisplayController(ImageGroupRepository imageGroupRepository,
                                        ImageSecurityService imageSecurityService,
                                        UserFactory userFactory,
@@ -43,7 +45,6 @@ public class ImageGroupDisplayController {
         this.webRequestTools = webRequestTools;
     }
 
-    @RequestMapping(method=RequestMethod.GET)
     public ModelAndView handleDisplayGroup(HttpServletRequest request,
                                            ModelMap model)
             throws NoSuchImageGroupException, MalformedUrlException {
@@ -63,10 +64,5 @@ public class ImageGroupDisplayController {
         model.addAttribute("frames", frames);
 
         return new ModelAndView(IMG_GROUP_VIEW, model);
-    }
-    
-    @RequestMapping(method=RequestMethod.POST)
-    public void processSubmit(@ModelAttribute("imageGroup") ImageGroup imageGroup) {
-        
     }
 }

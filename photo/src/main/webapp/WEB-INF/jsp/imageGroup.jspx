@@ -29,60 +29,60 @@ frames: List of ImageFrames for this group
           xmlns:fmt="http://java.sun.com/jsp/jstl/fmt"
           xmlns:tm="http://trailmagic.com/taglibs/image"
           xmlns:fn="http://java.sun.com/jsp/jstl/functions"
-          xmlns:authz="http://acegisecurity.org/authz">
-<!--    <jsp:directive.page contentType="application/xhtml+xml"/>-->
-        <jsp:directive.page contentType="text/html"/>
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <jsp:output 
-    omit-xml-declaration="false"
-    doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"
-    doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
-    doctype-root-element="html"/>
+          xmlns:authz="http://www.springframework.org/security/tags">
+    <!--    <jsp:directive.page contentType="application/xhtml+xml"/>-->
+    <jsp:directive.page contentType="text/html"/>
+    <html xmlns="http://www.w3.org/1999/xhtml">
+    <jsp:output
+            omit-xml-declaration="false"
+            doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"
+            doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
+            doctype-root-element="html"/>
 
     <head>
-      <title>${fn:escapeXml(imageGroup.displayName)}</title>
-      <!-- XXX: must make this path flexible -->
-    <link rel="stylesheet"
-      href="${pageContext.request.contextPath}/imagestore.css"
-      type="text/css" />
-    <link rel="stylesheet"
-      href="${pageContext.request.contextPath}/imagestore-color.css"
-          type="text/css" title="Standard"/>
-    <link rel="alternate stylesheet"
-      href="${pageContext.request.contextPath}/imagestore-debug.css"
-            type="text/css" title="Debug"/>
+        <title>${fn:escapeXml(imageGroup.displayName)}</title>
+        <!-- XXX: must make this path flexible -->
+        <link rel="stylesheet"
+              href="${pageContext.request.contextPath}/imagestore.css"
+              type="text/css"/>
+        <link rel="stylesheet"
+              href="${pageContext.request.contextPath}/imagestore-color.css"
+              type="text/css" title="Standard"/>
+        <link rel="alternate stylesheet"
+              href="${pageContext.request.contextPath}/imagestore-debug.css"
+              type="text/css" title="Debug"/>
     </head>
 
     <body id="imageGroupDisplay">
-      <div id="globalHeader">
+    <div id="globalHeader">
         <div class="breadcrumbs">
-&amp;nbsp;
-<!--          trailmagic : testing : some : places-->
+            &amp;nbsp;
+            <!--          trailmagic : testing : some : places-->
         </div>
 
         <div class="userAuth">
-          <authz:authorize ifAllGranted="ROLE_USER">
-            <authz:authentication operation="username"/> |
-              <a href="/photo/logout">Sign Out</a>
-          </authz:authorize>
-          <authz:authorize ifNotGranted="ROLE_USER">
-            <a href="/photo/login">Sign in</a>
-          </authz:authorize>
+            <authz:authorize ifAllGranted="ROLE_USER">
+                <authz:authentication property="principal.username"/> |
+                <a href="/photo/logout">Sign Out</a>
+            </authz:authorize>
+            <authz:authorize ifNotGranted="ROLE_USER">
+                <a href="/photo/login">Sign in</a>
+            </authz:authorize>
         </div>
-      </div>
+    </div>
 
-      <div id="header">
+    <div id="header">
         <div id="sitename">
-          <h1>trailmagic.com</h1>
+            <h1>trailmagic.com</h1>
         </div>
-<!--
-        <div id="pageDescription">
-          <h2 class="thingDescription">
-            <span class="bigThing">${groupTypeDisplay}</span>:
-            <span class="subThing">${imageGroup.displayName}</span>
-          </h2>
-        </div>
--->
+        <!--
+                <div id="pageDescription">
+                  <h2 class="thingDescription">
+                    <span class="bigThing">${groupTypeDisplay}</span>:
+                    <span class="subThing">${imageGroup.displayName}</span>
+                  </h2>
+                </div>
+        -->
         <div class="imageGroup">
           <span class="groupData">
             <span class="displayName">${fn:escapeXml(imageGroup.displayName)}</span>
@@ -92,101 +92,101 @@ frames: List of ImageFrames for this group
               Owned by:
               <tm:imageGroupLink owner="${imageGroup.owner}"
                                  groupType="${imageGroup.type}">
-                ${fn:escapeXml(imageGroup.owner.screenName)}
+                  ${fn:escapeXml(imageGroup.owner.screenName)}
               </tm:imageGroupLink>
             </span>
 
           </span>
         </div>
-<!--
-        <h2 class="ownerName">
-          <span class="label">Owned by:</span>
-          <span class="displayName">
-            <tm:imageGroupLink owner="${owner}"
-              groupType="${imageGroup.type}">${owner.screenName}</tm:imageGroupLink>
-          </span>
-        </h2>
+        <!--
+                <h2 class="ownerName">
+                  <span class="label">Owned by:</span>
+                  <span class="displayName">
+                    <tm:imageGroupLink owner="${owner}"
+                      groupType="${imageGroup.type}">${owner.screenName}</tm:imageGroupLink>
+                  </span>
+                </h2>
 
-        <p class="imageCount">${frames.size()} images in ${groupTypeDisplay}</p>
+                <p class="imageCount">${frames.size()} images in ${groupTypeDisplay}</p>
 
-            <c:if test="${!empty imageGroup.description}">
+                    <c:if test="${!empty imageGroup.description}">
 
-          <div id="imageGroupDescription">
-            <c:out value="${fn:escapeXml(imageGroup.description)}"/>
-          </div>
-      </c:if>
--->
-        
-</div>
+                  <div id="imageGroupDescription">
+                    <c:out value="${fn:escapeXml(imageGroup.description)}"/>
+                  </div>
+              </c:if>
+        -->
+
+    </div>
     <div class="imageGroupAdmin">
-      <authz:acl domainObject="${imageGroup}" hasPermission="1">
-        <!-- change group permission -->
-        <jsp:element name="form">
-          <jsp:attribute name="method">POST</jsp:attribute>
+        <authz:acl domainObject="${imageGroup}" hasPermission="1">
+            <!-- change group permission -->
+            <jsp:element name="form">
+                <jsp:attribute name="method">POST</jsp:attribute>
           <jsp:attribute
-            name="action">${pageContext.request.contextPath}/changePermission</jsp:attribute>
-          <jsp:body>
-            <input name="id" type="hidden" value="${imageGroup.id}"/>
-            <input name="target" type="hidden" value="imageGroup"/>
-            <c:choose>
-              <c:when test="${imageGroupIsPublic}">
-                <input name="action" type="hidden" value="makePrivate"/>
-                <input type="submit" name="submit" value="Make ${imageGroup.type} Private"/>
-              </c:when>
-              <c:otherwise>
-                <input name="action" type="hidden" value="makePublic"/>
-                <input type="submit" name="submit" value="Make ${imageGroup.type} Public"/>
-              </c:otherwise>
-            </c:choose>
-          </jsp:body>
-        </jsp:element>
+                  name="action">${pageContext.request.contextPath}/changePermission</jsp:attribute>
+                <jsp:body>
+                    <input name="id" type="hidden" value="${imageGroup.id}"/>
+                    <input name="target" type="hidden" value="imageGroup"/>
+                    <c:choose>
+                        <c:when test="${imageGroupIsPublic}">
+                            <input name="action" type="hidden" value="makePrivate"/>
+                            <input type="submit" name="submit" value="Make ${imageGroup.type} Private"/>
+                        </c:when>
+                        <c:otherwise>
+                            <input name="action" type="hidden" value="makePublic"/>
+                            <input type="submit" name="submit" value="Make ${imageGroup.type} Public"/>
+                        </c:otherwise>
+                    </c:choose>
+                </jsp:body>
+            </jsp:element>
 
-        <!--  change all the frames permission -->
-        <jsp:element name="form">
-          <jsp:attribute name="method">POST</jsp:attribute>
+            <!--  change all the frames permission -->
+            <jsp:element name="form">
+                <jsp:attribute name="method">POST</jsp:attribute>
           <jsp:attribute
-            name="action">${pageContext.request.contextPath}/changePermission</jsp:attribute>
-          <jsp:body>
-            <input name="id" type="hidden" value="${imageGroup.id}"/>
-            <input name="target" type="hidden" value="imageGroup"/>
-            <c:choose>
-              <c:when test="${imageGroupIsPublic}">
-                <input name="action" type="hidden" value="makeFramesPublic"/>
-                <input type="submit" name="submit" value="Make Frames Public"/>
-              </c:when>
-              <c:otherwise>
-                <input name="action" type="hidden" value="makeFramesPrivate"/>
-                <input type="submit" name="submit" value="Make Frames Private"/>
-              </c:otherwise>
-            </c:choose>
-          </jsp:body>
-        </jsp:element>
-      </authz:acl>
-        
+                  name="action">${pageContext.request.contextPath}/changePermission</jsp:attribute>
+                <jsp:body>
+                    <input name="id" type="hidden" value="${imageGroup.id}"/>
+                    <input name="target" type="hidden" value="imageGroup"/>
+                    <c:choose>
+                        <c:when test="${imageGroupIsPublic}">
+                            <input name="action" type="hidden" value="makeFramesPublic"/>
+                            <input type="submit" name="submit" value="Make Frames Public"/>
+                        </c:when>
+                        <c:otherwise>
+                            <input name="action" type="hidden" value="makeFramesPrivate"/>
+                            <input type="submit" name="submit" value="Make Frames Private"/>
+                        </c:otherwise>
+                    </c:choose>
+                </jsp:body>
+            </jsp:element>
+        </authz:acl>
+
     </div>
 
-      <ul class="thumbnailList">
-        
+    <ul class="thumbnailList">
+
         <c:forEach var="frame" items="${frames}">
-          <li>
-            <tm:imageFrameLink frame="${frame}">
-              <tm:image image="${frame.image}" sizeLabel="thumbnail"/>
-            </tm:imageFrameLink>
-          </li>
+            <li>
+                <tm:imageFrameLink frame="${frame}">
+                    <tm:image image="${frame.image}" sizeLabel="thumbnail"/>
+                </tm:imageFrameLink>
+            </li>
         </c:forEach>
-      </ul>
-      
+    </ul>
+
     <!--<jsp:include page="google-ad.jspx"/>-->
 
-      <div id="globalFooter">
+    <div id="globalFooter">
         <div class="footerLeft">
-<!--          To the left.-->
+            <!--          To the left.-->
         </div>
         <div class="footerRight">
-<!--          To the right.-->
+            <!--          To the right.-->
         </div>
-      </div>
+    </div>
     <jsp:include page="google-analytics.jspx"/>
     </body>
-</html>
+    </html>
 </jsp:root>

@@ -17,9 +17,9 @@ import com.trailmagic.user.Owned;
 import com.trailmagic.user.User;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import org.acegisecurity.acl.basic.AclObjectIdentity;
-import org.acegisecurity.acl.basic.AclObjectIdentityAware;
-import org.acegisecurity.acl.basic.NamedEntityObjectIdentity;
+import org.springframework.security.acl.basic.AclObjectIdentity;
+import org.springframework.security.acl.basic.AclObjectIdentityAware;
+import org.springframework.security.acl.basic.NamedEntityObjectIdentity;
 
 public class Image implements Owned, AclObjectIdentityAware {
     private long id;
