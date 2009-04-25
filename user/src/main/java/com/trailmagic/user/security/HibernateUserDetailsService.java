@@ -65,25 +65,14 @@ public class HibernateUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("No such user");
         }
         
-        // add a ROLE_<GROUPNAME> for each group the user's in
         List<Group> groups = m_groupFactory.getForUser(user);
-        Collection<GrantedAuthority> authorities =
-            new ArrayList<GrantedAuthority>();
+        Collection<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
         for (Group group : groups) {
-            authorities
-                .add(new GrantedAuthorityImpl("ROLE_"
-                                              + group.getName().toUpperCase()));
+            authorities.add(new GrantedAuthorityImpl("ROLE_" + group.getName().toUpperCase()));
         }
-        // add ROLE_USER for every user
         authorities.add(new GrantedAuthorityImpl("ROLE_USER"));
-        
-        // TODO: this doesn't really make sense, since I think this
-        // should be included by virtue of including the user itself,
-        // but that doens't seem to work and I want to move on, so
-        // just adding the username directly
         authorities.add(new GrantedAuthorityImpl(user.getScreenName()));
-        
-        return new ToolkitUserDetails(user,
-                                      authorities.toArray(new GrantedAuthority[0]));
+
+        return new ToolkitUserDetails(user, authorities.toArray(new GrantedAuthority[authorities.size()]));
     }
 }
