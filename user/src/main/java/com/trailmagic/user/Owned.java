@@ -13,8 +13,6 @@
  */
 package com.trailmagic.user;
 
-import org.springframework.security.acl.basic.AclObjectIdentityAware;
-
-public interface Owned extends AclObjectIdentityAware {
+public interface Owned {
     public User getOwner();
 }

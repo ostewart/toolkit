@@ -13,11 +13,7 @@
  */
 package com.trailmagic.image;
 
-import org.springframework.security.acl.basic.AclObjectIdentity;
-import org.springframework.security.acl.basic.AclObjectIdentityAware;
-import org.springframework.security.acl.basic.NamedEntityObjectIdentity;
-
-public class Lens implements AclObjectIdentityAware {
+public class Lens {
     private long m_id;
     private String m_name;
     private String m_manufacturer;
@@ -78,10 +74,5 @@ public class Lens implements AclObjectIdentityAware {
 
     public void setMaxAperature(int aperature) {
         m_maxAperature = aperature;
-    }
-
-    public AclObjectIdentity getAclObjectIdentity() {
-        return new NamedEntityObjectIdentity(Lens.class.getName(),
-                                             Long.toString(getId()));
     }
 }

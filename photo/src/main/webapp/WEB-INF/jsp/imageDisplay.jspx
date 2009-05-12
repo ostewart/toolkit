@@ -147,7 +147,7 @@ thisRequestUrl: the full client-requested URL for this request
     
     
     <div class="imageAdmin">
-      <authz:acl domainObject="${image}" hasPermission="1">
+      <authz:accesscontrollist domainObject="${image}" hasPermission="16">
         <jsp:element name="form">
           <jsp:attribute name="method">post</jsp:attribute>
           <jsp:attribute
@@ -178,7 +178,7 @@ thisRequestUrl: the full client-requested URL for this request
           </c:url>
           <a href="${fn:escapeXml(setPreviewLink)}">[make preview image for ${fn:escapeXml(frame.imageGroup.name)} (${frame.imageGroup.type.displayString})]</a> 
         
-      </authz:acl>
+      </authz:accesscontrollist>
         
     </div>
         

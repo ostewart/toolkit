@@ -8,13 +8,13 @@
           xmlns:form="http://www.springframework.org/tags/form">
   
       <div xmlns="http://www.w3.org/1999/xhtml" class="imageDetails">
-        <authz:acl hasPermission="4,1" domainObject="${image}">
+        <authz:accesscontrollist hasPermission="2,16" domainObject="${image}">
             <c:url var="editImageMetadataUrl" value="">
 <!--                <c:param name="imageId" value="${image.id}"/>-->
                 <c:param name="mode" value="edit"/>
             </c:url>
             <a class="edit" id="imageDetailsEdit" href="${editImageMetadataUrl}">edit</a>
-        </authz:acl>
+        </authz:accesscontrollist>
         <br/>
         ${fn:escapeXml(image.displayName)}
         <br/>

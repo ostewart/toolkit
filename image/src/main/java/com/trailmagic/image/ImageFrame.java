@@ -15,11 +15,8 @@ package com.trailmagic.image;
 
 import com.trailmagic.user.Owned;
 import com.trailmagic.user.User;
-import org.springframework.security.acl.basic.AclObjectIdentity;
-import org.springframework.security.acl.basic.AclObjectIdentityAware;
-import org.springframework.security.acl.basic.NamedEntityObjectIdentity;
 
-public class ImageFrame implements Owned, Comparable<ImageFrame>, AclObjectIdentityAware {
+public class ImageFrame implements Owned, Comparable<ImageFrame> {
     private long m_id;
     private ImageGroup m_imageGroup;
     private int m_position;
@@ -112,10 +109,6 @@ public class ImageFrame implements Owned, Comparable<ImageFrame>, AclObjectIdent
         return getImageGroup().getOwner();
     }
 
-    public AclObjectIdentity getAclObjectIdentity() {
-        return new NamedEntityObjectIdentity(ImageFrame.class.getName(),
-                                             Long.toString(getId()));
-    }
     
     @Override
     public String toString() {

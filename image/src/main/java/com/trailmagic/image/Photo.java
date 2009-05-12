@@ -14,12 +14,8 @@
 package com.trailmagic.image;
 
 import java.util.Date;
-import org.springframework.security.acl.basic.AclObjectIdentity;
-import org.springframework.security.acl.basic.AclObjectIdentityAware;
-import org.springframework.security.acl.basic.NamedEntityObjectIdentity;
 
-
-public class Photo extends Image implements AclObjectIdentityAware {
+public class Photo extends Image {
     private Lens lens;
     private Camera camera;
     private String notes;
@@ -87,10 +83,5 @@ public class Photo extends Image implements AclObjectIdentityAware {
     // XXX: assert(m_imageGroup.getType().equals("roll"));
     public void setRoll(ImageGroup group) {
         this.roll = group;
-    }
-
-    public AclObjectIdentity getAclObjectIdentity() {
-        return new NamedEntityObjectIdentity(Photo.class.getName(),
-                                             Long.toString(getId()));
     }
 }

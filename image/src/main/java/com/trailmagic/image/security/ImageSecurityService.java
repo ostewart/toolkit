@@ -17,28 +17,27 @@ import com.trailmagic.image.Image;
 import com.trailmagic.image.ImageFrame;
 import com.trailmagic.image.ImageGroup;
 import com.trailmagic.image.ImageManifestation;
+import com.trailmagic.user.User;
+import org.springframework.security.acls.Permission;
+
+import java.util.Set;
 
 public interface ImageSecurityService {
-    public void makePublic(Image image);
-    public void makePublic(ImageFrame frame);
-    public void makePublic(ImageGroup group);
-    public void makeFramesPublic(ImageGroup group);
-    public void makePublic(ImageManifestation mf);
-    public void makePrivate(Image image);
-    public void makePrivate(ImageFrame frame);
-    public void makePrivate(ImageGroup group);
-    public void makeFramesPrivate(ImageGroup group);
-    public void makePrivate(ImageManifestation mf);
     public void addOwnerAcl(Image image);
     public void addOwnerAcl(ImageFrame frame);
     public void addOwnerAcl(ImageGroup group);
     public void addOwnerAcl(ImageManifestation mf);
-    public void addReadPermission(Object obj, Object parent,
-                                  Object recipient);
-    public void addPermission(Image image, Object recipient, int mask);
-    public void addPermission(Object obj, Object parent,
-                              Object recipient, int mask);
-    public void setPermission(Object obj, Object parent,
-                              Object recipient, int mask);
+    public void makePublic(Object obj);
+    public void makePrivate(Object obj);
+    public void makeFramesPublic(ImageGroup group);
+    public void makeFramesPrivate(ImageGroup group);
+    public void addReadPermission(Object obj, User recipient);
+    public void addReadPermission(Object obj, String recipientRole);
+    public void addPermission(Image image, User recipient, Permission permission);
+    public void addPermission(Object obj, String recipientRole, Permission permission);
+    public void addPermissions(Object obj, User recipient, Set<Permission> permissions);
+    public void addPermissions(Object obj, String recipientRole, Set<Permission> permissions);
+    public void setPermission(Object obj, String recipientRole, Permission permission);
+    public void setPermission(Object obj, User recipient, Permission permission);
     public boolean isPublic(Object obj);
 }

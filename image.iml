@@ -78,6 +78,10 @@
     <orderEntry type="library" exported="" name="Maven: org.springframework:spring-support:2.0.8" level="project" />
     <orderEntry type="library" exported="" name="Maven: org.mockito:mockito-all:1.7" level="project" />
     <orderEntry type="library" exported="" name="Maven: org.springframework.security:spring-security-core-tiger:2.0.4" level="project" />
+    <orderEntry type="library" exported="" name="Maven: org.springframework.security:spring-security-acl:2.0.4" level="project" />
+    <orderEntry type="library" exported="" name="Maven: org.springframework:spring-jdbc:2.0.8" level="project" />
+    <orderEntry type="library" exported="" name="Maven: org.springframework:spring-dao:2.0.8" level="project" />
+    <orderEntry type="library" exported="" name="Maven: commons-beanutils:commons-beanutils:1.8.0" level="project" />
   </component>
 </module>
 

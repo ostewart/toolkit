@@ -20,342 +20,277 @@ import com.trailmagic.image.ImageGroupRepository;
 import com.trailmagic.image.ImageManifestation;
 import com.trailmagic.user.Owned;
 import com.trailmagic.user.User;
-import java.lang.reflect.InvocationTargetException;
-import java.util.List;
-import java.util.SortedSet;
-import org.springframework.security.AccessDeniedException;
-import org.springframework.security.acl.AclEntry;
-import org.springframework.security.acl.AclManager;
-import org.springframework.security.acl.basic.AclObjectIdentity;
-import org.springframework.security.acl.basic.AclObjectIdentityAware;
-import org.springframework.security.acl.basic.BasicAclEntry;
-import org.springframework.security.acl.basic.BasicAclExtendedDao;
-import org.springframework.security.acl.basic.NamedEntityObjectIdentity;
-import org.springframework.security.acl.basic.SimpleAclEntry;
 import org.apache.log4j.Logger;
+import org.springframework.security.AccessDeniedException;
+import org.springframework.security.acls.AccessControlEntry;
+import org.springframework.security.acls.Acl;
+import org.springframework.security.acls.MutableAcl;
+import org.springframework.security.acls.MutableAclService;
+import org.springframework.security.acls.NotFoundException;
+import org.springframework.security.acls.Permission;
+import org.springframework.security.acls.domain.BasePermission;
+import org.springframework.security.acls.objectidentity.ObjectIdentity;
+import org.springframework.security.acls.objectidentity.ObjectIdentityRetrievalStrategy;
+import org.springframework.security.acls.sid.GrantedAuthoritySid;
+import org.springframework.security.acls.sid.PrincipalSid;
+import org.springframework.security.acls.sid.Sid;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.SortedSet;
 
 @Transactional
 public class SpringSecurityImageSecurityService implements ImageSecurityService {
-    private BasicAclExtendedDao aclDao;
+    private MutableAclService aclService;
     private ImageGroupRepository imageGroupRepository;
-    private AclManager aclManager;
+    private ObjectIdentityRetrievalStrategy identityRetrievalStrategy;
     private static Logger log = Logger.getLogger(SpringSecurityImageSecurityService.class);
+    private static final Set<Permission> OWNER_PERMISSIONS = new HashSet<Permission>();
     private static final String ROLE_EVERYONE = "ROLE_EVERYONE";
-    private static final int OWNER_ACL_MASK =
-        (SimpleAclEntry.ADMINISTRATION
-         |SimpleAclEntry.READ_WRITE_CREATE_DELETE);
+    private static final GrantedAuthoritySid PUBLIC_SID = new GrantedAuthoritySid(ROLE_EVERYONE);
+    private static final Sid[] PUBLIC_SID_ARY = new Sid[]{PUBLIC_SID};
 
-    public SpringSecurityImageSecurityService() {
-        // do nothing
+    static {
+        OWNER_PERMISSIONS.add(BasePermission.READ);
+        OWNER_PERMISSIONS.add(BasePermission.WRITE);
+        OWNER_PERMISSIONS.add(BasePermission.CREATE);
+        OWNER_PERMISSIONS.add(BasePermission.DELETE);
+        OWNER_PERMISSIONS.add(BasePermission.ADMINISTRATION);
     }
 
-    public BasicAclExtendedDao getBasicAclExtendedDao() {
-        return aclDao;
-    }
-
-    public void setBasicAclExtendedDao(BasicAclExtendedDao dao) {
-        this.aclDao = dao;
-    }
-
-    public void setImageGroupRepository(ImageGroupRepository imageGroupRepository) {
+    public SpringSecurityImageSecurityService(MutableAclService aclService, ImageGroupRepository imageGroupRepository,
+                                              ObjectIdentityRetrievalStrategy identityRetrievalStrategy) {
+        this.aclService = aclService;
         this.imageGroupRepository = imageGroupRepository;
-    }
-
-    public void setAclManager(AclManager aclManager) {
-        this.aclManager = aclManager;
-    }
-
-    public void makePublic(Image image) {
-        ImageGroup roll = imageGroupRepository.getRollForImage(image);
-        makePublic(image, roll);
-
-        // also try to make all the frames public
-        List<ImageFrame> frames =
-            imageGroupRepository.getFramesContainingImage(image);
-        for (ImageFrame frame : frames) {
-            try {
-                makePublic(frame);
-            } catch (AccessDeniedException e) {
-                log.warn("No admin access to frame " + frame
-                           + " for image: " + image);
-            }
-        }
-
-	// for now also make the manifestations public
-	// this will mess things up if we set e.g. the original
-	// to be permissioned differently
-	SortedSet<ImageManifestation> manifestations =
-	    image.getManifestations();
-	for (ImageManifestation mf : manifestations) {
-	    makePublic(mf);
-	}
-
-        /*
-        try {
-            // also try to make the roll frame public
-            makePublic(imageGroupRepository
-                       .getImageFrameByImageGroupAndImageId(roll,
-                                                            image.getId()));
-        } catch (AccessDeniedException e) {
-            s_log.warn("No access to roll frame for image: " + image);
-        }
-        */
-    }
-
-    public void makePublic(ImageFrame frame) {
-        // image is always parent of frame so that we never have
-        // access to a frame without having access to the image
-        makePublic(frame, frame.getImage());
-    }
-
-    public void makePublic(ImageGroup group) {
-        makePublic(group, null);
+        this.identityRetrievalStrategy = identityRetrievalStrategy;
     }
 
     public void makeFramesPublic(ImageGroup group) {
-        log.info("Making all images in " + group.getType()
-                   + " public: " + group);
+        log.info("Making all images in " + group.getType() + " public: " + group);
 
         for (ImageFrame frame : group.getFrames()) {
             log.info("Making image public: " + frame.getImage());
             makePublic(frame.getImage());
         }
     }
-    
+
     public void makeFramesPrivate(ImageGroup group) {
-        log.info("Making all images in " + group.getType()
-                   + " private: " + group);
+        log.info("Making all images in " + group.getType() + " private: " + group);
         for (ImageFrame frame : group.getFrames()) {
             log.info("Making image private: " + frame.getImage());
             makePrivate(frame.getImage());
         }
     }
-    
-    public void makePublic(ImageManifestation mf) {
-        makePublic(mf, mf.getImage());
-    }
 
-    private void makePublic(Object obj, Object parent) {
-        /*
-        SimpleAclEntry entry =
-            new SimpleAclEntry(ROLE_EVERYONE,
-                               getIdentity(obj),
-                               (parent == null ? null
-                                :getIdentity(parent)),
-                               SimpleAclEntry.READ);
-
-        m_aclDao.create(entry);
-        */
-        addReadPermission(obj, parent, ROLE_EVERYONE);
+    public void makePublic(Object obj) {
+        addReadPermission(obj, ROLE_EVERYONE);
         log.info("Added access to " + obj + " by ROLE_EVERYONE");
+
+        if (obj instanceof Image) {
+            Image image = (Image) obj;
+            // for now also make the manifestations public
+            // this will mess things up if we set e.g. the original
+            // to be permissioned differently
+            SortedSet<ImageManifestation> manifestations = image.getManifestations();
+            for (ImageManifestation mf : manifestations) {
+                makePublic(mf);
+            }
+        }
     }
 
     public void addOwnerAcl(Image image) {
-        addOwnerAcl(image, imageGroupRepository.getRollForImage(image));
+        addOwnerAclInternal(image, imageGroupRepository.getRollForImage(image));
     }
 
     public void addOwnerAcl(ImageFrame frame) {
         // image is always parent of frame so that we never
         // have access to a frame without having access to the image
-        addOwnerAcl(frame, frame.getImage());
+        addOwnerAclInternal(frame, frame.getImage());
     }
 
     public void addOwnerAcl(ImageGroup group) {
-        addOwnerAcl(group, null);
+        addOwnerAclInternal(group, null);
     }
 
     public void addOwnerAcl(ImageManifestation mf) {
-        addOwnerAcl(mf, mf.getImage());
+        addOwnerAclInternal(mf, mf.getImage());
     }
 
-    private void addOwnerAcl(Owned ownedObj, Object parent) {
-        User owner = ownedObj.getOwner();
-        addPermission(ownedObj, parent, owner.getScreenName(), OWNER_ACL_MASK);
+    private void addOwnerAclInternal(Owned ownedObj, Object parent) {
+        final User owner = ownedObj.getOwner();
+        final ObjectIdentity identity = identityRetrievalStrategy.getObjectIdentity(ownedObj);
+        final MutableAcl acl = aclService.createAcl(identity);
+        final PrincipalSid principalSid = new PrincipalSid(owner.getScreenName());
+        acl.setOwner(principalSid);
+
+        if (parent != null) {
+            final ObjectIdentity parentIdentity = identityRetrievalStrategy.getObjectIdentity(parent);
+            if (parentIdentity != null) {
+                try {
+                    final Acl parentAcl = aclService.readAclById(parentIdentity, new Sid[]{principalSid});
+                    acl.setParent(parentAcl);
+                } catch (NotFoundException e) {
+                    // don't care
+                }
+            }
+        }
+        effectPermissions(acl, principalSid, OWNER_PERMISSIONS, false);
     }
 
     public boolean isPublic(Object obj) {
         log.debug("isPublic called");
-        AclEntry[] entries = aclManager.getAcls(obj);
-        for (AclEntry entry : entries) {
-            if (!(entry instanceof BasicAclEntry)) {
-                log.debug("skipping entry: " + entry);
-                continue;
-            }
 
-            BasicAclEntry basicEntry = (BasicAclEntry) entry;
-            if (ROLE_EVERYONE.equals(basicEntry.getRecipient())) {
-                boolean result = ((basicEntry.getMask() & SimpleAclEntry.READ)
-                                  == SimpleAclEntry.READ);
-                log.debug(basicEntry + " mask is " + basicEntry.getMask()
-                            + "evaluates to: " + result);
-                return result;
-            }
-        }
-        return false;
+        final Acl acl = aclService.readAclById(identityRetrievalStrategy.getObjectIdentity(obj), PUBLIC_SID_ARY);
+        return acl != null && acl.isGranted(new Permission[]{BasePermission.READ}, PUBLIC_SID_ARY, false);
     }
 
-    public void addReadPermission(Object obj, Object parent,
-                                  Object recipient) {
-        addPermission(obj, parent, recipient, SimpleAclEntry.READ);
+    public void addReadPermission(Object obj, String recipientRole) {
+        addPermission(obj, recipientRole, BasePermission.READ);
+    }
+
+    public void addReadPermission(Object obj, User recipient) {
+        addPermission(obj, recipient, BasePermission.READ);
     }
 
     /**
      * Adds permission to the image and the frames it's in.
-     **/
-    public void addPermission(Image image, Object recipient, int mask) {
-        ImageGroup parent = imageGroupRepository.getRollForImage(image);
-
-        addPermission(image, parent, recipient, mask);
+     */
+    public void addPermission(Image image, User recipient, Permission permission) {
+        addPermission(image, recipient, permission, false);
 
         // add read permission for all the frames if mask includes READ
         // ADMIN should be transitive from the group
-        if ((SimpleAclEntry.READ & mask) == SimpleAclEntry.READ) {
-            for (ImageFrame frame
-                     : imageGroupRepository.getFramesContainingImage(image)) {
-                addPermission(frame, image, recipient, SimpleAclEntry.READ);
+        if (isSet(BasePermission.READ, permission)) {
+            for (ImageFrame frame : imageGroupRepository.getFramesContainingImage(image)) {
+                addPermission(frame, recipient, BasePermission.READ);
             }
         }
     }
 
-    /**
-     * recipient should be a string, not a user
-     **/
-    public void addPermission(Object obj, Object parent, Object recipient,
-                              int mask) {
-        AclObjectIdentity objIdentity = getIdentity(obj);
-        AclObjectIdentity parentIdentity = getIdentity(parent);
-
-        BasicAclEntry existingEntry =
-            findExistingEntry(objIdentity, recipient);
-        if (existingEntry != null) {
-            int oldPerm = existingEntry.getMask();
-            aclDao.changeMask(objIdentity, recipient,
-                                oldPerm | mask);
-            if (log.isDebugEnabled()) {
-                log.debug("Added permission " + mask + " on "
-                           + objIdentity + " for recipient: "
-                           + recipient);
-            }
-        } else {
-            createPermission(objIdentity, parentIdentity, recipient, mask);
-
-        }
+    public void addPermission(Object obj, String recipientRole, Permission permission) {
+        final Sid sid = new GrantedAuthoritySid(recipientRole);
+        effectPermission(findAcl(obj, sid), sid, permission, false);
     }
 
-    public void setPermission(Object obj, Object parent,
-                               Object recipient,
-                               int mask) {
-        AclObjectIdentity objIdentity = getIdentity(obj);
-        AclObjectIdentity parentIdentity = getIdentity(parent);
-
-        BasicAclEntry existingEntry =
-            findExistingEntry(objIdentity, recipient);
-        if (existingEntry != null) {
-            int oldPerm = existingEntry.getMask();
-            aclDao.changeMask(objIdentity, recipient,
-                                mask);
-            if (log.isDebugEnabled()) {
-                log.debug("Set permission " + mask + " on "
-                           + objIdentity + " for recipient: "
-                           + recipient);
-            }
-        } else {
-            createPermission(objIdentity, parentIdentity, recipient, mask);
-
-        }
+    public void addPermissions(Object obj, User recipient, Set<Permission> permissions) {
+        final Sid sid = new PrincipalSid(recipient.getScreenName());
+        effectPermissions(findAcl(obj, sid), sid, permissions, false);
     }
 
-    private BasicAclEntry findExistingEntry(AclObjectIdentity objIdentity,
-                                            Object recipient) {
-        BasicAclEntry[] entries = aclDao.getAcls(objIdentity);
-        BasicAclEntry existingEntry = null;
+    public void addPermissions(Object obj, String recipientRole, Set<Permission> permissions) {
+        final Sid sid = new GrantedAuthoritySid(recipientRole);
+        effectPermissions(findAcl(obj, sid), sid, permissions, false);
+    }
 
-        // search for existing entries
-        if (entries != null) {
-            for (BasicAclEntry entry : entries) {
-                if (entry.getRecipient().equals(recipient)) {
-                    existingEntry = entry;
-                    break;
+    private boolean isSet(Permission targetPermission, Permission permission) {
+        return (targetPermission.getMask() & permission.getMask()) == BasePermission.READ.getMask();
+    }
+
+    private void addPermission(Object obj, User recipient, Permission permission) {
+        addPermission(obj, recipient, permission, true);
+    }
+
+    private void addPermission(Object obj, User recipient, Permission permission, boolean additive) {
+        final PrincipalSid principalSid = new PrincipalSid(recipient.getScreenName());
+        effectPermission(findAcl(obj, principalSid), principalSid, permission, additive);
+    }
+
+    public void setPermission(Object obj, User recipient, Permission permission) {
+        addPermission(obj, recipient, permission, false);
+    }
+
+    public void setPermission(Object obj, String recipientRole, Permission permission) {
+        final GrantedAuthoritySid sid = new GrantedAuthoritySid(recipientRole);
+        effectPermission(findAcl(obj, sid), sid, permission, false);
+    }
+
+    private void effectPermission(MutableAcl acl, Sid recipient, Permission permission, boolean additive) {
+        effectPermissions(acl, recipient, Collections.singleton(permission), additive);
+    }
+
+    public void effectPermissions(MutableAcl acl, Sid recipient, Set<Permission> newPermissions, boolean additive) {
+        Set<Permission> existingPermissions = findExistingPermissions(acl, recipient);
+
+        if (!additive) {
+            Set<Permission> permsToRemove = new HashSet<Permission>();
+            permsToRemove.addAll(existingPermissions);
+            permsToRemove.retainAll(newPermissions);
+            for (Permission perm : permsToRemove) {
+                acl.deleteAce(indexOf(recipient, perm, acl));
+                if (log.isDebugEnabled()) {
+                    log.debug("Removed ACE for permission " + perm + ", recipient " + recipient + ", on object " + acl.getObjectIdentity());
                 }
+
             }
         }
-        return existingEntry;
+
+        Set<Permission> permsToAdd = new HashSet<Permission>();
+        permsToAdd.addAll(newPermissions);
+        permsToAdd.removeAll(existingPermissions);
+        for (Permission perm : permsToAdd) {
+            acl.insertAce(acl.getEntries().length, perm, recipient, true);
+            if (log.isDebugEnabled()) {
+                log.debug("Added ACE for permission " + perm + ", recipient " + recipient + ", on object " + acl.getObjectIdentity());
+            }
+
+        }
+        aclService.updateAcl(acl);
     }
 
-    private void createPermission(AclObjectIdentity objIdentity,
-                               AclObjectIdentity parentIdentity,
-                               Object recipient,
-                               int mask) {
-            SimpleAclEntry entry =
-                new SimpleAclEntry(recipient,
-                                   objIdentity,
-                                   parentIdentity,
-                                   mask);
-            aclDao.create(entry);
-            if (log.isDebugEnabled()) {
-                log.debug("Created permission " + mask + " on "
-                            + objIdentity + " for recipient: "
-                            + recipient);
+    private Set<Permission> findExistingPermissions(MutableAcl acl, Sid recipient) {
+        Set<Permission> existingPermissions = new HashSet<Permission>();
+        for (AccessControlEntry entry : acl.getEntries()) {
+            if (entry.getSid().equals(recipient)) {
+                existingPermissions.add(entry.getPermission());
             }
+        }
+        return existingPermissions;
+    }
+
+    private int indexOf(Sid recipient, Permission permission, MutableAcl acl) {
+        final AccessControlEntry[] entries = acl.getEntries();
+        for (int i = 0; i < entries.length; i++) {
+            final AccessControlEntry entry = entries[i];
+            if (entry.getSid().equals(recipient) && permission.equals(entry.getPermission())) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private MutableAcl findAcl(Object obj, Sid sid) {
+        final ObjectIdentity identity = identityRetrievalStrategy.getObjectIdentity(obj);
+        return (MutableAcl) aclService.readAclById(identity, new Sid[]{sid});
     }
 
     public void makePrivate(Image image) {
-        ImageGroup roll = imageGroupRepository.getRollForImage(image);
-        makePrivate(image, roll);
+        makePrivate((Object) image);
 
         // also try to make all the frames private
-        List<ImageFrame> frames =
-            imageGroupRepository.getFramesContainingImage(image);
+        List<ImageFrame> frames = imageGroupRepository.getFramesContainingImage(image);
         for (ImageFrame frame : frames) {
             try {
                 makePrivate(frame);
             } catch (AccessDeniedException e) {
-                log.warn("No admin access to frame " + frame
-                           + " for image: " + image);
+                log.warn("No admin access to frame " + frame + " for image: " + image);
             }
         }
 
-	// for now also make the manifestations private
-	SortedSet<ImageManifestation> manifestations =
-	    image.getManifestations();
-	for (ImageManifestation mf : manifestations) {
-	    makePrivate(mf);
-	}
+        // for now also make the manifestations private
+        SortedSet<ImageManifestation> manifestations = image.getManifestations();
+        for (ImageManifestation mf : manifestations) {
+            makePrivate(mf);
+        }
     }
 
-    public void makePrivate(ImageFrame frame) {
-        makePrivate(frame, frame.getImage());
-    }
-
-    public void makePrivate(ImageGroup group) {
-        makePrivate(group, null);
-    }
-
-    public void makePrivate(ImageManifestation mf) {
-        makePrivate(mf, mf.getImage());
-    }
-
-    public void makePrivate(Object obj, Object parent) {
-        // instead of deleting the acl entry, set it to nothing so
-        // we're sure not to inherit any positive permissions
-        setPermission(obj, parent, ROLE_EVERYONE, SimpleAclEntry.NOTHING);
+    public void makePrivate(Object obj) {
+        // TODO: perhaps this should be a blocking permission instead
+        final GrantedAuthoritySid sid = new GrantedAuthoritySid(ROLE_EVERYONE);
+        effectPermissions(findAcl(obj, sid), sid, Collections.<Permission>emptySet(), false);
         log.info("Removed access to " + obj + " by ROLE_EVERYONE");
     }
 
-    private AclObjectIdentity getIdentity(Object obj) {
-        try {
-            if (obj == null) {
-                return null;
-            } else if (obj instanceof AclObjectIdentityAware) {
-                return ((AclObjectIdentityAware) obj).getAclObjectIdentity();
-            } else {
-                return new NamedEntityObjectIdentity(obj);
-            }
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException("Error creating ACL identity", e);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException("Error creating ACL identity", e);
-        }
-    }
 }

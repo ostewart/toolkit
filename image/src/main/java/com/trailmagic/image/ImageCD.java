@@ -14,11 +14,8 @@
 package com.trailmagic.image;
 
 import java.util.Collection;
-import org.springframework.security.acl.basic.AclObjectIdentity;
-import org.springframework.security.acl.basic.AclObjectIdentityAware;
-import org.springframework.security.acl.basic.NamedEntityObjectIdentity;
 
-public class ImageCD implements AclObjectIdentityAware {
+public class ImageCD {
     private long m_id;
     private int m_number;
     private String m_description;
@@ -57,10 +54,5 @@ public class ImageCD implements AclObjectIdentityAware {
 
     public void setImages(Collection images) {
         m_images = images;
-    }
-
-    public AclObjectIdentity getAclObjectIdentity() {
-        return new NamedEntityObjectIdentity(ImageCD.class.getName(),
-                                             Long.toString(getId()));
     }
 }

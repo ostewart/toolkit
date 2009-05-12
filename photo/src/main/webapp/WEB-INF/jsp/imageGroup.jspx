@@ -119,7 +119,7 @@ frames: List of ImageFrames for this group
 
     </div>
     <div class="imageGroupAdmin">
-        <authz:acl domainObject="${imageGroup}" hasPermission="1">
+        <authz:accesscontrollist hasPermission="2" domainObject="${imageGroup}">
             <!-- change group permission -->
             <jsp:element name="form">
                 <jsp:attribute name="method">POST</jsp:attribute>
@@ -161,7 +161,7 @@ frames: List of ImageFrames for this group
                     </c:choose>
                 </jsp:body>
             </jsp:element>
-        </authz:acl>
+        </authz:accesscontrollist>
 
     </div>
 

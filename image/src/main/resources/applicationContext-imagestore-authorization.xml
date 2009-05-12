@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN"
- "http://www.springframework.org/dtd/spring-beans.dtd">
 
 <!--
  Copyright (c) 2006 Oliver Stewart.  All Rights Reserved.
@@ -15,382 +13,307 @@
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
 -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+  http://www.springframework.org/schema/aop
+  http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+  http://www.springframework.org/schema/tx
+  http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+  http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+  http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-<beans>
-  <!-- ========= ACCESS CONTROL LIST LOOKUP MANAGER DEFINITIONS ========= -->
-  
-  <bean id="aclManager" class="org.springframework.security.acl.AclProviderManager">
-    <property name="providers">
-      <list>
-        <ref local="basicAclProvider"/>
-        <ref local="imageOwnerAclProvider"/>
-        <ref local="imageGroupOwnerAclProvider"/>
-        <ref local="imageManifestationOwnerAclProvider"/>
-        <ref local="imageFrameImageAclProvider"/>
-      </list>
-    </property>
-  </bean>
-
-  <bean id="messageSource"
-    class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
-    <property name="basename" value="org/springframework/security/messages"/>
-  </bean>
-  
-  <bean id="basicAclProvider"
-    class="org.springframework.security.acl.basic.BasicAclProvider">
-    <property name="basicAclDao"><ref
-        local="basicAclExtendedDao"/></property>
-    <property name="basicAclEntryCache">
-      <ref local="aclEntryCache"/>
-    </property>
-  </bean>
-
-  <bean id="basicAclExtendedDao"
-    class="org.springframework.security.acl.basic.jdbc.JdbcExtendedDaoImpl">
-    <property name="dataSource" ref="dataSource"/>
-
-    <property name="basicAclEntryCache">
-      <ref local="aclEntryCache"/>
-  </property>
-
-  </bean>
-
-  <bean id="imageOwnerAclProvider"
-    class="com.trailmagic.image.security.ImageOwnerAclProvider">
-    <property name="imageGroupRepository" ref="imageGroupRepository"/>
-  </bean>
-
-  <bean id="imageGroupOwnerAclProvider"
-    class="com.trailmagic.image.security.ImageGroupOwnerAclProvider"/>
-
-  <bean id="imageManifestationOwnerAclProvider"
-    class="com.trailmagic.image.security.ImageManifestationOwnerAclProvider"/>
-
-  <bean id="imageFrameImageAclProvider"
-    class="com.trailmagic.image.security.ImageFrameImageAclProvider">
-    <property name="aclManager">
-      <ref local="aclManager"/>
-    </property>
-  </bean>
-
-
-   <!-- An access decision voter that reads ROLE_* configuration settings -->
-   <bean id="roleVoter" class="org.springframework.security.vote.RoleVoter"/>
-
-  <!-- ============ METHOD INVOCATION AUTHORIZATION ==================== -->
-
-  <!-- ACL permission masks used by this application -->
-  <bean id="simpleAclEntry.ADMINISTRATION"
-    class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
-    <property name="staticField" value="org.springframework.security.acl.basic.SimpleAclEntry.ADMINISTRATION"/>
-  </bean>
-  
-  <bean id="simpleAclEntry.READ"
-    class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
-    <property name="staticField" value="org.springframework.security.acl.basic.SimpleAclEntry.READ"/>
-  </bean>
-  
-  <bean id="simpleAclEntry.DELETE"
-    class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
-    <property name="staticField" value="org.springframework.security.acl.basic.SimpleAclEntry.DELETE"/>
-  </bean>
-
-<bean id="simpleAclEntry.WRITE"
-    class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
-    <property name="staticField" value="org.springframework.security.acl.basic.SimpleAclEntry.WRITE"/>
-  </bean>
-  
-
-
-  <!-- An access decision voter for ACL_IMAGE_READ configuration settings -->
-  <bean id="aclImageReadVoter"
-    class="com.trailmagic.image.security.BetterAclEntryVoter">
-    <property name="processConfigAttribute" value="ACL_IMAGE_READ"/>
-    <property name="processDomainObjectClass" value="com.trailmagic.image.Image"/>
-    <property name="aclManager"><ref local="aclManager"/></property>
-    <property name="requirePermission">
-      <list>
-        <ref local="simpleAclEntry.ADMINISTRATION"/>
-        <ref local="simpleAclEntry.READ"/>
-      </list>
-    </property>
-  </bean>
-
-  <bean id="aclObjectAdminVoter"
-    class="com.trailmagic.image.security.BetterAclEntryVoter">
-    <property name="processConfigAttribute" value="ACL_OBJECT_ADMIN"/>
-    <property name="processDomainObjectClass" value="java.lang.Object"/>
-    <property name="aclManager"><ref local="aclManager"/></property>
-    <property name="requirePermission">
-      <list>
-        <ref local="simpleAclEntry.ADMINISTRATION"/>
-      </list>
-    </property>
-  </bean>
-
-  <bean id="aclImageWriteVoter"
-    class="com.trailmagic.image.security.BetterAclEntryVoter">
-    <property name="processConfigAttribute" value="ACL_IMAGE_WRITE"/>
-    <property name="processDomainObjectClass" value="com.trailmagic.image.Image"/>
-    <property name="aclManager"><ref local="aclManager"/></property>
-    <property name="requirePermission">
-      <list>
-        <ref local="simpleAclEntry.WRITE"/>
-      </list>
-    </property>
-  </bean>
-
-  <!-- An access decision voter for ACL_IMAGE_DELETE configuration settings -->
-  <bean id="aclImageDeleteVoter"
-    class="com.trailmagic.image.security.BetterAclEntryVoter">
-    <property name="processConfigAttribute" value="ACL_IMAGE_DELETE"/>
-    <property name="processDomainObjectClass" value="com.trailmagic.image.Image"/>
-    <property name="aclManager"><ref local="aclManager"/></property>
-    <property name="requirePermission">
-      <list>
-        <ref local="simpleAclEntry.ADMINISTRATION"/>
-        <ref local="simpleAclEntry.DELETE"/>
-      </list>
-    </property>
-  </bean>
-
-  <!-- An access decision voter for ACL_IMAGE_ADMIN configuration settings -->
-  <bean id="aclImageAdminVoter"
-    class="com.trailmagic.image.security.BetterAclEntryVoter">
-    <property name="processConfigAttribute">
-      <value>ACL_IMAGE_ADMIN</value>
-    </property>
-    <property name="processDomainObjectClass">
-      <value>com.trailmagic.image.Image</value>
-    </property>
-    <property name="aclManager"><ref local="aclManager"/></property>
-    <property name="requirePermission">
-      <list>
-        <ref local="simpleAclEntry.ADMINISTRATION"/>
-      </list>
-    </property>
-  </bean>
-
-  <bean id="aclImageGroupAdminVoter"
-    class="com.trailmagic.image.security.BetterAclEntryVoter">
-    <property name="processConfigAttribute">
-      <value>ACL_IMAGE_GROUP_ADMIN</value>
-    </property>
-    <property name="processDomainObjectClass">
-      <value>com.trailmagic.image.ImageGroup</value>
-    </property>
-    <property name="aclManager"><ref local="aclManager"/></property>
-    <property name="requirePermission">
-      <list>
-        <ref local="simpleAclEntry.ADMINISTRATION"/>
-      </list>
-    </property>
-  </bean>
-  
-  <bean id="aclImageFrameAdminVoter"
-    class="com.trailmagic.image.security.BetterAclEntryVoter">
-    <property name="processConfigAttribute">
-      <value>ACL_IMAGE_FRAME_ADMIN</value>
-    </property>
-    <property name="processDomainObjectClass">
-      <value>com.trailmagic.image.ImageFrame</value>
-    </property>
-    <property name="aclManager"><ref local="aclManager"/></property>
-    <property name="requirePermission">
-      <list>
-        <ref local="simpleAclEntry.ADMINISTRATION"/>
-      </list>
-    </property>
-  </bean>
-
-  <bean id="aclImageManifestationAdminVoter"
-    class="com.trailmagic.image.security.BetterAclEntryVoter">
-    <property name="processConfigAttribute">
-      <value>ACL_IMAGE_MF_ADMIN</value>
-    </property>
-    <property name="processDomainObjectClass">
-      <value>com.trailmagic.image.ImageManifestation</value>
-    </property>
-    <property name="aclManager"><ref local="aclManager"/></property>
-    <property name="requirePermission">
-      <list>
-        <ref local="simpleAclEntry.ADMINISTRATION"/>
-      </list>
-    </property>
-  </bean>
-
-  <bean id="imageAccessDecisionManager"
-    class="org.springframework.security.vote.AffirmativeBased">
-    <property name="allowIfAllAbstainDecisions" value="true"/>
-    <property name="decisionVoters">
-      <list>
-        <ref bean="aclImageReadVoter"/>
-        <ref bean="aclImageDeleteVoter"/>
-        <ref bean="aclImageAdminVoter"/>
-        <ref bean="aclImageWriteVoter"/>
-        <ref bean="aclObjectAdminVoter"/>
-        <ref bean="aclImageGroupAdminVoter"/>
-        <ref bean="aclImageFrameAdminVoter"/>
-        <ref bean="aclImageManifestationAdminVoter"/>
-      </list>
-    </property>
-  </bean>
-
-  <bean id="testVoter"
-    class="com.trailmagic.image.security.TestVoter"/>
-
-
-  <!--
-  you got some 'splainin' to do
-    -->
-  <bean id="imageFactorySecurity"
-    class="org.springframework.security.intercept.method.aopalliance.MethodSecurityInterceptor">
-    <property name="validateConfigAttributes" value="true"/>
-    <property name="authenticationManager" ref="authenticationManager"/>
-    <property name="accessDecisionManager">
-      <ref local="imageAccessDecisionManager"/>
-    </property>
-    <property name="afterInvocationManager">
-      <ref local="afterInvocationManager"/>
-    </property>
-    <property name="objectDefinitionSource">
-      <value>
-          com.trailmagic.image.ImageRepository.getById=AFTER_ACL_READ
-          com.trailmagic.image.ImageRepository.getAll=AFTER_ACL_COLLECTION_READ
-          com.trailmagic.image.ImageRepository.getByNameAndGroup=AFTER_ACL_COLLECTION_READ
-          com.trailmagic.image.ImageRepository.getByName=AFTER_ACL_COLLECTION_READ
-          com.trailmagic.image.ImageManifestationRepository.getById=AFTER_ACL_READ
-          com.trailmagic.image.ImageManifestationRepository.getHeavyById=AFTER_ACL_READ
-          com.trailmagic.image.ImageManifestationRepository.getAllForImageId=AFTER_ACL_COLLECTION_READ
-          com.trailmagic.image.ImageGroupRepository.getAlbumByOwnerAndName=AFTER_ACL_READ
-          com.trailmagic.image.ImageGroupRepository.getRollByOwnerAndName=AFTER_ACL_READ
-          com.trailmagic.image.ImageGroupRepository.getImageFrameByImageGroupAndImageId=AFTER_ACL_READ
-          com.trailmagic.image.ImageGroupRepository.getAlbumsByOwnerScreenName=AFTER_ACL_COLLECTION_READ
-          com.trailmagic.image.ImageGroupRepository.getRollsByOwnerScreenName=AFTER_ACL_COLLECTION_READ
-          com.trailmagic.image.ImageGroupRepository.getByOwnerScreenNameAndType=AFTER_ACL_COLLECTION_READ
-          com.trailmagic.image.ImageGroupRepository.getByOwnerNameAndTypeWithFrames=AFTER_ACL_READ
-          com.trailmagic.image.ImageGroupRepository.getByImage=AFTER_ACL_COLLECTION_READ
-          com.trailmagic.image.ImageGroupRepository.getRollForImage=AFTER_ACL_READ
-          com.trailmagic.image.security.ImageSecurityService.makePublic=ACL_OBJECT_ADMIN
-          com.trailmagic.image.security.ImageSecurityService.makePrivate=ACL_OBJECT_ADMIN
-          com.trailmagic.image.security.ImageSecurityService.addPermission=ACL_OBJECT_ADMIN
-          com.trailmagic.image.security.ImageSecurityService.addReadPermission=ACL_OBJECT_ADMIN
-          com.trailmagic.image.security.ImageSecurityService.setPermission=ACL_OBJECT_ADMIN
-          com.trailmagic.image.ImageRepository.save=ACL_IMAGE_WRITE
-      </value>
-    </property>
-  </bean>
-
-  <!--  this with DefaultAdvisorAutoProxyCreator should advise everything without
-        having to explicitly proxy
-  -->
-  <bean id="methodDefinitionSourceAdvisor"
-  	class="org.springframework.security.intercept.method.aopalliance.MethodDefinitionSourceAdvisor">
-  	<constructor-arg ref="imageFactorySecurity"/>
-  </bean>
-  
-    <bean id="beanNameAutoProxyCreator"
-    class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
-    <property name="beanNames">
-    <list>
-	   <value>imageRepository</value>
-     <value>imageManifestationRepository</value>
-     <value>imageGroupRepository</value>
-     <value>imageFactory</value>
-     <value>imageSecurityService</value>
-    </list>
-</property>
-<property name="interceptorNames" value="methodDefinitionSourceAdvisor"/>
+    <bean id="aclService" class="org.springframework.security.acls.jdbc.JdbcMutableAclService">
+        <constructor-arg ref="dataSource"/>
+        <constructor-arg ref="basicLookupStrategy"/>
+        <constructor-arg ref="aclCache"/>
     </bean>
 
-  
+    <bean id="basicLookupStrategy" class="org.springframework.security.acls.jdbc.BasicLookupStrategy">
+        <constructor-arg ref="dataSource"/>
+        <constructor-arg ref="aclCache"/>
+        <constructor-arg ref="aclAuthorizationStrategy"/>
+        <constructor-arg ref="auditLogger"/>
+    </bean>
 
-  <bean id="imageSecurityService"
-    class="com.trailmagic.image.security.SpringSecurityImageSecurityService">
-      <property name="basicAclExtendedDao" ref="basicAclExtendedDao"/>
-      <property name="aclManager" ref="aclManager"/>
-      <property name="imageGroupRepository" ref="imageGroupRepository"/>
-  </bean>
+    <bean id="aclAuthorizationStrategy" class="org.springframework.security.acls.domain.AclAuthorizationStrategyImpl">
+        <constructor-arg index="0">
+            <list>
+                <ref bean="ROLE_ACL_TAKE_OWNERSHIP"/>
+                <ref bean="ROLE_ACL_MODIFY_AUDITING"/>
+                <ref bean="ROLE_ACL_GENERAL_CHANGES"/>
+            </list>
+        </constructor-arg>
+    </bean>
 
-  <bean id="imageAspectSecurity"
-    class="org.springframework.security.intercept.method.aspectj.AspectJAnnotationSecurityInterceptor">
-    <property name="validateConfigAttributes" value="true"/>
-    <property name="authenticationManager" ref="authenticationManager"/>
-    <property name="accessDecisionManager">
-      <ref local="imageAccessDecisionManager"/>
-    </property>
-    <property name="afterInvocationManager">
-      <ref local="afterInvocationManager"/>
-    </property>
-    <property name="objectDefinitionSource">
-      <value>
-        com.trailmagic.image.ImageFrame.getImage=AFTER_ACL_READ
-        com.trailmagic.image.ImageGroup.getFrames=AFTER_ACL_COLLECTION_READ
-        com.trailmagic.image.Image.getManifestations=AFTER_ACL_COLLECTION_READ
-      </value>
-    </property>
-  </bean>
+    <bean id="auditLogger" class="com.trailmagic.image.security.Log4jAuditLogger"/>
 
-  <bean id="imageInstanceSecurityAspect"
-    class="com.trailmagic.image.ImageSecurityAspect"
-    factory-method="aspectOf">
-    <property name="securityInterceptor" ref="imageAspectSecurity"/>
-  </bean>
+    <!--suppress SpringBeanNameConventionInspection -->
+    <bean id="ROLE_ACL_GENERAL_CHANGES" class="org.springframework.security.GrantedAuthorityImpl">
+        <constructor-arg value="ROLE_ACL_GENERAL_CHANGES"/>
+    </bean>
+    <!--suppress SpringBeanNameConventionInspection -->
+    <bean id="ROLE_ACL_TAKE_OWNERSHIP" class="org.springframework.security.GrantedAuthorityImpl">
+        <constructor-arg value="ROLE_ACL_TAKE_OWNERSHIP"/>
+    </bean>
+    <!--suppress SpringBeanNameConventionInspection -->
+    <bean id="ROLE_ACL_MODIFY_AUDITING" class="org.springframework.security.GrantedAuthorityImpl">
+        <constructor-arg value="ROLE_ACL_MODIFY_AUDITING"/>
+    </bean>
 
-  <!-- ======= "AFTER INTERCEPTION" AUTHORIZATION DEFINITIONS =========== -->
-
-  <bean id="afterInvocationManager"
-    class="org.springframework.security.afterinvocation.AfterInvocationProviderManager">
-    <property name="providers">
-      <list>
-        <ref local="afterAclRead"/>
-        <ref local="afterAclCollectionRead"/>
-      </list>
-    </property>
-  </bean>
-   
-  <!-- Processes AFTER_ACL_COLLECTION_READ configuration settings -->
-  <bean id="afterAclCollectionRead"
-    class="org.springframework.security.afterinvocation.BasicAclEntryAfterInvocationCollectionFilteringProvider">
-    <property name="aclManager"><ref local="aclManager"/></property>
-    <property name="requirePermission">
-      <list>
-        <ref local="simpleAclEntry.ADMINISTRATION"/>
-        <ref local="simpleAclEntry.READ"/>
-      </list>
-    </property>
-   </bean>
-   
-  <!-- Processes AFTER_ACL_READ configuration settings -->
-  <bean id="afterAclRead"
-    class="org.springframework.security.afterinvocation.BasicAclEntryAfterInvocationProvider">
-    <property name="aclManager"><ref local="aclManager"/></property>
-    <property name="requirePermission">
-      <list>
-        <ref local="simpleAclEntry.ADMINISTRATION"/>
-        <ref local="simpleAclEntry.READ"/>
-      </list>
-    </property>
-  </bean>
+    <bean id="aclCache" class="org.springframework.security.acls.jdbc.EhCacheBasedAclCache">
+        <constructor-arg ref="aclCacheBackend"/>
+    </bean>
 
 
-  <!-- ACL CACHE -->
-  <bean id="cacheManager"
-    class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+    <bean id="messageSource"
+          class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+        <property name="basename" value="org/springframework/security/messages"/>
+    </bean>
 
-    <property name="configLocation" value="classpath:/ehcache-failsafe.xml"/>
-  </bean>
 
-  <bean id="aclCacheBackend"
-    class="org.springframework.cache.ehcache.EhCacheFactoryBean">
-    <property name="cacheManager">
-      <ref local="cacheManager"/>
-    </property>
-    <property name="cacheName" value="aclCache"/>
-  </bean>
+    <!-- An access decision voter that reads ROLE_* configuration settings -->
+    <bean id="roleVoter" class="org.springframework.security.vote.RoleVoter"/>
 
-  <bean id="aclEntryCache"
-    class="org.springframework.security.acl.basic.cache.EhCacheBasedAclEntryCache">
-    <property name="cache"><ref local="aclCacheBackend"/></property>
-  </bean>
+
+    <util:constant id="ADMINISTRATION" static-field="org.springframework.security.acls.domain.BasePermission.ADMINISTRATION"/>
+    <util:constant id="READ" static-field="org.springframework.security.acls.domain.BasePermission.READ"/>
+    <util:constant id="WRITE" static-field="org.springframework.security.acls.domain.BasePermission.WRITE"/>
+    <util:constant id="CREATE" static-field="org.springframework.security.acls.domain.BasePermission.CREATE"/>
+    <util:constant id="DELETE" static-field="org.springframework.security.acls.domain.BasePermission.DELETE"/>
+
+
+    <!-- An access decision voter for ACL_IMAGE_READ configuration settings -->
+    <bean id="aclImageReadVoter"
+          class="org.springframework.security.vote.AclEntryVoter">
+        <constructor-arg ref="aclService"/>
+        <constructor-arg value="ACL_IMAGE_READ"/>
+        <constructor-arg>
+            <list>
+                <ref local="ADMINISTRATION"/>
+                <ref local="READ"/>
+            </list>
+        </constructor-arg>
+        <property name="processDomainObjectClass" value="com.trailmagic.image.Image"/>
+    </bean>
+    <bean id="aclObjectAdminVoter"
+          class="org.springframework.security.vote.AclEntryVoter">
+        <constructor-arg ref="aclService"/>
+        <constructor-arg value="ACL_OBJECT_ADMIN"/>
+        <constructor-arg>
+            <list>
+                <ref local="ADMINISTRATION"/>
+            </list>
+        </constructor-arg>
+        <property name="processDomainObjectClass" value="java.lang.Object"/>
+    </bean>
+
+    <bean id="aclImageWriteVoter"
+          class="org.springframework.security.vote.AclEntryVoter">
+        <constructor-arg ref="aclService"/>
+        <constructor-arg value="ACL_IMAGE_WRITE"/>
+        <constructor-arg>
+            <list>
+                <ref local="WRITE"/>
+            </list>
+        </constructor-arg>
+        <property name="processDomainObjectClass" value="com.trailmagic.image.Image"/>
+    </bean>
+    <bean id="aclImageDeleteVoter"
+          class="org.springframework.security.vote.AclEntryVoter">
+        <constructor-arg ref="aclService"/>
+        <constructor-arg value="ACL_IMAGE_DELETE"/>
+        <constructor-arg>
+            <list>
+                <ref local="DELETE"/>
+            </list>
+        </constructor-arg>
+        <property name="processDomainObjectClass" value="com.trailmagic.image.Image"/>
+    </bean>
+    <bean id="aclImageAdminVoter"
+          class="org.springframework.security.vote.AclEntryVoter">
+        <constructor-arg ref="aclService"/>
+        <constructor-arg value="ACL_IMAGE_ADMIN"/>
+        <constructor-arg>
+            <list>
+                <ref local="ADMINISTRATION"/>
+            </list>
+        </constructor-arg>
+        <property name="processDomainObjectClass" value="com.trailmagic.image.Image"/>
+    </bean>
+
+
+    <bean id="imageAccessDecisionManager"
+          class="org.springframework.security.vote.AffirmativeBased">
+        <property name="allowIfAllAbstainDecisions" value="true"/>
+        <property name="decisionVoters">
+            <list>
+                <ref bean="aclImageReadVoter"/>
+                <ref bean="aclImageDeleteVoter"/>
+                <ref bean="aclImageAdminVoter"/>
+                <ref bean="aclImageWriteVoter"/>
+                <ref bean="aclObjectAdminVoter"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="imageFactorySecurity"
+          class="org.springframework.security.intercept.method.aopalliance.MethodSecurityInterceptor">
+        <property name="validateConfigAttributes" value="true"/>
+        <property name="authenticationManager" ref="authenticationManager"/>
+        <property name="accessDecisionManager">
+            <ref local="imageAccessDecisionManager"/>
+        </property>
+        <property name="afterInvocationManager">
+            <ref local="afterInvocationManager"/>
+        </property>
+        <property name="objectDefinitionSource">
+            <value>
+                com.trailmagic.image.ImageRepository.getById=AFTER_ACL_READ
+                com.trailmagic.image.ImageRepository.getAll=AFTER_ACL_COLLECTION_READ
+                com.trailmagic.image.ImageRepository.getByNameAndGroup=AFTER_ACL_COLLECTION_READ
+                com.trailmagic.image.ImageRepository.getByName=AFTER_ACL_COLLECTION_READ
+                com.trailmagic.image.ImageManifestationRepository.getById=AFTER_ACL_READ
+                com.trailmagic.image.ImageManifestationRepository.getHeavyById=AFTER_ACL_READ
+                com.trailmagic.image.ImageManifestationRepository.getAllForImageId=AFTER_ACL_COLLECTION_READ
+                com.trailmagic.image.ImageGroupRepository.getAlbumByOwnerAndName=AFTER_ACL_READ
+                com.trailmagic.image.ImageGroupRepository.getRollByOwnerAndName=AFTER_ACL_READ
+                com.trailmagic.image.ImageGroupRepository.getImageFrameByImageGroupAndImageId=AFTER_ACL_READ
+                com.trailmagic.image.ImageGroupRepository.getAlbumsByOwnerScreenName=AFTER_ACL_COLLECTION_READ
+                com.trailmagic.image.ImageGroupRepository.getRollsByOwnerScreenName=AFTER_ACL_COLLECTION_READ
+                com.trailmagic.image.ImageGroupRepository.getByOwnerScreenNameAndType=AFTER_ACL_COLLECTION_READ
+                com.trailmagic.image.ImageGroupRepository.getByOwnerNameAndTypeWithFrames=AFTER_ACL_READ
+                com.trailmagic.image.ImageGroupRepository.getByImage=AFTER_ACL_COLLECTION_READ
+                com.trailmagic.image.ImageGroupRepository.getRollForImage=AFTER_ACL_READ
+                com.trailmagic.image.security.ImageSecurityService.makePublic=ACL_OBJECT_ADMIN
+                com.trailmagic.image.security.ImageSecurityService.makePrivate=ACL_OBJECT_ADMIN
+                com.trailmagic.image.security.ImageSecurityService.addPermission=ACL_OBJECT_ADMIN
+                com.trailmagic.image.security.ImageSecurityService.addReadPermission=ACL_OBJECT_ADMIN
+                com.trailmagic.image.security.ImageSecurityService.setPermission=ACL_OBJECT_ADMIN
+                com.trailmagic.image.ImageRepository.save=ACL_IMAGE_WRITE
+            </value>
+        </property>
+    </bean>
+
+    <!--  this with DefaultAdvisorAutoProxyCreator should advise everything without
+          having to explicitly proxy
+    -->
+    <bean id="methodDefinitionSourceAdvisor"
+          class="org.springframework.security.intercept.method.aopalliance.MethodDefinitionSourceAdvisor">
+        <constructor-arg ref="imageFactorySecurity"/>
+    </bean>
+
+    <bean id="beanNameAutoProxyCreator"
+          class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
+        <property name="beanNames">
+            <list>
+                <value>imageRepository</value>
+                <value>imageManifestationRepository</value>
+                <value>imageGroupRepository</value>
+                <value>imageFactory</value>
+                <value>imageSecurityService</value>
+            </list>
+        </property>
+        <property name="interceptorNames" value="methodDefinitionSourceAdvisor"/>
+    </bean>
+
+
+    <bean id="imageSecurityService"
+          class="com.trailmagic.image.security.SpringSecurityImageSecurityService">
+        <constructor-arg ref="aclService"/>
+        <constructor-arg ref="imageGroupRepository"/>
+        <constructor-arg ref="objectIdentityRetrievalStrategy"/>
+    </bean>
+
+    <bean id="imageAspectSecurity"
+          class="org.springframework.security.intercept.method.aspectj.AspectJAnnotationSecurityInterceptor">
+        <property name="validateConfigAttributes" value="true"/>
+        <property name="authenticationManager" ref="authenticationManager"/>
+        <property name="accessDecisionManager">
+            <ref local="imageAccessDecisionManager"/>
+        </property>
+        <property name="afterInvocationManager">
+            <ref local="afterInvocationManager"/>
+        </property>
+        <property name="objectDefinitionSource">
+            <value>
+                com.trailmagic.image.ImageFrame.getImage=AFTER_ACL_READ
+                com.trailmagic.image.ImageGroup.getFrames=AFTER_ACL_COLLECTION_READ
+                com.trailmagic.image.Image.getManifestations=AFTER_ACL_COLLECTION_READ
+            </value>
+        </property>
+    </bean>
+
+    <bean id="imageInstanceSecurityAspect"
+          class="com.trailmagic.image.ImageSecurityAspect"
+          factory-method="aspectOf">
+        <property name="securityInterceptor" ref="imageAspectSecurity"/>
+    </bean>
+
+    <!-- ======= "AFTER INTERCEPTION" AUTHORIZATION DEFINITIONS =========== -->
+
+    <bean id="afterInvocationManager"
+          class="org.springframework.security.afterinvocation.AfterInvocationProviderManager">
+        <property name="providers">
+            <list>
+                <ref local="afterAclRead"/>
+                <ref local="afterAclCollectionRead"/>
+            </list>
+        </property>
+    </bean>
+
+    <!-- Processes AFTER_ACL_COLLECTION_READ configuration settings -->
+    <bean id="afterAclCollectionRead" class="org.springframework.security.afterinvocation.AclEntryAfterInvocationCollectionFilteringProvider">
+        <constructor-arg ref="aclService"/>
+        <constructor-arg>
+            <list>
+                <ref bean="ADMINISTRATION"/>
+                <ref bean="READ"/>
+            </list>
+        </constructor-arg>
+        <property name="objectIdentityRetrievalStrategy" ref="objectIdentityRetrievalStrategy"/>
+    </bean>
+
+    <!-- Processes AFTER_ACL_READ configuration settings -->
+    <bean id="afterAclRead" class="org.springframework.security.afterinvocation.AclEntryAfterInvocationProvider">
+        <constructor-arg ref="aclService"/>
+        <constructor-arg>
+            <list>
+                <ref bean="ADMINISTRATION"/>
+                <ref bean="READ"/>
+            </list>
+        </constructor-arg>
+        <property name="objectIdentityRetrievalStrategy" ref="objectIdentityRetrievalStrategy"/>
+    </bean>
+
+
+    <!-- ACL CACHE -->
+    <bean id="cacheManager"
+          class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+
+        <property name="configLocation" value="classpath:/ehcache-failsafe.xml"/>
+    </bean>
+
+    <bean id="aclCacheBackend"
+          class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+        <property name="cacheManager">
+            <ref local="cacheManager"/>
+        </property>
+        <property name="cacheName" value="aclCache"/>
+    </bean>
+
+    <bean id="aclEntryCache"
+          class="org.springframework.security.acl.basic.cache.EhCacheBasedAclEntryCache">
+        <property name="cache">
+            <ref local="aclCacheBackend"/>
+        </property>
+    </bean>
+
+    <bean id="objectIdentityRetrievalStrategy" class="com.trailmagic.image.security.AnnotatedObjectIdentityRetrievalStrategy"/>
 </beans>

@@ -15,13 +15,11 @@ package com.trailmagic.image;
 
 import com.trailmagic.user.Owned;
 import com.trailmagic.user.User;
+
 import java.util.SortedSet;
 import java.util.TreeSet;
-import org.springframework.security.acl.basic.AclObjectIdentity;
-import org.springframework.security.acl.basic.AclObjectIdentityAware;
-import org.springframework.security.acl.basic.NamedEntityObjectIdentity;
 
-public class Image implements Owned, AclObjectIdentityAware {
+public class Image implements Owned {
     private long id;
     private String name;
     private String displayName;
@@ -124,7 +122,7 @@ public class Image implements Owned, AclObjectIdentityAware {
     }
 
     public void setManifestations(SortedSet<ImageManifestation>
-                                  manifestations) {
+            manifestations) {
         this.manifestations = manifestations;
     }
 
@@ -143,14 +141,9 @@ public class Image implements Owned, AclObjectIdentityAware {
 
     public boolean equals(Object obj) {
         return (obj instanceof Image) &&
-            //            (this.getId() == ((Image)obj).getId());
-            (this.getName().equals(((Image)obj).getName())) &&
-            (this.getOwner().equals(((Image)obj).getOwner()));
-    }
-
-    public AclObjectIdentity getAclObjectIdentity() {
-        return new NamedEntityObjectIdentity(Image.class.getName(),
-                                             Long.toString(getId()));
+                //            (this.getId() == ((Image)obj).getId());
+                (this.getName().equals(((Image) obj).getName())) &&
+                (this.getOwner().equals(((Image) obj).getOwner()));
     }
 
     public String toString() {

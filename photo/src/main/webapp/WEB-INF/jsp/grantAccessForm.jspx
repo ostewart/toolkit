@@ -95,7 +95,7 @@ frames: List of ImageFrames for this group
         
 </div>
     <div class="imageGroupAdmin">
-      <authz:acl domainObject="${imageGroup}" hasPermission="1">
+      <authz:accesscontrollist domainObject="${imageGroup}" hasPermission="16">
         <jsp:element name="form">
           <jsp:attribute name="method">POST</jsp:attribute>
           <jsp:attribute
@@ -115,11 +115,11 @@ frames: List of ImageFrames for this group
             </c:choose>
           </jsp:body>
         </jsp:element>
-      </authz:acl>
+      </authz:accesscontrollist>
         
     </div>
 
-    <authz:acl domainObject="${frame.image}" hasPermission="1">
+    <authz:accesscontrollist domainObject="${frame.image}" hasPermission="16">
       <form method="post">
         <select name="action">
           <option value="grant">Grant Access</option>
@@ -131,7 +131,7 @@ frames: List of ImageFrames for this group
         <input name="mask" type="text"/>
         <table class="thumbnailList">
           <c:forEach var="frame" items="${frames}">
-            <authz:acl domainObject="${frame.image}" hasPermission="1">
+            <authz:accesscontrollist domainObject="${frame.image}" hasPermission="16">
               <tr>
                 <td>
                   <tm:imageFrameLink frame="${frame}">
@@ -143,12 +143,12 @@ frames: List of ImageFrames for this group
                     value="${frame.image.id}"/>
                 </td>
               </tr>
-            </authz:acl>
+            </authz:accesscontrollist>
           </c:forEach>
         </table>
         <input type="submit" value="Grant Access"/>
       </form>
-    </authz:acl>
+    </authz:accesscontrollist>
       
     <div id="globalFooter">
       <div class="footerLeft">

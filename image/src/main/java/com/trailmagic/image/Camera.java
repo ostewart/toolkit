@@ -13,11 +13,7 @@
  */
 package com.trailmagic.image;
 
-import org.springframework.security.acl.basic.AclObjectIdentity;
-import org.springframework.security.acl.basic.AclObjectIdentityAware;
-import org.springframework.security.acl.basic.NamedEntityObjectIdentity;
-
-public class Camera implements AclObjectIdentityAware {
+public class Camera {
     private long m_id;
     private String m_name;
     private String m_manufacturer;
@@ -62,8 +58,4 @@ public class Camera implements AclObjectIdentityAware {
         m_format = format;
     }
 
-    public AclObjectIdentity getAclObjectIdentity() {
-        return new NamedEntityObjectIdentity(Camera.class.getName(),
-                                             Long.toString(getId()));
-    }
 }

@@ -61,16 +61,13 @@ public class GrantAccessController extends SimpleFormController {
                                     HttpServletResponse res,
                                     BindException errors) throws Exception {
         String groupId = req.getParameter("groupId");
-        ImageGroup group =
-            imageGroupRepository.getByIdWithFrames(Long.parseLong(groupId));
+        ImageGroup group = imageGroupRepository.getByIdWithFrames(Long.parseLong(groupId));
 
         HashMap<String,Object> model = new HashMap<String,Object>();
-        model.put("imageGroupIsPublic",
-                  imageSecurityService.isPublic(group));
+        model.put("imageGroupIsPublic", imageSecurityService.isPublic(group));
         model.put("imageGroup", group);
         model.put("groupType", group.getType());
-        model.put("groupTypeDisplay",
-                  group.getTypeDisplay());
+        model.put("groupTypeDisplay", group.getTypeDisplay());
         model.put("owner", group.getOwner());
         model.put("frames", group.getFrames());
         return new ModelAndView(getFormView(), model);
@@ -87,15 +84,11 @@ public class GrantAccessController extends SimpleFormController {
         for (String stringId : imageIds) {
             Long id = Long.parseLong(stringId);
             Image image = imageRepository.getById(id);
-            User recipient =
-                userFactory.getByScreenName(bean.getRecipient());
+            User recipient = userFactory.getByScreenName(bean.getRecipient());
             if (GRANT_ACTION.equals(bean.getAction())) {
-                s_log.info("Adding permission " + bean.getMask()
-                           + " for " + recipient.getScreenName()
-                           + " to Image: " + image);
-                imageSecurityService.addPermission(image,
-                                                     recipient.getScreenName(),
-                                                     bean.getMask());
+                s_log.info("Adding permission " + bean.getMask() + " for " + recipient.getScreenName() + " to Image: " + image);
+                throw new UnsupportedOperationException("Need to refactor for new security mask stuff");
+//                imageSecurityService.addPermission(image, recipient, bean.getMask());
             } else if (MAKE_PUBLIC_ACTION.equals(bean.getAction())) {
                 s_log.info("Making Image public: " + image);
                 imageSecurityService.makePublic(image);

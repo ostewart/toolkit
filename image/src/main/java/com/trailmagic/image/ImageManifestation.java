@@ -15,16 +15,12 @@ package com.trailmagic.image;
 
 import com.trailmagic.user.Owned;
 import com.trailmagic.user.User;
-import org.springframework.security.acl.basic.AclObjectIdentity;
-import org.springframework.security.acl.basic.AclObjectIdentityAware;
-import org.springframework.security.acl.basic.NamedEntityObjectIdentity;
 
 /**
  * This class maps the metadata of the manifestation, while its subclass,
  * the <code>HeavyImageManifestation</code> also maps the data.
- **/
-public class ImageManifestation implements Comparable<ImageManifestation>, Owned,
-                                           AclObjectIdentityAware {
+ */
+public class ImageManifestation implements Comparable<ImageManifestation>, Owned {
     private long id;
     private Image image;
     private int height;
@@ -106,38 +102,29 @@ public class ImageManifestation implements Comparable<ImageManifestation>, Owned
     public int compareTo(ImageManifestation other) {
         int difference = this.getArea() - other.getArea();
         if (difference == 0) {
-            return (int)(this.getId() - other.getId());
+            return (int) (this.getId() - other.getId());
         } else {
             return difference;
         }
     }
 
     public boolean equals(Object obj) {
-        if ( !(obj instanceof ImageManifestation) ) {
-            return false;
-        }
+        return obj instanceof ImageManifestation && this.getId() == ((ImageManifestation) obj).getId();
 
-        return this.getId() == ((ImageManifestation)obj).getId();
     }
 
     public int hashCode() {
         return new Long(getId()).hashCode();
     }
 
-    public AclObjectIdentity getAclObjectIdentity() {
-        return new NamedEntityObjectIdentity(ImageManifestation.class
-                                             .getName(),
-                                             Long.toString(getId()));
-    }
-    
     @Override
     public String toString() {
         return getClass() + "(id=" + id
-            + "; name=" + name
-            + "; height=" + height
-            + "; width=" + width
-            + "; format=" + format
-            + "; original=" + original;
-            
+                + "; name=" + name
+                + "; height=" + height
+                + "; width=" + width
+                + "; format=" + format
+                + "; original=" + original;
+
     }
 }

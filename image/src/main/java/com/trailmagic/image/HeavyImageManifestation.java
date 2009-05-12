@@ -3,13 +3,12 @@
  */
 package com.trailmagic.image;
 
-import java.sql.Blob;
-import org.springframework.security.acl.basic.AclObjectIdentity;
-import org.springframework.security.acl.basic.AclObjectIdentityAware;
-import org.springframework.security.acl.basic.NamedEntityObjectIdentity;
+import com.trailmagic.image.security.Identity;
 
-public class HeavyImageManifestation extends ImageManifestation
-    implements AclObjectIdentityAware {
+import java.sql.Blob;
+
+@Identity(ImageManifestation.class)
+public class HeavyImageManifestation extends ImageManifestation {
 
     //    private byte[] m_data;
     private Blob m_data;
@@ -34,12 +33,4 @@ public class HeavyImageManifestation extends ImageManifestation
         m_data = data;
     }
     */
-
-    public AclObjectIdentity getAclObjectIdentity() {
-        // pretend we're an ImageManifestation...really the same thing
-        // in terms of identity
-        return new NamedEntityObjectIdentity(ImageManifestation.class
-                                             .getName(),
-                                             Long.toString(getId()));
-    }
 }
