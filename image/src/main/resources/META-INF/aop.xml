@@ -1,0 +1,11 @@
+<aspectj>
+    <aspects>
+        <aspect name="com.trailmagic.image.ImageSecurityAspect"/>
+        <include within="com.trailmagic.image.*"/>
+    </aspects>
+
+    <weaver options="-verbose">
+        <include within="com.trailmagic..*"/>
+        <!--<include within="(!@NoWeave foo.*) AND foo.*"/>-->
+    </weaver>
+</aspectj>

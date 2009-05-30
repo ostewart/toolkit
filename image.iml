@@ -52,8 +52,8 @@
       </library>
     </orderEntry>
     <orderEntry type="library" exported="" name="Maven: org.springframework:spring:2.5.6" level="project" />
-    <orderEntry type="library" exported="" name="Maven: commons-logging:commons-logging:1.1.1" level="project" />
     <orderEntry type="library" exported="" name="Maven: org.springframework:spring-test:2.5.6" level="project" />
+    <orderEntry type="library" exported="" name="Maven: commons-logging:commons-logging:1.1.1" level="project" />
     <orderEntry type="library" exported="" name="Maven: junit:junit:4.4" level="project" />
     <orderEntry type="library" exported="" name="Maven: org.hibernate:hibernate:3.2.5.ga" level="project" />
     <orderEntry type="library" exported="" name="Maven: net.sf.ehcache:ehcache:1.2.3" level="project" />
