@@ -146,6 +146,13 @@ public class Image implements Owned {
                 (this.getOwner().equals(((Image) obj).getOwner()));
     }
 
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (owner != null ? owner.hashCode() : 0);
+        return result;
+    }
+
     public String toString() {
         return getClass().getName() + ": " + getName();
     }

@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Copyright (c) 2006, 2007 Oliver Stewart.  All Rights Reserved.
+
+ This file is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2, or (at your option)
+ any later version.
+
+ This file is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+-->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+  http://www.springframework.org/schema/aop
+  http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+  http://www.springframework.org/schema/tx
+  http://www.springframework.org/schema/tx/spring-tx-2.0.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+<bean id="filterChainProxy" class="org.springframework.security.util.FilterChainProxy">
+    <property name="filterInvocationDefinitionSource">
+        <value>
+            CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
+            PATTERN_TYPE_APACHE_ANT
+            /**=channelProcessingFilter,httpSessionContextIntegrationFilter,authenticationProcessingFilter,rememberMeProcessingFilter,anonymousProcessingFilter,exceptionTranslationFilter,filterSecurityInterceptor
+        </value>
+    </property>
+</bean>
+
+<bean id="httpSessionContextIntegrationFilter" class="org.springframework.security.context.HttpSessionContextIntegrationFilter">
+</bean>
+
+        <!--
+          <bean id="jaasAuthenticationProvider" class="org.springframework.security.providers.jaas.JaasAuthenticationProvider">
+            <property name="loginConfig">
+              <value>classpath:jaas.config</value>
+            </property>
+            <property name="loginContextName">
+              <value>ImageStore</value>
+            </property>
+            <property name="callbackHandlers">
+              <list>
+                <bean class="org.springframework.security.providers.jaas.JaasNameCallbackHandler"/>
+                <bean class="org.springframework.security.providers.jaas.JaasPasswordCallbackHandler"/>
+              </list>
+            </property>
+            <property name="authorityGranters">
+              <list>
+                <bean class="com.trailmagic.user.UserGroupAuthorityGranter"/>
+              </list>
+            </property>
+          </bean>
+        -->
+<bean id="authenticationProcessingFilter"
+      class="org.springframework.security.ui.webapp.AuthenticationProcessingFilter">
+<property name="authenticationManager" ref="authenticationManager"/>
+<property name="defaultTargetUrl" value="/albums/"/>
+<property name="authenticationFailureUrl" value="/login?failure=true"/>
+<property name="alwaysUseDefaultTargetUrl" value="false"/>
+<property name="rememberMeServices">
+    <ref local="rememberMeServices"/>
+</property>
+</bean>
+
+<bean id="anonymousProcessingFilter"
+      class="org.springframework.security.providers.anonymous.AnonymousProcessingFilter">
+<property name="key" value="foobar"/>
+<property name="userAttribute" value="anonymous,ROLE_ANONYMOUS,ROLE_EVERYONE"/>
+</bean>
+
+<bean id="rememberMeProcessingFilter"
+      class="org.springframework.security.ui.rememberme.RememberMeProcessingFilter">
+<property name="rememberMeServices">
+    <ref local="rememberMeServices"/>
+</property>
+<property name="authenticationManager" ref="authenticationManager"/>
+</bean>
+
+<bean id="rememberMeServices"
+      class="org.springframework.security.ui.rememberme.TokenBasedRememberMeServices">
+<property name="userDetailsService" ref="hibernateUserDetailsService"/>
+<property name="key" value="springRocks"/>
+</bean>
+
+
+
+
+        <!-- You will need to uncomment the "Spring Security Channel Processing Filter"
+<filter-mapping> in web.xml for the following beans to be used -->
+
+<bean id="channelProcessingFilter"
+      class="org.springframework.security.securechannel.ChannelProcessingFilter">
+<property name="channelDecisionManager">
+    <ref local="channelDecisionManager"/>
+</property>
+<property name="filterInvocationDefinitionSource">
+    <value>
+        CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
+        \A/secure/.*\Z=REQUIRES_SECURE_CHANNEL
+        \A/login.jsp.*\Z=REQUIRES_SECURE_CHANNEL
+        \A/login.*\Z=REQUIRES_SECURE_CHANNEL
+        \A/j_spring_security_check.*\Z=REQUIRES_SECURE_CHANNEL
+        \A.*\Z=REQUIRES_INSECURE_CHANNEL
+    </value>
+</property>
+</bean>
+        <!--
+        -->
+
+<bean id="channelDecisionManager"
+      class="org.springframework.security.securechannel.ChannelDecisionManagerImpl">
+<property name="channelProcessors">
+    <list>
+        <ref local="secureChannelProcessor"/>
+        <ref local="insecureChannelProcessor"/>
+    </list>
+</property>
+</bean>
+
+<bean id="secureChannelProcessor"
+      class="org.springframework.security.securechannel.SecureChannelProcessor"/>
+<bean id="insecureChannelProcessor"
+      class="org.springframework.security.securechannel.InsecureChannelProcessor"/>
+
+<bean id="exceptionTranslationFilter"
+      class="org.springframework.security.ui.ExceptionTranslationFilter">
+<property name="authenticationEntryPoint">
+    <ref local="authenticationProcessingFilterEntryPoint"/>
+</property>
+</bean>
+
+<bean id="authenticationProcessingFilterEntryPoint"
+      class="org.springframework.security.ui.webapp.AuthenticationProcessingFilterEntryPoint">
+<property name="forceHttps" value="false"/>
+<property name="loginFormUrl" value="/login"/>
+</bean>
+
+
+<bean id="filterSecurityInterceptor"
+      class="org.springframework.security.intercept.web.FilterSecurityInterceptor">
+<property name="authenticationManager" ref="authenticationManager"/>
+<property name="accessDecisionManager">
+    <ref local="httpRequestAccessDecisionManager"/>
+</property>
+<property name="objectDefinitionSource">
+    <value>
+        CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
+        PATTERN_TYPE_APACHE_ANT
+        /index.jsp=ROLE_ANONYMOUS,ROLE_USER
+        /hello.htm=ROLE_ANONYMOUS,ROLE_USER
+        /logoff.jsp=ROLE_ANONYMOUS,ROLE_USER
+        /switchuser.jsp=ROLE_SUPERVISOR
+        /j_spring_security_switch_user=ROLE_SUPERVISOR
+        /login.jsp*=ROLE_ANONYMOUS,ROLE_USER
+        /login=ROLE_ANONYMOUS,ROLE_USER
+        /import=ROLE_USER
+        /**=ROLE_ANONYMOUS,ROLE_USER
+    </value>
+</property>
+</bean>
+
+<bean id="httpRequestAccessDecisionManager"
+      class="org.springframework.security.vote.AffirmativeBased">
+<property name="allowIfAllAbstainDecisions" value="false"/>
+<property name="decisionVoters">
+    <list>
+        <ref bean="roleVoter"/>
+    </list>
+</property>
+</bean>
+</beans>
