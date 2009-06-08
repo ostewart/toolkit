@@ -2,7 +2,10 @@
 <project relativePaths="false" version="4">
   <component name="ChangeListManager">
     <list default="true" readonly="true" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/image/src/test/java/com/trailmagic/image/security/SecurityIntegrationTest.java" afterPath="$PROJECT_DIR$/image/src/test/java/com/trailmagic/image/security/SecurityIntegrationTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/image/src/main/java/com/trailmagic/image/ImageFrame.java" afterPath="$PROJECT_DIR$/image/src/main/java/com/trailmagic/image/ImageFrame.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/image/src/main/java/com/trailmagic/image/security/IdentityProxy.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/image/src/main/java/com/trailmagic/image/security/AnnotatedObjectIdentityRetrievalStrategy.java" afterPath="$PROJECT_DIR$/image/src/main/java/com/trailmagic/image/security/AnnotatedObjectIdentityRetrievalStrategy.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/image/src/test/java/com/trailmagic/image/security/AnnotatedObjectIdentityRetrievalStrategyTest.java" afterPath="$PROJECT_DIR$/image/src/test/java/com/trailmagic/image/security/AnnotatedObjectIdentityRetrievalStrategyTest.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/toolkit.iws" afterPath="$PROJECT_DIR$/toolkit.iws" />
     </list>
     <ignored path="toolkit.iws" />
@@ -64,6 +67,9 @@
       <FILTER>com.trailmagic.*</FILTER>
     </SUITE>
     <SUITE FILE_PATH="coverage/toolkit$ImageFactoryTests..es" NAME="ImageFactoryTests Coverage Results" MODIFIED="1243742471991" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="emma" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+      <FILTER>com.trailmagic.*</FILTER>
+    </SUITE>
+    <SUITE FILE_PATH="coverage/toolkit$AnnotatedObjectIdentityRetrievalStrategyTest..es" NAME="AnnotatedObjectIdentityRetrievalStrategyTest Coverage Results" MODIFIED="1244437700838" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="emma" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
       <FILTER>com.trailmagic.*</FILTER>
     </SUITE>
     <SUITE FILE_PATH="coverage/toolkit$SpringSecurityImageSecurityServiceTest_testIsNotPublic..es" NAME="SpringSecurityImageSecurityServiceTest.testIsNotPublic Coverage Results" MODIFIED="1243745981078" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="emma" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
@@ -244,7 +250,7 @@
       <file leaf-file-name="ImageSecurityService.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/image/src/main/java/com/trailmagic/image/security/ImageSecurityService.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="34" column="68" selection-start="1408" selection-end="1408" vertical-scroll-proportion="0.0">
+            <state line="30" column="16" selection-start="1147" selection-end="1147" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -253,84 +259,80 @@
       <file leaf-file-name="SpringSecurityImageSecurityService.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/image/src/main/java/com/trailmagic/image/security/SpringSecurityImageSecurityService.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="157" column="4" selection-start="6495" selection-end="6495" vertical-scroll-proportion="-21.64">
+            <state line="86" column="16" selection-start="3840" selection-end="3840" vertical-scroll-proportion="-12.84">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SpringSecurityImageSecurityServiceTest.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/image/src/test/java/com/trailmagic/image/security/SpringSecurityImageSecurityServiceTest.java">
+      <file leaf-file-name="AnnotatedObjectIdentityRetrievalStrategy.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/image/src/main/java/com/trailmagic/image/security/AnnotatedObjectIdentityRetrievalStrategy.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="22" column="33" selection-start="1116" selection-end="1116" vertical-scroll-proportion="0.0">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SecurityTestHelper.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/image/src/test/java/com/trailmagic/image/security/SecurityTestHelper.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="16" column="0" selection-start="718" selection-end="718" vertical-scroll-proportion="0.0">
+            <state line="29" column="0" selection-start="1557" selection-end="1557" vertical-scroll-proportion="0.61452514">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="pom.xml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/image/pom.xml">
+      <file leaf-file-name="AnnotatedObjectIdentityRetrievalStrategyTest.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/image/src/test/java/com/trailmagic/image/security/AnnotatedObjectIdentityRetrievalStrategyTest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="84" column="26" selection-start="3311" selection-end="3513" vertical-scroll-proportion="-7.08">
+            <state line="62" column="10" selection-start="1780" selection-end="1780" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="CreateImageControllerTest.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/photo/src/test/java/com/trailmagic/image/ui/CreateImageControllerTest.java">
+      <file leaf-file-name="Identity.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/image/src/main/java/com/trailmagic/image/security/Identity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="14" column="13" selection-start="495" selection-end="495" vertical-scroll-proportion="0.0">
+            <state line="9" column="18" selection-start="282" selection-end="282" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ImageGroupDisplayController.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/photo/src/main/java/com/trailmagic/image/ui/ImageGroupDisplayController.java">
+      <file leaf-file-name="IdentityProxy.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/image/src/main/java/com/trailmagic/image/security/IdentityProxy.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="33" column="0" selection-start="1324" selection-end="1324" vertical-scroll-proportion="0.0">
+            <state line="7" column="87" selection-start="289" selection-end="289" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="pom.xml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/photo/pom.xml">
+      <file leaf-file-name="ImageFrame.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/image/src/main/java/com/trailmagic/image/ImageFrame.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="57" column="41" selection-start="2031" selection-end="2031" vertical-scroll-proportion="0.0">
+            <state line="23" column="18" selection-start="868" selection-end="868" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="AbstractUserDetailsAuthenticationProvider.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/security/spring-security-core/2.0.4/spring-security-core-2.0.4-sources.jar!/org/springframework/security/providers/dao/AbstractUserDetailsAuthenticationProvider.java">
+      <file leaf-file-name="Photo.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/image/src/main/java/com/trailmagic/image/Photo.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="183" column="40" selection-start="9529" selection-end="9543" vertical-scroll-proportion="0.0">
+            <state line="17" column="13" selection-start="618" selection-end="618" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SecurityIntegrationTest.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/image/src/test/java/com/trailmagic/image/security/SecurityIntegrationTest.java">
+      <file leaf-file-name="ImageManifestation.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/image/src/main/java/com/trailmagic/image/ImageManifestation.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="52" column="0" selection-start="2375" selection-end="2375" vertical-scroll-proportion="0.47601476">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+            <state line="22" column="13" selection-start="808" selection-end="808" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="HeavyImageManifestation.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/image/src/main/java/com/trailmagic/image/HeavyImageManifestation.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="10" column="13" selection-start="224" selection-end="224" vertical-scroll-proportion="0.0">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -454,14 +456,17 @@
     <key name="CreateTestDialog.RecentsKey">
       <recent name="com.trailmagic.image" />
     </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.trailmagic.image.security" />
+    </key>
+    <key name="MoveMembersDialog.RECENTS_KEY">
+      <recent name="com.trailmagic.image.security.AnnotatedIdentityRetrievalStrategyTest" />
+    </key>
     <key name="IntroduceConstantDialog.RECENTS_KEY">
       <recent name="com.trailmagic.image.security.AnnotatedIdentityRetrievalStrategyTest.AnnotatedThing" />
       <recent name="com.trailmagic.image.security.SpringSecurityImageSecurityService" />
       <recent name="com.trailmagic.image.ui.CreateImageControllerTest" />
       <recent name="com.trailmagic.image.ImageServiceImplTest" />
-    </key>
-    <key name="MoveMembersDialog.RECENTS_KEY">
-      <recent name="com.trailmagic.image.security.AnnotatedIdentityRetrievalStrategyTest" />
     </key>
     <key name="CreateClassDialog.RecentsKey">
       <recent name="com.trailmagic.image.security" />
@@ -476,8 +481,8 @@
       <recent name="com.trailmagic.image.util" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.SecurityIntegrationTest">
-    <tempConfiguration default="false" name="SecurityIntegrationTest" type="JUnit" factoryName="JUnit" enabled="true" merge="false" sample_coverage="true" runner="emma">
+  <component name="RunManager" selected="Remote.Debug Tomcat">
+    <tempConfiguration default="false" name="AnnotatedObjectIdentityRetrievalStrategyTest" type="JUnit" factoryName="JUnit" enabled="true" merge="false" sample_coverage="true" runner="emma">
       <pattern>
         <option name="PATTERN" value="com.trailmagic.*" />
         <option name="ENABLED" value="true" />
@@ -486,7 +491,7 @@
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" value="" />
       <option name="PACKAGE_NAME" value="com.trailmagic.image.security" />
-      <option name="MAIN_CLASS_NAME" value="com.trailmagic.image.security.SecurityIntegrationTest" />
+      <option name="MAIN_CLASS_NAME" value="com.trailmagic.image.security.AnnotatedObjectIdentityRetrievalStrategyTest" />
       <option name="METHOD_NAME" value="" />
       <option name="TEST_OBJECT" value="class" />
       <option name="VM_PARAMETERS" value="-javaagent:$MAVEN_REPOSITORY$/org/aspectj/aspectjweaver/1.6.2/aspectjweaver-1.6.2.jar" />
@@ -757,7 +762,7 @@
       <item index="1" class="java.lang.String" itemvalue="JUnit.ImageRepositoryIntegrationTest" />
       <item index="2" class="java.lang.String" itemvalue="Remote.Debug Tomcat" />
       <item index="3" class="java.lang.String" itemvalue="Tomcat Server.Tomcat Server" />
-      <item index="4" class="java.lang.String" itemvalue="JUnit.SecurityIntegrationTest" />
+      <item index="4" class="java.lang.String" itemvalue="JUnit.AnnotatedObjectIdentityRetrievalStrategyTest" />
     </list>
     <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false">
       <Host>localhost</Host>
@@ -867,10 +872,10 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="25" width="1400" height="1025" extended-state="0" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Data Sources" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32920793" sideWeight="0.5" order="0" side_tool="false" />
-      <window_info id="Changes" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32346243" sideWeight="0.5" order="13" side_tool="false" />
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32346243" sideWeight="0.5" order="13" side_tool="false" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="6" side_tool="false" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.30751708" sideWeight="0.5" order="7" side_tool="false" />
@@ -883,11 +888,11 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.66287017" order="1" side_tool="false" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24851191" sideWeight="0.66287017" order="4" side_tool="false" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3139881" sideWeight="0.5922551" order="0" side_tool="false" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3139881" sideWeight="0.66287017" order="0" side_tool="false" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" />
       <window_info id="Web Preview" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32967034" sideWeight="0.5" order="5" side_tool="false" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="11" side_tool="false" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32915717" sideWeight="0.5" order="8" side_tool="false" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32915717" sideWeight="0.5" order="8" side_tool="false" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="10" side_tool="false" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" />
       <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" />
@@ -904,7 +909,7 @@
     <option name="PERFORM_CHECKOUT_IN_BACKGROUND" value="true" />
     <option name="PERFORM_ADD_REMOVE_IN_BACKGROUND" value="true" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add real (integration) tests for security stuff and fix bugs&#10;Some refactoring" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added a few more security test asserts" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="REFORMAT_BEFORE_FILE_COMMIT" value="false" />
@@ -922,6 +927,7 @@
     <MESSAGE value="Upgrade Spring security to 2.0.4 and new acl system (still needs unit tests)" />
     <MESSAGE value="Re-enabled a persistence test and some refactoring of security contexts" />
     <MESSAGE value="Add real (integration) tests for security stuff and fix bugs&#10;Some refactoring" />
+    <MESSAGE value="Added a few more security test asserts" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -935,74 +941,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/image/src/main/resources/applicationContext-imagestore-authorization.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="43" column="72" selection-start="2151" selection-end="2151" vertical-scroll-proportion="-3.2666667">
-          <folding />
-        </state>
-      </provider>
-      <provider editor-type-id="com.intellij.spring.perspectives.SpringBeansStructureEditorProvider">
-        <state />
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/security/spring-security-core/2.0.4/spring-security-core-2.0.4-sources.jar!/org/springframework/security/providers/dao/DaoAuthenticationProvider.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="36" column="70" selection-start="1696" selection-end="1696" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/security/spring-security-acl/2.0.4/spring-security-acl-2.0.4-sources.jar!/org/springframework/security/acls/sid/PrincipalSid.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="43" column="11" selection-start="1747" selection-end="1747" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/security/spring-security-core/2.0.4/spring-security-core-2.0.4-sources.jar!/org/springframework/security/providers/UsernamePasswordAuthenticationToken.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/security/spring-security-core/2.0.4/spring-security-core-2.0.4-sources.jar!/org/springframework/security/adapters/PrincipalSpringSecurityUserToken.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="28" column="103" selection-start="1078" selection-end="1078" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/security/spring-security-core/2.0.4/spring-security-core-2.0.4-sources.jar!/org/springframework/security/Authentication.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="56" column="11" selection-start="2273" selection-end="2273" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/image/src/main/java/com/trailmagic/image/security/SpringSecurityImageSecurityService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="157" column="4" selection-start="6495" selection-end="6495" vertical-scroll-proportion="-21.64">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/image/src/test/java/com/trailmagic/image/security/SpringSecurityImageSecurityServiceTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="22" column="33" selection-start="1116" selection-end="1116" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/image/src/test/java/com/trailmagic/image/security/SecurityTestHelper.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="0" selection-start="718" selection-end="718" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/image/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state line="84" column="26" selection-start="3311" selection-end="3513" vertical-scroll-proportion="-7.08">
@@ -1038,19 +976,82 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/image/src/test/java/com/trailmagic/image/security/SecurityIntegrationTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="46" column="24" selection-start="1980" selection-end="1980" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/image/src/main/java/com/trailmagic/image/security/ImageSecurityService.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="34" column="68" selection-start="1408" selection-end="1408" vertical-scroll-proportion="0.0">
+        <state line="30" column="16" selection-start="1147" selection-end="1147" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/image/src/test/java/com/trailmagic/image/security/SecurityIntegrationTest.java">
+    <entry file="file://$PROJECT_DIR$/image/src/main/java/com/trailmagic/image/security/SpringSecurityImageSecurityService.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="52" column="0" selection-start="2375" selection-end="2375" vertical-scroll-proportion="0.47601476">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state line="86" column="16" selection-start="3840" selection-end="3840" vertical-scroll-proportion="-12.84">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/image/src/main/java/com/trailmagic/image/Photo.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="17" column="13" selection-start="618" selection-end="618" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/image/src/main/java/com/trailmagic/image/ImageManifestation.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="22" column="13" selection-start="808" selection-end="808" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/image/src/main/java/com/trailmagic/image/HeavyImageManifestation.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="10" column="13" selection-start="224" selection-end="224" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/image/src/main/java/com/trailmagic/image/security/Identity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="9" column="18" selection-start="282" selection-end="282" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/image/src/main/java/com/trailmagic/image/security/IdentityProxy.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="7" column="87" selection-start="289" selection-end="289" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/image/src/test/java/com/trailmagic/image/security/AnnotatedObjectIdentityRetrievalStrategyTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="62" column="10" selection-start="1780" selection-end="1780" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/image/src/main/java/com/trailmagic/image/ImageFrame.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="23" column="18" selection-start="868" selection-end="868" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/image/src/main/java/com/trailmagic/image/security/AnnotatedObjectIdentityRetrievalStrategy.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="29" column="0" selection-start="1557" selection-end="1557" vertical-scroll-proportion="0.61452514">
+          <folding />
         </state>
       </provider>
     </entry>

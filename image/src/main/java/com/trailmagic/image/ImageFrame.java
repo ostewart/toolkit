@@ -15,57 +15,59 @@ package com.trailmagic.image;
 
 import com.trailmagic.user.Owned;
 import com.trailmagic.user.User;
+import com.trailmagic.image.security.IdentityProxy;
 
 public class ImageFrame implements Owned, Comparable<ImageFrame> {
-    private long m_id;
-    private ImageGroup m_imageGroup;
-    private int m_position;
-    private Image m_image;
-    private String m_caption;
+    private long id;
+    private ImageGroup imageGroup;
+    private int position;
+    @IdentityProxy
+    private Image image;
+    private String caption;
 
     public ImageFrame() {
     }
 
     public long getId() {
-        return m_id;
+        return id;
     }
 
     public void setId(long id) {
-        m_id = id;
+        this.id = id;
     }
 
 
 
     public ImageGroup getImageGroup() {
-        return m_imageGroup;
+        return imageGroup;
     }
 
     public void setImageGroup(ImageGroup group) {
-        m_imageGroup = group;
+        imageGroup = group;
     }
 
     public int getPosition() {
-        return m_position;
+        return position;
     }
 
     public void setPosition(int pos) {
-        m_position = pos;
+        position = pos;
     }
 
     public Image getImage() {
-        return m_image;
+        return image;
     }
 
     public void setImage(Image image) {
-        m_image = image;
+        this.image = image;
     }
 
     public String getCaption() {
-        return m_caption;
+        return caption;
     }
 
     public void setCaption(String caption) {
-        m_caption = caption;
+        this.caption = caption;
     }
 
     public boolean equals(Object obj) {
@@ -91,11 +93,11 @@ public class ImageFrame implements Owned, Comparable<ImageFrame> {
 
     public int compareTo(ImageFrame other) {
         // XXX: need to add something to this to make it consistent with equals
-        return (this.m_position - other.m_position);
+        return (this.position - other.position);
     }
 
     public int hashCode() {
-        return m_position;
+        return position;
     }
 
     /**
@@ -112,9 +114,9 @@ public class ImageFrame implements Owned, Comparable<ImageFrame> {
     
     @Override
     public String toString() {
-        return getClass() + "(id=" + m_id
-            + "; position=" + m_position
-            + "; image=" + m_image
+        return getClass() + "(id=" + id
+            + "; position=" + position
+            + "; image=" + image
             + ")";
     }
 }
