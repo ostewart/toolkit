@@ -17,7 +17,7 @@ import com.trailmagic.image.ImageGroup.Type;
 import com.trailmagic.image.security.ImageSecurityService;
 import com.trailmagic.image.*;
 import com.trailmagic.user.User;
-import com.trailmagic.user.UserFactory;
+import com.trailmagic.user.UserRepository;
 import com.trailmagic.util.SecurityUtil;
 import java.util.Collection;
 import java.util.Date;
@@ -37,7 +37,7 @@ public class ImageServiceImpl implements ImageService {
     private ImageRepository imageRepository;
     private ImageSecurityService imageSecurityService;
     private ImageManifestationRepository imageManifestationRepository;
-    private UserFactory userFactory;
+    private UserRepository userRepository;
     private SecurityUtil securityUtil;
     
     private static Logger log =
@@ -49,14 +49,14 @@ public class ImageServiceImpl implements ImageService {
                             ImageRepository imageRepository,
                             ImageSecurityService imageSecurityService,
                             ImageManifestationRepository imageManifestationRepository,
-                            UserFactory userFactory,
+                            UserRepository userRepository,
                             SecurityUtil securityUtil) {
         super();
         this.imageGroupRepository = imageGroupRepository;
         this.imageRepository = imageRepository;
         this.imageSecurityService = imageSecurityService;
         this.imageManifestationRepository = imageManifestationRepository;
-        this.userFactory = userFactory;
+        this.userRepository = userRepository;
         this.securityUtil = securityUtil;
     }
 
@@ -227,7 +227,7 @@ public class ImageServiceImpl implements ImageService {
 
     public void makeImageGroupPublic(String ownerName, Type type, String imageGroupName)
             throws NoSuchImageGroupException {
-        User owner = userFactory.getByScreenName(ownerName);
+        User owner = userRepository.getByScreenName(ownerName);
         ImageGroup group =
             imageGroupRepository.getByOwnerNameAndTypeWithFrames(owner,
                                                       imageGroupName,

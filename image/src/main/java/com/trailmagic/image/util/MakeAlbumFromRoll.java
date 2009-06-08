@@ -6,7 +6,8 @@ package com.trailmagic.image.util;
 import com.trailmagic.image.ImageFrame;
 import com.trailmagic.image.ImageGroup;
 import com.trailmagic.image.ImageGroupRepository;
-import com.trailmagic.user.UserFactory;
+import com.trailmagic.user.UserRepository;
+
 import java.util.Iterator;
 import java.util.SortedSet;
 import org.hibernate.HibernateException;
@@ -54,8 +55,8 @@ public class MakeAlbumFromRoll implements ApplicationContextAware {
 
             ImageGroupRepository gf =
                 (ImageGroupRepository)m_appContext.getBean(GROUP_FACTORY_BEAN);
-            UserFactory uf =
-                (UserFactory)m_appContext.getBean(USER_FACTORY_BEAN);
+            UserRepository uf =
+                (UserRepository)m_appContext.getBean(USER_FACTORY_BEAN);
 
             ImageGroup roll =
                 gf.getRollByOwnerAndName(uf.getByScreenName(userName),

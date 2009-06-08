@@ -19,7 +19,7 @@ import com.trailmagic.image.ImageGroup;
 import com.trailmagic.image.ImageGroupRepository;
 import com.trailmagic.image.security.ImageSecurityService;
 import com.trailmagic.user.User;
-import com.trailmagic.user.UserFactory;
+import com.trailmagic.user.UserRepository;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 import org.apache.log4j.Logger;
 import org.springframework.web.servlet.ModelAndView;
@@ -33,7 +33,7 @@ public class GrantAccessController extends SimpleFormController {
     private ImageSecurityService imageSecurityService;
     private ImageRepository imageRepository;
     private ImageGroupRepository imageGroupRepository;
-    private UserFactory userFactory;
+    private UserRepository userRepository;
 
     private static Logger s_log =
         Logger.getLogger(GrantAccessController.class);
@@ -53,8 +53,8 @@ public class GrantAccessController extends SimpleFormController {
         this.imageGroupRepository = factory;
     }
 
-    public void setUserFactory(UserFactory factory) {
-        this.userFactory = factory;
+    public void setUserFactory(UserRepository repository) {
+        this.userRepository = repository;
     }
 
     protected ModelAndView showForm(HttpServletRequest req,
@@ -84,7 +84,7 @@ public class GrantAccessController extends SimpleFormController {
         for (String stringId : imageIds) {
             Long id = Long.parseLong(stringId);
             Image image = imageRepository.getById(id);
-            User recipient = userFactory.getByScreenName(bean.getRecipient());
+            User recipient = userRepository.getByScreenName(bean.getRecipient());
             if (GRANT_ACTION.equals(bean.getAction())) {
                 s_log.info("Adding permission " + bean.getMask() + " for " + recipient.getScreenName() + " to Image: " + image);
                 throw new UnsupportedOperationException("Need to refactor for new security mask stuff");

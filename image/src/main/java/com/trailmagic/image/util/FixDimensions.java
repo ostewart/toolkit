@@ -17,16 +17,14 @@ import org.apache.log4j.Logger;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import com.trailmagic.user.User;
-import com.trailmagic.user.UserFactory;
+import com.trailmagic.user.UserRepository;
 import com.trailmagic.image.Image;
-import com.trailmagic.image.ImageRepository;
 import com.trailmagic.image.ImageFrame;
 import com.trailmagic.image.ImageGroup;
 import com.trailmagic.image.ImageGroupRepository;
 import com.trailmagic.image.HeavyImageManifestation;
 import com.trailmagic.image.ImageManifestation;
 import com.trailmagic.image.ImageManifestationRepository;
-import java.util.List;
 import org.hibernate.Session;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import javax.imageio.ImageIO;
@@ -36,7 +34,7 @@ import java.awt.image.BufferedImage;
 public class FixDimensions {
     private ImageGroupRepository imageGroupRepository;
     private HibernateTemplate m_hibernateTemplate;
-    private UserFactory m_userFactory;
+    private UserRepository userRepository;
     private ImageManifestationRepository m_imageManifestationFactory;
     private static Logger s_log = Logger.getLogger(FixDimensions.class);
 
@@ -48,8 +46,8 @@ public class FixDimensions {
     public void setImageGroupRepository(ImageGroupRepository factory) {
         this.imageGroupRepository = factory;
     }
-    public void setUserFactory(UserFactory factory) {
-        m_userFactory = factory;
+    public void setUserFactory(UserRepository repository) {
+        userRepository = repository;
     }
 
     public void setImageManifestationFactory(ImageManifestationRepository factory) {
@@ -60,7 +58,7 @@ public class FixDimensions {
         m_hibernateTemplate.execute(new HibernateCallback() {
                 public Object doInHibernate(Session session) {
                     try {
-                    User owner = m_userFactory.getByScreenName(ownerName);
+                    User owner = userRepository.getByScreenName(ownerName);
                     ImageGroup roll =
                         imageGroupRepository
                         .getRollByOwnerAndName(owner, rollName);

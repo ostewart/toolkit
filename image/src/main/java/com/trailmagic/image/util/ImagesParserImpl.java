@@ -23,7 +23,8 @@ import com.trailmagic.image.ImageGroup;
 import com.trailmagic.image.ImageGroupRepository;
 import com.trailmagic.image.ImageService;
 import com.trailmagic.image.Photo;
-import com.trailmagic.user.UserFactory;
+import com.trailmagic.user.UserRepository;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -67,16 +68,16 @@ public class ImagesParserImpl extends DefaultHandler implements ImagesParser {
     private File m_baseDir;
     private StringBuffer m_characterData;
         private ImageGroupRepository imageGroupRepository;
-    private UserFactory userFactory;
+    private UserRepository userRepository;
     private HibernateTemplate hibernateTemplate;
     private ImageService imageService;
 
     public ImagesParserImpl(ImageGroupRepository imageGroupRepository,
-            UserFactory userFactory, HibernateTemplate hibernateTemplate,
+            UserRepository userRepository, HibernateTemplate hibernateTemplate,
             ImageService imageService) {
         super();
         this.imageGroupRepository = imageGroupRepository;
-        this.userFactory = userFactory;
+        this.userRepository = userRepository;
         this.hibernateTemplate = hibernateTemplate;
         this.imageService = imageService;
     }
@@ -314,7 +315,7 @@ public class ImagesParserImpl extends DefaultHandler implements ImagesParser {
                     m_image.setCreator(characterData);
                 } else if ( "owner".equals(currentElt) ) {
                     String ownerName = characterData;
-                    m_image.setOwner(userFactory.getByScreenName(ownerName));
+                    m_image.setOwner(userRepository.getByScreenName(ownerName));
                 } else if ( "number".equals(currentElt) ) {
                     m_image.setNumber(new Integer(characterData));
                 }
@@ -328,7 +329,7 @@ public class ImagesParserImpl extends DefaultHandler implements ImagesParser {
                 m_roll.setDescription(characterData);
             } else if ( "owner".equals(currentElt) ) {
                 String ownerName = characterData;
-                m_roll.setOwner(userFactory.getByScreenName(ownerName));
+                m_roll.setOwner(userRepository.getByScreenName(ownerName));
                 s_logger.debug("set roll " + m_roll.getName() + " owner to: "
                                + m_roll.getOwner());
             }

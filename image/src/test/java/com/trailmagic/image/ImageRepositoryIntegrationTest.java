@@ -2,7 +2,7 @@ package com.trailmagic.image;
 
 import com.trailmagic.test.AbstractHibernateTests;
 import com.trailmagic.user.User;
-import com.trailmagic.user.UserFactory;
+import com.trailmagic.user.UserRepository;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.GrantedAuthority;
 import org.springframework.security.GrantedAuthorityImpl;
@@ -12,7 +12,7 @@ import org.springframework.security.providers.UsernamePasswordAuthenticationToke
 
 public class ImageRepositoryIntegrationTest extends AbstractHibernateTests {
     private ImageRepository imageRepository;
-    private UserFactory userFactory;
+    private UserRepository userRepository;
     private User testUser;
     private static final String TEST_PHOTO_NAME = "testPhoto";
 
@@ -25,8 +25,8 @@ public class ImageRepositoryIntegrationTest extends AbstractHibernateTests {
         return imageRepository;
     }
 
-    public void setUserFactory(UserFactory userFactory) {
-        this.userFactory = userFactory;
+    public void setUserFactory(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     public void setImageRepository(ImageRepository imageRepository) {
@@ -34,13 +34,13 @@ public class ImageRepositoryIntegrationTest extends AbstractHibernateTests {
     }
 
     protected void onSetUpInTransaction() {
-        testUser = userFactory.createUser();
+        testUser = userRepository.createUser();
         testUser.setScreenName("testuser");
         testUser.setFirstName("Test");
         testUser.setLastName("User");
         testUser.setPassword("password");
         testUser.setPrimaryEmail("test@example.com");
-        userFactory.save(testUser);
+        userRepository.save(testUser);
     }
 
     public void testNewInstance() {

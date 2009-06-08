@@ -65,6 +65,8 @@
         <constructor-arg ref="dataSource"/>
         <constructor-arg ref="basicLookupStrategy"/>
         <constructor-arg ref="aclCache"/>
+        <property name="classIdentityQuery" value="select last_insert_id()"/>
+        <property name="sidIdentityQuery" value="select last_insert_id()"/>
     </bean>
 
     <bean id="basicLookupStrategy" class="org.springframework.security.acls.jdbc.BasicLookupStrategy">

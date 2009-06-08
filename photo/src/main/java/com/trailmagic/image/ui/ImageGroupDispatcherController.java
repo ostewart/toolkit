@@ -17,7 +17,7 @@ import com.trailmagic.image.Image;
 import com.trailmagic.image.ImageGroup;
 import com.trailmagic.image.ImageGroupRepository;
 import com.trailmagic.user.User;
-import com.trailmagic.user.UserFactory;
+import com.trailmagic.user.UserRepository;
 import com.trailmagic.web.util.ImageRequestInfo;
 import com.trailmagic.web.util.WebRequestTools;
 import java.util.ArrayList;
@@ -49,18 +49,18 @@ public class ImageGroupDispatcherController implements Controller {
     private ImageGroupRepository imageGroupRepository;
     private ImageDisplayController imageDisplayController;
     private ImageGroupDisplayController imageGroupDisplayController;
-    private UserFactory userFactory;
+    private UserRepository userRepository;
     private WebRequestTools webRequestTools;
 
     public ImageGroupDispatcherController(ImageGroupDisplayController imageGroupDisplayController,
                                           ImageGroupRepository imageGroupRepository,
                                           ImageDisplayController imageDisplayController,
-                                          UserFactory userFactory,
+                                          UserRepository userRepository,
                                           WebRequestTools webRequestTools) {
         super();
         this.imageGroupDisplayController = imageGroupDisplayController;
         this.imageGroupRepository = imageGroupRepository;
-        this.userFactory = userFactory;
+        this.userRepository = userRepository;
         this.webRequestTools = webRequestTools;
         this.imageDisplayController = imageDisplayController;
     }
@@ -160,7 +160,7 @@ public class ImageGroupDispatcherController implements Controller {
         // sort the groups by upload date (descending)
         Collections.sort(filteredGroups, new ImageGroupUploadDateDescendingComparator());
 
-        User owner = userFactory.getByScreenName(ownerName);
+        User owner = userRepository.getByScreenName(ownerName);
         model.put("owner", owner);
         
         model.put("groupType", groupType);

@@ -51,7 +51,6 @@ public class SpringSecurityImageSecurityService implements ImageSecurityService 
     private static final Set<Permission> OWNER_PERMISSIONS = new HashSet<Permission>();
     private static final String ROLE_EVERYONE = "ROLE_EVERYONE";
     private static final GrantedAuthoritySid PUBLIC_SID = new GrantedAuthoritySid(ROLE_EVERYONE);
-    private static final Sid[] PUBLIC_SID_ARY = new Sid[]{PUBLIC_SID};
 
     static {
         OWNER_PERMISSIONS.add(BasePermission.READ);
@@ -123,28 +122,61 @@ public class SpringSecurityImageSecurityService implements ImageSecurityService 
         final User owner = ownedObj.getOwner();
         final ObjectIdentity identity = identityRetrievalStrategy.getObjectIdentity(ownedObj);
         final MutableAcl acl = aclService.createAcl(identity);
-        final PrincipalSid principalSid = new PrincipalSid(owner.getScreenName());
-        acl.setOwner(principalSid);
+        final Sid ownerSid = sidForUser(owner);
+        acl.setOwner(ownerSid);
+        aclService.updateAcl(acl);
 
         if (parent != null) {
             final ObjectIdentity parentIdentity = identityRetrievalStrategy.getObjectIdentity(parent);
             if (parentIdentity != null) {
                 try {
-                    final Acl parentAcl = aclService.readAclById(parentIdentity, new Sid[]{principalSid});
+                    final Acl parentAcl = aclService.readAclById(parentIdentity, new Sid[]{ownerSid});
                     acl.setParent(parentAcl);
                 } catch (NotFoundException e) {
                     // don't care
                 }
             }
         }
-        effectPermissions(acl, principalSid, OWNER_PERMISSIONS, false);
+        effectPermissions(acl, ownerSid, OWNER_PERMISSIONS, false);
     }
 
     public boolean isPublic(Object obj) {
-        log.debug("isPublic called");
+        return isGranted(obj, PUBLIC_SID, BasePermission.READ);
+    }
 
-        final Acl acl = aclService.readAclById(identityRetrievalStrategy.getObjectIdentity(obj), PUBLIC_SID_ARY);
-        return acl != null && acl.isGranted(new Permission[]{BasePermission.READ}, PUBLIC_SID_ARY, false);
+    public boolean isReadableByUser(Object target, User recipient) {
+        return isGranted(target, recipient, BasePermission.READ);
+    }
+
+    public boolean isAvailableToUser(Object target, User recipient, Permission permission) {
+        return isGranted(target, recipient, permission);
+    }
+
+    public boolean isReadableByRole(Object target, String role) {
+        return isGranted(target, role, BasePermission.READ);
+    }
+    
+    public boolean isAvailableToRole(Object target, String role, Permission permission) {
+        return isGranted(target, role, permission);
+    }
+
+
+    private boolean isGranted(Object target, User recipient, Permission permission) {
+        return isGranted(target, sidForUser(recipient), permission);
+    }
+
+    private boolean isGranted(Object target, String recipientRole, Permission permission) {
+        return isGranted(target, sidForRole(recipientRole), permission);
+    }
+
+    private boolean isGranted(Object target, Sid recipient, Permission permission) {
+        Sid[] sids = new Sid[]{recipient};
+        try {
+            final Acl acl = aclService.readAclById(identityRetrievalStrategy.getObjectIdentity(target), sids);
+            return acl != null && acl.isGranted(new Permission[]{permission}, sids, false);
+        } catch (NotFoundException e) {
+            return false;
+        }
     }
 
     public void addReadPermission(Object obj, String recipientRole) {
@@ -155,46 +187,49 @@ public class SpringSecurityImageSecurityService implements ImageSecurityService 
         addPermission(obj, recipient, BasePermission.READ);
     }
 
-    /**
-     * Adds permission to the image and the frames it's in.
-     */
-    public void addPermission(Image image, User recipient, Permission permission) {
-        addPermission(image, recipient, permission, false);
-
-        // add read permission for all the frames if mask includes READ
-        // ADMIN should be transitive from the group
-        if (isSet(BasePermission.READ, permission)) {
-            for (ImageFrame frame : imageGroupRepository.getFramesContainingImage(image)) {
-                addPermission(frame, recipient, BasePermission.READ);
-            }
-        }
-    }
-
     public void addPermission(Object obj, String recipientRole, Permission permission) {
-        final Sid sid = new GrantedAuthoritySid(recipientRole);
+        final Sid sid = sidForRole(recipientRole);
         effectPermission(findAcl(obj, sid), sid, permission, false);
     }
 
+    private Sid sidForRole(String recipientRole) {
+        return new GrantedAuthoritySid(recipientRole);
+    }
+
     public void addPermissions(Object obj, User recipient, Set<Permission> permissions) {
-        final Sid sid = new PrincipalSid(recipient.getScreenName());
+        final Sid sid = sidForUser(recipient);
         effectPermissions(findAcl(obj, sid), sid, permissions, false);
+    }
+
+    private Sid sidForUser(User recipient) {
+        return new PrincipalSid(recipient.getScreenName());
     }
 
     public void addPermissions(Object obj, String recipientRole, Set<Permission> permissions) {
-        final Sid sid = new GrantedAuthoritySid(recipientRole);
+        final Sid sid = sidForRole(recipientRole);
         effectPermissions(findAcl(obj, sid), sid, permissions, false);
-    }
-
-    private boolean isSet(Permission targetPermission, Permission permission) {
-        return (targetPermission.getMask() & permission.getMask()) == BasePermission.READ.getMask();
     }
 
     private void addPermission(Object obj, User recipient, Permission permission) {
         addPermission(obj, recipient, permission, true);
+
+        if (obj instanceof Image) {
+            if (BasePermission.READ.equals(permission)) {
+                for (ImageFrame frame : imageGroupRepository.getFramesContainingImage((Image) obj)) {
+                    addPermission(frame, recipient, BasePermission.READ);
+                }
+            }
+        } else if (obj instanceof ImageGroup) {
+            if (BasePermission.ADMINISTRATION.equals(permission)) {
+                for (ImageFrame frame : ((ImageGroup) obj).getFrames()) {
+                    addPermission(frame, recipient, BasePermission.ADMINISTRATION);
+                }
+            }
+        }
     }
 
     private void addPermission(Object obj, User recipient, Permission permission, boolean additive) {
-        final PrincipalSid principalSid = new PrincipalSid(recipient.getScreenName());
+        final Sid principalSid = sidForUser(recipient);
         effectPermission(findAcl(obj, principalSid), principalSid, permission, additive);
     }
 
@@ -203,7 +238,7 @@ public class SpringSecurityImageSecurityService implements ImageSecurityService 
     }
 
     public void setPermission(Object obj, String recipientRole, Permission permission) {
-        final GrantedAuthoritySid sid = new GrantedAuthoritySid(recipientRole);
+        final Sid sid = sidForRole(recipientRole);
         effectPermission(findAcl(obj, sid), sid, permission, false);
     }
 
@@ -217,7 +252,7 @@ public class SpringSecurityImageSecurityService implements ImageSecurityService 
         if (!additive) {
             Set<Permission> permsToRemove = new HashSet<Permission>();
             permsToRemove.addAll(existingPermissions);
-            permsToRemove.retainAll(newPermissions);
+            permsToRemove.removeAll(newPermissions);
             for (Permission perm : permsToRemove) {
                 acl.deleteAce(indexOf(recipient, perm, acl));
                 if (log.isDebugEnabled()) {
@@ -266,29 +301,28 @@ public class SpringSecurityImageSecurityService implements ImageSecurityService 
         return (MutableAcl) aclService.readAclById(identity, new Sid[]{sid});
     }
 
-    public void makePrivate(Image image) {
-        makePrivate((Object) image);
+    public void makePrivate(Object obj) {
+        if (obj instanceof Image) {
+            Image image = (Image) obj;
+            // also try to make all the frames private
+            List<ImageFrame> frames = imageGroupRepository.getFramesContainingImage(image);
+            for (ImageFrame frame : frames) {
+                try {
+                    makePrivate(frame);
+                } catch (AccessDeniedException e) {
+                    log.warn("No admin access to frame " + frame + " for image: " + image);
+                }
+            }
 
-        // also try to make all the frames private
-        List<ImageFrame> frames = imageGroupRepository.getFramesContainingImage(image);
-        for (ImageFrame frame : frames) {
-            try {
-                makePrivate(frame);
-            } catch (AccessDeniedException e) {
-                log.warn("No admin access to frame " + frame + " for image: " + image);
+            // for now also make the manifestations private
+            SortedSet<ImageManifestation> manifestations = image.getManifestations();
+            for (ImageManifestation mf : manifestations) {
+                makePrivate(mf);
             }
         }
 
-        // for now also make the manifestations private
-        SortedSet<ImageManifestation> manifestations = image.getManifestations();
-        for (ImageManifestation mf : manifestations) {
-            makePrivate(mf);
-        }
-    }
-
-    public void makePrivate(Object obj) {
         // TODO: perhaps this should be a blocking permission instead
-        final GrantedAuthoritySid sid = new GrantedAuthoritySid(ROLE_EVERYONE);
+        final Sid sid = sidForRole(ROLE_EVERYONE);
         effectPermissions(findAcl(obj, sid), sid, Collections.<Permission>emptySet(), false);
         log.info("Removed access to " + obj + " by ROLE_EVERYONE");
     }

@@ -16,7 +16,8 @@ package com.trailmagic.user.security;
 import com.trailmagic.user.Group;
 import com.trailmagic.user.GroupFactory;
 import com.trailmagic.user.User;
-import com.trailmagic.user.UserFactory;
+import com.trailmagic.user.UserRepository;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -29,11 +30,11 @@ import org.springframework.security.userdetails.UsernameNotFoundException;
 import org.springframework.dao.DataAccessException;
 
 public class HibernateUserDetailsService implements UserDetailsService {
-    private UserFactory m_userFactory;
+    private UserRepository userRepository;
     private GroupFactory m_groupFactory;
 
-    public void setUserFactory(UserFactory factory) {
-        m_userFactory = factory;
+    public void setUserFactory(UserRepository repository) {
+        userRepository = repository;
     }
 
     public void setGroupFactory(GroupFactory groupFactory) {
@@ -60,7 +61,7 @@ public class HibernateUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username)
         throws UsernameNotFoundException, DataAccessException {
 
-        User user = m_userFactory.getByScreenName(username);
+        User user = userRepository.getByScreenName(username);
         if (user == null) {
             throw new UsernameNotFoundException("No such user");
         }

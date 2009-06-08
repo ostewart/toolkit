@@ -15,16 +15,15 @@ package com.trailmagic.user.hibernate;
 
 import com.trailmagic.user.NoSuchUserException;
 import com.trailmagic.user.User;
-import com.trailmagic.user.UserFactory;
+import com.trailmagic.user.UserRepository;
 import java.util.List;
 import org.hibernate.SessionFactory;
-import org.springframework.dao.DataAccessException;
 import org.springframework.orm.ObjectRetrievalFailureException;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly=true)
-public class HibernateUserFactory implements UserFactory {
+public class HibernateUserRepository implements UserRepository {
     private static final String BY_SN_QUERY_NAME = "userByScreenName";
     private static final String HASH_ALGORITHM = "MD5";
 

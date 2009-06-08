@@ -90,4 +90,17 @@ public class User implements Serializable {
             (this.getScreenName().equals(((User)obj).getScreenName()));
 
     }
+
+    @Override
+    public int hashCode() {
+        return screenName.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+               "id=" + id +
+               ", screenName='" + screenName + '\'' +
+               '}';
+    }
 }

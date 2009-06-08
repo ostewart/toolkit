@@ -21,7 +21,8 @@ import com.trailmagic.image.ImageGroupRepository;
 import com.trailmagic.image.ImageManifestation;
 import com.trailmagic.image.ImageManifestationRepository;
 import com.trailmagic.user.User;
-import com.trailmagic.user.UserFactory;
+import com.trailmagic.user.UserRepository;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -48,7 +49,7 @@ public class ReplaceImageManifestation {
     private SessionFactory sessionFactory;
     private ImageManifestationRepository imfFactory;
     private HibernateTemplate hibernateTemplate;
-    private UserFactory userFactory;
+    private UserRepository userRepository;
     private ImageGroupRepository imageGroupRepository;
 
     private static Logger s_log =
@@ -73,8 +74,8 @@ public class ReplaceImageManifestation {
         this.hibernateTemplate = template;
     }
 
-    public void setUserFactory(UserFactory factory) {
-        this.userFactory = factory;
+    public void setUserFactory(UserRepository repository) {
+        this.userRepository = repository;
     }
     public void setImageGroupRepository(ImageGroupRepository imageGroupRepository) {
         this.imageGroupRepository = imageGroupRepository;
@@ -134,7 +135,7 @@ public class ReplaceImageManifestation {
         hibernateTemplate.execute(new HibernateCallback() {
                 public Object doInHibernate(Session session) {
                     try {
-                        User owner = userFactory.getByScreenName(ownerName);
+                        User owner = userRepository.getByScreenName(ownerName);
                         ImageGroup roll =
                             imageGroupRepository
                             .getRollByOwnerAndName(owner, rollName);

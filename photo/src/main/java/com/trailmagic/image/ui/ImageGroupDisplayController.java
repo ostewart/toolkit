@@ -6,25 +6,21 @@ import com.trailmagic.image.ImageGroupRepository;
 import com.trailmagic.image.NoSuchImageGroupException;
 import com.trailmagic.image.security.ImageSecurityService;
 import com.trailmagic.user.User;
-import com.trailmagic.user.UserFactory;
+import com.trailmagic.user.UserRepository;
 import com.trailmagic.web.util.ImageRequestInfo;
 import com.trailmagic.web.util.MalformedUrlException;
 import com.trailmagic.web.util.WebRequestTools;
 import java.util.SortedSet;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
-import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Service
 public class ImageGroupDisplayController {
-    private UserFactory userFactory;
+    private UserRepository userRepository;
     private ImageGroupRepository imageGroupRepository;
     private ImageSecurityService imageSecurityService;
     private WebRequestTools webRequestTools;
@@ -36,12 +32,12 @@ public class ImageGroupDisplayController {
     @Autowired
     public ImageGroupDisplayController(ImageGroupRepository imageGroupRepository,
                                        ImageSecurityService imageSecurityService,
-                                       UserFactory userFactory,
+                                       UserRepository userRepository,
                                        WebRequestTools webRequestTools) {
         super();
         this.imageGroupRepository = imageGroupRepository;
         this.imageSecurityService = imageSecurityService;
-        this.userFactory = userFactory;
+        this.userRepository = userRepository;
         this.webRequestTools = webRequestTools;
     }
 
@@ -50,7 +46,7 @@ public class ImageGroupDisplayController {
             throws NoSuchImageGroupException, MalformedUrlException {
         
         ImageRequestInfo iri = webRequestTools.getImageRequestInfo(request);
-        User owner = userFactory.getByScreenName(iri.getScreenName());
+        User owner = userRepository.getByScreenName(iri.getScreenName());
         ImageGroup group =
             imageGroupRepository.getByOwnerNameAndTypeWithFrames(owner,
                                                                  iri.getImageGroupName(),

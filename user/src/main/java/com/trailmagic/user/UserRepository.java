@@ -13,7 +13,7 @@
  */
 package com.trailmagic.user;
 
-public interface UserFactory {
+public interface UserRepository {
     public User createUser();
     
     /**

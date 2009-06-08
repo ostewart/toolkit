@@ -60,8 +60,7 @@ public class ImageSecurityAspect implements InitializingBean {
         return securityInterceptor;
     }
 
-    public void setSecurityInterceptor(AspectJAnnotationSecurityInterceptor
-            securityInterceptor) {
+    public void setSecurityInterceptor(AspectJAnnotationSecurityInterceptor securityInterceptor) {
         this.securityInterceptor = securityInterceptor;
     }
 

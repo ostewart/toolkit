@@ -14,7 +14,8 @@
 package com.trailmagic.image.ui;
 
 import com.trailmagic.image.ImageGroup;
-import com.trailmagic.user.UserFactory;
+import com.trailmagic.user.UserRepository;
+
 import java.util.ArrayList;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -31,7 +32,7 @@ import org.springframework.web.servlet.mvc.SimpleFormController;
 
 public class ImageGroupAddForm extends SimpleFormController {
     private SessionFactory m_sessionFactory;
-    private UserFactory m_userFactory;
+    private UserRepository userRepository;
 
     public ImageGroupAddForm() {
         setCommandClass(ImageGroup.class);
@@ -41,8 +42,8 @@ public class ImageGroupAddForm extends SimpleFormController {
         m_sessionFactory = sessionFactory;
     }
 
-    public void setUserFactory(UserFactory userFactory) {
-        m_userFactory = userFactory;
+    public void setUserFactory(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
 
@@ -54,7 +55,7 @@ public class ImageGroupAddForm extends SimpleFormController {
         imgGroup.setSupergroup(null);
         imgGroup.setSubgroups(new ArrayList<ImageGroup>());
         // TODO: implement multi-user
-        imgGroup.setOwner(m_userFactory.getByScreenName("oliver"));
+        imgGroup.setOwner(userRepository.getByScreenName("oliver"));
         // TODO: maybe implement new roll
         imgGroup.setType(ImageGroup.Type.ALBUM);
         session.save(imgGroup);

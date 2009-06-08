@@ -25,7 +25,7 @@ import com.trailmagic.image.security.ImageSecurityService;
 import com.trailmagic.user.Group;
 import com.trailmagic.user.GroupFactory;
 import com.trailmagic.user.User;
-import com.trailmagic.user.UserFactory;
+import com.trailmagic.user.UserRepository;
 import com.trailmagic.user.UserLoginModule;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
@@ -54,7 +54,7 @@ public class AddPermissions {
     private ImageRepository imageFactory;
     private ImageGroupRepository imageGroupRepository;
     private ImageSecurityService imageSecurityService;
-    private UserFactory userFactory;
+    private UserRepository userRepository;
     private GroupFactory groupFactory;
     private HibernateTemplate hibernateTemplate;
 
@@ -74,8 +74,8 @@ public class AddPermissions {
         this.imageFactory = factory;
     }
 
-    public void setUserFactory(UserFactory factory) {
-        this.userFactory = factory;
+    public void setUserFactory(UserRepository repository) {
+        this.userRepository = repository;
     }
 
     public void setHibernateTemplate(HibernateTemplate template) {
@@ -136,7 +136,7 @@ public class AddPermissions {
 
         hibernateTemplate.execute(new HibernateCallback() {
             public Object doInHibernate(Session session) {
-                User owner = userFactory.getByScreenName(ownerName);
+                User owner = userRepository.getByScreenName(ownerName);
                 for (String groupName : groupNames) {
                     ImageGroup group;
                     if ("roll".equals(type)) {
@@ -192,7 +192,7 @@ public class AddPermissions {
                                     final String albumName) {
         hibernateTemplate.execute(new HibernateCallback() {
             public Object doInHibernate(Session session) {
-                User user = userFactory.getByScreenName(ownerName);
+                User user = userRepository.getByScreenName(ownerName);
                 ImageGroup group =
                         imageGroupRepository.getAlbumByOwnerAndName(user,
                                 albumName);
@@ -238,7 +238,7 @@ public class AddPermissions {
                                   final Collection<Long> imageIds) {
         hibernateTemplate.execute(new HibernateCallback() {
             public Object doInHibernate(Session session) {
-                User user = userFactory.getByScreenName(username);
+                User user = userRepository.getByScreenName(username);
                 for (Long id : imageIds) {
                     Image image = imageFactory.getById(id);
                     final Set<Permission> newPerms = new HashSet<Permission>(Arrays.asList(BasePermission.READ, BasePermission.ADMINISTRATION));
@@ -253,10 +253,10 @@ public class AddPermissions {
                              final Collection<Long> imageIds) {
         hibernateTemplate.execute(new HibernateCallback() {
             public Object doInHibernate(Session session) {
-                User user = userFactory.getByScreenName(username);
+                User user = userRepository.getByScreenName(username);
                 for (Long id : imageIds) {
                     Image image = imageFactory.getById(id);
-                    imageSecurityService.addPermission(image, user, BasePermission.READ);
+                    imageSecurityService.addReadPermission(image, user);
                 }
                 return null;
             }

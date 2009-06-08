@@ -4,12 +4,10 @@ import org.junit.Test;
 import org.junit.Before;
 import org.junit.Assert;
 import org.mockito.Mockito;
-import org.aspectj.lang.Aspects;
-import org.springframework.security.intercept.method.aspectj.AspectJAnnotationSecurityInterceptor;
-import org.springframework.security.intercept.method.MapBasedMethodDefinitionSource;
-import com.trailmagic.user.UserFactory;
+import com.trailmagic.user.UserRepository;
 import com.trailmagic.user.User;
 import com.trailmagic.image.security.ImageSecurityService;
+import com.trailmagic.image.security.SecurityTestHelper;
 import com.trailmagic.image.*;
 import com.trailmagic.util.MockSecurityUtil;
 
@@ -19,7 +17,7 @@ import java.io.ByteArrayInputStream;
 import java.sql.SQLException;
 
 public class ImageServiceImplTest {
-    private UserFactory userFactory;
+    private UserRepository userRepository;
     private ImageManifestationRepository imageManifestationRepository;
     private ImageService imageService;
     private ImageGroupRepository imageGroupRepository;
@@ -29,19 +27,20 @@ public class ImageServiceImplTest {
     private static final String TEST_USER_SCREEN_NAME = "testUser";
     private ImageGroup defaultGroup;
     private static final String TEST_ROLL_NAME = "my-awesome-roll";
+    private final SecurityTestHelper securityTestHelper = new SecurityTestHelper();
 
     @Before
     public void setUp() {
         imageGroupRepository = Mockito.mock(ImageGroupRepository.class);
         imageRepository = Mockito.mock(ImageRepository.class);
         imageSecurityService = Mockito.mock(ImageSecurityService.class);
-        userFactory = Mockito.mock(UserFactory.class);
+        userRepository = Mockito.mock(UserRepository.class);
         imageManifestationRepository = Mockito.mock(ImageManifestationRepository.class);
     }
 
     private void withCurrentUser(User currentUser, boolean hasDefaultGroup) {
         final MockSecurityUtil securityUtil = new MockSecurityUtil(currentUser);
-        imageService = new ImageServiceImpl(imageGroupRepository, imageRepository, imageSecurityService, imageManifestationRepository, userFactory, securityUtil);
+        imageService = new ImageServiceImpl(imageGroupRepository, imageRepository, imageSecurityService, imageManifestationRepository, userRepository, securityUtil);
         if (hasDefaultGroup) {
             defaultGroup = setupDefaultGroup(currentUser);
         }
@@ -124,9 +123,7 @@ public class ImageServiceImplTest {
 
     @Test
     public void testSavesImageMetaData() throws IOException, SQLException {
-        final AspectJAnnotationSecurityInterceptor interceptor = new AspectJAnnotationSecurityInterceptor();
-        interceptor.setObjectDefinitionSource(new MapBasedMethodDefinitionSource());
-        Aspects.aspectOf(ImageSecurityAspect.class).setSecurityInterceptor(interceptor);
+        securityTestHelper.disableSecurityInterceptor();
         User currentUser = new User(TEST_USER_SCREEN_NAME);
         withCurrentUser(currentUser, true);
 
