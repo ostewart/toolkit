@@ -2,35 +2,7 @@
 <project relativePaths="false" version="4">
   <component name="ChangeListManager">
     <list default="true" readonly="true" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/image/src/main/java/com/trailmagic/image/util/AddPermissions.java" afterPath="$PROJECT_DIR$/image/src/main/java/com/trailmagic/image/util/AddPermissions.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/image/pom.xml" afterPath="$PROJECT_DIR$/image/pom.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/photo/pom.xml" afterPath="$PROJECT_DIR$/photo/pom.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/photo.iml" afterPath="$PROJECT_DIR$/photo.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/user/src/main/resources/applicationContext-user.xml" afterPath="$PROJECT_DIR$/user/src/main/resources/applicationContext-user.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/image/src/main/java/com/trailmagic/image/util/ImagesParserImpl.java" afterPath="$PROJECT_DIR$/image/src/main/java/com/trailmagic/image/util/ImagesParserImpl.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/photo/src/main/java/com/trailmagic/image/ui/ImageGroupAddForm.java" afterPath="$PROJECT_DIR$/photo/src/main/java/com/trailmagic/image/ui/ImageGroupAddForm.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/image/src/test/java/com/trailmagic/image/impl/ImageServiceImplTest.java" afterPath="$PROJECT_DIR$/image/src/test/java/com/trailmagic/image/impl/ImageServiceImplTest.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/image.iml" afterPath="$PROJECT_DIR$/image.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/image/src/main/java/com/trailmagic/image/util/FixDimensions.java" afterPath="$PROJECT_DIR$/image/src/main/java/com/trailmagic/image/util/FixDimensions.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/image/src/main/java/com/trailmagic/image/ImageSecurityAspect.java" afterPath="$PROJECT_DIR$/image/src/main/java/com/trailmagic/image/ImageSecurityAspect.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/photo/src/main/java/com/trailmagic/image/ui/ImageGroupDisplayController.java" afterPath="$PROJECT_DIR$/photo/src/main/java/com/trailmagic/image/ui/ImageGroupDisplayController.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/image/src/main/java/com/trailmagic/image/util/ReplaceImageManifestation.java" afterPath="$PROJECT_DIR$/image/src/main/java/com/trailmagic/image/util/ReplaceImageManifestation.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/image/src/test/java/com/trailmagic/image/security/SecurityTestHelper.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/photo/src/main/java/com/trailmagic/image/ui/ImageGroupDispatcherController.java" afterPath="$PROJECT_DIR$/photo/src/main/java/com/trailmagic/image/ui/ImageGroupDispatcherController.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/image/src/main/java/com/trailmagic/image/impl/ImageServiceImpl.java" afterPath="$PROJECT_DIR$/image/src/main/java/com/trailmagic/image/impl/ImageServiceImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/image/src/test/java/com/trailmagic/image/security/SecurityIntegrationTest.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/image/src/main/java/com/trailmagic/image/util/MakeAlbumFromRoll.java" afterPath="$PROJECT_DIR$/image/src/main/java/com/trailmagic/image/util/MakeAlbumFromRoll.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/image/src/test/java/com/trailmagic/image/ImageRepositoryIntegrationTest.java" afterPath="$PROJECT_DIR$/image/src/test/java/com/trailmagic/image/ImageRepositoryIntegrationTest.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/user/src/main/java/com/trailmagic/user/UserFactory.java" afterPath="$PROJECT_DIR$/user/src/main/java/com/trailmagic/user/UserRepository.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/user/src/main/java/com/trailmagic/user/hibernate/HibernateUserFactory.java" afterPath="$PROJECT_DIR$/user/src/main/java/com/trailmagic/user/hibernate/HibernateUserRepository.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/user/src/main/java/com/trailmagic/user/security/HibernateUserDetailsService.java" afterPath="$PROJECT_DIR$/user/src/main/java/com/trailmagic/user/security/HibernateUserDetailsService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/user/src/main/java/com/trailmagic/user/User.java" afterPath="$PROJECT_DIR$/user/src/main/java/com/trailmagic/user/User.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/image/src/main/java/com/trailmagic/image/security/SpringSecurityImageSecurityService.java" afterPath="$PROJECT_DIR$/image/src/main/java/com/trailmagic/image/security/SpringSecurityImageSecurityService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/photo/src/main/java/com/trailmagic/image/ui/GrantAccessController.java" afterPath="$PROJECT_DIR$/photo/src/main/java/com/trailmagic/image/ui/GrantAccessController.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/image/src/main/java/com/trailmagic/image/security/ImageSecurityService.java" afterPath="$PROJECT_DIR$/image/src/main/java/com/trailmagic/image/security/ImageSecurityService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/image/src/main/java/com/trailmagic/image/util/MakeAlbum.java" afterPath="$PROJECT_DIR$/image/src/main/java/com/trailmagic/image/util/MakeAlbum.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/image/src/test/java/com/trailmagic/image/security/SpringSecurityImageSecurityServiceTest.java" afterPath="$PROJECT_DIR$/image/src/test/java/com/trailmagic/image/security/SpringSecurityImageSecurityServiceTest.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/image/src/main/resources/applicationContext-imagestore-authorization.xml" afterPath="$PROJECT_DIR$/image/src/main/resources/applicationContext-imagestore-authorization.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/image/src/test/java/com/trailmagic/image/security/SecurityIntegrationTest.java" afterPath="$PROJECT_DIR$/image/src/test/java/com/trailmagic/image/security/SecurityIntegrationTest.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/toolkit.iws" afterPath="$PROJECT_DIR$/toolkit.iws" />
     </list>
     <ignored path="toolkit.iws" />
@@ -85,7 +57,7 @@
     <SUITE FILE_PATH="coverage/toolkit$SpringSecurityImageSecurityServiceTest_testMakePrivate..es" NAME="SpringSecurityImageSecurityServiceTest.testMakePrivate Coverage Results" MODIFIED="1244422691026" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="emma" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
       <FILTER>com.trailmagic.*</FILTER>
     </SUITE>
-    <SUITE FILE_PATH="coverage/toolkit$SecurityIntegrationTest..es" NAME="SecurityIntegrationTest Coverage Results" MODIFIED="1244435199534" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="emma" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+    <SUITE FILE_PATH="coverage/toolkit$SecurityIntegrationTest..es" NAME="SecurityIntegrationTest Coverage Results" MODIFIED="1244436207050" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="emma" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
       <FILTER>com.trailmagic.*</FILTER>
     </SUITE>
     <SUITE FILE_PATH="coverage/toolkit$SpringSecurityImageSecurityServiceTest_testCumulative..es" NAME="SpringSecurityImageSecurityServiceTest.testCumulative Coverage Results" MODIFIED="1241663416175" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="emma" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
@@ -272,7 +244,7 @@
       <file leaf-file-name="ImageSecurityService.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/image/src/main/java/com/trailmagic/image/security/ImageSecurityService.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="45" column="0" selection-start="2052" selection-end="2206" vertical-scroll-proportion="0.0">
+            <state line="34" column="68" selection-start="1408" selection-end="1408" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -325,10 +297,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ImageGroupDisplayController.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="ImageGroupDisplayController.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/photo/src/main/java/com/trailmagic/image/ui/ImageGroupDisplayController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="33" column="0" selection-start="1324" selection-end="1324" vertical-scroll-proportion="0.4704797">
+            <state line="33" column="0" selection-start="1324" selection-end="1324" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -352,10 +324,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SecurityIntegrationTest.java" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="SecurityIntegrationTest.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/image/src/test/java/com/trailmagic/image/security/SecurityIntegrationTest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="62" column="24" selection-start="2529" selection-end="2529" vertical-scroll-proportion="0.0">
+            <state line="52" column="0" selection-start="2375" selection-end="2375" vertical-scroll-proportion="0.47601476">
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -504,8 +476,8 @@
       <recent name="com.trailmagic.image.util" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.SpringSecurityImageSecurityServiceTest">
-    <tempConfiguration default="false" name="SpringSecurityImageSecurityServiceTest" type="JUnit" factoryName="JUnit" enabled="true" merge="false" sample_coverage="true" runner="emma">
+  <component name="RunManager" selected="JUnit.SecurityIntegrationTest">
+    <tempConfiguration default="false" name="SecurityIntegrationTest" type="JUnit" factoryName="JUnit" enabled="true" merge="false" sample_coverage="true" runner="emma">
       <pattern>
         <option name="PATTERN" value="com.trailmagic.*" />
         <option name="ENABLED" value="true" />
@@ -514,7 +486,7 @@
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" value="" />
       <option name="PACKAGE_NAME" value="com.trailmagic.image.security" />
-      <option name="MAIN_CLASS_NAME" value="com.trailmagic.image.security.SpringSecurityImageSecurityServiceTest" />
+      <option name="MAIN_CLASS_NAME" value="com.trailmagic.image.security.SecurityIntegrationTest" />
       <option name="METHOD_NAME" value="" />
       <option name="TEST_OBJECT" value="class" />
       <option name="VM_PARAMETERS" value="-javaagent:$MAVEN_REPOSITORY$/org/aspectj/aspectjweaver/1.6.2/aspectjweaver-1.6.2.jar" />
@@ -785,7 +757,7 @@
       <item index="1" class="java.lang.String" itemvalue="JUnit.ImageRepositoryIntegrationTest" />
       <item index="2" class="java.lang.String" itemvalue="Remote.Debug Tomcat" />
       <item index="3" class="java.lang.String" itemvalue="Tomcat Server.Tomcat Server" />
-      <item index="4" class="java.lang.String" itemvalue="JUnit.SpringSecurityImageSecurityServiceTest" />
+      <item index="4" class="java.lang.String" itemvalue="JUnit.SecurityIntegrationTest" />
     </list>
     <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false">
       <Host>localhost</Host>
@@ -932,7 +904,7 @@
     <option name="PERFORM_CHECKOUT_IN_BACKGROUND" value="true" />
     <option name="PERFORM_ADD_REMOVE_IN_BACKGROUND" value="true" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="Re-enabled a persistence test and some refactoring of security contexts" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add real (integration) tests for security stuff and fix bugs&#10;Some refactoring" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="REFORMAT_BEFORE_FILE_COMMIT" value="false" />
@@ -949,6 +921,7 @@
     <MESSAGE value="Formatting changes/warnings" />
     <MESSAGE value="Upgrade Spring security to 2.0.4 and new acl system (still needs unit tests)" />
     <MESSAGE value="Re-enabled a persistence test and some refactoring of security contexts" />
+    <MESSAGE value="Add real (integration) tests for security stuff and fix bugs&#10;Some refactoring" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -1007,29 +980,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/security/spring-security-core/2.0.4/spring-security-core-2.0.4-sources.jar!/org/springframework/security/providers/dao/AbstractUserDetailsAuthenticationProvider.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="183" column="40" selection-start="9529" selection-end="9543" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/image/src/main/java/com/trailmagic/image/security/ImageSecurityService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="45" column="0" selection-start="2052" selection-end="2206" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/image/src/test/java/com/trailmagic/image/security/SecurityIntegrationTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="62" column="24" selection-start="2529" selection-end="2529" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/image/src/main/java/com/trailmagic/image/security/SpringSecurityImageSecurityService.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="157" column="4" selection-start="6495" selection-end="6495" vertical-scroll-proportion="-21.64">
@@ -1074,10 +1024,33 @@
         </state>
       </provider>
     </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/security/spring-security-core/2.0.4/spring-security-core-2.0.4-sources.jar!/org/springframework/security/providers/dao/AbstractUserDetailsAuthenticationProvider.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="183" column="40" selection-start="9529" selection-end="9543" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/photo/src/main/java/com/trailmagic/image/ui/ImageGroupDisplayController.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="33" column="0" selection-start="1324" selection-end="1324" vertical-scroll-proportion="0.4704797">
+        <state line="33" column="0" selection-start="1324" selection-end="1324" vertical-scroll-proportion="0.0">
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/image/src/main/java/com/trailmagic/image/security/ImageSecurityService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="34" column="68" selection-start="1408" selection-end="1408" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/image/src/test/java/com/trailmagic/image/security/SecurityIntegrationTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="52" column="0" selection-start="2375" selection-end="2375" vertical-scroll-proportion="0.47601476">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

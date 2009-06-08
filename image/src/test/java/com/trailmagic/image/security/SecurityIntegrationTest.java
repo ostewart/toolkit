@@ -12,6 +12,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.GrantedAuthority;
 import org.springframework.security.GrantedAuthorityImpl;
+import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
 import org.springframework.test.context.ContextConfiguration;
@@ -45,6 +46,9 @@ public class SecurityIntegrationTest {
 
         service.makePrivate(photo);
         assertFalse("After makePrivate call, the photo should not be public", service.isPublic(photo));
+        assertFalse("After addReadPermission call, should be readable", service.isReadableByRole(photo, "ROLE_EVERYONE"));
+        assertFalse("After makePrivate call, isAvailable should also work", service.isAvailableToRole(photo, "ROLE_EVERYONE", BasePermission.READ));
+
     }
 
     @Test
@@ -55,6 +59,7 @@ public class SecurityIntegrationTest {
         assertFalse("After creation, a photo should not be public", service.isPublic(photo));
         service.addReadPermission(photo, testUser);
         assertTrue("After addReadPermission call, should be readable", service.isReadableByUser(photo, testUser));
+        assertTrue("After addReadPermission call, isAvailable should also work", service.isAvailableToUser(photo, testUser, BasePermission.READ));
     }
 
 
