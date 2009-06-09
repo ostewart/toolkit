@@ -135,6 +135,7 @@
             </list>
         </constructor-arg>
         <property name="processDomainObjectClass" value="com.trailmagic.image.Image"/>
+        <property name="objectIdentityRetrievalStrategy" ref="objectIdentityRetrievalStrategy"/>
     </bean>
     <bean id="aclObjectAdminVoter"
           class="org.springframework.security.vote.AclEntryVoter">
@@ -146,6 +147,7 @@
             </list>
         </constructor-arg>
         <property name="processDomainObjectClass" value="java.lang.Object"/>
+        <property name="objectIdentityRetrievalStrategy" ref="objectIdentityRetrievalStrategy"/>
     </bean>
 
     <bean id="aclImageWriteVoter"
@@ -158,6 +160,7 @@
             </list>
         </constructor-arg>
         <property name="processDomainObjectClass" value="com.trailmagic.image.Image"/>
+        <property name="objectIdentityRetrievalStrategy" ref="objectIdentityRetrievalStrategy"/>
     </bean>
     <bean id="aclImageDeleteVoter"
           class="org.springframework.security.vote.AclEntryVoter">
@@ -169,6 +172,7 @@
             </list>
         </constructor-arg>
         <property name="processDomainObjectClass" value="com.trailmagic.image.Image"/>
+        <property name="objectIdentityRetrievalStrategy" ref="objectIdentityRetrievalStrategy"/>
     </bean>
     <bean id="aclImageAdminVoter"
           class="org.springframework.security.vote.AclEntryVoter">
@@ -180,6 +184,7 @@
             </list>
         </constructor-arg>
         <property name="processDomainObjectClass" value="com.trailmagic.image.Image"/>
+        <property name="objectIdentityRetrievalStrategy" ref="objectIdentityRetrievalStrategy"/>
     </bean>
 
 
@@ -250,7 +255,7 @@
                 <value>imageRepository</value>
                 <value>imageManifestationRepository</value>
                 <value>imageGroupRepository</value>
-                <value>imageFactory</value>
+                <value>imageRepository</value>
                 <value>imageSecurityService</value>
             </list>
         </property>
@@ -270,14 +275,14 @@
         <property name="validateConfigAttributes" value="true"/>
         <property name="authenticationManager" ref="authenticationManager"/>
         <property name="accessDecisionManager">
-            <ref local="imageAccessDecisionManager"/>
+            <ref bean="imageAccessDecisionManager"/>
         </property>
         <property name="afterInvocationManager">
-            <ref local="afterInvocationManager"/>
+            <ref bean="afterInvocationManager"/>
         </property>
         <property name="objectDefinitionSource">
             <value>
-                com.trailmagic.image.ImageFrame.getImage=AFTER_ACL_READ
+                com.trailmagic.image.ImageGroup.getPreviewImage=AFTER_ACL_READ
                 com.trailmagic.image.ImageGroup.getFrames=AFTER_ACL_COLLECTION_READ
                 com.trailmagic.image.Image.getManifestations=AFTER_ACL_COLLECTION_READ
             </value>

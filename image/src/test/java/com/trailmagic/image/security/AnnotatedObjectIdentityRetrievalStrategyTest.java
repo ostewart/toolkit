@@ -1,5 +1,9 @@
 package com.trailmagic.image.security;
 
+import com.trailmagic.image.HeavyImageManifestation;
+import com.trailmagic.image.Photo;
+import com.trailmagic.image.Image;
+import com.trailmagic.image.ImageFrame;
 import junit.framework.TestCase;
 import org.springframework.security.acls.objectidentity.ObjectIdentityImpl;
 
@@ -19,6 +23,31 @@ public class AnnotatedObjectIdentityRetrievalStrategyTest extends TestCase {
     public void testUsesIdentityProxyAnnotation() {
         assertEquals(new ObjectIdentityImpl(ProxyThing.class, OTHER_ID), strategy.getObjectIdentity(new ProxiedIdentityThing()));
     }
+
+    public void testFollowsInheritanceIdentity() {
+        assertEquals(new ObjectIdentityImpl(ProxyThing.class, OTHER_ID), strategy.getObjectIdentity(new TripleProxyThing()));
+    }
+
+    public void testWorksWithImageManifestations() {
+        Long imageId = 1L;
+        final Photo photo = new Photo();
+        photo.setId(imageId);
+        final HeavyImageManifestation mf = new HeavyImageManifestation();
+        mf.setId(2L);
+        mf.setImage(photo);
+        assertEquals(new ObjectIdentityImpl(Image.class, imageId), strategy.getObjectIdentity(mf));
+    }
+
+    public void testWorksWithImageFrames() {
+        Long imageId = 1L;
+        final Photo photo = new Photo();
+        photo.setId(imageId);
+        final ImageFrame frame = new ImageFrame();
+        frame.setImage(photo);
+        assertEquals(new ObjectIdentityImpl(Image.class, imageId), strategy.getObjectIdentity(frame));
+    }
+
+    // XXX: it would be sort of good to test CGLIB generated classes as the identity, proxy, domain object, etc.
 
     protected void setUp() throws Exception {
         super.setUp();
@@ -40,6 +69,11 @@ public class AnnotatedObjectIdentityRetrievalStrategyTest extends TestCase {
         public long getId() {
             return id;
         }
+    }
+
+    @Identity(ProxiedIdentityThing.class)
+    public class TripleProxyThing extends ProxiedIdentityThing {
+
     }
 
     public class ProxiedIdentityThing {

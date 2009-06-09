@@ -13,8 +13,11 @@
  */
 package com.trailmagic.image;
 
+import com.trailmagic.image.security.Identity;
+
 import java.util.Date;
 
+@Identity(Image.class)
 public class Photo extends Image {
     private Lens lens;
     private Camera camera;

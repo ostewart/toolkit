@@ -15,6 +15,7 @@ package com.trailmagic.image;
 
 import com.trailmagic.user.Owned;
 import com.trailmagic.user.User;
+import com.trailmagic.image.security.IdentityProxy;
 
 /**
  * This class maps the metadata of the manifestation, while its subclass,
@@ -22,6 +23,7 @@ import com.trailmagic.user.User;
  */
 public class ImageManifestation implements Comparable<ImageManifestation>, Owned {
     private long id;
+    @IdentityProxy
     private Image image;
     private int height;
     private int width;

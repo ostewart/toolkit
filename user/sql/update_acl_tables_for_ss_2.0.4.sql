@@ -68,14 +68,14 @@ insert into acl_entry (acl_object_identity, ace_order, sid, mask, granting, audi
         select acl_object_identity, 4, 1, 16, true, false, false from acl_permission where recipient = 'oliver' and mask = 31;
 
 
-insert into acl_entry (id, acl_object_identity, ace_order, sid, mask, granting, audit_success, audit_failure)
-        select id, acl_object_identity, 5, 2, 1, true, false, false from acl_permission where recipient = 'ROLE_EVERYONE' and mask = 2;
+insert into acl_entry (acl_object_identity, ace_order, sid, mask, granting, audit_success, audit_failure)
+        select acl_object_identity, 5, 2, 1, true, false, false from acl_permission where recipient = 'ROLE_EVERYONE' and mask = 2;
 
-insert into acl_entry (id, acl_object_identity, ace_order, sid, mask, granting, audit_success, audit_failure)
-        select id, acl_object_identity, 5, 2, 2, true, false, false from acl_permission where recipient = 'ROLE_EVERYONE' and mask = 4;
+insert into acl_entry (acl_object_identity, ace_order, sid, mask, granting, audit_success, audit_failure)
+        select acl_object_identity, 5, 2, 2, true, false, false from acl_permission where recipient = 'ROLE_EVERYONE' and mask = 4;
 
-insert into acl_entry (id, acl_object_identity, ace_order, sid, mask, granting, audit_success, audit_failure)
-        select id, acl_object_identity, 5, 2, 4, true, false, false from acl_permission where recipient = 'ROLE_EVERYONE' and mask = 8;
+insert into acl_entry (acl_object_identity, ace_order, sid, mask, granting, audit_success, audit_failure)
+        select acl_object_identity, 5, 2, 4, true, false, false from acl_permission where recipient = 'ROLE_EVERYONE' and mask = 8;
 
 insert into acl_entry (id, acl_object_identity, ace_order, sid, mask, granting, audit_success, audit_failure)
         select id, acl_object_identity, 5, 2, 8, true, false, false from acl_permission where recipient = 'ROLE_EVERYONE' and mask = 16;
