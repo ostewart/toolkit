@@ -100,8 +100,9 @@ public class ImageDisplayController extends SimpleFormController {
     private ModelAndView setupModel(HttpServletRequest request, Map<String,Object> model) throws MalformedUrlException {
         ImageRequestInfo iri = webRequestTools.getImageRequestInfo(request);
         ImageFrame frame =
-            imageGroupRepository.getImageFrameByGroupNameAndImageId(iri.getImageGroupName(),
-                                                                    iri.getImageId());
+            imageGroupRepository.getImageFrameByGroupNameTypeAndImageId(iri.getImageGroupName(),
+                                                                        iri.getImageGroupType(),
+                                                                        iri.getImageId());
         model.put("frame", frame);
         model.put("image", frame.getImage());
         model.put("group", frame.getImageGroup());

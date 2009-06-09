@@ -184,9 +184,10 @@
     AND frame.image.id = :imageId
   </query>
 
-  <query name="imageFrameByGroupNameAndImageId">
+  <query name="imageFrameByGroupNameTypeAndImageId">
     FROM com.trailmagic.image.ImageFrame frame
     WHERE frame.imageGroup.name = :groupName
+    AND frame.imageGroup.type = :groupType
     AND frame.image.id = :imageId
   </query>
 

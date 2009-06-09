@@ -39,16 +39,14 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
         "albumByOwnerAndName";
     private static final String IMGFRAME_BY_IMG_GROUP_AND_IMAGE_QRY =
         "imageFrameByImageGroupAndImageId";
-    private static final String IMGFRAME_BY_GROUP_NAME_AND_IMAGE_ID_QRY =
-        "imageFrameByGroupNameAndImageId";
+    private static final String IMGFRAME_BY_GROUP_NAME_TYPE_AND_IMAGE_ID_QRY =
+            "imageFrameByGroupNameTypeAndImageId";
     private static final String ALBUMS_BY_OWNER_NAME_QRY =
         "albumsByOwnerScreenName";
     private static final String ALBUM_OWNERS_QRY =
         "albumOwners";
     private static final String ROLLS_BY_OWNER_NAME_QRY =
         "rollsByOwnerScreenName";
-    private static final String ROLL_OWNERS_QRY =
-        "rollOwners";
     private static final String GROUP_OWNERS_QRY =
         "groupOwnersByType";
     private static final String GROUPS_BY_OWNER_NAME_QRY =
@@ -133,14 +131,13 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
         }
     }
 
-    public ImageFrame getImageFrameByGroupNameAndImageId(String groupName,
-                                                         long imageId)
-        throws NoSuchImageFrameException {
+    public ImageFrame getImageFrameByGroupNameTypeAndImageId(String groupName, Type groupType, long imageId)
+            throws NoSuchImageFrameException {
         List results =
             m_hibernateTemplate
-            .findByNamedQueryAndNamedParam(IMGFRAME_BY_GROUP_NAME_AND_IMAGE_ID_QRY,
-                                           new String[] {"groupName", "imageId"},
-                                           new Object[] {groupName, imageId});
+            .findByNamedQueryAndNamedParam(IMGFRAME_BY_GROUP_NAME_TYPE_AND_IMAGE_ID_QRY,
+                                           new String[] {"groupName", "groupType", "imageId"},
+                                           new Object[] {groupName, groupType, imageId});
         if (results.size() == 0) {
             throw new NoSuchImageFrameException(groupName, imageId);
         } else {
@@ -195,16 +192,6 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
                 SessionFactoryUtils.getSession(m_sessionFactory, false);
             Query qry = session.getNamedQuery(ROLLS_BY_OWNER_NAME_QRY);
             qry.setString("screenName", screenName);
-            return qry.list();
-        } catch (HibernateException e) {
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
-        }
-    }
-    public List<User> getRollOwners() {
-        try {
-            Session session =
-                SessionFactoryUtils.getSession(m_sessionFactory, false);
-            Query qry = session.getNamedQuery(ROLL_OWNERS_QRY);
             return qry.list();
         } catch (HibernateException e) {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
@@ -287,7 +274,7 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
             Session session =
                 SessionFactoryUtils.getSession(m_sessionFactory, false);
 
-            return (ImageGroup)session.get(ImageGroup.class, new Long(id));
+            return (ImageGroup)session.get(ImageGroup.class, id);
         } catch (HibernateException e) {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
         }
@@ -334,10 +321,9 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
     }
 
     public int getPublicFrameCount(ImageGroup group) {
-        return ((Integer)
+        return (Integer)
                 m_hibernateTemplate.findByNamedQuery("publicFrameCount",
-                                                     group.getId()).get(0))
-               .intValue();
+                                                     group.getId()).get(0);
 
     }
 

@@ -27,14 +27,12 @@ public interface ImageGroupRepository {
     public ImageFrame getImageFrameByImageGroupAndImageId(ImageGroup group,
                                                           long imageId)
         throws NoSuchImageFrameException;
-    public ImageFrame getImageFrameByGroupNameAndImageId(String groupName,
-                                                         long imageId)
-        throws NoSuchImageFrameException;
+    public ImageFrame getImageFrameByGroupNameTypeAndImageId(String groupName, Type groupType, long imageId)
+            throws NoSuchImageFrameException;
     public List<ImageFrame> getFramesContainingImage(Image image);
     public List<ImageGroup> getAlbumsByOwnerScreenName(String screenName);
     public List<ImageGroup> getRollsByOwnerScreenName(String screenName);
     public List<User> getAlbumOwners();
-    public List<User> getRollOwners();
     public List<User> getOwnersByType(Type groupType);
     public List<ImageGroup> getByOwnerScreenNameAndType(String screenName,
                                                         Type groupType);
