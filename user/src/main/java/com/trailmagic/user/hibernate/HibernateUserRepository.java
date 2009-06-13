@@ -25,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly=true)
 public class HibernateUserRepository implements UserRepository {
     private static final String BY_SN_QUERY_NAME = "userByScreenName";
-    private static final String HASH_ALGORITHM = "MD5";
 
     private SessionFactory m_sessionFactory;
     private HibernateTemplate m_hibernateTemplate;

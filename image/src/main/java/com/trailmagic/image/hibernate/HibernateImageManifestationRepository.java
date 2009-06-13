@@ -23,7 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
-@Transactional
+@Transactional(readOnly = true)
 public class HibernateImageManifestationRepository
         implements ImageManifestationRepository {
 
@@ -63,7 +63,8 @@ public class HibernateImageManifestationRepository
         }
         return typedResults;
     }
-    
+
+    @Transactional(readOnly = false)
     public void saveNewImageManifestation(HeavyImageManifestation imageManifestation) {
         log.info("Saving image manifestation: " + imageManifestation);
         hibernateTemplate.save(imageManifestation);

@@ -274,12 +274,8 @@
           class="org.springframework.security.intercept.method.aspectj.AspectJAnnotationSecurityInterceptor">
         <property name="validateConfigAttributes" value="true"/>
         <property name="authenticationManager" ref="authenticationManager"/>
-        <property name="accessDecisionManager">
-            <ref bean="imageAccessDecisionManager"/>
-        </property>
-        <property name="afterInvocationManager">
-            <ref bean="afterInvocationManager"/>
-        </property>
+        <property name="accessDecisionManager" ref="imageAccessDecisionManager"/>
+        <property name="afterInvocationManager" ref="afterInvocationManager"/>
         <property name="objectDefinitionSource">
             <value>
                 com.trailmagic.image.ImageGroup.getPreviewImage=AFTER_ACL_READ

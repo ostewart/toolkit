@@ -24,6 +24,8 @@
     name="ImageGroup"
     table="image_groups">
 
+      <cache usage="read-write"/>
+
     <id
       name="id"
       type="long"
@@ -86,6 +88,7 @@
       lazy="true"
       sort="natural"
       inverse="true">
+        <cache usage="read-write"/>
       <key>
         <column name="group_id" unique-key="frames_group_position"/>
       </key>
@@ -96,6 +99,7 @@
   </class>
 
   <class name="ImageFrame" table="image_frames">
+      <cache usage="read-write"/>
     <id
       name="id"
       type="long"

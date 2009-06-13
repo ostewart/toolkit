@@ -24,6 +24,7 @@
   <class
     name="User"
     table="users">
+      <cache usage="read-write"/>
 
     <id
       name="id"

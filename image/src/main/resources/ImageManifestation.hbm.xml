@@ -25,6 +25,8 @@
     name="com.trailmagic.image.ImageManifestation"
     table="image_manifestations">
 
+      <cache usage="read-write"/>
+
     <id
       name="id"
       type="long"

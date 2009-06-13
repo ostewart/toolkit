@@ -90,6 +90,7 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
             Query qry = session.getNamedQuery(ALBUM_BY_OWNER_AND_NAME_QRY);
             qry.setEntity("owner", owner);
             qry.setString("albumName", albumName);
+            qry.setCacheable(true);
             return (ImageGroup)qry.uniqueResult();
         } catch (HibernateException e) {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
@@ -104,6 +105,7 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
             Query qry = session.getNamedQuery(ROLL_BY_OWNER_AND_NAME_QRY);
             qry.setEntity("owner", owner);
             qry.setString("rollName", rollName);
+            qry.setCacheable(true);
             return (ImageGroup)qry.uniqueResult();
         } catch (HibernateException e) {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
@@ -120,6 +122,7 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
                 session.getNamedQuery(IMGFRAME_BY_IMG_GROUP_AND_IMAGE_QRY);
             qry.setEntity("imageGroup", group);
             qry.setLong("imageId", imageId);
+            qry.setCacheable(true);
             ImageFrame result = (ImageFrame)qry.uniqueResult();
             if (result == null) {
                 throw new NoSuchImageFrameException(group, imageId);
@@ -157,6 +160,7 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
             Query qry =
                 session.getNamedQuery(FRAMES_CONTAINING_IMAGE_QRY);
             qry.setEntity("image", image);
+            qry.setCacheable(true);
             return qry.list();
         } catch (HibernateException e) {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
@@ -169,6 +173,7 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
                 SessionFactoryUtils.getSession(m_sessionFactory, false);
             Query qry = session.getNamedQuery(ALBUMS_BY_OWNER_NAME_QRY);
             qry.setString("screenName", screenName);
+            qry.setCacheable(true);
             return qry.list();
         } catch (HibernateException e) {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
@@ -180,6 +185,7 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
             Session session =
                 SessionFactoryUtils.getSession(m_sessionFactory, false);
             Query qry = session.getNamedQuery(ALBUM_OWNERS_QRY);
+            qry.setCacheable(true);
             return qry.list();
         } catch (HibernateException e) {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
@@ -191,6 +197,7 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
             Session session =
                 SessionFactoryUtils.getSession(m_sessionFactory, false);
             Query qry = session.getNamedQuery(ROLLS_BY_OWNER_NAME_QRY);
+            qry.setCacheable(true);
             qry.setString("screenName", screenName);
             return qry.list();
         } catch (HibernateException e) {
@@ -204,6 +211,7 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
                 SessionFactoryUtils.getSession(m_sessionFactory, false);
             Query qry = session.getNamedQuery(GROUP_OWNERS_QRY);
             qry.setString("groupType", groupType.toString());
+            qry.setCacheable(true);
             return qry.list();
         } catch (HibernateException e) {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
@@ -218,6 +226,7 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
             Query qry = session.getNamedQuery(GROUPS_BY_OWNER_NAME_QRY);
             qry.setString("screenName", screenName);
             qry.setString("groupType", groupType.toString());
+            qry.setCacheable(true);
             return qry.list();
         } catch (HibernateException e) {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
@@ -233,7 +242,11 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
             qry.setEntity("owner", owner);
             qry.setString("groupName", groupName);
             qry.setString("groupType", groupType.toString());
-            return (ImageGroup)qry.uniqueResult();
+            qry.setCacheable(true);
+            final ImageGroup group = (ImageGroup) qry.uniqueResult();
+            // join fetch stopped working after enabling caching?
+            group.getFrames().first();
+            return group;
         } catch (HibernateException e) {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
         }
@@ -245,6 +258,7 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
                 SessionFactoryUtils.getSession(m_sessionFactory, false);
             Query qry = session.getNamedQuery(GROUPS_BY_IMAGE_QRY);
             qry.setEntity("image", image);
+            qry.setCacheable(true);
             return qry.list();
         } catch (HibernateException e) {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
@@ -258,6 +272,7 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
                 SessionFactoryUtils.getSession(m_sessionFactory, false);
             Query qry = session.getNamedQuery(ROLL_FOR_IMAGE_QRY);
             qry.setEntity("image", image);
+            qry.setCacheable(true);
             List results = qry.list();
             if (results.size() < 1) {
                 return null;

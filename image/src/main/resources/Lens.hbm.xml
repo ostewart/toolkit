@@ -25,6 +25,9 @@
     name="com.trailmagic.image.Lens"
     table="lenses">
 
+      <cache usage="read-write"/>
+
+
     <id
       name="id"
       type="long"

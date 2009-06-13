@@ -140,26 +140,30 @@ public class SpringSecurityImageSecurityService implements ImageSecurityService 
         effectPermissions(acl, ownerSid, OWNER_PERMISSIONS, false);
     }
 
+    @Transactional(readOnly = true)
     public boolean isPublic(Object obj) {
         return isGranted(obj, PUBLIC_SID, BasePermission.READ);
     }
 
+    @Transactional(readOnly = true)
     public boolean isReadableByUser(Object target, User recipient) {
         return isGranted(target, recipient, BasePermission.READ);
     }
 
+    @Transactional(readOnly=true)
     public boolean isAvailableToUser(Object target, User recipient, Permission permission) {
         return isGranted(target, recipient, permission);
     }
 
+    @Transactional(readOnly = true)
     public boolean isReadableByRole(Object target, String role) {
         return isGranted(target, role, BasePermission.READ);
     }
-    
+
+    @Transactional(readOnly = true)
     public boolean isAvailableToRole(Object target, String role, Permission permission) {
         return isGranted(target, role, permission);
     }
-
 
     private boolean isGranted(Object target, User recipient, Permission permission) {
         return isGranted(target, sidForUser(recipient), permission);

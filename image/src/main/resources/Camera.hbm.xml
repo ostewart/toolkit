@@ -25,6 +25,9 @@
     name="com.trailmagic.image.Camera"
     table="cameras">
 
+      <cache usage="read-write"/>
+
+
     <id
       name="id"
       type="long"
