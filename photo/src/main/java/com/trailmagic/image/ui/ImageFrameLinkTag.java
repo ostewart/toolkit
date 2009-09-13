@@ -20,40 +20,46 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import javax.servlet.http.HttpServletRequest;
 
-import com.trailmagic.user.*;
 import com.trailmagic.image.*;
 
 public class ImageFrameLinkTag extends TagSupport {
-    private ImageFrame m_frame;
-    
+    private ImageFrame frame;
+    private String id;
 
-    private static final String USER_ATTR = "user";
 
     public int doStartTag() throws JspException {
-        StringBuffer html = new StringBuffer();
+        StringBuilder html = new StringBuilder();
 
         try {
-            html.append("<a href=\"");
+            html.append("<a ");
+            html.append(formatAttribute("href", imageFrameUrl()));
+            if (id != null) {
+                html.append(formatAttribute("id", id));                
+            }
+            html.append(">");
 
-            //XXX: yeek?
-            WebApplicationContext ctx =
-                WebApplicationContextUtils
-                .getRequiredWebApplicationContext(pageContext
-                                                  .getServletContext());
-            LinkHelper helper =
-                (LinkHelper)ctx.getBean("linkHelper");
-            // XXX: check for null bean
-            // XXX: evil cast?
-            helper.setRequest((HttpServletRequest)pageContext.getRequest());
-                //                new LinkHelper((HttpServletRequest)pageContext.getRequest());
-
-            html.append(helper.getImageGroupFrameUrl(m_frame));
-            html.append("\">");
             pageContext.getOut().write(html.toString());
             return EVAL_BODY_INCLUDE;
         } catch (IOException e) {
             throw new JspException(e);
         }
+    }
+
+    private String imageFrameUrl() {
+        WebApplicationContext ctx =
+            WebApplicationContextUtils
+            .getRequiredWebApplicationContext(pageContext
+                                              .getServletContext());
+        LinkHelper helper =
+            (LinkHelper)ctx.getBean("linkHelper");
+        helper.setRequest((HttpServletRequest)pageContext.getRequest());
+
+        return helper.getImageGroupFrameUrl(frame);
+    }
+
+    private String formatAttribute(String name, String value) {
+        return name + "=\"" + value + "\" ";
+
     }
 
     public int doEndTag() throws JspException {
@@ -66,10 +72,18 @@ public class ImageFrameLinkTag extends TagSupport {
     }
 
     public void setFrame(ImageFrame frame) {
-        m_frame = frame;
+        this.frame = frame;
     }
 
     public ImageFrame getFrame() {
-        return m_frame;
+        return frame;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

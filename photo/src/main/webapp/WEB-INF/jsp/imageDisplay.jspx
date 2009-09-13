@@ -13,23 +13,6 @@
  GNU General Public License for more details.
 -->
 
-<!--
-View to display a single Image.
-
-Model Requirements:
-user: currently logged in user
-image: Image to display
-
-Optional Attributes:
-frame: current ImageFrame
-nextFrame: ImageFrame
-prevFrame: ImageFrame
-nextImage: Image
-prevImage: Image
-groupsContainingImage: ImageGroups that contain frame.image
-thisRequestUrl: the full client-requested URL for this request
-
--->
 <jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0">
     <jsp:output 
         doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"
@@ -95,20 +78,6 @@ thisRequestUrl: the full client-requested URL for this request
       </div>
     </div>
     
-<!--    <div class="navSection">-->
-<!--      <span class="prevNav">-->
-<!--        <c:if test="${!empty prev}">-->
-<!--          <tm:imageFrameLink frame="${prev}">&amp;laquo;-->
-<!--            Previous</tm:imageFrameLink>-->
-<!--        </c:if>-->
-<!--      </span>-->
-<!--      <span class="nextNav">-->
-<!--        <c:if test="${!empty next}">-->
-<!--          <tm:imageFrameLink frame="${next}">Next &amp;raquo;</tm:imageFrameLink>-->
-<!--        </c:if>-->
-<!--      </span>-->
-<!--    </div>-->
-    
     <div id="header">
         <div id="sitename">
           <h1>trailmagic.com</h1>
@@ -118,31 +87,11 @@ thisRequestUrl: the full client-requested URL for this request
             <span class="displayName"><tm:imageGroupLink imageGroup="${frame.imageGroup}">${fn:escapeXml(frame.imageGroup.displayName)}</tm:imageGroupLink></span>
             <span class="imageCount">${fn:length(frame.imageGroup.frames)}
             images in ${frame.imageGroup.type.displayString}</span>
-<!--
-            <span class="owner">
-              Owned by:
-              <tm:imageGroupLink owner="${owner}"
-                                 groupType="${imageGroup.type}">
-                ${fn:escapeXml(owner.screenName)}
-              </tm:imageGroupLink>
-            </span>
--->
+
 
           </span>
         </div>
-<!--
-      <h1 class="thingDescription">
-        <span class="bigThing">
-          <tm:imageGroupLink imageGroup="${imageGroup}">
-            <c:out value="${fn:escapeXml(imageGroup.displayName)}"/>
-          </tm:imageGroupLink>
-        </span>
-        <span class="subThing">
-          <c:if test="${!empty imageGroup}"> : </c:if>
-          <c:out value="${fn:escapeXml(image.displayName)}"/>
-        </span>
-      </h1>
--->  
+
     </div>
     
     
@@ -237,16 +186,42 @@ thisRequestUrl: the full client-requested URL for this request
       <div class="prevNav">
 
       <c:if test="${!empty prev}">
-        <tm:imageFrameLink frame="${prev}"><img title="Previous Image" alt="Previous Image" src="${pageContext.request.contextPath}/left-arrow.png"/></tm:imageFrameLink>
+        <tm:imageFrameLink id="prevLink" frame="${prev}"><img title="Previous Image" alt="Previous Image" src="${pageContext.request.contextPath}/left-arrow.png"/></tm:imageFrameLink>
         </c:if>
       </div>
       <div class="nextNav">
 
       <c:if test="${!empty next}">
-        <tm:imageFrameLink frame="${next}"><img title="Next Image" alt="Next Image" src="${pageContext.request.contextPath}/right-arrow.png"/></tm:imageFrameLink>
+        <tm:imageFrameLink id="nextLink" frame="${next}"><img title="Next Image" alt="Next Image" src="${pageContext.request.contextPath}/right-arrow.png"/></tm:imageFrameLink>
         </c:if>
      </div>
     </div>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"><jsp:text>
+    </jsp:text></script>
+    <script type="text/javascript">
+        <![CDATA[
+        // <![CDATA[
+        //	<!--
+        $(document).ready(function() {
+            $(window).keydown(function(e) {
+                if (e.which == 37) {
+                    var prevUrl = $("#prevLink").attr("href");
+                    if (!prevUrl == "") {
+                        window.location = prevUrl;
+                    }
+                }
+                if (e.which == 39) {
+                    var nextUrl = $("#nextLink").attr("href");
+                    if (!nextUrl == "") {
+                        window.location = nextUrl;
+                    }
+                }
+            });
+        });
+        //-->
+        ]]>
+        // ]]&gt;
+    </script>
     <jsp:include page="google-analytics.jspx"/>
   </body>
 </html>
