@@ -9,7 +9,7 @@
   <packaging>pom</packaging>
 
   <scm>
-    <developerConnection>scm:svn:svn+ssh://trailmagic.com/usr/local/svn/toolkit/trunk</developerConnection>
+    <developerConnection>scm:git:git://github.com/ostewart/toolkit.git</developerConnection>
   </scm>
 
   <build>
@@ -27,9 +27,6 @@
 
       <plugin>
         <artifactId>maven-release-plugin</artifactId>
-        <configuration>
-          <tagBase>svn+ssh://trailmagic.com/usr/local/svn/toolkit/tags</tagBase>
-        </configuration>
       </plugin>
 
         <plugin>
