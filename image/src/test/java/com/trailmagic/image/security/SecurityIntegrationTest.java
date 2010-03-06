@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:applicationContext-global.xml",
+                                   "classpath:com/trailmagic/image/applicationContext-test.xml",
                                    "classpath:applicationContext-user.xml",
                                    "classpath:applicationContext-imagestore.xml",
                                    "classpath:applicationContext-imagestore-authorization.xml"})

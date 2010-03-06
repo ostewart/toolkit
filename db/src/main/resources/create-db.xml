@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+    <changeSet author="oliver (generated)" id="1267334179256-1">
+        <createTable tableName="acl_class">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column defaultValue="" name="class" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="oliver (generated)" id="1267334179256-2">
+        <createTable tableName="acl_entry">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="acl_object_identity" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ace_order" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sid" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="mask" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="granting" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="audit_success" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="audit_failure" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="oliver (generated)" id="1267334179256-3">
+        <createTable tableName="acl_object_identity">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="object_id_class" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="object_id_identity" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="parent_object" type="BIGINT"/>
+            <column name="owner_sid" type="BIGINT"/>
+            <column name="entries_inheriting" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="oliver (generated)" id="1267334179256-6">
+        <createTable tableName="acl_sid">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="principal" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="" name="sid" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="oliver (generated)" id="1267334179256-7">
+        <createTable tableName="cameras">
+            <column autoIncrement="true" name="camera_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column defaultValue="" name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="" name="manufacturer" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="" name="format" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="oliver (generated)" id="1267334179256-8">
+        <createTable tableName="groups">
+            <column autoIncrement="true" name="group_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column defaultValue="" name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="owner_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="oliver (generated)" id="1267334179256-9">
+        <createTable tableName="groups_users">
+            <column defaultValueNumeric="0" name="group_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="0" name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="oliver (generated)" id="1267334179256-10">
+        <createTable tableName="image_cds">
+            <column autoIncrement="true" name="cd_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column defaultValueNumeric="0" name="number" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="clob">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="oliver (generated)" id="1267334179256-11">
+        <createTable tableName="image_frames">
+            <column autoIncrement="true" name="frame_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column defaultValueNumeric="0" name="group_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="caption" type="clob"/>
+            <column defaultValueNumeric="0" name="image_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="0" name="pos" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="oliver (generated)" id="1267334179256-12">
+        <createTable tableName="image_groups">
+            <column autoIncrement="true" name="group_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="supergroup_id" type="BIGINT"/>
+            <column defaultValue="" name="name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="display_name" type="varchar(2048)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="" name="type" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="clob"/>
+            <column defaultValueNumeric="0" name="owner_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="upload_date" type="DATETIME"/>
+            <column name="preview_image" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="oliver (generated)" id="1267334179256-13">
+        <createTable tableName="image_manifestations">
+            <column autoIncrement="true" name="manifestation_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column defaultValueNumeric="0" name="image_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="0" name="height" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="0" name="width" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="format" type="varchar(1024)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueBoolean="false" name="originalp" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="varchar(2048)"/>
+            <column name="image_data" type="LONGBLOB">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="oliver (generated)" id="1267334179256-14">
+        <createTable tableName="images">
+            <column autoIncrement="true" name="image_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column defaultValue="" name="name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="display_name" type="varchar(2048)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="caption" type="clob"/>
+            <column name="copyright" type="varchar(2048)"/>
+            <column name="creator" type="varchar(2048)"/>
+            <column name="number" type="INT"/>
+            <column defaultValueNumeric="0" name="owner_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cd_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="oliver (generated)" id="1267334179256-15">
+        <createTable tableName="lenses">
+            <column autoIncrement="true" name="lens_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column defaultValue="" name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="" name="manufacturer" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="0" name="focal_length" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="0" name="min_aperature" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="0" name="max_aperature" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="oliver (generated)" id="1267334179256-16">
+        <createTable tableName="photos">
+            <column defaultValueNumeric="0" name="image_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="notes" type="clob"/>
+            <column name="capture_date" type="DATE"/>
+            <column name="lens_id" type="BIGINT"/>
+            <column name="camera_id" type="BIGINT"/>
+            <column name="image_group_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="oliver (generated)" id="1267334179256-17">
+        <createTable tableName="users">
+            <column autoIncrement="true" name="user_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column defaultValue="" name="screen_name" type="VARCHAR(32)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="primary_email" type="varchar(2048)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="first_name" type="varchar(256)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_name" type="varchar(256)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="" name="password" type="VARCHAR(32)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="oliver (generated)" id="1267334179256-18">
+        <createIndex indexName="class" tableName="acl_class" unique="true">
+            <column name="class"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="oliver (generated)" id="1267334179256-19">
+        <createIndex indexName="acl_object_identity" tableName="acl_entry" unique="true">
+            <column name="acl_object_identity"/>
+            <column name="ace_order"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="oliver (generated)" id="1267334179256-20">
+        <createIndex indexName="object_id_class" tableName="acl_object_identity" unique="true">
+            <column name="object_id_class"/>
+            <column name="object_id_identity"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="oliver (generated)" id="1267334179256-24">
+        <createIndex indexName="sid" tableName="acl_sid" unique="true">
+            <column name="sid"/>
+            <column name="principal"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="oliver (generated)" id="1267334179256-25">
+        <createIndex indexName="FKB63DD9D463219E27" tableName="groups" unique="false">
+            <column name="owner_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="oliver (generated)" id="1267334179256-26">
+        <createIndex indexName="name" tableName="groups" unique="true">
+            <column name="name"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="oliver (generated)" id="1267334179256-27">
+        <createIndex indexName="FKF4231BDD1E2E76DB" tableName="groups_users" unique="false">
+            <column name="group_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="oliver (generated)" id="1267334179256-28">
+        <createIndex indexName="FKF4231BDDE89E12C3" tableName="groups_users" unique="false">
+            <column name="user_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="oliver (generated)" id="1267334179256-29">
+        <createIndex indexName="number" tableName="image_cds" unique="true">
+            <column name="number"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="oliver (generated)" id="1267334179256-30">
+        <createIndex indexName="FK1662AC0A408A9C0C" tableName="image_frames" unique="false">
+            <column name="group_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="oliver (generated)" id="1267334179256-31">
+        <createIndex indexName="FK1662AC0A8E5DEC6D" tableName="image_frames" unique="false">
+            <column name="image_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="oliver (generated)" id="1267334179256-32">
+        <createIndex indexName="pos" tableName="image_frames" unique="true">
+            <column name="pos"/>
+            <column name="group_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="oliver (generated)" id="1267334179256-33">
+        <createIndex indexName="FK181E013863219E27" tableName="image_groups" unique="false">
+            <column name="owner_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="oliver (generated)" id="1267334179256-34">
+        <createIndex indexName="FK181E013875186087" tableName="image_groups" unique="false">
+            <column name="supergroup_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="oliver (generated)" id="1267334179256-35">
+        <createIndex indexName="FK181E0138EB226012" tableName="image_groups" unique="false">
+            <column name="preview_image"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="oliver (generated)" id="1267334179256-36">
+        <createIndex indexName="owner_id" tableName="image_groups" unique="true">
+            <column name="owner_id"/>
+            <column name="name"/>
+            <column name="type"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="oliver (generated)" id="1267334179256-37">
+        <createIndex indexName="FKE7923671CCC3867F" tableName="image_manifestations" unique="false">
+            <column name="image_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="oliver (generated)" id="1267334179256-38">
+        <createIndex indexName="FKB95A82785484C2DB" tableName="images" unique="false">
+            <column name="owner_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="oliver (generated)" id="1267334179256-39">
+        <createIndex indexName="FKB95A82785A1FDB9" tableName="images" unique="false">
+            <column name="cd_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="oliver (generated)" id="1267334179256-40">
+        <createIndex indexName="FKC50C88813BE47FC" tableName="photos" unique="false">
+            <column name="lens_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="oliver (generated)" id="1267334179256-41">
+        <createIndex indexName="FKC50C888188A2553F" tableName="photos" unique="false">
+            <column name="image_group_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="oliver (generated)" id="1267334179256-42">
+        <createIndex indexName="FKC50C8881EB9DA075" tableName="photos" unique="false">
+            <column name="camera_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="oliver (generated)" id="1267334179256-43">
+        <createIndex indexName="screen_name" tableName="users" unique="true">
+            <column name="screen_name"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="oliver (generated)" id="1267334179256-45">
+        <addForeignKeyConstraint baseColumnNames="group_id" baseTableName="groups_users" constraintName="FKF4231BDD586A5191" deferrable="false" initiallyDeferred="false" referencedColumnNames="group_id" referencedTableName="groups"/>
+    </changeSet>
+    <changeSet author="oliver (generated)" id="1267334179256-46">
+        <addForeignKeyConstraint baseColumnNames="cd_id" baseTableName="images" constraintName="FKB95A8278CA3AA888" deferrable="false" initiallyDeferred="false" referencedColumnNames="cd_id" referencedTableName="image_cds"/>
+    </changeSet>
+    <changeSet author="oliver (generated)" id="1267334179256-47">
+        <addForeignKeyConstraint baseColumnNames="owner_id" baseTableName="images" constraintName="FKB95A827863219E27" deferrable="false" initiallyDeferred="false" referencedColumnNames="user_id" referencedTableName="users"/>
+    </changeSet>
+    <changeSet author="oliver (generated)" id="1267334179256-48">
+        <addForeignKeyConstraint baseColumnNames="camera_id" baseTableName="photos" constraintName="FKC50C8881EB9DA075" deferrable="false" initiallyDeferred="false" referencedColumnNames="camera_id" referencedTableName="cameras"/>
+    </changeSet>
+    <changeSet author="oliver (generated)" id="1267334179256-49">
+        <addForeignKeyConstraint baseColumnNames="image_group_id" baseTableName="photos" constraintName="FKC50C8881AAFE7A70" deferrable="false" initiallyDeferred="false" referencedColumnNames="group_id" referencedTableName="image_groups"/>
+    </changeSet>
+    <changeSet author="oliver (generated)" id="1267334179256-50">
+        <addForeignKeyConstraint baseColumnNames="preview_image" baseTableName="image_groups" constraintName="FKC50C8881CCC3867F" deferrable="false" initiallyDeferred="false" referencedColumnNames="image_id" referencedTableName="images"/>
+    </changeSet>
+    <changeSet author="oliver (generated)" id="1267334179256-51">
+        <addForeignKeyConstraint baseColumnNames="lens_id" baseTableName="photos" constraintName="FKC50C8881C7EDCE07" deferrable="false" initiallyDeferred="false" referencedColumnNames="lens_id" referencedTableName="lenses"/>
+    </changeSet>
+</databaseChangeLog>

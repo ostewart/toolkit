@@ -1,19 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	     xmlns:tx="http://www.springframework.org/schema/tx"
-	     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd">
 
-  <!-- override the aspect based security for the tests -->
-  <bean id="imageAspectSecurity"
-    class="org.springframework.security.intercept.method.aspectj.AspectJAnnotationSecurityInterceptor">
-    <property name="validateConfigAttributes" value="true"/>
-    <property name="authenticationManager" ref="authenticationManager"/>
-    <property name="accessDecisionManager" ref="imageAccessDecisionManager"/>
-    <property name="afterInvocationManager" ref="afterInvocationManager"/>
-    <property name="objectDefinitionSource" value=""/>
-  </bean>
+    <!-- override the aspect based security for the tests -->
+    <bean id="imageAspectSecurity"
+          class="org.springframework.security.intercept.method.aspectj.AspectJAnnotationSecurityInterceptor">
+        <property name="validateConfigAttributes" value="true"/>
+        <property name="authenticationManager" ref="authenticationManager"/>
+        <property name="accessDecisionManager" ref="imageAccessDecisionManager"/>
+        <property name="afterInvocationManager" ref="afterInvocationManager"/>
+        <property name="objectDefinitionSource" value=""/>
+    </bean>
 
+
+    <!--<bean id="h2Database"-->
+          <!--class="org.h2.tools.Server"-->
+          <!--factory-method="createTcpServer"-->
+          <!--init-method="start"-->
+          <!--destroy-method="stop">-->
+        <!--<constructor-arg value="-tcp,-tcpAllowOthers,true,-tcpPort,8043"/>-->
+    <!--</bean>-->
+
+    <!--<bean id="initDatabase" class="liquibase.spring.SpringLiquibase" >-->
+        <!--<property name="dataSource" ref="dataSource"/>-->
+        <!--<property name="changeLog" value="classpath:db-master.xml"/>-->
+    <!--</bean>-->
 </beans>
