@@ -13,14 +13,15 @@
  */
 package com.trailmagic.image.security;
 
+import org.slf4j.LoggerFactory;
 import org.springframework.security.vote.AccessDecisionVoter;
 import org.springframework.security.ConfigAttribute;
 import org.springframework.security.ConfigAttributeDefinition;
 import org.springframework.security.Authentication;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 
 public class TestVoter implements AccessDecisionVoter {
-    private static Logger s_log = Logger.getLogger(TestVoter.class);
+    private static Logger s_log = LoggerFactory.getLogger(TestVoter.class);
 
     public boolean supports(Class clazz) {
         s_log.debug("Supports called with: " + clazz);

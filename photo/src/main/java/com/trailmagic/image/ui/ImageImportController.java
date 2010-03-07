@@ -14,34 +14,37 @@
 package com.trailmagic.image.ui;
 
 import com.trailmagic.image.util.ImagesParser;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.util.Arrays;
+
 public class ImageImportController extends SimpleFormController {
     private ImagesParser imagesParser;
 
     private static Logger s_logger =
-        Logger.getLogger(ImageImportController.class);
+            LoggerFactory.getLogger(ImageImportController.class);
 
     public ImageImportController(ImagesParser imagesParser) {
         super();
         this.imagesParser = imagesParser;
     }
-    
+
     @Override
     protected Object formBackingObject(HttpServletRequest request)
             throws Exception {
         ImageImportBean command = new ImageImportBean();
-        
+
         command.setBaseDir("/photo/import/");
         return command;
     }
@@ -50,22 +53,22 @@ public class ImageImportController extends SimpleFormController {
                                     HttpServletResponse res,
                                     Object command,
                                     BindException errors)
-        throws Exception {
+            throws Exception {
         try {
             s_logger.debug("onSubmit called.");
-            ImageImportBean bean = (ImageImportBean)command;
+            ImageImportBean bean = (ImageImportBean) command;
 
-            if ( bean == null ) {
+            if (bean == null) {
                 throw new Exception("null command in ImageImportController");
             }
-            
+
             File baseDir = new File(bean.getBaseDir());
             if (!baseDir.exists() || !baseDir.isDirectory()) {
                 errors.rejectValue("baseDir", "baseDir.noExistOrNotDirectory");
             }
 
             byte[] data = bean.getImagesData();
-            s_logger.debug("imagesData: " + data);
+            s_logger.debug("imagesData: " + Arrays.toString(data));
             ByteArrayInputStream bis = new ByteArrayInputStream(data);
 
             imagesParser.parse(bis, baseDir);
@@ -73,14 +76,14 @@ public class ImageImportController extends SimpleFormController {
             s_logger.warn("Exception in onSubmit", e);
             throw e;
         }
-        
+
         return super.onSubmit(req, res, command, errors);
     }
 
 
     protected void initBinder(HttpServletRequest request,
                               ServletRequestDataBinder binder)
-        throws ServletException {
+            throws ServletException {
 
         // to actually be able to convert Multipart instance to byte[]
         // we have to register a custom editor (in this case the
@@ -89,6 +92,6 @@ public class ImageImportController extends SimpleFormController {
                                     new ByteArrayMultipartFileEditor());
         // now Spring knows how to handle multipart object and convert them
 
-        binder.setRequiredFields(new String[] {"imagesData"});
+        binder.setRequiredFields(new String[]{"imagesData"});
     }
 }

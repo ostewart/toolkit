@@ -17,14 +17,15 @@ import com.trailmagic.image.Image;
 import com.trailmagic.image.ImageGroupRepository;
 import com.trailmagic.user.Owned;
 import com.trailmagic.user.security.OwnerAclProvider;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Creates an ACL with full permissions for the User owner of an Image.
  **/
 public class ImageOwnerAclProvider extends OwnerAclProvider {
     private ImageGroupRepository imageGroupRepository;
-    private static Logger s_log = Logger.getLogger(ImageOwnerAclProvider.class);
+    private static Logger s_log = LoggerFactory.getLogger(ImageOwnerAclProvider.class);
 
     public void setImageGroupRepository(ImageGroupRepository factory) {
         imageGroupRepository = factory;

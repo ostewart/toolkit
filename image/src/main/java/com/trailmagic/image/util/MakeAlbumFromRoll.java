@@ -14,7 +14,8 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -24,17 +25,15 @@ import org.springframework.orm.hibernate3.SessionFactoryUtils;
  * Run like: ant run -Drun.class=com.trailmagic.image.util.MakeAlbumFromRoll -Drun.args="oliver descrie"
  **/
 public class MakeAlbumFromRoll implements ApplicationContextAware {
-    private Session m_session;
     private SessionFactory m_sessionFactory;
     private Transaction m_transaction;
     private ApplicationContext m_appContext;
 
     private static final String GROUP_FACTORY_BEAN = "imageGroupRepository";
     private static final String USER_FACTORY_BEAN = "userFactory";
-    private static final String SESS_FACTORY_BEAN = "sessionFactory";
     private static final String MAFR_BEAN = "makeAlbumFromRoll";
 
-    private static Logger s_logger = Logger.getLogger(MakeAlbumFromRoll.class);
+    private static Logger s_logger = LoggerFactory.getLogger(MakeAlbumFromRoll.class);
 
     public SessionFactory getSessionFactory() {
         return m_sessionFactory;
@@ -49,7 +48,7 @@ public class MakeAlbumFromRoll implements ApplicationContextAware {
     }
 
     public void doStuff(String userName, String rollName, String albumName) {
-        m_session = SessionFactoryUtils.getSession(m_sessionFactory, false);
+        Session m_session = SessionFactoryUtils.getSession(m_sessionFactory, false);
         try {
             m_transaction = m_session.beginTransaction();
 
@@ -75,7 +74,6 @@ public class MakeAlbumFromRoll implements ApplicationContextAware {
 
             SortedSet frames = roll.getFrames();
             Iterator iter = frames.iterator();
-            int frameNum;
             ImageFrame oldFrame, newFrame;
             while (iter.hasNext()) {
                 oldFrame = (ImageFrame)iter.next();
@@ -108,7 +106,7 @@ public class MakeAlbumFromRoll implements ApplicationContextAware {
                            + "<album-name>");
     }
 
-    public static final void main(String[] args) {
+    public static void main(String[] args) {
         if ( args.length != 3 ) {
             printUsage();
             System.exit(1);

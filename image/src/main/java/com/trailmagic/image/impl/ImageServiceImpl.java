@@ -24,7 +24,8 @@ import java.util.Date;
 import java.io.InputStream;
 import java.io.IOException;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +42,7 @@ public class ImageServiceImpl implements ImageService {
     private SecurityUtil securityUtil;
     
     private static Logger log =
-        Logger.getLogger(ImageServiceImpl.class);
+        LoggerFactory.getLogger(ImageServiceImpl.class);
 
     @SuppressWarnings({"SpringJavaAutowiringInspection"})
     @Autowired

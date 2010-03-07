@@ -12,7 +12,8 @@ import com.trailmagic.web.util.MalformedUrlException;
 import com.trailmagic.web.util.WebRequestTools;
 import java.util.SortedSet;
 import javax.servlet.http.HttpServletRequest;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.ModelAndView;
@@ -27,7 +28,7 @@ public class ImageGroupDisplayController {
     
     private static final String IMG_GROUP_VIEW = "imageGroup";
     private static Logger log =
-        Logger.getLogger(ImageGroupDisplayController.class);
+        LoggerFactory.getLogger(ImageGroupDisplayController.class);
 
     @Autowired
     public ImageGroupDisplayController(ImageGroupRepository imageGroupRepository,

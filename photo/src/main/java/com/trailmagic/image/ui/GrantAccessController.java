@@ -14,20 +14,22 @@
 package com.trailmagic.image.ui;
 
 import com.trailmagic.image.Image;
-import com.trailmagic.image.ImageRepository;
 import com.trailmagic.image.ImageGroup;
 import com.trailmagic.image.ImageGroupRepository;
+import com.trailmagic.image.ImageRepository;
 import com.trailmagic.image.security.ImageSecurityService;
 import com.trailmagic.user.User;
 import com.trailmagic.user.UserRepository;
-import org.springframework.web.servlet.mvc.SimpleFormController;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.SimpleFormController;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.springframework.validation.BindException;
-import java.util.List;
 import java.util.HashMap;
+import java.util.List;
 
 public class GrantAccessController extends SimpleFormController {
     private ImageSecurityService imageSecurityService;
@@ -36,7 +38,7 @@ public class GrantAccessController extends SimpleFormController {
     private UserRepository userRepository;
 
     private static Logger s_log =
-        Logger.getLogger(GrantAccessController.class);
+            LoggerFactory.getLogger(GrantAccessController.class);
 
     private static final String GRANT_ACTION = "grant";
     private static final String MAKE_PUBLIC_ACTION = "makePublic";
@@ -63,7 +65,7 @@ public class GrantAccessController extends SimpleFormController {
         String groupId = req.getParameter("groupId");
         ImageGroup group = imageGroupRepository.getByIdWithFrames(Long.parseLong(groupId));
 
-        HashMap<String,Object> model = new HashMap<String,Object>();
+        HashMap<String, Object> model = new HashMap<String, Object>();
         model.put("imageGroupIsPublic", imageSecurityService.isPublic(group));
         model.put("imageGroup", group);
         model.put("groupType", group.getType());

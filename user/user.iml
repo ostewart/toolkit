@@ -32,22 +32,29 @@
     <orderEntry type="library" exported="" name="Maven: asm:asm-attrs:1.5.3" level="project" />
     <orderEntry type="library" exported="" name="Maven: dom4j:dom4j:1.6.1" level="project" />
     <orderEntry type="library" exported="" name="Maven: antlr:antlr:2.7.6" level="project" />
-    <orderEntry type="library" exported="" name="Maven: cglib:cglib:2.1_3" level="project" />
+    <orderEntry type="library" exported="" scope="RUNTIME" name="Maven: cglib:cglib:2.1_3" level="project" />
     <orderEntry type="library" exported="" name="Maven: asm:asm:1.5.3" level="project" />
-    <orderEntry type="library" exported="" name="Maven: org.springframework:spring:2.5.6" level="project" />
-    <orderEntry type="library" exported="" name="Maven: org.springframework:spring-test:2.5.6" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.4" level="project" />
+    <orderEntry type="library" exported="" name="Maven: org.springframework:spring-orm:3.0.1.RELEASE" level="project" />
+    <orderEntry type="library" exported="" name="Maven: org.springframework:spring-beans:3.0.1.RELEASE" level="project" />
+    <orderEntry type="library" exported="" name="Maven: org.springframework:spring-core:3.0.1.RELEASE" level="project" />
+    <orderEntry type="library" exported="" name="Maven: org.springframework:spring-asm:3.0.1.RELEASE" level="project" />
+    <orderEntry type="library" exported="" name="Maven: org.springframework:spring-jdbc:3.0.1.RELEASE" level="project" />
+    <orderEntry type="library" exported="" name="Maven: org.springframework:spring-tx:3.0.1.RELEASE" level="project" />
+    <orderEntry type="library" exported="" name="Maven: aopalliance:aopalliance:1.0" level="project" />
+    <orderEntry type="library" exported="" name="Maven: org.springframework:spring-aop:3.0.1.RELEASE" level="project" />
+    <orderEntry type="library" exported="" name="Maven: org.springframework:spring-context:3.0.1.RELEASE" level="project" />
+    <orderEntry type="library" exported="" name="Maven: org.springframework:spring-expression:3.0.1.RELEASE" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.springframework:spring-test:3.0.1.RELEASE" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: javax.servlet:servlet-api:2.5" level="project" />
-    <orderEntry type="library" exported="" name="Maven: log4j:log4j:1.2.9" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.7" level="project" />
+    <orderEntry type="library" exported="" scope="RUNTIME" name="Maven: org.slf4j:jcl-over-slf4j:1.5.8" level="project" />
+    <orderEntry type="library" exported="" name="Maven: org.slf4j:slf4j-api:1.5.8" level="project" />
+    <orderEntry type="library" exported="" name="Maven: ch.qos.logback:logback-classic:0.9.17" level="project" />
+    <orderEntry type="library" exported="" name="Maven: ch.qos.logback:logback-core:0.9.17" level="project" />
     <orderEntry type="library" exported="" name="Maven: org.aspectj:aspectjrt:1.6.2" level="project" />
     <orderEntry type="library" exported="" name="Maven: org.aspectj:aspectjweaver:1.6.2" level="project" />
+    <orderEntry type="library" exported="" name="Maven: org.springframework.security:spring-security-core-tiger:2.0.4" level="project" />
     <orderEntry type="library" exported="" name="Maven: org.springframework.security:spring-security-core:2.0.4" level="project" />
-    <orderEntry type="library" exported="" name="Maven: org.springframework:spring-core:2.0.8" level="project" />
-    <orderEntry type="library" exported="" name="Maven: org.springframework:spring-context:2.0.8" level="project" />
-    <orderEntry type="library" exported="" name="Maven: aopalliance:aopalliance:1.0" level="project" />
-    <orderEntry type="library" exported="" name="Maven: org.springframework:spring-beans:2.0.8" level="project" />
-    <orderEntry type="library" exported="" name="Maven: org.springframework:spring-aop:2.0.8" level="project" />
-    <orderEntry type="library" exported="" scope="RUNTIME" name="Maven: org.springframework:spring-support:2.0.8" level="project" />
   </component>
 </module>
 

@@ -20,7 +20,8 @@ import com.trailmagic.image.ImageGroupRepository;
 import com.trailmagic.image.ImageManifestation;
 import com.trailmagic.user.Owned;
 import com.trailmagic.user.User;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.AccessDeniedException;
 import org.springframework.security.acls.AccessControlEntry;
 import org.springframework.security.acls.Acl;
@@ -47,7 +48,7 @@ public class SpringSecurityImageSecurityService implements ImageSecurityService 
     private MutableAclService aclService;
     private ImageGroupRepository imageGroupRepository;
     private ObjectIdentityRetrievalStrategy identityRetrievalStrategy;
-    private static Logger log = Logger.getLogger(SpringSecurityImageSecurityService.class);
+    private static Logger log = LoggerFactory.getLogger(SpringSecurityImageSecurityService.class);
     private static final Set<Permission> OWNER_PERMISSIONS = new HashSet<Permission>();
     private static final String ROLE_EVERYONE = "ROLE_EVERYONE";
     private static final GrantedAuthoritySid PUBLIC_SID = new GrantedAuthoritySid(ROLE_EVERYONE);

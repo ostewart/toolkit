@@ -27,8 +27,9 @@ import com.trailmagic.user.GroupFactory;
 import com.trailmagic.user.User;
 import com.trailmagic.user.UserRepository;
 import com.trailmagic.user.UserLoginModule;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.hibernate.Session;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
@@ -58,7 +59,7 @@ public class AddPermissions {
     private GroupFactory groupFactory;
     private HibernateTemplate hibernateTemplate;
 
-    private static Logger s_log = Logger.getLogger(AddPermissions.class);
+    private static Logger s_log = LoggerFactory.getLogger(AddPermissions.class);
 
     private static final String EVERYONE_GROUP_NAME = "everyone";
 

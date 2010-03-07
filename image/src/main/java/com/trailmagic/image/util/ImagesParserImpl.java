@@ -34,9 +34,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.transaction.annotation.Propagation;
@@ -54,7 +55,7 @@ public class ImagesParserImpl extends DefaultHandler implements ImagesParser {
     /** ISO 8601 date format **/
     public static final String DATE_PATTERN = "YYYY-MM-DD";
 
-    private static Logger s_logger = Logger.getLogger(ImagesParserImpl.class);
+    private static Logger s_logger = LoggerFactory.getLogger(ImagesParserImpl.class);
 
     private Image m_image;
     private ImageGroup m_roll;

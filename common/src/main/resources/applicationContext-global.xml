@@ -27,7 +27,6 @@
  GNU General Public License for more details.
 -->
 
-  <!-- bring in jdbc settings from external jdbc.properties -->
   <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
     <property name="locations" value="classpath:jdbc.properties"/>
   </bean>
@@ -49,7 +48,15 @@
     class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
     <property name="dataSource"><ref local="dataSource"/></property>
     <property name="hibernateProperties">
-    	<util:properties location="classpath:com/trailmagic/common/hibernate.properties"/>
+        <props>
+            <prop key="hibernate.show_sql">false</prop>
+            <prop key="hibernate.hbm2ddl.auto">update</prop>
+            <prop key="hibernate.dialect">${hibernate.dialect}</prop>
+            <prop key="hibernate.jdbc.use_streams_for_binary">true</prop>
+            <prop key="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</prop>
+            <prop key="hibernate.cache.use_query_cache">true</prop>
+
+        </props>
     </property>
     <property name="mappingResources">
     	<util:list>

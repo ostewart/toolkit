@@ -16,14 +16,15 @@ package com.trailmagic.image.security;
 import com.trailmagic.image.ImageGroup;
 import com.trailmagic.user.Owned;
 import com.trailmagic.user.security.OwnerAclProvider;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Creates an ACL with full permissions for the User owner of an Image.
  **/
 public class ImageGroupOwnerAclProvider extends OwnerAclProvider {
     private static Logger s_log =
-        Logger.getLogger(ImageGroupOwnerAclProvider.class);
+        LoggerFactory.getLogger(ImageGroupOwnerAclProvider.class);
 
     /**
      * Determines whether or not a domain object instance is supported by

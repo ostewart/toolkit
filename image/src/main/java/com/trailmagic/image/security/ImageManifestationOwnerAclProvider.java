@@ -17,14 +17,15 @@ import com.trailmagic.image.Image;
 import com.trailmagic.image.ImageManifestation;
 import com.trailmagic.user.Owned;
 import com.trailmagic.user.security.OwnerAclProvider;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Creates an ACL with full permissions for the User owner of an Image.
  **/
 public class ImageManifestationOwnerAclProvider extends OwnerAclProvider {
     private static Logger s_log =
-        Logger.getLogger(ImageManifestationOwnerAclProvider.class);
+        LoggerFactory.getLogger(ImageManifestationOwnerAclProvider.class);
     /**
      * Determines whether or not a domain object instance is supported by
      * this provider

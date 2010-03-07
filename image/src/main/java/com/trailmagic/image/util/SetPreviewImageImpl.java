@@ -4,7 +4,8 @@ import com.trailmagic.image.Image;
 import com.trailmagic.image.ImageGroup;
 import com.trailmagic.image.ImageGroupRepository;
 import java.util.List;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -12,7 +13,7 @@ public class SetPreviewImageImpl implements SetPreviewImage {
     private ImageGroupRepository imageGroupRepository;
 
     private static Logger s_log =
-        Logger.getLogger(SetPreviewImageImpl.class);
+        LoggerFactory.getLogger(SetPreviewImageImpl.class);
 
     @Required
     public void setImageGroupRepository(ImageGroupRepository imageGroupRepository) {
@@ -36,7 +37,7 @@ public class SetPreviewImageImpl implements SetPreviewImage {
         
     }
     
-    public static final void main(String[] args) {
+    public static void main(String[] args) {
         ClassPathXmlApplicationContext appContext =
             new ClassPathXmlApplicationContext(new String[]
                 {"applicationContext-global.xml",

@@ -16,8 +16,10 @@ package com.trailmagic.user;
 import java.security.Principal;
 import java.util.HashSet;
 import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.providers.jaas.AuthorityGranter;
-import org.apache.log4j.Logger;
 
 /**
  * Grants authorities based on the User's roles and the roles of the groups
@@ -25,7 +27,7 @@ import org.apache.log4j.Logger;
  **/
 public class UserGroupAuthorityGranter implements AuthorityGranter {
     private static Logger s_log =
-        Logger.getLogger(UserGroupAuthorityGranter.class);
+        LoggerFactory.getLogger(UserGroupAuthorityGranter.class);
 
     /**
      * The grant method is called for each principal returned from the

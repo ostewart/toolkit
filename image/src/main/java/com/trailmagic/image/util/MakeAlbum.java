@@ -27,7 +27,8 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -37,18 +38,16 @@ import org.springframework.orm.hibernate3.SessionFactoryUtils;
  * Run like: ant run -Drun.class=com.trailmagic.image.util.MakeAlbum -Drun.args="oliver roll-name album-name keepers-file"
  **/
 public class MakeAlbum implements ApplicationContextAware {
-    private Session m_session;
     private SessionFactory m_sessionFactory;
     private Transaction m_transaction;
     private ApplicationContext m_appContext;
 
     private static final String GROUP_FACTORY_BEAN = "imageGroupRepository";
     private static final String USER_FACTORY_BEAN = "userFactory";
-    private static final String SESS_FACTORY_BEAN = "sessionFactory";
     private static final String IMAGE_FACTORY_BEAN = "imageFactory";
     private static final String MAKE_ALBUM_BEAN = "makeAlbum";
 
-    private static Logger s_logger = Logger.getLogger(MakeAlbum.class);
+    private static Logger s_logger = LoggerFactory.getLogger(MakeAlbum.class);
 
     public SessionFactory getSessionFactory() {
         return m_sessionFactory;
@@ -63,7 +62,7 @@ public class MakeAlbum implements ApplicationContextAware {
 
     public void doStuff(String userName, String rollName, String albumName,
                         String fileName) {
-        m_session = SessionFactoryUtils.getSession(m_sessionFactory, false);
+        Session m_session = SessionFactoryUtils.getSession(m_sessionFactory, false);
         try {
             BufferedReader keepers =
                 new BufferedReader(new FileReader(fileName));
@@ -154,7 +153,7 @@ public class MakeAlbum implements ApplicationContextAware {
                            + "<album-name> <keepers-file>");
     }
 
-    public static final void main(String[] args) {
+    public static void main(String[] args) {
         if ( args.length != 4 ) {
             printUsage();
             System.exit(1);

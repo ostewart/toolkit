@@ -16,19 +16,21 @@ package com.trailmagic.user.security;
 import com.trailmagic.user.User;
 import com.trailmagic.user.Owned;
 import java.lang.reflect.InvocationTargetException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.Authentication;
 import org.springframework.security.acl.AclEntry;
 import org.springframework.security.acl.AclProvider;
 import org.springframework.security.acl.basic.NamedEntityObjectIdentity;
 import org.springframework.security.acl.basic.SimpleAclEntry;
-import org.apache.log4j.Logger;
 
 /**
  * Creates an ACL with full permissions for the User owner of an
  * Owned object.
  **/
 public abstract class OwnerAclProvider implements AclProvider {
-    private static Logger s_log = Logger.getLogger(OwnerAclProvider.class);
+    private static Logger s_log = LoggerFactory.getLogger(OwnerAclProvider.class);
 
     /**
      * Returns a single ACL with full permissions for the owner of the

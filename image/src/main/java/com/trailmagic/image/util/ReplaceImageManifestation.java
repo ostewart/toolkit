@@ -27,10 +27,11 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import javax.imageio.ImageIO;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
@@ -53,7 +54,7 @@ public class ReplaceImageManifestation {
     private ImageGroupRepository imageGroupRepository;
 
     private static Logger s_log =
-        Logger.getLogger(ReplaceImageManifestation.class);
+        LoggerFactory.getLogger(ReplaceImageManifestation.class);
     private static final String REPLACEIM_BEAN = "replaceImageManifestation";
 
     /**

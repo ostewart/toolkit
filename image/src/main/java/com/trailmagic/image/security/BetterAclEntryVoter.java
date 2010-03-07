@@ -14,10 +14,12 @@
 package com.trailmagic.image.security;
 
 import java.lang.reflect.Method;
+
+import org.slf4j.LoggerFactory;
 import org.springframework.security.AuthorizationServiceException;
 import org.springframework.security.vote.BasicAclEntryVoter;
 import org.aopalliance.intercept.MethodInvocation;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.reflect.CodeSignature;
 
@@ -26,7 +28,7 @@ import org.springframework.security.Authentication;
 
 
 public class BetterAclEntryVoter extends BasicAclEntryVoter {
-    private static Logger s_log = Logger.getLogger(BetterAclEntryVoter.class);
+    private static Logger s_log = LoggerFactory.getLogger(BetterAclEntryVoter.class);
     /**
      * This implementation supports both
      * <code>MethodSecurityInterceptor</code> and <code>JoinPoint</code>.

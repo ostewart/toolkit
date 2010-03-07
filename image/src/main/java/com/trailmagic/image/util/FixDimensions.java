@@ -13,7 +13,8 @@
  */
 package com.trailmagic.image.util;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import com.trailmagic.user.User;
@@ -36,7 +37,7 @@ public class FixDimensions {
     private HibernateTemplate m_hibernateTemplate;
     private UserRepository userRepository;
     private ImageManifestationRepository m_imageManifestationFactory;
-    private static Logger s_log = Logger.getLogger(FixDimensions.class);
+    private static Logger s_log = LoggerFactory.getLogger(FixDimensions.class);
 
     private static final String FIX_DIMENSIONS_BEAN = "fixDimensions";
 

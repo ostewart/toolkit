@@ -15,6 +15,7 @@ package com.trailmagic.image.security;
 
 import com.trailmagic.image.Image;
 import com.trailmagic.image.ImageFrame;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.acl.AclProvider;
 import org.springframework.security.acl.AclManager;
 import org.springframework.security.Authentication;
@@ -22,7 +23,7 @@ import org.springframework.security.acl.AclEntry;
 import org.springframework.security.acl.basic.NamedEntityObjectIdentity;
 import org.springframework.security.acl.basic.SimpleAclEntry;
 import org.springframework.security.acl.basic.BasicAclEntry;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import java.util.Collection;
 import java.util.ArrayList;
 import java.lang.reflect.InvocationTargetException;
@@ -31,7 +32,7 @@ import java.lang.reflect.InvocationTargetException;
 public class ImageFrameImageAclProvider implements AclProvider {
     private AclManager m_aclManager;
     private static Logger s_log =
-        Logger.getLogger(ImageFrameImageAclProvider.class);
+        LoggerFactory.getLogger(ImageFrameImageAclProvider.class);
 
     public ImageFrameImageAclProvider() {
         // do nothing

@@ -15,11 +15,12 @@ package com.trailmagic.image.security;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TestMethodInterceptor implements MethodInterceptor {
     private static Logger s_log =
-        Logger.getLogger(TestMethodInterceptor.class);
+        LoggerFactory.getLogger(TestMethodInterceptor.class);
 
     public Object invoke(MethodInvocation inv) throws Throwable {
         s_log.debug("Interception before method: "

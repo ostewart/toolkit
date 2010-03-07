@@ -29,12 +29,13 @@ import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 import org.apache.commons.codec.binary.Hex;
-import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -47,7 +48,7 @@ public class UserLoginModule implements LoginModule {
     private SessionFactory m_sessFactory;
     private List<Principal> m_principals;
     private boolean m_success;
-    private static Logger s_log = Logger.getLogger(UserLoginModule.class);
+    private static Logger s_log = LoggerFactory.getLogger(UserLoginModule.class);
 
     private static final String USER_BY_SN_QUERY = "userByScreenName";
     private static final String GROUPS_QUERY = "groupsForUserId";
@@ -166,7 +167,7 @@ public class UserLoginModule implements LoginModule {
         throws Exception {
 
         boolean valid = false;
-        User user = null;
+        User user;
         Session sess = null;
 
         try {

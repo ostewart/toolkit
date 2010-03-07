@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+  <appender name="logfile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
+    <File>/srv/trailmagic.com/logs/photo.log</File>
+    <layout class="ch.qos.logback.classic.PatternLayout">
+      <Pattern>%d [%t] %-5p %c %x - %m%n</Pattern>
+    </layout>
+    <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+      <maxIndex>5</maxIndex>
+      <FileNamePattern>/srv/trailmagic.com/logs/photo.log.%i</FileNamePattern>
+    </rollingPolicy>
+    <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+      <MaxFileSize>5MB</MaxFileSize>
+    </triggeringPolicy>
+  </appender>
+  <root level="INFO">
+    <appender-ref ref="logfile"/>
+  </root>
+</configuration>
