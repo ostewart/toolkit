@@ -332,7 +332,7 @@
     <bean id="cacheManager"
           class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
 
-        <property name="configLocation" value="classpath:/ehcache-failsafe.xml"/>
+        <property name="configLocation" value="classpath:/ehcache.xml"/>
     </bean>
 
     <bean id="aclCacheBackend"
