@@ -53,7 +53,7 @@
             <prop key="hibernate.hbm2ddl.auto">update</prop>
             <prop key="hibernate.dialect">${hibernate.dialect}</prop>
             <prop key="hibernate.jdbc.use_streams_for_binary">true</prop>
-            <prop key="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</prop>
+            <prop key="hibernate.cache.provider_class">net.sf.ehcache.hibernate.EhCacheProvider</prop>
             <prop key="hibernate.cache.use_query_cache">true</prop>
 
         </props>
