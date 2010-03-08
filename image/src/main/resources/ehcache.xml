@@ -2,7 +2,7 @@
 
 <ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd">
-    <diskStore path="java.io.tmpdir"/>
+    <diskStore path="java.io.tmpdir/main"/>
     <!--<terracottaConfig url="localhost:9510"/>-->
 
     <defaultCache
@@ -19,9 +19,6 @@
     <!--<terracotta/>-->
 </defaultCache>        
 
-    <cache eternal="false" maxElementsInMemory="10000" name="aclCache" overflowToDisk="false">
-        <!--<terracotta/>-->
-        </cache>
     <cache eternal="false" maxElementsInMemory="10000" name="com.trailmagic.image.Image" overflowToDisk="false">
         <!--<terracotta/>-->
         </cache>
