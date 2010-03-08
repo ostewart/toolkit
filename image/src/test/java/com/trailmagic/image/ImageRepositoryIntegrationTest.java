@@ -1,25 +1,42 @@
 package com.trailmagic.image;
 
-import com.trailmagic.test.AbstractHibernateTests;
 import com.trailmagic.user.User;
 import com.trailmagic.user.UserRepository;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.security.GrantedAuthority;
 import org.springframework.security.GrantedAuthorityImpl;
 import org.springframework.security.context.SecurityContext;
 import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 
-public class ImageRepositoryIntegrationTest extends AbstractHibernateTests {
+import static org.junit.Assert.*;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = {"classpath:applicationContext-global.xml",
+                                   "classpath:com/trailmagic/image/applicationContext-test.xml",
+                                   "classpath:applicationContext-user.xml",
+                                   "classpath:applicationContext-imagestore.xml",
+                                   "classpath:applicationContext-imagestore-authorization.xml"})
+@Transactional
+public class ImageRepositoryIntegrationTest {
+    @Autowired
     private ImageRepository imageRepository;
+    @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+    @Autowired HibernateTemplate hibernateTemplate;
     private User testUser;
     private static final String TEST_PHOTO_NAME = "testPhoto";
-
-    public ImageRepositoryIntegrationTest() {
-        super();
-        setAutowireMode(AUTOWIRE_BY_NAME);
-    }
 
     public ImageRepository getImageRepository() {
         return imageRepository;
@@ -33,7 +50,8 @@ public class ImageRepositoryIntegrationTest extends AbstractHibernateTests {
         this.imageRepository = imageRepository;
     }
 
-    protected void onSetUpInTransaction() {
+    @Before
+    public void onSetUpInTransaction() {
         testUser = userRepository.createUser();
         testUser.setScreenName("testuser");
         testUser.setFirstName("Test");
@@ -43,6 +61,7 @@ public class ImageRepositoryIntegrationTest extends AbstractHibernateTests {
         userRepository.save(testUser);
     }
 
+    @Test
     public void testNewInstance() {
         setupAuthenticatedUser();
 
@@ -62,7 +81,7 @@ public class ImageRepositoryIntegrationTest extends AbstractHibernateTests {
 
         imageRepository.saveNew(newPhoto);
 
-        getHibernateTemplate().flush();
+        hibernateTemplate.flush();
         assertTrue(newPhoto.getId() != 0);
         assertNotNull(jdbcTemplate.queryForObject("select name from images where name = ?",
                                                   new Object[]{TEST_PHOTO_NAME},

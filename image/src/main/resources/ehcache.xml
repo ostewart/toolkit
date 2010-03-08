@@ -3,18 +3,62 @@
 <ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd">
     <diskStore path="java.io.tmpdir"/>
+    <!--<terracottaConfig url="localhost:9510"/>-->
 
     <defaultCache
             maxElementsInMemory="10000"
             eternal="false"
             timeToIdleSeconds="120"
             timeToLiveSeconds="120"
-            overflowToDisk="true"
+            overflowToDisk="false"
             maxElementsOnDisk="10000000"
             diskPersistent="false"
             diskExpiryThreadIntervalSeconds="120"
             memoryStoreEvictionPolicy="LRU"
-            />
+            >
+    <!--<terracotta/>-->
+</defaultCache>        
 
-    <cache eternal="false" maxElementsInMemory="10000" name="aclCache" overflowToDisk="true"/>
+    <cache eternal="false" maxElementsInMemory="10000" name="aclCache" overflowToDisk="false">
+        <!--<terracotta/>-->
+        </cache>
+    <cache eternal="false" maxElementsInMemory="10000" name="com.trailmagic.image.Image" overflowToDisk="false">
+        <!--<terracotta/>-->
+        </cache>
+    <cache eternal="false" maxElementsInMemory="10000" name="com.trailmagic.user.User" overflowToDisk="false">
+        <!--<terracotta/>-->
+        </cache>
+    <cache eternal="false" maxElementsInMemory="10000" name="com.trailmagic.image.ImageCD" overflowToDisk="false">
+        <!--<terracotta/>-->
+        </cache>
+    <cache eternal="false" maxElementsInMemory="10000" name="com.trailmagic.image.ImageFrame" overflowToDisk="false">
+        <!--<terracotta/>-->
+        </cache>
+    <cache eternal="false" maxElementsInMemory="10000" name="com.trailmagic.user.Group" overflowToDisk="false">
+        <!--<terracotta/>-->
+        </cache>
+    <cache eternal="false" maxElementsInMemory="10000" name="com.trailmagic.image.Camera" overflowToDisk="false">
+        <!--<terracotta/>-->
+        </cache>
+    <cache eternal="false" maxElementsInMemory="10000" name="com.trailmagic.image.Lens" overflowToDisk="false">
+        <!--<terracotta/>-->
+        </cache>
+    <cache eternal="false" maxElementsInMemory="10000" name="com.trailmagic.image.ImageManifestation" overflowToDisk="false">
+        <!--<terracotta/>-->
+        </cache>
+    <cache eternal="false" maxElementsInMemory="10000" name="com.trailmagic.image.ImageGroup" overflowToDisk="false">
+        <!--<terracotta/>-->
+        </cache>
+    <cache eternal="false" maxElementsInMemory="10000" name="com.trailmagic.image.Image.manifestations" overflowToDisk="false">
+        <!--<terracotta/>-->
+        </cache>
+    <cache eternal="false" maxElementsInMemory="10000" name="com.trailmagic.image.ImageGroup.frames" overflowToDisk="false">
+        <!--<terracotta/>-->
+        </cache>
+    <cache eternal="false" maxElementsInMemory="10000" name="org.hibernate.cache.UpdateTimestampsCache" overflowToDisk="false">
+        <!--<terracotta/>-->
+        </cache>
+    <cache eternal="false" maxElementsInMemory="10000" name="org.hibernate.cache.StandardQueryCache" overflowToDisk="false">
+        <!--<terracotta/>-->
+        </cache>
 </ehcache>
