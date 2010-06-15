@@ -3,6 +3,7 @@ package com.trailmagic.image.impl;
 import org.junit.Test;
 import org.junit.Before;
 import org.junit.Assert;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import com.trailmagic.user.UserRepository;
 import com.trailmagic.user.User;
@@ -10,19 +11,22 @@ import com.trailmagic.image.security.ImageSecurityService;
 import com.trailmagic.image.security.SecurityTestHelper;
 import com.trailmagic.image.*;
 import com.trailmagic.util.MockSecurityUtil;
+import org.mockito.MockitoAnnotations;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ByteArrayInputStream;
 import java.sql.SQLException;
 
+import static org.mockito.Mockito.never;
+
 public class ImageServiceImplTest {
-    private UserRepository userRepository;
-    private ImageManifestationRepository imageManifestationRepository;
     private ImageService imageService;
-    private ImageGroupRepository imageGroupRepository;
-    private ImageRepository imageRepository;
-    private ImageSecurityService imageSecurityService;
+    @Mock private UserRepository userRepository;
+    @Mock private ImageManifestationRepository imageManifestationRepository;
+    @Mock private ImageGroupRepository imageGroupRepository;
+    @Mock private ImageRepository imageRepository;
+    @Mock private ImageSecurityService imageSecurityService;
     private static final long DEFAULT_GROUP_ID = 1234L;
     private static final String TEST_USER_SCREEN_NAME = "testUser";
     private ImageGroup defaultGroup;
@@ -31,11 +35,7 @@ public class ImageServiceImplTest {
 
     @Before
     public void setUp() {
-        imageGroupRepository = Mockito.mock(ImageGroupRepository.class);
-        imageRepository = Mockito.mock(ImageRepository.class);
-        imageSecurityService = Mockito.mock(ImageSecurityService.class);
-        userRepository = Mockito.mock(UserRepository.class);
-        imageManifestationRepository = Mockito.mock(ImageManifestationRepository.class);
+        MockitoAnnotations.initMocks(this);
     }
 
     private void withCurrentUser(User currentUser, boolean hasDefaultGroup) {
@@ -138,7 +138,7 @@ public class ImageServiceImplTest {
         Assert.assertEquals(photo, mf.getImage());
         Assert.assertEquals(testBytes.length, mf.getData().getBinaryStream().available());
 
-        Mockito.verify(imageSecurityService).addOwnerAcl(mf);
+        Mockito.verify(imageSecurityService, never()).addOwnerAcl(mf);
         Mockito.verify(imageSecurityService).addOwnerAcl(photo);
     }
 

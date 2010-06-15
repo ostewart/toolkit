@@ -1,5 +1,6 @@
 package com.trailmagic.image.security;
 
+import com.trailmagic.image.HeavyImageManifestation;
 import com.trailmagic.image.ImageService;
 import com.trailmagic.image.Photo;
 import com.trailmagic.user.User;
@@ -7,6 +8,8 @@ import com.trailmagic.user.UserRepository;
 import com.trailmagic.user.security.ToolkitUserDetails;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
+import org.hibernate.Hibernate;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +39,7 @@ public class SecurityIntegrationTest {
     private User testUser;
 
     @Test
-    public void testMakePrivate() {
+    public void testMakePhotoPrivate() {
         setupAuthenticatedUser();
         final Photo photo = testPhoto();
 
@@ -47,9 +50,39 @@ public class SecurityIntegrationTest {
 
         service.makePrivate(photo);
         assertFalse("After makePrivate call, the photo should not be public", service.isPublic(photo));
-        assertFalse("After addReadPermission call, should be readable", service.isReadableByRole(photo, "ROLE_EVERYONE"));
+        assertFalse("After makePrivate call, should not be readable", service.isReadableByRole(photo, "ROLE_EVERYONE"));
         assertFalse("After makePrivate call, isAvailable should also work", service.isAvailableToRole(photo, "ROLE_EVERYONE", BasePermission.READ));
 
+    }
+
+    @Test
+    public void testMakeImageManifestationPrivate() {
+        setupAuthenticatedUser();
+        final Photo photo = testPhoto();
+        HeavyImageManifestation mf = manifestationForPhoto(photo);
+
+        assertFalse("After creation, a manifestation should not be public", service.isPublic(mf));
+
+        service.makePublic(photo);
+        assertTrue("After makePublic call on its Image, the manifestation should be public", service.isPublic(mf));
+
+        service.makePrivate(photo);
+        assertFalse("After makePrivate call, the manifestation should not be public", service.isPublic(mf));
+        assertFalse("After makePrivate call, should not be readable", service.isReadableByRole(mf, "ROLE_EVERYONE"));
+        assertFalse("After makePrivate call, isAvailable should also work", service.isAvailableToRole(mf, "ROLE_EVERYONE", BasePermission.READ));
+    }
+
+    private HeavyImageManifestation manifestationForPhoto(Photo photo) {
+        HeavyImageManifestation mf = new HeavyImageManifestation();
+        mf.setId(2L);
+        mf.setFormat("image/jpeg");
+        mf.setHeight(0);
+        mf.setWidth(0);
+        mf.setOriginal(true);
+        mf.setData(Hibernate.createBlob(new byte[0]));
+        photo.addManifestation(mf);
+
+        return mf;
     }
 
     @Test
@@ -61,6 +94,18 @@ public class SecurityIntegrationTest {
         service.addReadPermission(photo, testUser);
         assertTrue("After addReadPermission call, should be readable", service.isReadableByUser(photo, testUser));
         assertTrue("After addReadPermission call, isAvailable should also work", service.isAvailableToUser(photo, testUser, BasePermission.READ));
+    }
+
+    @Test
+    public void testAddPermissionAppliesToManifestation() {
+        setupAuthenticatedUser();
+        final Photo photo = testPhoto();
+        HeavyImageManifestation mf = manifestationForPhoto(photo);
+
+        assertFalse("After creation, a photo should not be public", service.isPublic(mf));
+        service.addReadPermission(photo, testUser);
+        assertTrue("After addReadPermission call, should be readable", service.isReadableByUser(mf, testUser));
+        assertTrue("After addReadPermission call, isAvailable should also work", service.isAvailableToUser(mf, testUser, BasePermission.READ));
     }
 
 

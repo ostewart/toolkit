@@ -127,8 +127,8 @@ public class Image implements Owned {
     }
 
     public void addManifestation(ImageManifestation im) {
-        im.setImage(this);
         manifestations.add(im);
+        im.setImage(this);
     }
 
     public Integer getNumber() {

@@ -1,5 +1,6 @@
 package com.trailmagic.image.security;
 
+import org.aspectj.lang.NoAspectBoundException;
 import org.springframework.security.intercept.method.aspectj.AspectJAnnotationSecurityInterceptor;
 import org.springframework.security.intercept.method.MapBasedMethodDefinitionSource;
 import org.aspectj.lang.Aspects;
@@ -10,8 +11,12 @@ public class SecurityTestHelper {
     }
 
     public void disableSecurityInterceptor() {
-        final AspectJAnnotationSecurityInterceptor interceptor = new AspectJAnnotationSecurityInterceptor();
-        interceptor.setObjectDefinitionSource(new MapBasedMethodDefinitionSource());
-        Aspects.aspectOf(ImageSecurityAspect.class).setSecurityInterceptor(interceptor);
+        try {
+            final AspectJAnnotationSecurityInterceptor interceptor = new AspectJAnnotationSecurityInterceptor();
+            interceptor.setObjectDefinitionSource(new MapBasedMethodDefinitionSource());
+            Aspects.aspectOf(ImageSecurityAspect.class).setSecurityInterceptor(interceptor);
+        } catch (NoAspectBoundException e) {
+            // AspectJ isn't on
+        }
     }
 }

@@ -172,7 +172,7 @@ public class ImagesParserImpl extends DefaultHandler implements ImagesParser {
 
     public void startManifestation() {
         m_manifestation = new HeavyImageManifestation();
-        m_manifestation.setImage(m_image);
+        m_image.addManifestation(m_manifestation);
         m_inManifestation = true;
     }
 

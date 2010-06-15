@@ -3,8 +3,11 @@ package com.trailmagic.image.security;
 import com.trailmagic.image.ImageGroupRepository;
 import com.trailmagic.image.Photo;
 import com.trailmagic.user.User;
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.springframework.security.acls.MutableAcl;
 import org.springframework.security.acls.MutableAclService;
 import org.springframework.security.acls.NotFoundException;
@@ -15,31 +18,44 @@ import org.springframework.security.acls.objectidentity.ObjectIdentityRetrievalS
 import org.springframework.security.acls.sid.GrantedAuthoritySid;
 import org.springframework.security.acls.sid.Sid;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 @SuppressWarnings({"ThrowableInstanceNeverThrown"})
-public class SpringSecurityImageSecurityServiceTest extends TestCase {
+public class SpringSecurityImageSecurityServiceTest {
     private SpringSecurityImageSecurityService service;
-    private MutableAclService aclService;
-    private ObjectIdentityRetrievalStrategy identityRetrievalStrategy;
+    @Mock private MutableAclService aclService;
+    @Mock private ImageGroupRepository imageGroupRepository;
+    @Mock private ObjectIdentityRetrievalStrategy identityRetrievalStrategy;
     private MutableAcl publicAcl;
 
+    @Before
+    public void setUp() throws Exception {
+        MockitoAnnotations.initMocks(this);
+        service = new SpringSecurityImageSecurityService(aclService, imageGroupRepository, identityRetrievalStrategy);
+    }
+
+    @Test
     public void testIsPublic() {
-        final Photo photo = testPhoto();
+        final Photo photo = makeTestPhoto();
 
         setupAclWithPublic(photo, true);
 
         assertTrue(service.isPublic(photo));
     }
 
+    @Test
     public void testIsNotPublic() {
-        final Photo photo = testPhoto();
+        final Photo photo = makeTestPhoto();
 
         setupAclWithPublic(photo, false);
 
         assertFalse(service.isPublic(photo));
     }
 
+    @Test
     public void testNoAceIsNotPublic() {
-        final Photo photo = testPhoto();
+        final Photo photo = makeTestPhoto();
 
         final ObjectIdentityImpl identity = new ObjectIdentityImpl(photo);
         Mockito.when(identityRetrievalStrategy.getObjectIdentity(photo)).thenReturn(identity);
@@ -52,8 +68,9 @@ public class SpringSecurityImageSecurityServiceTest extends TestCase {
         assertFalse(service.isPublic(photo));
     }
 
+    @Test
     public void testNoAclIsNotPublic() {
-        final Photo photo = testPhoto();
+        final Photo photo = makeTestPhoto();
 
         final ObjectIdentityImpl identity = new ObjectIdentityImpl(photo);
         Mockito.when(identityRetrievalStrategy.getObjectIdentity(photo)).thenReturn(identity);
@@ -64,7 +81,13 @@ public class SpringSecurityImageSecurityServiceTest extends TestCase {
         assertFalse(service.isPublic(photo));
     }
 
-    private Photo testPhoto() {
+    @Test
+    public void testSaveImageManifestationUsesImageAcl() {
+
+    }
+
+
+    private Photo makeTestPhoto() {
         final Photo photo = new Photo();
         photo.setId(1L);
         photo.setName("test");
@@ -81,14 +104,5 @@ public class SpringSecurityImageSecurityServiceTest extends TestCase {
         Mockito.when(aclService.readAclById(identity, new Sid[]{everyone})).thenReturn(publicAcl);
 
         Mockito.when(publicAcl.isGranted(new Permission[]{BasePermission.READ}, new Sid[]{everyone}, false)).thenReturn(isPublic);
-    }
-
-    protected void setUp() throws Exception {
-        super.setUp();
-        aclService = Mockito.mock(MutableAclService.class);
-        final ImageGroupRepository repository = Mockito.mock(ImageGroupRepository.class);
-
-        identityRetrievalStrategy = Mockito.mock(ObjectIdentityRetrievalStrategy.class);
-        service = new SpringSecurityImageSecurityService(aclService, repository, identityRetrievalStrategy);
     }
 }

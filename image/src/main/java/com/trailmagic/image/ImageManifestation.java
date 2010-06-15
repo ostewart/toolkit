@@ -46,11 +46,15 @@ public class ImageManifestation implements Comparable<ImageManifestation>, Owned
         return image;
     }
 
+    /**
+     * Use Image.addManifestation(ImageManifestation) instead.
+     * @see Image#addManifestation(ImageManifestation)
+     */
     public void setImage(Image image) {
         this.image = image;
-        // this would be redundant if we added to the other collection
-        //        SortedSet mfs = image.getManifestations();
-        //        mfs.add(this);
+        if (!image.getManifestations().contains(this)) {
+            throw new IllegalStateException("Manifestation added to Image that doesn't contain it.  Add manifestation to Image first.");
+        }
     }
 
     public int getHeight() {

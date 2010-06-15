@@ -66,7 +66,6 @@ public class ImageServiceImpl implements ImageService {
 
         final HeavyImageManifestation manifestation = new HeavyImageManifestation();
         manifestation.setData(Hibernate.createBlob(inputStream));
-        manifestation.setImage(photo);
         manifestation.setOriginal(true);
         manifestation.setFormat(contentType);
         photo.addManifestation(manifestation);
@@ -165,8 +164,8 @@ public class ImageServiceImpl implements ImageService {
     
     public void saveNewImageManifestation(HeavyImageManifestation imageManifestation) {
         imageManifestationRepository.saveNewImageManifestation(imageManifestation);
-        imageSecurityService.addOwnerAcl(imageManifestation);
         
+
         log.info("Saved image manifestation (before flush/evict): "
                  + imageManifestation);
         // for now we'll clear/evict here since the normal case is probably
