@@ -1,6 +1,8 @@
 package com.trailmagic.image.security;
 
 import com.trailmagic.image.HeavyImageManifestation;
+import com.trailmagic.image.ImageFrame;
+import com.trailmagic.image.ImageGroup;
 import com.trailmagic.image.ImageService;
 import com.trailmagic.image.Photo;
 import com.trailmagic.user.User;
@@ -21,6 +23,8 @@ import org.springframework.security.providers.UsernamePasswordAuthenticationToke
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:applicationContext-global.xml",
@@ -70,6 +74,64 @@ public class SecurityIntegrationTest {
         assertFalse("After makePrivate call, the manifestation should not be public", service.isPublic(mf));
         assertFalse("After makePrivate call, should not be readable", service.isReadableByRole(mf, "ROLE_EVERYONE"));
         assertFalse("After makePrivate call, isAvailable should also work", service.isAvailableToRole(mf, "ROLE_EVERYONE", BasePermission.READ));
+    }
+
+    @Test
+    public void testMakeImageFramePrivate() {
+        setupAuthenticatedUser();
+        final Photo photo = testPhoto();
+
+        ImageGroup group = new ImageGroup("testGroup", testUser, ImageGroup.Type.ROLL);
+
+        ImageFrame frame = new ImageFrame();
+        frame.setId(3L);
+        frame.setImage(photo);
+        frame.setImageGroup(group);
+
+        group.addFrame(frame);
+
+        assertFalse("After creation, a frame should not be public", service.isPublic(frame));
+
+        service.makePublic(photo);
+        assertTrue("After makePublic call on its Image, the frame should be public", service.isPublic(frame));
+        assertTrue("After makePublic call, should be readable", service.isReadableByRole(frame, "ROLE_EVERYONE"));
+
+        service.makePrivate(photo);
+        assertFalse("After makePrivate call, the frame should not be public", service.isPublic(frame));
+        assertFalse("After makePrivate call, should not be readable", service.isReadableByRole(frame, "ROLE_EVERYONE"));
+        assertFalse("After makePrivate call, isAvailable should also work", service.isAvailableToRole(frame, "ROLE_EVERYONE", BasePermission.READ));
+    }
+
+    @Test
+    public void testMakeImageGroupPrivate() {
+        setupAuthenticatedUser();
+        final Photo photo = testPhoto();
+
+        ImageGroup group = new ImageGroup("testGroup", testUser, ImageGroup.Type.ROLL);
+        group.setDisplayName("test group");
+        group.setName("testGroup");
+        group.setUploadDate(new Date());
+
+        ImageFrame frame = new ImageFrame();
+        frame.setId(3L);
+        frame.setImage(photo);
+        frame.setImageGroup(group);
+
+        group.addFrame(frame);
+
+        imageService.saveNewImageFrame(frame);
+        imageService.saveNewImageGroup(group);
+
+        assertFalse("After creation, a group should not be public", service.isPublic(group));
+
+        service.makePublic(group);
+        assertTrue("After makePublic call on its ImageGroup, the ImageGroup should be public", service.isPublic(group));
+        assertTrue("After makePublic call, should be readable", service.isReadableByRole(group, "ROLE_EVERYONE"));
+
+        service.makePrivate(group);
+        assertFalse("After makePrivate call, should not be public", service.isPublic(group));
+        assertFalse("After makePrivate call, should not be readable", service.isReadableByRole(group, "ROLE_EVERYONE"));
+        assertFalse("After makePrivate call, isAvailable should also work", service.isAvailableToRole(group, "ROLE_EVERYONE", BasePermission.READ));
     }
 
     private HeavyImageManifestation manifestationForPhoto(Photo photo) {

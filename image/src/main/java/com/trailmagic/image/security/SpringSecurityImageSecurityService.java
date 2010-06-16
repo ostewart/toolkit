@@ -91,13 +91,6 @@ public class SpringSecurityImageSecurityService implements ImageSecurityService 
 
         if (obj instanceof Image) {
             Image image = (Image) obj;
-            // for now also make the manifestations public
-            // this will mess things up if we set e.g. the original
-            // to be permissioned differently
-            SortedSet<ImageManifestation> manifestations = image.getManifestations();
-            for (ImageManifestation mf : manifestations) {
-                makePublic(mf);
-            }
         }
     }
 

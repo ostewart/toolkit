@@ -159,7 +159,6 @@ public class ImageServiceImpl implements ImageService {
     
     public void saveNewImageFrame(ImageFrame imageFrame) {
         imageGroupRepository.saveFrame(imageFrame);
-        imageSecurityService.addOwnerAcl(imageFrame);
     }
     
     public void saveNewImageManifestation(HeavyImageManifestation imageManifestation) {

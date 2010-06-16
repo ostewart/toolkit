@@ -18,6 +18,7 @@ import com.trailmagic.user.User;
 import java.util.Collection;
 import java.util.Date;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
 public class ImageGroup implements Owned {
     public static final String DEFAULT_ROLL_NAME = "uploads";
@@ -82,7 +83,7 @@ public class ImageGroup implements Owned {
     private String displayName;
     private String description;
     private Date uploadDate;
-    private SortedSet<ImageFrame> frames;
+    private SortedSet<ImageFrame> frames = new TreeSet<ImageFrame>();
     private Collection<ImageGroup> subgroups;
     private ImageGroup supergroup;
     private User owner;
