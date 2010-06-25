@@ -13,14 +13,16 @@
  */
 package com.trailmagic.image;
 
+import com.trailmagic.image.security.AccessControlled;
 import com.trailmagic.user.Owned;
 import com.trailmagic.user.User;
+
 import java.util.Collection;
 import java.util.Date;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-public class ImageGroup implements Owned {
+public class ImageGroup implements Owned, AccessControlled {
     public static final String DEFAULT_ROLL_NAME = "uploads";
 
     public ImageGroup(String name, User owner, Type type) {
@@ -30,50 +32,37 @@ public class ImageGroup implements Owned {
     }
 
     public enum Type {
-        ROLL("roll"), ALBUM("album");
+        ROLL("roll", "Roll", "Rolls"), ALBUM("album", "Album", "Albums");
         private String typeName;
-        private static final String ROLL_DISPLAY = "Roll";
-        private static final String ALBUM_DISPLAY = "Album";
-        private static final String ROLL_DISPLAY_PLURAL = "Rolls";
-        private static final String ALBUM_DISPLAY_PLURAL = "Albums";
-        
-        private Type(String typeName) {
+        private String displayName;
+        private String pluralDisplayName;
+
+        private Type(String typeName, String displayName, String pluralDisplayName) {
             this.typeName = typeName;
+            this.displayName = displayName;
+            this.pluralDisplayName = pluralDisplayName;
         }
+
         public String toString() {
             return this.typeName;
         }
-    
+
         public String getDisplayString() {
-            switch (this) {
-            case ROLL:
-                return ROLL_DISPLAY;
-            case ALBUM:
-                return ALBUM_DISPLAY;
-            default:
-                throw new IllegalStateException("Unhandled type");    
-            }
+            return displayName;
         }
-    
+
+        @SuppressWarnings({"UnusedDeclaration"})
         public String getPluralDisplayString() {
-            switch (this) {
-            case ROLL:
-                return ROLL_DISPLAY_PLURAL;
-            case ALBUM:
-                return ALBUM_DISPLAY_PLURAL;
-            default:
-                throw new IllegalStateException("Unhandled type");    
-            }
+            return pluralDisplayName;
         }
-        
+
         public static Type fromString(String typeString) {
-            if ("album".equalsIgnoreCase(typeString)) {
-                return ALBUM;
-            } else if ("roll".equalsIgnoreCase(typeString)) {
-                return ROLL;
-            } else {
-                throw new IllegalArgumentException("Invalid type string");
+            for (Type type : Type.values()) {
+                if (type.typeName.equals(typeString)) {
+                    return type;
+                }
             }
+            throw new IllegalArgumentException("Invalid type string");
         }
     }
 
@@ -89,9 +78,6 @@ public class ImageGroup implements Owned {
     private User owner;
     private Image previewImage;
 
-    public static final String ROLL_TYPE = "roll";
-    public static final String ALBUM_TYPE = "album";
-
     public ImageGroup() {
     }
 
@@ -103,7 +89,9 @@ public class ImageGroup implements Owned {
         this.id = id;
     }
 
-    /** URL worthy name **/
+    /**
+     * URL worthy name *
+     */
     public String getName() {
         return name;
     }
@@ -112,7 +100,9 @@ public class ImageGroup implements Owned {
         this.name = name;
     }
 
-    /** name to be displayed to the user **/
+    /**
+     * name to be displayed to the user *
+     */
     public String getDisplayName() {
         return displayName;
     }
@@ -144,20 +134,15 @@ public class ImageGroup implements Owned {
     public void setType(Type type) {
         this.type = type;
     }
-    
+
+    @SuppressWarnings({"JpaAttributeMemberSignatureInspection"})
     public String getTypeDisplay() {
-    	switch (type) {
-    	case ROLL:
-    		return "Roll";
-    	case ALBUM:
-    		return "Album";
-    	default:
-    	    throw new IllegalStateException("Unknown type");
-    	}
+        return type.getDisplayString();
     }
 
     public void addFrame(ImageFrame frame) {
         frames.add(frame);
+        frame.setImageGroup(this);
     }
 
     public SortedSet<ImageFrame> getFrames() {
@@ -168,6 +153,7 @@ public class ImageGroup implements Owned {
         this.frames = frames;
     }
 
+    @SuppressWarnings({"JpaAttributeMemberSignatureInspection"})
     public int getNextFrameNumber() {
         ImageFrame lastFrame = frames.last();
         return lastFrame.getPosition() + 1;
@@ -204,9 +190,14 @@ public class ImageGroup implements Owned {
 
     public boolean equals(Object obj) {
         return (obj instanceof ImageGroup) &&
-            (this.getName().equals(((ImageGroup)obj).getName())) &&
-            (this.getOwner().equals(((ImageGroup)obj).getOwner())) &&
-            (this.getType().equals(((ImageGroup)obj).getType()));
+               (this.getName().equals(((ImageGroup) obj).getName())) &&
+               (this.getOwner().equals(((ImageGroup) obj).getOwner())) &&
+               (this.getType().equals(((ImageGroup) obj).getType()));
+    }
+
+    @Override
+    public int hashCode() {
+        return getName().hashCode() + getOwner().hashCode() + getType().hashCode();
     }
 
     public Image getPreviewImage() {
@@ -216,13 +207,13 @@ public class ImageGroup implements Owned {
     public void setPreviewImage(Image previewImage) {
         this.previewImage = previewImage;
     }
-    
+
     @Override
     public String toString() {
         return "ImageGroup(id=" + id
-            + "; type=" + type
-            + "; name=" + name
-            + "; owner=" + owner
-            + ")";
+               + "; type=" + type
+               + "; name=" + name
+               + "; owner=" + owner
+               + ")";
     }
 }

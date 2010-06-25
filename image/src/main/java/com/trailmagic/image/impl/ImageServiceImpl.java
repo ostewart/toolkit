@@ -156,11 +156,7 @@ public class ImageServiceImpl implements ImageService {
         imageGroupRepository.saveNewGroup(imageGroup);
         imageSecurityService.addOwnerAcl(imageGroup);
     }
-    
-    public void saveNewImageFrame(ImageFrame imageFrame) {
-        imageGroupRepository.saveFrame(imageFrame);
-    }
-    
+
     public void saveNewImageManifestation(HeavyImageManifestation imageManifestation) {
         imageManifestationRepository.saveNewImageManifestation(imageManifestation);
         
@@ -175,12 +171,12 @@ public class ImageServiceImpl implements ImageService {
     public ImageFrame addImageToGroup(Image image, ImageGroup group,
                                       int position) {
         ImageFrame frame = new ImageFrame();
-        frame.setImageGroup(group);
         frame.setImage(image);
         frame.setPosition(position);
 
-        imageGroupRepository.saveFrame(frame);
-        imageSecurityService.addOwnerAcl(frame);
+        group.addFrame(frame);
+
+        imageGroupRepository.saveGroup(group);
 
         return frame;
     }
@@ -197,7 +193,7 @@ public class ImageServiceImpl implements ImageService {
     // (i.e. without security filtering)
     
     
-    public void makeImageGroupPublic(ImageGroup group) {
+    public void makeImageGroupAndImagesPublic(ImageGroup group) {
         imageSecurityService.makePublic(group);
         log.info("Added public permission for group: "
                    + group.getName());
@@ -205,26 +201,14 @@ public class ImageServiceImpl implements ImageService {
         Collection<ImageFrame> frames = group.getFrames();
 
         for (ImageFrame frame : frames) {
-            imageSecurityService.makePublic(frame);
-            log.info("Added public permission for frame: "
-                       + frame.getPosition() + " of group "
-                       + group.getName());
-
             Image image = frame.getImage();
             imageSecurityService.makePublic(image);
             log.info("Added public permission for image: "
                        + image.getDisplayName());
-
-            for (ImageManifestation mf : image.getManifestations()) {
-                imageSecurityService.makePublic(mf);
-                log.info("Added public permission for "
-                           + "manifestation: "
-                           + mf.getHeight() + "x" + mf.getWidth());
-            }
         }
     }
 
-    public void makeImageGroupPublic(String ownerName, Type type, String imageGroupName)
+    public void makeImageGroupAndImagesPublic(String ownerName, Type type, String imageGroupName)
             throws NoSuchImageGroupException {
         User owner = userRepository.getByScreenName(ownerName);
         ImageGroup group =
@@ -235,7 +219,7 @@ public class ImageServiceImpl implements ImageService {
             log.error("No " + type + " found with name " + imageGroupName
                         + " owned by " + owner);
         }
-        makeImageGroupPublic(group);
+        makeImageGroupAndImagesPublic(group);
     }
     
     public void setImageGroupPreview(long imageGroupId, long imageId)

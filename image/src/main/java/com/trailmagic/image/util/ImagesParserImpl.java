@@ -217,16 +217,9 @@ public class ImagesParserImpl extends DefaultHandler implements ImagesParser {
         // m_photoFrameNum
 
         imageService.saveNewImage(m_image);
-        ImageFrame frame = new ImageFrame();
-        frame.setImageGroup(m_photoRoll);
-        frame.setImage(m_image);
-        frame.setPosition(Integer.parseInt(m_photoFrameNum));
 
-        s_logger.debug("About to save frame: " + frame);
+        ImageFrame frame = imageService.addImageToGroup(m_image, m_photoRoll, Integer.parseInt(m_photoFrameNum));
 
-        imageService.saveNewImageFrame(frame);
-
-        s_logger.debug("After save, frame id is: " + frame.getId());
 
         synchronized (hibernateTemplate) {
             hibernateTemplate.flush();

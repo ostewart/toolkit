@@ -24,20 +24,15 @@ import java.util.Set;
 
 public interface ImageSecurityService {
     public void addOwnerAcl(Image image);
-    public void addOwnerAcl(ImageFrame frame);
     public void addOwnerAcl(ImageGroup group);
-    public void addOwnerAcl(ImageManifestation mf);
-    public void makePublic(Object obj);
-    public void makePrivate(Object obj);
-    public void makeFramesPublic(ImageGroup group);
-    public void makeFramesPrivate(ImageGroup group);
+    public void makePublic(AccessControlled obj);
+    public void makePrivate(AccessControlled obj);
+    public void makeImagesPublic(ImageGroup group);
+    public void makeImagesPrivate(ImageGroup group);
     public void addReadPermission(Object obj, User recipient);
     public void addReadPermission(Object obj, String recipientRole);
     public void addPermission(Object obj, String recipientRole, Permission permission);
     public void addPermissions(Object obj, User recipient, Set<Permission> permissions);
-    public void addPermissions(Object obj, String recipientRole, Set<Permission> permissions);
-    public void setPermission(Object obj, String recipientRole, Permission permission);
-    public void setPermission(Object obj, User recipient, Permission permission);
     public boolean isPublic(Object obj);
     public boolean isReadableByUser(Object target, User recipient);
     public boolean isAvailableToUser(Object target, User recipient, Permission permission);

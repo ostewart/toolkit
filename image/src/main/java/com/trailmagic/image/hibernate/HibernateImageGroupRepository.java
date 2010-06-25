@@ -321,11 +321,6 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
     }
 
     @Transactional(readOnly=false)
-    public void saveFrame(ImageFrame frame) {
-        m_hibernateTemplate.saveOrUpdate(frame);
-    }
-
-    @Transactional(readOnly=false)
     public void saveNewGroup(ImageGroup newGroup) {
         m_hibernateTemplate.save(newGroup);
     }

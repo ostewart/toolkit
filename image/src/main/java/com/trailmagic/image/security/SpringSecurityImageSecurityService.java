@@ -17,12 +17,10 @@ import com.trailmagic.image.Image;
 import com.trailmagic.image.ImageFrame;
 import com.trailmagic.image.ImageGroup;
 import com.trailmagic.image.ImageGroupRepository;
-import com.trailmagic.image.ImageManifestation;
 import com.trailmagic.user.Owned;
 import com.trailmagic.user.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.AccessDeniedException;
 import org.springframework.security.acls.AccessControlEntry;
 import org.springframework.security.acls.Acl;
 import org.springframework.security.acls.MutableAcl;
@@ -39,9 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.SortedSet;
 
 @Transactional
 public class SpringSecurityImageSecurityService implements ImageSecurityService {
@@ -68,7 +64,7 @@ public class SpringSecurityImageSecurityService implements ImageSecurityService 
         this.identityRetrievalStrategy = identityRetrievalStrategy;
     }
 
-    public void makeFramesPublic(ImageGroup group) {
+    public void makeImagesPublic(ImageGroup group) {
         log.info("Making all images in " + group.getType() + " public: " + group);
 
         for (ImageFrame frame : group.getFrames()) {
@@ -77,7 +73,7 @@ public class SpringSecurityImageSecurityService implements ImageSecurityService 
         }
     }
 
-    public void makeFramesPrivate(ImageGroup group) {
+    public void makeImagesPrivate(ImageGroup group) {
         log.info("Making all images in " + group.getType() + " private: " + group);
         for (ImageFrame frame : group.getFrames()) {
             log.info("Making image private: " + frame.getImage());
@@ -85,31 +81,17 @@ public class SpringSecurityImageSecurityService implements ImageSecurityService 
         }
     }
 
-    public void makePublic(Object obj) {
+    public void makePublic(AccessControlled obj) {
         addReadPermission(obj, ROLE_EVERYONE);
         log.info("Added access to " + obj + " by ROLE_EVERYONE");
-
-        if (obj instanceof Image) {
-            Image image = (Image) obj;
-        }
     }
 
     public void addOwnerAcl(Image image) {
         addOwnerAclInternal(image, imageGroupRepository.getRollForImage(image));
     }
 
-    public void addOwnerAcl(ImageFrame frame) {
-        // image is always parent of frame so that we never
-        // have access to a frame without having access to the image
-        addOwnerAclInternal(frame, frame.getImage());
-    }
-
     public void addOwnerAcl(ImageGroup group) {
         addOwnerAclInternal(group, null);
-    }
-
-    public void addOwnerAcl(ImageManifestation mf) {
-        addOwnerAclInternal(mf, mf.getImage());
     }
 
     private void addOwnerAclInternal(Owned ownedObj, Object parent) {
@@ -144,7 +126,7 @@ public class SpringSecurityImageSecurityService implements ImageSecurityService 
         return isGranted(target, recipient, BasePermission.READ);
     }
 
-    @Transactional(readOnly=true)
+    @Transactional(readOnly = true)
     public boolean isAvailableToUser(Object target, User recipient, Permission permission) {
         return isGranted(target, recipient, permission);
     }
@@ -203,41 +185,13 @@ public class SpringSecurityImageSecurityService implements ImageSecurityService 
         return new PrincipalSid(recipient.getScreenName());
     }
 
-    public void addPermissions(Object obj, String recipientRole, Set<Permission> permissions) {
-        final Sid sid = sidForRole(recipientRole);
-        effectPermissions(findAcl(obj, sid), sid, permissions, false);
-    }
-
     private void addPermission(Object obj, User recipient, Permission permission) {
         addPermission(obj, recipient, permission, true);
-
-        if (obj instanceof Image) {
-            if (BasePermission.READ.equals(permission)) {
-                for (ImageFrame frame : imageGroupRepository.getFramesContainingImage((Image) obj)) {
-                    addPermission(frame, recipient, BasePermission.READ);
-                }
-            }
-        } else if (obj instanceof ImageGroup) {
-            if (BasePermission.ADMINISTRATION.equals(permission)) {
-                for (ImageFrame frame : ((ImageGroup) obj).getFrames()) {
-                    addPermission(frame, recipient, BasePermission.ADMINISTRATION);
-                }
-            }
-        }
     }
 
     private void addPermission(Object obj, User recipient, Permission permission, boolean additive) {
         final Sid principalSid = sidForUser(recipient);
         effectPermission(findAcl(obj, principalSid), principalSid, permission, additive);
-    }
-
-    public void setPermission(Object obj, User recipient, Permission permission) {
-        addPermission(obj, recipient, permission, false);
-    }
-
-    public void setPermission(Object obj, String recipientRole, Permission permission) {
-        final Sid sid = sidForRole(recipientRole);
-        effectPermission(findAcl(obj, sid), sid, permission, false);
     }
 
     private void effectPermission(MutableAcl acl, Sid recipient, Permission permission, boolean additive) {
@@ -299,26 +253,7 @@ public class SpringSecurityImageSecurityService implements ImageSecurityService 
         return (MutableAcl) aclService.readAclById(identity, new Sid[]{sid});
     }
 
-    public void makePrivate(Object obj) {
-        if (obj instanceof Image) {
-            Image image = (Image) obj;
-            // also try to make all the frames private
-            List<ImageFrame> frames = imageGroupRepository.getFramesContainingImage(image);
-            for (ImageFrame frame : frames) {
-                try {
-                    makePrivate(frame);
-                } catch (AccessDeniedException e) {
-                    log.warn("No admin access to frame " + frame + " for image: " + image);
-                }
-            }
-
-            // for now also make the manifestations private
-            SortedSet<ImageManifestation> manifestations = image.getManifestations();
-            for (ImageManifestation mf : manifestations) {
-                makePrivate(mf);
-            }
-        }
-
+    public void makePrivate(AccessControlled obj) {
         // TODO: perhaps this should be a blocking permission instead
         final Sid sid = sidForRole(ROLE_EVERYONE);
         effectPermissions(findAcl(obj, sid), sid, Collections.<Permission>emptySet(), false);

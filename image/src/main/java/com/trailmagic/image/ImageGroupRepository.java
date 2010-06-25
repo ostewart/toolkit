@@ -45,7 +45,6 @@ public interface ImageGroupRepository {
     public ImageGroup getByIdWithFrames(long id);
     public ImageGroup loadById(long imageGroupId);
     public List<ImageGroup> getAll();
-    public void saveFrame(ImageFrame frame);
     public void saveNewGroup(ImageGroup newGroup);
     public ImageGroup saveGroup(ImageGroup imageGroup);
     public int getPublicFrameCount(ImageGroup group);

@@ -138,7 +138,6 @@ public class ImageServiceImplTest {
         Assert.assertEquals(photo, mf.getImage());
         Assert.assertEquals(testBytes.length, mf.getData().getBinaryStream().available());
 
-        Mockito.verify(imageSecurityService, never()).addOwnerAcl(mf);
         Mockito.verify(imageSecurityService).addOwnerAcl(photo);
     }
 

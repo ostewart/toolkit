@@ -13,32 +13,31 @@
  */
 package com.trailmagic.image;
 
+import com.trailmagic.image.security.AccessControlled;
 import com.trailmagic.user.Owned;
 import com.trailmagic.user.User;
 
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-public class Image implements Owned {
+public class Image implements Owned, AccessControlled {
     private long id;
     private String name;
     private String displayName;
     private String caption;
     private String copyright;
     private String creator;
-    private SortedSet<ImageManifestation> manifestations;
+    private SortedSet<ImageManifestation> manifestations = new TreeSet<ImageManifestation>();
     private User owner;
     private ImageCD imageCD;
     private Integer number;
 
     public Image(long id) {
         super();
-        // nothing for now
         this.id = id;
     }
 
     public Image() {
-        this.manifestations = new TreeSet<ImageManifestation>();
     }
 
     public Image(Image image) {
@@ -154,7 +153,7 @@ public class Image implements Owned {
     }
 
     public String toString() {
-        return getClass().getName() + ": " + getName();
+        return getClass().getName() + "{id=" + id + ", name=" + getName() + "}";
     }
 
 }

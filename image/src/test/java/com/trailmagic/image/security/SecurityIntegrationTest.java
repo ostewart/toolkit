@@ -45,7 +45,7 @@ public class SecurityIntegrationTest {
     @Test
     public void testMakePhotoPrivate() {
         setupAuthenticatedUser();
-        final Photo photo = testPhoto();
+        final Photo photo = makePhoto("test");
 
         assertFalse("After creation, a photo should not be public", service.isPublic(photo));
 
@@ -62,7 +62,7 @@ public class SecurityIntegrationTest {
     @Test
     public void testMakeImageManifestationPrivate() {
         setupAuthenticatedUser();
-        final Photo photo = testPhoto();
+        final Photo photo = makePhoto("test");
         HeavyImageManifestation mf = manifestationForPhoto(photo);
 
         assertFalse("After creation, a manifestation should not be public", service.isPublic(mf));
@@ -79,14 +79,9 @@ public class SecurityIntegrationTest {
     @Test
     public void testMakeImageFramePrivate() {
         setupAuthenticatedUser();
-        final Photo photo = testPhoto();
-
-        ImageGroup group = new ImageGroup("testGroup", testUser, ImageGroup.Type.ROLL);
-
-        ImageFrame frame = new ImageFrame();
-        frame.setId(3L);
-        frame.setImage(photo);
-        frame.setImageGroup(group);
+        final Photo photo = makePhoto("test1");
+        ImageGroup group = makeRoll();
+        ImageFrame frame = makeFrame(photo, group, 1);
 
         group.addFrame(frame);
 
@@ -105,22 +100,11 @@ public class SecurityIntegrationTest {
     @Test
     public void testMakeImageGroupPrivate() {
         setupAuthenticatedUser();
-        final Photo photo = testPhoto();
-
-        ImageGroup group = new ImageGroup("testGroup", testUser, ImageGroup.Type.ROLL);
-        group.setDisplayName("test group");
-        group.setName("testGroup");
-        group.setUploadDate(new Date());
-
-        ImageFrame frame = new ImageFrame();
-        frame.setId(3L);
-        frame.setImage(photo);
-        frame.setImageGroup(group);
+        final Photo photo = makePhoto("test");
+        ImageGroup group = makeRoll();
+        ImageFrame frame = makeFrame(photo, group, 1);
 
         group.addFrame(frame);
-
-        imageService.saveNewImageFrame(frame);
-        imageService.saveNewImageGroup(group);
 
         assertFalse("After creation, a group should not be public", service.isPublic(group));
 
@@ -150,7 +134,7 @@ public class SecurityIntegrationTest {
     @Test
     public void testAddPermission() {
         setupAuthenticatedUser();
-        final Photo photo = testPhoto();
+        final Photo photo = makePhoto("test");
 
         assertFalse("After creation, a photo should not be public", service.isPublic(photo));
         service.addReadPermission(photo, testUser);
@@ -161,7 +145,7 @@ public class SecurityIntegrationTest {
     @Test
     public void testAddPermissionAppliesToManifestation() {
         setupAuthenticatedUser();
-        final Photo photo = testPhoto();
+        final Photo photo = makePhoto("test");
         HeavyImageManifestation mf = manifestationForPhoto(photo);
 
         assertFalse("After creation, a photo should not be public", service.isPublic(mf));
@@ -170,11 +154,56 @@ public class SecurityIntegrationTest {
         assertTrue("After addReadPermission call, isAvailable should also work", service.isAvailableToUser(mf, testUser, BasePermission.READ));
     }
 
+    @Test
+    public void testMakeImagesPrivate() {
+        setupAuthenticatedUser();
+        final Photo photo1 = makePhoto("test1");
+        final Photo photo2 = makePhoto("test2");
 
-    private Photo testPhoto() {
+        ImageGroup group = makeRoll();
+
+        ImageFrame frame1 = makeFrame(photo1, group, 1);
+        ImageFrame frame2 = makeFrame(photo2, group, 2);
+
+        assertFalse("After creation, frame should not be public", service.isPublic(frame1));
+        assertFalse("After creation, frame should not be public", service.isPublic(frame2));
+
+        service.makeImagesPublic(group);
+        assertTrue("After makeImagesPublic call on its ImageGroup, the frame should be public", service.isPublic(frame1));
+        assertTrue("After makeImagesPublic call on its ImageGroup, the frame should be public", service.isPublic(frame2));
+        assertTrue("After makeImagesPublic call, frame should be readable", service.isReadableByRole(frame1, "ROLE_EVERYONE"));
+        assertTrue("After makeImagesPublic call, frame should be readable", service.isReadableByRole(frame2, "ROLE_EVERYONE"));
+
+        service.makeImagesPrivate(group);
+        assertFalse("After makeImagesPrivate call, should not be public", service.isPublic(frame1));
+        assertFalse("After makeImagesPrivate call, should not be public", service.isPublic(frame2));
+        assertFalse("After makeImagesPrivate call, should not be readable", service.isReadableByRole(frame1, "ROLE_EVERYONE"));
+        assertFalse("After makeImagesPrivate call, should not be readable", service.isReadableByRole(frame2, "ROLE_EVERYONE"));
+        assertFalse("After makeImagesPrivate call, isAvailable should also work", service.isAvailableToRole(frame1, "ROLE_EVERYONE", BasePermission.READ));
+        assertFalse("After makeImagesPrivate call, isAvailable should also work", service.isAvailableToRole(frame2, "ROLE_EVERYONE", BasePermission.READ));
+
+    }
+
+    private ImageFrame makeFrame(Photo photo, ImageGroup group, int position) {
+        ImageFrame frame = new ImageFrame();
+        frame.setImage(photo);
+        frame.setPosition(position);
+        group.addFrame(frame);
+        return frame;
+    }
+
+    private ImageGroup makeRoll() {
+        ImageGroup group = new ImageGroup("testGroup", testUser, ImageGroup.Type.ROLL);
+        group.setDisplayName("test group");
+        group.setUploadDate(new Date());
+        imageService.saveNewImageGroup(group);
+        return group;
+    }
+
+
+    private Photo makePhoto(String name) {
         final Photo photo = new Photo();
-        photo.setId(1L);
-        photo.setName("test");
+        photo.setName(name);
         photo.setOwner(testUser);
         photo.setDisplayName("test display");
         imageService.saveNewImage(photo);

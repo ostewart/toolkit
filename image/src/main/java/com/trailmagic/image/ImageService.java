@@ -23,11 +23,10 @@ public interface ImageService {
 
     public void saveNewImage(Image image);
     public void saveNewImageGroup(ImageGroup imageGroup) throws IllegalStateException;
-    public void saveNewImageFrame(ImageFrame imageFrame);
     public void saveNewImageManifestation(HeavyImageManifestation imageManifestation);
     public ImageFrame addImageToGroup(Image image, ImageGroup group, int position);
-    public void makeImageGroupPublic(ImageGroup group);
-    public void makeImageGroupPublic(String ownerName,
+    public void makeImageGroupAndImagesPublic(ImageGroup group);
+    public void makeImageGroupAndImagesPublic(String ownerName,
                                      ImageGroup.Type type,
                                      String imageGroupName)
         throws NoSuchImageGroupException;

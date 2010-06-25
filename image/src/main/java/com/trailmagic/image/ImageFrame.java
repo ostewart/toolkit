@@ -44,6 +44,10 @@ public class ImageFrame implements Owned, Comparable<ImageFrame> {
 
     public void setImageGroup(ImageGroup group) {
         imageGroup = group;
+        if (!group.getFrames().contains(this)) {
+            throw new IllegalStateException("ImageFrame added to ImageGroup that doesn't contain it.  Add frame to group first.");
+        }
+
     }
 
     public int getPosition() {
@@ -71,33 +75,21 @@ public class ImageFrame implements Owned, Comparable<ImageFrame> {
     }
 
     public boolean equals(Object obj) {
-        return (obj instanceof ImageFrame) &&
-            (this.getImageGroup().equals(((ImageFrame)obj).getImageGroup())) &&
-            (this.getImage().equals(((ImageFrame)obj).getImage()));
-        /*
-        if ( !(obj instanceof ImageFrame) ) {return false;}
-        ImageGroup mine = getImageGroup();
-        ImageGroup yours = ((ImageFrame)obj).getImageGroup();
-        System.err.println("mine: " + mine + ", yours: " + yours);
-
-        if (!(mine.equals(yours))) {
-            return false;
-        }
-        if (!(this.getImage().equals(((ImageFrame)obj).getImage()))) {
-            return false;
-        }
-        return false;
-        */
+        return obj instanceof ImageFrame &&
+               this.getImageGroup().equals(((ImageFrame)obj).getImageGroup()) &&
+               this.getImage().equals(((ImageFrame)obj).getImage());
     }
 
-
     public int compareTo(ImageFrame other) {
-        // XXX: need to add something to this to make it consistent with equals
-        return (this.position - other.position);
+        return this.comparisonString().compareTo(other.comparisonString());
+    }
+
+    private String comparisonString() {
+        return image.getName() + image.getOwner() + position;
     }
 
     public int hashCode() {
-        return position;
+        return getImage().hashCode() + getImageGroup().hashCode();
     }
 
     /**
@@ -107,6 +99,7 @@ public class ImageFrame implements Owned, Comparable<ImageFrame> {
      * owner, but it's a tricky situation anyway, and the frame really
      * properly belongs to the group.
      **/
+    @SuppressWarnings({"JpaAttributeMemberSignatureInspection", "JpaAttributeTypeInspection"})
     public User getOwner() {
         return getImageGroup().getOwner();
     }
@@ -117,6 +110,7 @@ public class ImageFrame implements Owned, Comparable<ImageFrame> {
         return getClass() + "(id=" + id
             + "; position=" + position
             + "; image=" + image
+            + "; imageGroup=" + imageGroup
             + ")";
     }
 }

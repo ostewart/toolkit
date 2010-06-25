@@ -35,8 +35,8 @@ public class ImageAccessController extends SimpleFormController {
 
     private static final String MAKE_PUBLIC_ACTION = "makePublic";
     private static final String MAKE_PRIVATE_ACTION = "makePrivate";
-    private static final String MAKE_FRAMES_PUBLIC_ACTION = "makeFramesPublic";
-    private static final String MAKE_FRAMES_PRIVATE_ACTION = "makeFramesPrivate";
+    private static final String MAKE_FRAMES_PUBLIC_ACTION = "makeImagesPublic";
+    private static final String MAKE_FRAMES_PRIVATE_ACTION = "makeImagesPrivate";
     private static final String IMAGE_TARGET = "image";
     private static final String IMAGE_GROUP_TARGET = "imageGroup";
 
@@ -91,9 +91,9 @@ public class ImageAccessController extends SimpleFormController {
             } else if (MAKE_PRIVATE_ACTION.equals(bean.getAction())) {
                 imageSecurityService.makePrivate(target);
             } else if (MAKE_FRAMES_PUBLIC_ACTION.equals(bean.getAction())) {
-                imageSecurityService.makeFramesPublic(target);
+                imageSecurityService.makeImagesPublic(target);
             } else if (MAKE_FRAMES_PRIVATE_ACTION.equals(bean.getAction())) {
-                imageSecurityService.makeFramesPrivate(target);
+                imageSecurityService.makeImagesPrivate(target);
             } else {
                 throw new Exception("invalid action");
             }

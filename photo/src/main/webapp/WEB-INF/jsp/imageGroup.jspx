@@ -31,6 +31,10 @@ frames: List of ImageFrames for this group
           xmlns:fn="http://java.sun.com/jsp/jstl/functions"
           xmlns:authz="http://www.springframework.org/security/tags">
     <!--    <jsp:directive.page contentType="application/xhtml+xml"/>-->
+
+
+    <!--@elvariable id="imageGroup" type="com.trailmagic.image.ImageGroup"-->
+    <!--@elvariable id="frames" type="java.util.Collection<com.trailmagic.image.ImageFrame>"-->
     <jsp:directive.page contentType="text/html"/>
     <html xmlns="http://www.w3.org/1999/xhtml">
     <jsp:output
@@ -86,7 +90,8 @@ frames: List of ImageFrames for this group
         <div class="imageGroup">
           <span class="groupData">
             <span class="displayName">${fn:escapeXml(imageGroup.displayName)}</span>
-            <span class="imageCount">${fn:length(frames)} images in ${imageGroup.type.displayString}</span>
+            <span class="imageCount">
+            ${fn:length(frames)} images in ${imageGroup.type.displayString}</span>
             <span class="description">${fn:escapeXml(imageGroup.description)}</span>
             <span class="owner">
               Owned by:
@@ -151,12 +156,12 @@ frames: List of ImageFrames for this group
                     <input name="target" type="hidden" value="imageGroup"/>
                     <c:choose>
                         <c:when test="${imageGroupIsPublic}">
-                            <input name="action" type="hidden" value="makeFramesPublic"/>
-                            <input type="submit" name="submit" value="Make Frames Public"/>
+                            <input name="action" type="hidden" value="makeImagesPublic"/>
+                            <input type="submit" name="submit" value="Make Images Public"/>
                         </c:when>
                         <c:otherwise>
-                            <input name="action" type="hidden" value="makeFramesPrivate"/>
-                            <input type="submit" name="submit" value="Make Frames Private"/>
+                            <input name="action" type="hidden" value="makeImagesPrivate"/>
+                            <input type="submit" name="submit" value="Make Images Private"/>
                         </c:otherwise>
                     </c:choose>
                 </jsp:body>

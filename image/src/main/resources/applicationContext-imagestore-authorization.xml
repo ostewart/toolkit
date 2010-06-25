@@ -234,7 +234,6 @@
                 com.trailmagic.image.security.ImageSecurityService.makePrivate=ACL_OBJECT_ADMIN
                 com.trailmagic.image.security.ImageSecurityService.addPermission=ACL_OBJECT_ADMIN
                 com.trailmagic.image.security.ImageSecurityService.addReadPermission=ACL_OBJECT_ADMIN
-                com.trailmagic.image.security.ImageSecurityService.setPermission=ACL_OBJECT_ADMIN
                 com.trailmagic.image.ImageRepository.save=ACL_IMAGE_WRITE
             </value>
         </property>

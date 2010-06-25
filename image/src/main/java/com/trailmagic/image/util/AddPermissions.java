@@ -87,83 +87,6 @@ public class AddPermissions {
         this.groupFactory = groupFactory;
     }
 
-    public void makeEverythingPublic(final String ownerName) {
-        hibernateTemplate.execute(new HibernateCallback() {
-            public Object doInHibernate(Session session) {
-                Collection<ImageGroup> imageGroups =
-                        imageGroupRepository
-                                .getAlbumsByOwnerScreenName(ownerName);
-                imageGroups.addAll(imageGroupRepository
-                        .getRollsByOwnerScreenName(ownerName));
-
-                for (ImageGroup group : imageGroups) {
-                    makeGroupPublic(group);
-                }
-                return null;
-            }
-        });
-    }
-
-    // assumes within a session
-    private void makeGroupPublic(ImageGroup group) {
-        imageSecurityService.makePublic(group);
-        s_log.info("Added public permission for group: "
-                + group.getName());
-
-        Collection<ImageFrame> frames = group.getFrames();
-
-        for (ImageFrame frame : frames) {
-            imageSecurityService.makePublic(frame);
-            s_log.info("Added public permission for frame: "
-                    + frame.getPosition() + " of group "
-                    + group.getName());
-
-            Image image = frame.getImage();
-            imageSecurityService.makePublic(image);
-            s_log.info("Added public permission for image: "
-                    + image.getDisplayName());
-
-            for (ImageManifestation mf : image.getManifestations()) {
-                imageSecurityService.makePublic(mf);
-                s_log.info("Added public permission for "
-                        + "manifestation: "
-                        + mf.getHeight() + "x" + mf.getWidth());
-            }
-        }
-    }
-
-    public void makeImageGroupsPublic(final String ownerName, final String type,
-                                      final Collection<String> groupNames) {
-
-        hibernateTemplate.execute(new HibernateCallback() {
-            public Object doInHibernate(Session session) {
-                User owner = userRepository.getByScreenName(ownerName);
-                for (String groupName : groupNames) {
-                    ImageGroup group;
-                    if ("roll".equals(type)) {
-                        group =
-                                imageGroupRepository.getRollByOwnerAndName(owner,
-                                        groupName);
-                        if (group == null) {
-                            s_log.error("No roll found with name " + groupName
-                                    + " owned by " + owner);
-                        }
-                    } else if ("album".equals(type)) {
-                        group =
-                                imageGroupRepository.getAlbumByOwnerAndName(owner,
-                                        groupName);
-                        s_log.error("No album found with name " + groupName
-                                + " owned by " + owner);
-                    } else {
-                        throw new IllegalArgumentException("invalid type");
-                    }
-                    makeGroupPublic(group);
-                }
-                return null;
-            }
-        });
-    }
-
     public void addAllOwnerPermissions(final String ownerName) {
         hibernateTemplate.execute(new HibernateCallback() {
             public Object doInHibernate(Session session) {
@@ -175,13 +98,8 @@ public class AddPermissions {
                 for (ImageGroup group : groups) {
                     imageSecurityService.addOwnerAcl(group);
                     for (ImageFrame frame : group.getFrames()) {
-                        imageSecurityService.addOwnerAcl(frame);
                         Image image = frame.getImage();
                         imageSecurityService.addOwnerAcl(image);
-                        for (ImageManifestation mf
-                                : image.getManifestations()) {
-                            imageSecurityService.addOwnerAcl(mf);
-                        }
                     }
                 }
                 return null;
@@ -199,36 +117,8 @@ public class AddPermissions {
                                 albumName);
                 imageSecurityService.addOwnerAcl(group);
                 for (ImageFrame frame : group.getFrames()) {
-                    imageSecurityService.addOwnerAcl(frame);
                     Image image = frame.getImage();
                     imageSecurityService.addOwnerAcl(image);
-                    for (ImageManifestation mf
-                            : image.getManifestations()) {
-                        imageSecurityService.addOwnerAcl(mf);
-                    }
-                }
-                return null;
-            }
-        });
-    }
-
-    public void fixFramePermissions() {
-        hibernateTemplate.execute(new HibernateCallback() {
-            public Object doInHibernate(Session session) {
-                List<ImageGroup> groups =
-                        imageGroupRepository.getAll();
-
-                for (ImageGroup group : groups) {
-                    for (ImageFrame frame : group.getFrames()) {
-                        if (imageSecurityService.isPublic(frame
-                                .getImage())) {
-                            s_log.info("Making frame public: " + frame);
-                            imageSecurityService.makePublic(frame);
-                        } else {
-                            s_log.info("Making frame private: " + frame);
-                            imageSecurityService.makePrivate(frame);
-                        }
-                    }
                 }
                 return null;
             }
@@ -337,9 +227,7 @@ public class AddPermissions {
 //            (AddPermissions) appContext.getBean(ADD_PERMISSIONS_BEAN);
 
         String command = args[0];
-        if ("fixFramePermissions".equals(command)) {
-            ap.fixFramePermissions();
-        } else if ("addAllOwnerPermissions".equals(command)) {
+        if ("addAllOwnerPermissions".equals(command)) {
             ap.addAllOwnerPermissions(args[1]);
         } else if ("addOwnerPermissions".equals(command)) {
             ap.addOwnerPermissions(args[1], args[2]);
@@ -364,7 +252,7 @@ public class AddPermissions {
                     (ImageService) appContext.getBean("imageService");
             for (int i = 3; i < args.length; i++) {
                 try {
-                    manager.makeImageGroupPublic(args[1],
+                    manager.makeImageGroupAndImagesPublic(args[1],
                             ImageGroup.Type.fromString(args[2]),
                             args[i]);
                 } catch (NoSuchImageGroupException e) {
@@ -373,8 +261,6 @@ public class AddPermissions {
             }
             // username, type, groups...
 //            ap.makeImageGroupsPublic(args[1], args[2], groups);
-        } else if ("makeEverythingPublic".equals(command)) {
-            ap.makeEverythingPublic(args[1]);
         } else {
             printUsage();
             System.exit(1);
