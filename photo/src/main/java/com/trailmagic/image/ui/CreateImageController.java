@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Controller
+@RequestMapping("/image")
 public class CreateImageController {
     private ImageService imageService;
 
@@ -26,10 +27,20 @@ public class CreateImageController {
 
     @InitBinder
     public void setupBinder(WebDataBinder binder) {
-        binder.setRequiredFields(new String[] {"file"});
+        binder.setRequiredFields("file");
     }
 
-    @RequestMapping(value="/image", method= RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.GET)
+    public String displayForm() {
+        return "addImage";
+    }
+
+    @ModelAttribute("imageUpload")
+    public ImageUpload formBackingObject() {
+        return new ImageUpload();
+    }
+
+    @RequestMapping(method= RequestMethod.POST)
     public void processNewImage(@ModelAttribute ImageUpload imageUpload, HttpServletResponse response) throws IOException {
         ImageMetadata imageMetadata = new ImageMetadata();
         final MultipartFile multipartFile = imageUpload.getFile();

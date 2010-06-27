@@ -23,6 +23,7 @@ import com.trailmagic.image.ImageGroup;
 import com.trailmagic.image.ImageGroupRepository;
 import com.trailmagic.image.ImageService;
 import com.trailmagic.image.Photo;
+import com.trailmagic.image.impl.ImageInitializer;
 import com.trailmagic.user.UserRepository;
 
 import java.io.File;
@@ -72,15 +73,17 @@ public class ImagesParserImpl extends DefaultHandler implements ImagesParser {
     private UserRepository userRepository;
     private HibernateTemplate hibernateTemplate;
     private ImageService imageService;
+    private ImageInitializer imageInitializer;
 
     public ImagesParserImpl(ImageGroupRepository imageGroupRepository,
             UserRepository userRepository, HibernateTemplate hibernateTemplate,
-            ImageService imageService) {
+            ImageService imageService, ImageInitializer imageInitializer) {
         super();
         this.imageGroupRepository = imageGroupRepository;
         this.userRepository = userRepository;
         this.hibernateTemplate = hibernateTemplate;
         this.imageService = imageService;
+        this.imageInitializer = imageInitializer;
     }
 
     public File getBaseDir() {
@@ -200,7 +203,7 @@ public class ImagesParserImpl extends DefaultHandler implements ImagesParser {
 
     public void endRoll() {
         s_logger.debug("endRoll() called");
-        imageService.saveNewImageGroup(m_roll);
+        imageInitializer.saveNewImageGroup(m_roll);
         m_inRoll = false;
     }
 
@@ -216,7 +219,7 @@ public class ImagesParserImpl extends DefaultHandler implements ImagesParser {
         // add the photo to the m_photoRollName roll with frame number
         // m_photoFrameNum
 
-        imageService.saveNewImage(m_image);
+        imageInitializer.saveNewImage(m_image);
 
         ImageFrame frame = imageService.addImageToGroup(m_image, m_photoRoll, Integer.parseInt(m_photoFrameNum));
 
@@ -367,7 +370,7 @@ public class ImagesParserImpl extends DefaultHandler implements ImagesParser {
             FileInputStream fis = new FileInputStream(srcFile);
 
             m_manifestation.setData(Hibernate.createBlob(fis));
-            imageService.saveNewImageManifestation(m_manifestation);
+            imageInitializer.saveNewImageManifestation(m_manifestation);
 
             fis.close();
             s_logger.info("Finished importing " + srcFile.getPath());

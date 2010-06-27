@@ -14,6 +14,7 @@
 package com.trailmagic.image;
 
 import com.trailmagic.image.security.Identity;
+import com.trailmagic.user.User;
 
 import java.util.Date;
 
@@ -45,6 +46,10 @@ public class Photo extends Image {
         setNotes(photo.getNotes());
         setCaptureDate(photo.getCaptureDate());
         setRoll(photo.getRoll());
+    }
+
+    public Photo(String name, User owner) {
+        super(name, owner);
     }
 
     public Lens getLens() {

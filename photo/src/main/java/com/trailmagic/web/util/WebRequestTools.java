@@ -93,7 +93,7 @@ public class WebRequestTools {
         try {
             iri.setImageGroupType(ImageGroup.Type.fromString(groupTypeString));
         } catch(IllegalArgumentException e) {
-            throw new MalformedUrlException("invalid group type", e);
+            throw new MalformedUrlException("invalid group type: " + groupTypeString, e);
         }
 
         if ( !pathTokens.hasMoreTokens() ) {

@@ -140,6 +140,7 @@
             <element id="library" level="project" name="Maven: cglib:cglib:2.2" />
             <element id="library" level="project" name="Maven: asm:asm:3.1" />
             <element id="library" level="project" name="Maven: org.springframework.security:spring-security-acl:2.0.4" />
+            <element id="library" level="project" name="Maven: commons-lang:commons-lang:2.4" />
             <element id="library" level="project" name="Maven: commons-beanutils:commons-beanutils:1.8.0" />
             <element id="library" level="project" name="Maven: org.liquibase:liquibase-core:1.9.5" />
             <element id="library" level="project" name="Maven: commons-fileupload:commons-fileupload:1.2.1" />
@@ -149,7 +150,6 @@
             <element id="library" level="project" name="Maven: javax.servlet:jstl:1.1.2" />
             <element id="library" level="project" name="Maven: org.easymock:easymock:2.3" />
             <element id="library" level="project" name="Maven: commons-io:commons-io:1.4" />
-            <element id="library" level="project" name="Maven: commons-lang:commons-lang:2.1" />
             <element id="library" level="project" name="Maven: org.springframework.security:spring-security-taglibs:2.0.4" />
             <element id="library" level="project" name="Maven: org.springframework:spring-support:2.0.8" />
           </element>
@@ -1150,17 +1150,6 @@
         <root url="jar://$MAVEN_REPOSITORY$/junit/junit/4.7/junit-4.7-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: commons-lang:commons-lang:2.1">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/commons-lang/commons-lang/2.1/commons-lang-2.1.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/commons-lang/commons-lang/2.1/commons-lang-2.1-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/commons-lang/commons-lang/2.1/commons-lang-2.1-sources.jar!/" />
-      </SOURCES>
-    </library>
     <library name="Maven: org.springframework.security:spring-security-taglibs:2.0.4">
       <CLASSES>
         <root url="jar://$MAVEN_REPOSITORY$/org/springframework/security/spring-security-taglibs/2.0.4/spring-security-taglibs-2.0.4.jar!/" />
@@ -1203,6 +1192,17 @@
       </JAVADOC>
       <SOURCES>
         <root url="jar://$MAVEN_REPOSITORY$/org/springframework/spring-dao/2.0.8/spring-dao-2.0.8-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: commons-lang:commons-lang:2.4">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-lang/commons-lang/2.4/commons-lang-2.4.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-lang/commons-lang/2.4/commons-lang-2.4-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-lang/commons-lang/2.4/commons-lang-2.4-sources.jar!/" />
       </SOURCES>
     </library>
   </component>

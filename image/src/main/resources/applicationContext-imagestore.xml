@@ -50,6 +50,7 @@
     <constructor-arg ref="imageGroupRepository"/>
     <constructor-arg ref="userFactory"/>
     <constructor-arg ref="imageService"/>
+      <constructor-arg ref="imageInitializer"/>
   </bean>
 
   <bean id="testInterceptor"

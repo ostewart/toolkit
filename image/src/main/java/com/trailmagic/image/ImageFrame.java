@@ -44,9 +44,9 @@ public class ImageFrame implements Owned, Comparable<ImageFrame> {
 
     public void setImageGroup(ImageGroup group) {
         imageGroup = group;
-        if (!group.getFrames().contains(this)) {
-            throw new IllegalStateException("ImageFrame added to ImageGroup that doesn't contain it.  Add frame to group first.");
-        }
+//        if (!group.getFrames().contains(this)) {
+//            throw new IllegalStateException("setImageGroup called on ImageFrame with ImageGroup that doesn't contain it.  Add frame to group first.");
+//        }
 
     }
 
@@ -74,10 +74,26 @@ public class ImageFrame implements Owned, Comparable<ImageFrame> {
         this.caption = caption;
     }
 
-    public boolean equals(Object obj) {
-        return obj instanceof ImageFrame &&
-               this.getImageGroup().equals(((ImageFrame)obj).getImageGroup()) &&
-               this.getImage().equals(((ImageFrame)obj).getImage());
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ImageFrame)) return false;
+
+        ImageFrame frame = (ImageFrame) o;
+
+        if (position != frame.position) return false;
+        if (image != null ? !image.equals(frame.image) : frame.image != null) return false;
+        if (imageGroup != null ? !imageGroup.equals(frame.imageGroup) : frame.imageGroup != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = imageGroup != null ? imageGroup.hashCode() : 0;
+        result = 31 * result + position;
+        result = 31 * result + (image != null ? image.hashCode() : 0);
+        return result;
     }
 
     public int compareTo(ImageFrame other) {
@@ -85,11 +101,8 @@ public class ImageFrame implements Owned, Comparable<ImageFrame> {
     }
 
     private String comparisonString() {
-        return image.getName() + image.getOwner() + position;
-    }
-
-    public int hashCode() {
-        return getImage().hashCode() + getImageGroup().hashCode();
+        return imageGroup != null ? imageGroup.getName() : "null"
+            + image != null ? image.getName() : "null" + position;
     }
 
     /**

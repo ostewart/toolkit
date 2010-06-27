@@ -37,6 +37,7 @@
                     <argLine>
                         -javaagent:${settings.localRepository}/org/aspectj/aspectjweaver/1.6.2/aspectjweaver-1.6.2.jar
                     </argLine>
+                    <!--  -javaagent:${settings.localRepository}/org/terracotta/hibernate/terracotta-hibernate-agent/1.1.0/terracotta-hibernate-agent-1.1.0.jar -->
                 </configuration>
             </plugin>
 
@@ -64,6 +65,19 @@
         <module>db</module>
     </modules>
 
+    <repositories>
+        <repository>
+            <id>terracotta-snapshots</id>
+                  <url>http://www.terracotta.org/download/reflector/maven2</url>
+                  <releases>
+                    <enabled>true</enabled>
+                  </releases>
+                  <snapshots>
+                    <enabled>true</enabled>
+                  </snapshots>            
+        </repository>
+    </repositories>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -75,13 +89,13 @@
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
                 <version>1.2.130</version>
-            </dependency>            
+            </dependency>
             <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
                 <version>5.1.5</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-core</artifactId>
@@ -113,6 +127,18 @@
                 <groupId>net.sf.ehcache</groupId>
                 <artifactId>ehcache-terracotta</artifactId>
                 <version>1.8.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.terracotta.hibernate</groupId>
+                <artifactId>terracotta-hibernate-agent</artifactId>
+                <version>1.1.0</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.terracotta.hibernate</groupId>
+                <artifactId>terracotta-hibernate-cache</artifactId>
+                <version>1.1.0</version>
             </dependency>
 
             <dependency>
@@ -157,7 +183,7 @@
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-context-support</artifactId>
                 <version>3.0.1.RELEASE</version>
-            </dependency>            
+            </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-orm</artifactId>
@@ -283,7 +309,7 @@
             <dependency>
                 <groupId>commons-lang</groupId>
                 <artifactId>commons-lang</artifactId>
-                <version>2.1</version>
+                <version>2.4</version>
             </dependency>
             <dependency>
                 <groupId>commons-codec</groupId>

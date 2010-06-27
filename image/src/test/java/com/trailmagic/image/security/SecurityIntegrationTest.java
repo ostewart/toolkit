@@ -5,6 +5,7 @@ import com.trailmagic.image.ImageFrame;
 import com.trailmagic.image.ImageGroup;
 import com.trailmagic.image.ImageService;
 import com.trailmagic.image.Photo;
+import com.trailmagic.image.impl.ImageInitializer;
 import com.trailmagic.user.User;
 import com.trailmagic.user.UserRepository;
 import com.trailmagic.user.security.ToolkitUserDetails;
@@ -41,6 +42,8 @@ public class SecurityIntegrationTest {
     @Autowired
     private UserRepository userRepository;
     private User testUser;
+    @Autowired
+    private ImageInitializer imageInitializer;
 
     @Test
     public void testMakePhotoPrivate() {
@@ -196,7 +199,7 @@ public class SecurityIntegrationTest {
         ImageGroup group = new ImageGroup("testGroup", testUser, ImageGroup.Type.ROLL);
         group.setDisplayName("test group");
         group.setUploadDate(new Date());
-        imageService.saveNewImageGroup(group);
+        imageInitializer.saveNewImageGroup(group);
         return group;
     }
 
@@ -206,7 +209,7 @@ public class SecurityIntegrationTest {
         photo.setName(name);
         photo.setOwner(testUser);
         photo.setDisplayName("test display");
-        imageService.saveNewImage(photo);
+        imageInitializer.saveNewImage(photo);
         return photo;
     }
 

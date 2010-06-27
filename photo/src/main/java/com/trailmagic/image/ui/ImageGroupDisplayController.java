@@ -2,6 +2,7 @@ package com.trailmagic.image.ui;
 
 import com.trailmagic.image.ImageFrame;
 import com.trailmagic.image.ImageGroup;
+import com.trailmagic.image.ImageGroupNotFoundException;
 import com.trailmagic.image.ImageGroupRepository;
 import com.trailmagic.image.NoSuchImageGroupException;
 import com.trailmagic.image.security.ImageSecurityService;
@@ -25,7 +26,7 @@ public class ImageGroupDisplayController {
     private ImageGroupRepository imageGroupRepository;
     private ImageSecurityService imageSecurityService;
     private WebRequestTools webRequestTools;
-    
+
     private static final String IMG_GROUP_VIEW = "imageGroup";
     private static Logger log =
         LoggerFactory.getLogger(ImageGroupDisplayController.class);
@@ -45,16 +46,19 @@ public class ImageGroupDisplayController {
     public ModelAndView handleDisplayGroup(HttpServletRequest request,
                                            ModelMap model)
             throws NoSuchImageGroupException, MalformedUrlException {
-        
+
         ImageRequestInfo iri = webRequestTools.getImageRequestInfo(request);
         User owner = userRepository.getByScreenName(iri.getScreenName());
         ImageGroup group =
             imageGroupRepository.getByOwnerNameAndTypeWithFrames(owner,
                                                                  iri.getImageGroupName(),
                                                                  iri.getImageGroupType());
+        if (group == null) {
+            throw new ImageGroupNotFoundException(iri.getImageGroupType().getDisplayString()
+                                                  + " not found: " + iri.getImageGroupName());
+        }
         model.addAttribute("imageGroup", group);
-        model.addAttribute("imageGroupIsPublic",
-                           imageSecurityService.isPublic(group));
+        model.addAttribute("imageGroupIsPublic", imageSecurityService.isPublic(group));
 
         SortedSet<ImageFrame> frames = group.getFrames();
         log.debug("Frames contains " + frames.size() + " items.");

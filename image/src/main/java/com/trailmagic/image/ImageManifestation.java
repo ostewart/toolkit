@@ -52,9 +52,9 @@ public class ImageManifestation implements Comparable<ImageManifestation>, Owned
      */
     public void setImage(Image image) {
         this.image = image;
-        if (!image.getManifestations().contains(this)) {
-            throw new IllegalStateException("Manifestation added to Image that doesn't contain it.  Add manifestation to Image first.");
-        }
+//        if (!image.getManifestations().contains(this)) {
+//            throw new IllegalStateException("Manifestation added to Image that doesn't contain it.  Add manifestation to Image first.");
+//        }
     }
 
     public int getHeight() {

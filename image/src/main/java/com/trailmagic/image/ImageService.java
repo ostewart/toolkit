@@ -13,24 +13,19 @@
  */
 package com.trailmagic.image;
 
+import com.trailmagic.user.User;
+
 import java.io.InputStream;
 import java.io.IOException;
 
 public interface ImageService {
     public Photo createImage(ImageMetadata imageMetadata, InputStream inputStream, String contentType) throws IllegalStateException, IOException;
     public Photo createImage(ImageMetadata imageData) throws IllegalStateException;
-
-
-    public void saveNewImage(Image image);
-    public void saveNewImageGroup(ImageGroup imageGroup) throws IllegalStateException;
-    public void saveNewImageManifestation(HeavyImageManifestation imageManifestation);
     public ImageFrame addImageToGroup(Image image, ImageGroup group, int position);
+    public ImageFrame addImageToGroup(Image image, ImageGroup group);
     public void makeImageGroupAndImagesPublic(ImageGroup group);
-    public void makeImageGroupAndImagesPublic(String ownerName,
-                                     ImageGroup.Type type,
-                                     String imageGroupName)
-        throws NoSuchImageGroupException;
-    public void setImageGroupPreview(long imageGroupId, long imageId)
-        throws NoSuchImageGroupException;
+    public void makeImageGroupAndImagesPublic(String ownerName, ImageGroup.Type type, String imageGroupName) throws NoSuchImageGroupException;
+    public void setImageGroupPreview(long imageGroupId, long imageId) throws NoSuchImageGroupException;
 
+    public ImageGroup findNamedOrDefaultRoll(String rollName, User owner);
 }

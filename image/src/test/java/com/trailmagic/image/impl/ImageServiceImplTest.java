@@ -1,8 +1,9 @@
 package com.trailmagic.image.impl;
 
+import com.trailmagic.util.SecurityUtil;
+import com.trailmagic.util.TimeSource;
 import org.junit.Test;
 import org.junit.Before;
-import org.junit.Assert;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import com.trailmagic.user.UserRepository;
@@ -10,15 +11,21 @@ import com.trailmagic.user.User;
 import com.trailmagic.image.security.ImageSecurityService;
 import com.trailmagic.image.security.SecurityTestHelper;
 import com.trailmagic.image.*;
-import com.trailmagic.util.MockSecurityUtil;
 import org.mockito.MockitoAnnotations;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ByteArrayInputStream;
 import java.sql.SQLException;
+import java.util.Date;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class ImageServiceImplTest {
     private ImageService imageService;
@@ -27,104 +34,82 @@ public class ImageServiceImplTest {
     @Mock private ImageGroupRepository imageGroupRepository;
     @Mock private ImageRepository imageRepository;
     @Mock private ImageSecurityService imageSecurityService;
+    @Mock private ImageInitializer imageInitializer;
+    @Mock private SecurityUtil securityUtil;
+    @Mock private TimeSource timeSource;
     private static final long DEFAULT_GROUP_ID = 1234L;
-    private static final String TEST_USER_SCREEN_NAME = "testUser";
+    private static final Date TEST_TIME = new Date();
     private ImageGroup defaultGroup;
     private static final String TEST_ROLL_NAME = "my-awesome-roll";
     private final SecurityTestHelper securityTestHelper = new SecurityTestHelper();
+    private User testUser;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
+        testUser = new User("testy");
+        when(timeSource.today()).thenReturn(TEST_TIME);
+        when(securityUtil.getCurrentUser()).thenReturn(testUser);
+        imageService = new ImageServiceImpl(imageGroupRepository, imageRepository, imageSecurityService, userRepository, securityUtil, imageInitializer, timeSource);
     }
 
     private void withCurrentUser(User currentUser, boolean hasDefaultGroup) {
-        final MockSecurityUtil securityUtil = new MockSecurityUtil(currentUser);
-        imageService = new ImageServiceImpl(imageGroupRepository, imageRepository, imageSecurityService, imageManifestationRepository, userRepository, securityUtil);
         if (hasDefaultGroup) {
             defaultGroup = setupDefaultGroup(currentUser);
         }
-        Mockito.when(imageGroupRepository.getRollByOwnerAndName(currentUser, ImageGroup.DEFAULT_ROLL_NAME)).thenReturn(defaultGroup);
+        when(imageGroupRepository.getRollByOwnerAndName(currentUser, ImageGroup.DEFAULT_ROLL_NAME)).thenReturn(defaultGroup);
     }
 
 
     @Test
     public void testCreateImageWithDefaultGroup() {
-        User currentUser = new User(TEST_USER_SCREEN_NAME);
+        User currentUser = testUser;
         withCurrentUser(currentUser, true);
         ImageMetadata imageMetadata = setupImageMetadata();
 
         final Photo image = imageService.createImage(imageMetadata);
 
-        Assert.assertEquals(currentUser, image.getOwner());
-        Assert.assertNotNull(image.getId());
-        Assert.assertEquals(defaultGroup, image.getRoll());
+        assertEquals(currentUser, image.getOwner());
+        assertNotNull(image.getId());
+        assertEquals(defaultGroup, image.getRoll());
 
-        Mockito.verify(imageGroupRepository).getRollByOwnerAndName(currentUser, ImageGroup.DEFAULT_ROLL_NAME);
-        Mockito.verify(imageRepository, Mockito.times(1)).saveNew(Mockito.any(Photo.class));
-        Mockito.verify(imageSecurityService).addOwnerAcl(Mockito.any(Image.class));
+        verify(imageGroupRepository).getRollByOwnerAndName(currentUser, ImageGroup.DEFAULT_ROLL_NAME);
+        verify(imageInitializer, Mockito.times(1)).saveNewImage(Mockito.any(Photo.class));
     }
 
-    @Test
-    public void testServiceOverridesOwner() {
-        User currentUser = new User(TEST_USER_SCREEN_NAME);
-        withCurrentUser(currentUser, true);
-
-        Photo newPhoto = new Photo();
-        newPhoto.setOwner(null);
-        newPhoto.setName("blah");
-
-        imageService.saveNewImage(newPhoto);
-
-        Assert.assertEquals(currentUser, newPhoto.getOwner());
-        Mockito.verify(imageRepository).saveNew(newPhoto);
-        Mockito.verify(imageSecurityService).addOwnerAcl(newPhoto);
-    }
 
     @Test
     public void testLooksUpRoll() {
-        User currentUser = new User(TEST_USER_SCREEN_NAME);
+        User currentUser = testUser;
         withCurrentUser(currentUser, true);
         ImageMetadata imageMetadata = setupImageMetadata();
         imageMetadata.setRollName(TEST_ROLL_NAME);
         final ImageGroup existingRoll = new ImageGroup(TEST_ROLL_NAME, currentUser, ImageGroup.Type.ROLL);
-        Mockito.when(imageGroupRepository.getRollByOwnerAndName(currentUser, TEST_ROLL_NAME)).thenReturn(existingRoll);
+        when(imageGroupRepository.getRollByOwnerAndName(currentUser, TEST_ROLL_NAME)).thenReturn(existingRoll);
 
         final Photo image = imageService.createImage(imageMetadata);
 
-        Assert.assertEquals(existingRoll, image.getRoll());
+        assertEquals(existingRoll, image.getRoll());
     }
 
-    @Test
-    public void testCantCreateWithoutUser() {
-        withCurrentUser(null, false);
-        ImageMetadata imageMetadata = setupImageMetadata();
-
-        try {
-            imageService.createImage(imageMetadata);
-            Assert.fail();
-        } catch (IllegalStateException e) {
-            // awesome
-        }
-    }
 
     @Test
     public void testCreatesNewDefaultGroup() {
-        User currentUser = new User(TEST_USER_SCREEN_NAME);
+        User currentUser = testUser;
         withCurrentUser(currentUser, false);
         ImageMetadata imageMetadata = setupImageMetadata();
 
         final Photo image = imageService.createImage(imageMetadata);
         final ImageGroup assignedGroup = image.getRoll();
-        Assert.assertNotNull(assignedGroup);
-        Assert.assertEquals(ImageGroup.DEFAULT_ROLL_NAME, assignedGroup.getName());
-        Assert.assertEquals(ImageGroup.Type.ROLL, assignedGroup.getType());
+        assertNotNull(assignedGroup);
+        assertEquals(ImageGroup.DEFAULT_ROLL_NAME, assignedGroup.getName());
+        assertEquals(ImageGroup.Type.ROLL, assignedGroup.getType());
     }
 
     @Test
     public void testSavesImageMetaData() throws IOException, SQLException {
         securityTestHelper.disableSecurityInterceptor();
-        User currentUser = new User(TEST_USER_SCREEN_NAME);
+        User currentUser = testUser;
         withCurrentUser(currentUser, true);
 
         ImageMetadata imageMetadata = setupImageMetadata();
@@ -132,13 +117,90 @@ public class ImageServiceImplTest {
         final InputStream imageInputStream = new ByteArrayInputStream(testBytes);
         final Photo photo = imageService.createImage(imageMetadata, imageInputStream, "image/jpeg");
 
-        Assert.assertEquals(1, photo.getManifestations().size());
+        assertEquals(1, photo.getManifestations().size());
         final HeavyImageManifestation mf = (HeavyImageManifestation) photo.getManifestations().first();
-        Assert.assertEquals("image/jpeg", mf.getFormat());
-        Assert.assertEquals(photo, mf.getImage());
-        Assert.assertEquals(testBytes.length, mf.getData().getBinaryStream().available());
+        assertEquals("image/jpeg", mf.getFormat());
+        assertEquals(photo, mf.getImage());
+        assertEquals(testBytes.length, mf.getData().getBinaryStream().available());
 
-        Mockito.verify(imageSecurityService).addOwnerAcl(photo);
+        verify(imageInitializer).saveNewImage(photo);
+        verify(imageInitializer).saveNewImageManifestation((HeavyImageManifestation) photo.getManifestations().first());
+    }
+
+    @Test
+    public void testFindOrCreateRollCreatesDefaultRoll() {
+        when(imageGroupRepository.getRollByOwnerAndName(testUser, ImageGroup.DEFAULT_ROLL_NAME)).thenReturn(null);
+
+        ImageGroup roll = imageService.findNamedOrDefaultRoll(null, testUser);
+
+        verify(imageInitializer).saveNewImageGroup(any(ImageGroup.class));
+
+        assertEquals(ImageGroup.DEFAULT_ROLL_NAME, roll.getName());
+        assertEquals("Uploads", roll.getDisplayName());
+        assertEquals("Uploaded Images", roll.getDescription());
+        assertEquals(ImageGroup.Type.ROLL, roll.getType());
+        assertEquals(testUser, roll.getOwner());
+        assertEquals(TEST_TIME, roll.getUploadDate());
+        assertNull(roll.getSupergroup());
+    }
+
+    @Test
+    public void testFindOrCreateRollFindsDefaultRoll() {
+        ImageGroup expectedGroup = new ImageGroup("test", testUser, ImageGroup.Type.ROLL);
+        when(imageGroupRepository.getRollByOwnerAndName(testUser, ImageGroup.DEFAULT_ROLL_NAME)).thenReturn(expectedGroup);
+
+        ImageGroup roll = imageService.findNamedOrDefaultRoll(null, testUser);
+
+        verify(imageInitializer, never()).saveNewImageGroup(any(ImageGroup.class));
+
+        assertEquals(expectedGroup, roll);
+    }
+
+    @Test
+    public void testFindOrCreateRollFindsDefaultRollWithEmptyString() {
+        ImageGroup expectedGroup = new ImageGroup("test", testUser, ImageGroup.Type.ROLL);
+        when(imageGroupRepository.getRollByOwnerAndName(testUser, ImageGroup.DEFAULT_ROLL_NAME)).thenReturn(expectedGroup);
+
+        ImageGroup roll = imageService.findNamedOrDefaultRoll("", testUser);
+
+        verify(imageInitializer, never()).saveNewImageGroup(any(ImageGroup.class));
+
+        assertEquals(expectedGroup, roll);
+    }
+
+    @Test
+    public void testFindOrCreateRollFindsNamedRoll() {
+        ImageGroup expectedGroup = new ImageGroup("test", testUser, ImageGroup.Type.ROLL);
+        when(imageGroupRepository.getRollByOwnerAndName(testUser, TEST_ROLL_NAME)).thenReturn(expectedGroup);
+
+        ImageGroup roll = imageService.findNamedOrDefaultRoll(TEST_ROLL_NAME, testUser);
+
+        verify(imageInitializer, never()).saveNewImageGroup(any(ImageGroup.class));
+
+        assertEquals(expectedGroup, roll);
+    }
+
+    @Test(expected = ImageGroupNotFoundException.class)
+    public void testFindOrCreateRollThrowsExceptionForMissingNamedRoll() {
+        when(imageGroupRepository.getRollByOwnerAndName(testUser, "non-existent roll")).thenReturn(null);
+
+        imageService.findNamedOrDefaultRoll(TEST_ROLL_NAME, testUser);
+    }
+
+    @Test
+    public void testAppendImageToGroup() {
+        ImageGroup group = new ImageGroup("test", testUser, ImageGroup.Type.ROLL);
+        when(imageGroupRepository.findMaxPosition(group)).thenReturn(5);
+
+        Photo image = new Photo("test", testUser);
+        ImageFrame frame = imageService.addImageToGroup(image, group);
+
+        assertEquals(6, frame.getPosition());
+        assertEquals(group, frame.getImageGroup());
+        assertEquals(image, frame.getImage());
+        assertEquals(testUser, frame.getOwner());
+
+        verify(imageGroupRepository).saveGroup(group);
     }
 
     private ImageGroup setupDefaultGroup(User currentUser) {

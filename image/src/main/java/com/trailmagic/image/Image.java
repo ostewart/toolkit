@@ -40,6 +40,11 @@ public class Image implements Owned, AccessControlled {
     public Image() {
     }
 
+    public Image(String name, User owner) {
+        this.name = name;
+        this.owner = owner;
+    }
+
     public Image(Image image) {
         setName(image.getName());
         setDisplayName(image.getDisplayName());

@@ -26,6 +26,16 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-ehcache</artifactId>
         </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.terracotta.hibernate</groupId>-->
+            <!--<artifactId>terracotta-hibernate-agent</artifactId>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
+
+        <!--<dependency>-->
+            <!--<groupId>org.terracotta.hibernate</groupId>-->
+            <!--<artifactId>terracotta-hibernate-cache</artifactId>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>net.sf.ehcache</groupId>
             <artifactId>ehcache-core</artifactId>

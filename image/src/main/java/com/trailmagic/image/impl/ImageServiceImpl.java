@@ -13,52 +13,54 @@
  */
 package com.trailmagic.image.impl;
 
+import com.trailmagic.image.*;
 import com.trailmagic.image.ImageGroup.Type;
 import com.trailmagic.image.security.ImageSecurityService;
-import com.trailmagic.image.*;
 import com.trailmagic.user.User;
 import com.trailmagic.user.UserRepository;
 import com.trailmagic.util.SecurityUtil;
-import java.util.Collection;
-import java.util.Date;
-import java.io.InputStream;
-import java.io.IOException;
-
+import com.trailmagic.util.TimeSource;
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.hibernate.Hibernate;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collection;
 
 @Transactional
 @Service("imageService")
 public class ImageServiceImpl implements ImageService {
-    private ImageGroupRepository imageGroupRepository;
-    private ImageRepository imageRepository;
-    private ImageSecurityService imageSecurityService;
-    private ImageManifestationRepository imageManifestationRepository;
-    private UserRepository userRepository;
     private SecurityUtil securityUtil;
-    
+
     private static Logger log =
-        LoggerFactory.getLogger(ImageServiceImpl.class);
+            LoggerFactory.getLogger(ImageServiceImpl.class);
+    private ImageInitializer imageInitializer;
+    private TimeSource timeSource;
+    private ImageRepository imageRepository;
+    private ImageGroupRepository imageGroupRepository;
+    private UserRepository userRepository;
+    private ImageSecurityService imageSecurityService;
 
     @SuppressWarnings({"SpringJavaAutowiringInspection"})
     @Autowired
     public ImageServiceImpl(ImageGroupRepository imageGroupRepository,
                             ImageRepository imageRepository,
                             ImageSecurityService imageSecurityService,
-                            ImageManifestationRepository imageManifestationRepository,
                             UserRepository userRepository,
-                            SecurityUtil securityUtil) {
+                            SecurityUtil securityUtil, ImageInitializer imageInitializer, TimeSource timeSource) {
         super();
         this.imageGroupRepository = imageGroupRepository;
         this.imageRepository = imageRepository;
         this.imageSecurityService = imageSecurityService;
-        this.imageManifestationRepository = imageManifestationRepository;
         this.userRepository = userRepository;
         this.securityUtil = securityUtil;
+        this.imageInitializer = imageInitializer;
+        this.timeSource = timeSource;
     }
 
     public Photo createImage(ImageMetadata imageMetadata, InputStream inputStream, String contentType) throws IllegalStateException, IOException {
@@ -70,8 +72,9 @@ public class ImageServiceImpl implements ImageService {
         manifestation.setFormat(contentType);
         photo.addManifestation(manifestation);
 
-        saveNewImageManifestation(manifestation);
-        imageRepository.save(photo);
+        // need to save manifestation first because it isn't mapped as a heavy from the image side
+        // so transitive persistence doesn't save the image data
+        imageInitializer.saveNewImageManifestation(manifestation);
 
         scheduleResize(photo);
 
@@ -79,7 +82,6 @@ public class ImageServiceImpl implements ImageService {
     }
 
     private void scheduleResize(Photo photo) {
-        log.info("Scheduling resize of image: " + photo.getDisplayName() + " (id=" + photo.getId() + ")");
         //TODO: implement
     }
 
@@ -90,17 +92,28 @@ public class ImageServiceImpl implements ImageService {
         photo.setDisplayName(imageData.getDisplayName());
         photo.setCopyright(imageData.getCopyright());
         photo.setCreator(imageData.getCreator());
+
         final User currentUser = securityUtil.getCurrentUser();
         photo.setOwner(currentUser);
-        if (imageData.getRollName() == null) {
-            photo.setRoll(getDefaultRollForUser(currentUser));
+        photo.setRoll(findNamedOrDefaultRoll(imageData.getRollName(), currentUser));
 
-        } else {
-            photo.setRoll(imageGroupRepository.getRollByOwnerAndName(currentUser, imageData.getRollName()));
-        }
-        saveNewImage(photo);
+        imageInitializer.saveNewImage(photo);
+
+        addImageToGroup(photo, photo.getRoll());
 
         return photo;
+    }
+
+    public ImageGroup findNamedOrDefaultRoll(String rollName, User owner) {
+        if (StringUtils.isBlank(rollName)) {
+            return getDefaultRollForUser(owner);
+        } else {
+            ImageGroup roll = imageGroupRepository.getRollByOwnerAndName(owner, rollName);
+            if (roll == null) {
+                throw new ImageGroupNotFoundException("Roll not found: " + rollName);
+            }
+            return roll;
+        }
     }
 
     private ImageGroup getDefaultRollForUser(User currentUser) {
@@ -110,70 +123,24 @@ public class ImageServiceImpl implements ImageService {
             defaultRoll.setType(ImageGroup.Type.ROLL);
             defaultRoll.setOwner(currentUser);
             defaultRoll.setSupergroup(null);
-            defaultRoll.setUploadDate(new Date());
-            defaultRoll.setName("uploads");
+            defaultRoll.setUploadDate(timeSource.today());
+            defaultRoll.setName(ImageGroup.DEFAULT_ROLL_NAME);
             defaultRoll.setDisplayName("Uploads");
-            defaultRoll.setDescription("Uploaded images");
-            imageGroupRepository.saveNewGroup(defaultRoll);
+            defaultRoll.setDescription("Uploaded Images");
+            imageInitializer.saveNewImageGroup(defaultRoll);
         }
         return defaultRoll;
     }
 
-    public void saveNewImage(Image image) {
-        log.info("Saving image: " + image);
-        if (image.getOwner() == null) {
-            if (securityUtil.getCurrentUser() != null) {
-                image.setOwner(securityUtil.getCurrentUser());
-            } else {
-                throw new IllegalStateException("Can't save an image with no owner");
-            }
-        }
-
-        imageRepository.saveNew(image);
-        imageSecurityService.addOwnerAcl(image);
+    public ImageFrame addImageToGroup(Image image, ImageGroup group) {
+        return addImageToGroup(image, group, imageGroupRepository.findMaxPosition(group) + 1);
     }
 
-    public void saveNewImageGroup(ImageGroup imageGroup) throws IllegalStateException {
-        log.info("Saving image group: " + imageGroup);
-        if (imageGroup.getOwner() == null) {
-            if (securityUtil.getCurrentUser() != null) {
-                imageGroup.setOwner(securityUtil.getCurrentUser());
-            } else {
-                throw new IllegalStateException("Can't save a roll with no owner");
-            }
-        }
-        
-        if (imageGroup.getPreviewImage() == null
-                && imageGroup.getFrames() != null
-                && imageGroup.getFrames().size() > 0) {
-            imageGroup.setPreviewImage(imageGroup.getFrames().first().getImage());
-            if (log.isDebugEnabled()) {
-                log.debug("Set missing preview image to first image on group: "
-                          + imageGroup.getName());
-            }
-        }
-
-        imageGroupRepository.saveNewGroup(imageGroup);
-        imageSecurityService.addOwnerAcl(imageGroup);
-    }
-
-    public void saveNewImageManifestation(HeavyImageManifestation imageManifestation) {
-        imageManifestationRepository.saveNewImageManifestation(imageManifestation);
-        
-
-        log.info("Saved image manifestation (before flush/evict): "
-                 + imageManifestation);
-        // for now we'll clear/evict here since the normal case is probably
-        // that we want this out of memory quickly
-        imageManifestationRepository.cleanFromSession(imageManifestation);
-    }
-
-    public ImageFrame addImageToGroup(Image image, ImageGroup group,
-                                      int position) {
+    public ImageFrame addImageToGroup(Image image, ImageGroup group, int position) {
         ImageFrame frame = new ImageFrame();
         frame.setImage(image);
         frame.setPosition(position);
-
+        frame.setImageGroup(group);
         group.addFrame(frame);
 
         imageGroupRepository.saveGroup(group);
@@ -181,22 +148,10 @@ public class ImageServiceImpl implements ImageService {
         return frame;
     }
 
-        // get DAO
-        // create group
-        // set properties
-        // assign owner
-        // assign perms
-        // save object
-        // return
-
-    // for add to group, need accurate position count
-    // (i.e. without security filtering)
-    
-    
     public void makeImageGroupAndImagesPublic(ImageGroup group) {
         imageSecurityService.makePublic(group);
         log.info("Added public permission for group: "
-                   + group.getName());
+                 + group.getName());
 
         Collection<ImageFrame> frames = group.getFrames();
 
@@ -204,7 +159,7 @@ public class ImageServiceImpl implements ImageService {
             Image image = frame.getImage();
             imageSecurityService.makePublic(image);
             log.info("Added public permission for image: "
-                       + image.getDisplayName());
+                     + image.getDisplayName());
         }
     }
 
@@ -212,20 +167,20 @@ public class ImageServiceImpl implements ImageService {
             throws NoSuchImageGroupException {
         User owner = userRepository.getByScreenName(ownerName);
         ImageGroup group =
-            imageGroupRepository.getByOwnerNameAndTypeWithFrames(owner,
-                                                      imageGroupName,
-                                                      type);
+                imageGroupRepository.getByOwnerNameAndTypeWithFrames(owner,
+                                                                     imageGroupName,
+                                                                     type);
         if (group == null) {
             log.error("No " + type + " found with name " + imageGroupName
-                        + " owned by " + owner);
+                      + " owned by " + owner);
         }
         makeImageGroupAndImagesPublic(group);
     }
-    
+
     public void setImageGroupPreview(long imageGroupId, long imageId)
             throws NoSuchImageGroupException, NoSuchImageException {
         ImageGroup imageGroup = imageGroupRepository.loadById(imageGroupId);
-        Image image = imageRepository.loadById(imageId); 
+        Image image = imageRepository.loadById(imageId);
         imageGroup.setPreviewImage(image);
         imageGroupRepository.saveGroup(imageGroup);
     }

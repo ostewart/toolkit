@@ -70,6 +70,7 @@
     <orderEntry type="library" exported="" scope="RUNTIME" name="Maven: cglib:cglib:2.2" level="project" />
     <orderEntry type="library" exported="" scope="RUNTIME" name="Maven: asm:asm:3.1" level="project" />
     <orderEntry type="library" exported="" name="Maven: org.springframework.security:spring-security-acl:2.0.4" level="project" />
+    <orderEntry type="library" exported="" name="Maven: commons-lang:commons-lang:2.4" level="project" />
     <orderEntry type="library" exported="" name="Maven: commons-beanutils:commons-beanutils:1.8.0" level="project" />
     <orderEntry type="library" exported="" name="Maven: org.liquibase:liquibase-core:1.9.5" level="project" />
     <orderEntry type="library" exported="" name="Maven: commons-fileupload:commons-fileupload:1.2.1" level="project" />
@@ -84,7 +85,6 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.mockito:mockito-all:1.8.1" level="project" />
     <orderEntry type="library" exported="" name="Maven: commons-io:commons-io:1.4" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.7" level="project" />
-    <orderEntry type="library" exported="" name="Maven: commons-lang:commons-lang:2.1" level="project" />
     <orderEntry type="library" exported="" name="Maven: org.springframework.security:spring-security-taglibs:2.0.4" level="project" />
     <orderEntry type="library" exported="" scope="RUNTIME" name="Maven: org.springframework:spring-support:2.0.8" level="project" />
   </component>

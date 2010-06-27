@@ -161,6 +161,7 @@
         /login.jsp*=ROLE_ANONYMOUS,ROLE_USER
         /login=ROLE_ANONYMOUS,ROLE_USER
         /import=ROLE_USER
+        /image=ROLE_USER
         /**=ROLE_ANONYMOUS,ROLE_USER
     </value>
 </property>

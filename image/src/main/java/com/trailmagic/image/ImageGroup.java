@@ -58,7 +58,7 @@ public class ImageGroup implements Owned, AccessControlled {
 
         public static Type fromString(String typeString) {
             for (Type type : Type.values()) {
-                if (type.typeName.equals(typeString)) {
+                if (type.typeName.equalsIgnoreCase(typeString)) {
                     return type;
                 }
             }

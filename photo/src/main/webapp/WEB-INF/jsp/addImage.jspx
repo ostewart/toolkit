@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Copyright (c) 2010 Oliver Stewart.  All Rights Reserved.
+
+ This file is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2, or (at your option)
+ any later version.
+
+ This file is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+-->
+
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0">
+    <jsp:output
+            doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"
+            doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
+            doctype-root-element="html"/>
+    <!--    <jsp:directive.page contentType="application/xhtml+xml"/>-->
+    <jsp:directive.page contentType="text/html"/>
+    <html xmlns="http://www.w3.org/1999/xhtml"
+          xmlns:jsp="http://java.sun.com/JSP/Page"
+          xmlns:c="http://java.sun.com/jsp/jstl/core"
+          xmlns:fmt="http://java.sun.com/jsp/jstl/fmt"
+          xmlns:tm="http://trailmagic.com/taglibs/image"
+          xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+          xmlns:form="http://www.springframework.org/tags/form"
+          xmlns:authz="http://www.springframework.org/security/tags">
+    <head>
+        <title>Add Image</title>
+        <link rel="stylesheet"
+              href="${pageContext.request.contextPath}/imagestore.css"
+              type="text/css"/>
+        <link rel="stylesheet"
+              href="${pageContext.request.contextPath}/imagestore-color.css"
+              type="text/css" title="Standard"/>
+        <link rel="alternate stylesheet"
+              href="${pageContext.request.contextPath}/imagestore-debug.css"
+              type="text/css" title="Debug"/>
+        <style type="text/css">
+            ul {display: block; width: 100%;}
+            li {display: block; width: 100%;}
+            li label {display: block;width: 50%;}
+            li input {display:block; width: 50%;}
+        </style>
+    </head>
+    <body>
+    <h1>Upload an Image</h1>
+    <form:form method="post" commandName="imageUpload" enctype="multipart/form-data">
+        <ul>
+            <li>
+                <form:label path="title">Title: </form:label>
+                <form:input path="title"/>
+            </li>
+            <li>
+                <form:label path="caption">Caption: </form:label>
+                <form:input path="caption"/>
+            </li>
+            <li>
+                <form:label path="creator">Creator: </form:label>
+                <form:input path="creator"/>
+            </li>
+            <li>
+                <form:label path="copyright">Copyright String (include the word "Copyright" if desired): </form:label>
+                <form:input path="copyright"/>
+            </li>
+            <li>
+                <form:label path="rollName">Roll Name: </form:label>
+                <form:input path="rollName"/>
+            </li>
+            <li>
+                <form:label path="file">File: </form:label>
+                <input type="file" name="file"/>
+            </li>
+        </ul>
+        <input type="submit" value="Upload"/>
+    </form:form>
+    </body>
+    </html>
+</jsp:root>

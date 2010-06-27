@@ -67,10 +67,6 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
     private SessionFactory m_sessionFactory;
     private HibernateTemplate m_hibernateTemplate;
 
-    public SessionFactory getSessionFactory() {
-        return m_sessionFactory;
-    }
-
     public void setSessionFactory(SessionFactory sf) {
         m_sessionFactory = sf;
     }
@@ -245,7 +241,9 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
             qry.setCacheable(true);
             final ImageGroup group = (ImageGroup) qry.uniqueResult();
             // join fetch stopped working after enabling caching?
-            group.getFrames().first();
+            if (group != null && group.getFrames().size() > 0) {
+                group.getFrames().first();
+            }
             return group;
         } catch (HibernateException e) {
             throw SessionFactoryUtils.convertHibernateAccessException(e);
@@ -303,8 +301,7 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
     
     public ImageGroup loadById(long imageGroupId) throws NoSuchImageGroupException {
         try {
-            return (ImageGroup)
-                m_hibernateTemplate.load(ImageGroup.class, imageGroupId);
+            return m_hibernateTemplate.load(ImageGroup.class, imageGroupId);
         } catch (ObjectRetrievalFailureException e) {
             throw new NoSuchImageGroupException(imageGroupId, e);
         }
@@ -327,13 +324,12 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
 
     @Transactional(readOnly=false)
     public ImageGroup saveGroup(ImageGroup imageGroup) {
-        return (ImageGroup) m_hibernateTemplate.merge(imageGroup);
+        return m_hibernateTemplate.merge(imageGroup);
     }
 
     public int getPublicFrameCount(ImageGroup group) {
         return (Integer)
-                m_hibernateTemplate.findByNamedQuery("publicFrameCount",
-                                                     group.getId()).get(0);
+                m_hibernateTemplate.findByNamedQuery("publicFrameCount", group.getId()).get(0);
 
     }
 
@@ -341,5 +337,14 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
         // need to get all the frames in order to get an
         // accurate count of how many we have access to :(
         return group.getFrames().size();
+    }
+
+    @Override
+    public int findMaxPosition(ImageGroup group) {
+        List results = m_hibernateTemplate.findByNamedQuery("maxFramePosition", group.getId());
+        if (results.isEmpty() || results.get(0) == null) {
+            return 0;
+        }
+        return (Integer) results.get(0);
     }
 }

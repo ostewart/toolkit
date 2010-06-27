@@ -64,6 +64,6 @@ public class HibernateImageRepository extends HibernateDaoSupport implements Ima
 
     @Transactional(readOnly=false)
     public Image save(Image image) {
-        return (Image) getHibernateTemplate().merge(image);
+        return getHibernateTemplate().merge(image);
     }
 }
