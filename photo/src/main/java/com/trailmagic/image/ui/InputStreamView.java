@@ -13,7 +13,10 @@
  */
 package com.trailmagic.image.ui;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.web.servlet.view.AbstractView;
+
+import java.io.IOException;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,23 +32,25 @@ public class InputStreamView extends AbstractView {
                                            HttpServletRequest req,
                                            HttpServletResponse res)
         throws Exception {
-        
+
+        setupHeaders(model, res);
+        writeOutput(model, res);
+    }
+
+    private void writeOutput(Map model, HttpServletResponse res) throws IOException {
+        OutputStream out = res.getOutputStream();
+        InputStream in = (InputStream)model.get(STREAM_KEY);
+
+        IOUtils.copy(in, out);
+    }
+
+    private void setupHeaders(Map model, HttpServletResponse res) {
         setContentType((String)model.get(CONTENT_TYPE_KEY));
         // XXX: that doesn't seem to work, so do it myself
         res.setContentType((String)model.get(CONTENT_TYPE_KEY));
         if (model.containsKey(CONTENT_DISPOSITION_KEY)) {
             res.setHeader("Content-Disposition",
                           (String)model.get(CONTENT_DISPOSITION_KEY));
-        }
-        OutputStream out = res.getOutputStream();
-        InputStream in = (InputStream)model.get(STREAM_KEY);
-        byte[] buf = new byte[1024];
-        int numRead = 0;
-
-        // move along now
-        while ( in.available() > 0 ) {
-            numRead = in.read(buf);
-            out.write(buf, 0, numRead);
         }
     }
 }

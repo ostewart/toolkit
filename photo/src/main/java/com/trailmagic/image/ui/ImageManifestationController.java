@@ -65,13 +65,13 @@ public class ImageManifestationController extends AbstractController {
                 imageManifestationRepository.getHeavyById(Long.parseLong(pathTokens.nextToken()));
 
             java.io.InputStream dataStream = mf.getData().getBinaryStream();
-            log.debug("Passing manifestation data stream to view (type: "
-                           + dataStream.getClass() + ")");
+            res.setContentLength((int) mf.getData().length());
+
+            log.debug("Passing manifestation data stream to view (type: " + dataStream.getClass() + ")");
             model.put(InputStreamView.STREAM_KEY, dataStream);
             model.put(InputStreamView.CONTENT_TYPE_KEY, mf.getFormat());
             if (mf.getName() != null) {
-                model.put(InputStreamView.CONTENT_DISPOSITION_KEY,
-                          "inline; filename=" + mf.getName() + ";");
+                model.put(InputStreamView.CONTENT_DISPOSITION_KEY, "inline; filename=" + mf.getName() + ";");
             }
             return new ModelAndView(new InputStreamView(), model);
         }
