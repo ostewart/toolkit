@@ -24,8 +24,8 @@ public class ImageMagickImageResizerTest {
     @Mock CommandExcecutor executor;
 
     public static final String PORTRAIT_RESULT_IDENTIFY = "/tmp/portrait.jpg[1] JPEG 128x171 128x171+0+0 8-bit DirectClass 11.1KB 0.000u 0:00.000";
-    private static final String PORTRAIT_COMMAND = "convert -quality 80 -resize '128x>' ";
-    private static final String LANDSCAPE_COMMAND = "convert -quality 80 -resize 'x128>' ";
+    private static final String PORTRAIT_COMMAND = "convert -quality 80 -resize";
+    private static final String LANDSCAPE_COMMAND = "convert -quality 80 -resize";
 
     @Before
     public void setUp() throws Exception {
@@ -38,7 +38,7 @@ public class ImageMagickImageResizerTest {
     public void testResizePortraitImage() throws Exception {
         File file = resizer.resizeImage(srcFile, new ImageFileInfo(192, 128, "image/jpeg"), 128);
 
-        verify(executor, times(1)).exec(startsWith(PORTRAIT_COMMAND));
+        verify(executor, times(1)).exec(startsWith(PORTRAIT_COMMAND), eq("128x>"), anyString(), anyString());
         assertNotNull(file);
         file.delete();
     }
@@ -47,7 +47,7 @@ public class ImageMagickImageResizerTest {
     public void testResizeLandscapeImage() throws Exception {
         File file = resizer.resizeImage(srcFile, new ImageFileInfo(128, 192, "image/jpeg"), 128);
 
-        verify(executor, times(1)).exec(startsWith(LANDSCAPE_COMMAND));
+        verify(executor, times(1)).exec(startsWith(LANDSCAPE_COMMAND), eq("x128>"), anyString(), anyString());
         assertNotNull(file);
         file.delete();
     }
@@ -77,5 +77,4 @@ public class ImageMagickImageResizerTest {
     public void testFileNameWithSpaces() {
     }
     // given input image, what size images should we generate?
-    // given an abstract image size, what dimensions does that translate to (taking into account different aspect ratios?
 }

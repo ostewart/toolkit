@@ -16,6 +16,7 @@ package com.trailmagic.image.impl;
 import com.trailmagic.image.*;
 import com.trailmagic.image.ImageGroup.Type;
 import com.trailmagic.image.security.ImageSecurityService;
+import com.trailmagic.resizer.ImageResizeService;
 import com.trailmagic.user.User;
 import com.trailmagic.user.UserRepository;
 import com.trailmagic.util.SecurityUtil;
@@ -45,6 +46,7 @@ public class ImageServiceImpl implements ImageService {
     private ImageGroupRepository imageGroupRepository;
     private UserRepository userRepository;
     private ImageSecurityService imageSecurityService;
+    private ImageResizeService imageResizeService;
 
     @SuppressWarnings({"SpringJavaAutowiringInspection"})
     @Autowired
@@ -76,13 +78,13 @@ public class ImageServiceImpl implements ImageService {
         // so transitive persistence doesn't save the image data
         imageInitializer.saveNewImageManifestation(manifestation);
 
-        scheduleResize(photo);
+        scheduleResize(photo, manifestation.getId());
 
         return photo;
     }
 
-    private void scheduleResize(Photo photo) {
-        //TODO: implement
+    private void scheduleResize(Photo photo, long manifestationId) {
+//        imageResizeService.scheduleResize(photo.getId(), manifestationId);
     }
 
     public Photo createImage(ImageMetadata imageData) throws IllegalStateException {

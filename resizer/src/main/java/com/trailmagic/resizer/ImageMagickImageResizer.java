@@ -25,10 +25,10 @@ public class ImageMagickImageResizer implements ImageResizer {
         try {
             File destFile = File.createTempFile("image-resizer-output", "jpg");
 
-            executor.exec(String.format("convert -quality 80 -resize '%s' '%s' '%s'",
-                                        geometryString(imageInfo, shortestDimensionLength),
-                                        srcFile.getAbsolutePath(),
-                                        destFile.getAbsolutePath()));
+            executor.exec("convert -quality 80 -resize",
+                          geometryString(imageInfo, shortestDimensionLength),
+                          srcFile.getAbsolutePath(),
+                          destFile.getAbsolutePath());
             return destFile;
         } catch (IOException e) {
             throw new ResizeFailedException(e);

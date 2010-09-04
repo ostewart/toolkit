@@ -3,6 +3,7 @@ package com.trailmagic.resizer;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteStreamHandler;
+import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,9 +13,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by: oliver on Date: Aug 28, 2010 Time: 7:11:21 PM
- */
+@Service
 public class CommandExcecutor {    
     public List<String> exec(String command, String... args) throws CommandFailedException {
         CommandLine commandLine = CommandLine.parse(command);
