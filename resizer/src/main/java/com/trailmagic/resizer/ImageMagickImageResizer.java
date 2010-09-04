@@ -51,7 +51,7 @@ public class ImageMagickImageResizer implements ImageResizer {
 
     @Override
     public ImageFileInfo identify(File file) throws CouldNotIdentifyException {
-        String output = executor.exec("identify " + file.getAbsolutePath());
+        String output = executor.exec("identify " + file.getAbsolutePath()).get(0);
 
         Pattern pattern = Pattern.compile(".*?([A-Z]+) (\\d+)x(\\d+).*?");
 

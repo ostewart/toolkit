@@ -9,6 +9,7 @@ import org.mockito.MockitoAnnotations;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -59,7 +60,7 @@ public class ImageMagickImageResizerTest {
     @Test
     public void testIdentify() throws IOException {
         File file = File.createTempFile("testIdentify", "jpg");
-        when(executor.exec("identify " + file.getAbsolutePath())).thenReturn(PORTRAIT_RESULT_IDENTIFY);
+        when(executor.exec("identify " + file.getAbsolutePath())).thenReturn(Arrays.asList(PORTRAIT_RESULT_IDENTIFY));
 
         ImageFileInfo info = resizer.identify(file);
 
