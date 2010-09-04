@@ -1,5 +1,8 @@
 package com.trailmagic.resizer;
 
+import java.io.File;
+import java.util.List;
+
 public interface ImageResizeService {
-    public void scheduleResize(Long imageId, Long imageManifestationId);
+    public List<File> scheduleResize(Long imageId, Long imageManifestationId);
 }

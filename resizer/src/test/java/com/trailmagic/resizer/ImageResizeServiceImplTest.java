@@ -7,7 +7,9 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.io.File;
+import java.util.List;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -31,12 +33,14 @@ public class ImageResizeServiceImplTest {
         ImageFileInfo imageFileInfo = new ImageFileInfo();
         when(imageResizer.identify(Mockito.<File>any())).thenReturn(imageFileInfo);
 
-        imageResizeService.scheduleResize(1234L, 4567L);
+        List<File> files = imageResizeService.scheduleResize(1234L, 4567L);
 
         verify(imageResizer).resizeImage(Mockito.<File>any(), eq(imageFileInfo), eq(128));
         verify(imageResizer).resizeImage(Mockito.<File>any(), eq(imageFileInfo), eq(256));
         verify(imageResizer).resizeImage(Mockito.<File>any(), eq(imageFileInfo), eq(512));
         verify(imageResizer).resizeImage(Mockito.<File>any(), eq(imageFileInfo), eq(1024));
         verify(imageResizer).resizeImage(Mockito.<File>any(), eq(imageFileInfo), eq(2048));
+
+        assertEquals(5, files.size());
     }
 }
