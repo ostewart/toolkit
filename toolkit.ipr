@@ -471,6 +471,7 @@
       <module fileurl="file://$PROJECT_DIR$/db/db.iml" filepath="$PROJECT_DIR$/db/db.iml" />
       <module fileurl="file://$PROJECT_DIR$/image/image.iml" filepath="$PROJECT_DIR$/image/image.iml" />
       <module fileurl="file://$PROJECT_DIR$/photo/photo.iml" filepath="$PROJECT_DIR$/photo/photo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/resizer/resizer.iml" filepath="$PROJECT_DIR$/resizer/resizer.iml" />
       <module fileurl="file://$PROJECT_DIR$/toolkit.iml" filepath="$PROJECT_DIR$/toolkit.iml" />
       <module fileurl="file://$PROJECT_DIR$/user/user.iml" filepath="$PROJECT_DIR$/user/user.iml" />
     </modules>
@@ -1203,6 +1204,17 @@
       </JAVADOC>
       <SOURCES>
         <root url="jar://$MAVEN_REPOSITORY$/commons-lang/commons-lang/2.4/commons-lang-2.4-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.apache.commons:commons-exec:1.0.1">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-exec/1.0.1/commons-exec-1.0.1.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-exec/1.0.1/commons-exec-1.0.1-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-exec/1.0.1/commons-exec-1.0.1-sources.jar!/" />
       </SOURCES>
     </library>
   </component>
