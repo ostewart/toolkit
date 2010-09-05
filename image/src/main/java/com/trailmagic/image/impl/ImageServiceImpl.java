@@ -16,7 +16,9 @@ package com.trailmagic.image.impl;
 import com.trailmagic.image.*;
 import com.trailmagic.image.ImageGroup.Type;
 import com.trailmagic.image.security.ImageSecurityService;
+import com.trailmagic.resizer.ImageFileInfo;
 import com.trailmagic.resizer.ImageResizeService;
+import com.trailmagic.resizer.ResizeFailedException;
 import com.trailmagic.user.User;
 import com.trailmagic.user.UserRepository;
 import com.trailmagic.util.SecurityUtil;
@@ -29,9 +31,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.SQLException;
 import java.util.Collection;
+import java.util.List;
 
 @Transactional
 @Service("imageService")
@@ -54,7 +59,7 @@ public class ImageServiceImpl implements ImageService {
                             ImageRepository imageRepository,
                             ImageSecurityService imageSecurityService,
                             UserRepository userRepository,
-                            SecurityUtil securityUtil, ImageInitializer imageInitializer, TimeSource timeSource) {
+                            SecurityUtil securityUtil, ImageInitializer imageInitializer, TimeSource timeSource, ImageResizeService imageResizeService) {
         super();
         this.imageGroupRepository = imageGroupRepository;
         this.imageRepository = imageRepository;
@@ -63,6 +68,7 @@ public class ImageServiceImpl implements ImageService {
         this.securityUtil = securityUtil;
         this.imageInitializer = imageInitializer;
         this.timeSource = timeSource;
+        this.imageResizeService = imageResizeService;
     }
 
     public Photo createImage(ImageMetadata imageMetadata, InputStream inputStream, String contentType) throws IllegalStateException, IOException {
@@ -78,13 +84,37 @@ public class ImageServiceImpl implements ImageService {
         // so transitive persistence doesn't save the image data
         imageInitializer.saveNewImageManifestation(manifestation);
 
-        scheduleResize(photo, manifestation.getId());
+        try {
+            scheduleResize(photo, manifestation);
+        } catch (SQLException e) {
+            throw new IllegalStateException("Error resizing image " + photo.getName(), e);
+        } catch (ResizeFailedException e) {
+            log.error("Resize failed: ", e);
+        }
 
         return photo;
     }
 
-    private void scheduleResize(Photo photo, long manifestationId) {
-//        imageResizeService.scheduleResize(photo.getId(), manifestationId);
+    private void scheduleResize(Photo photo, HeavyImageManifestation manifestation) throws SQLException, ResizeFailedException {
+        List<ImageFileInfo> fileInfos = imageResizeService.scheduleResize(manifestation.getData().getBinaryStream());
+        for (ImageFileInfo info : fileInfos) {
+            final HeavyImageManifestation newManifestation = new HeavyImageManifestation();
+            try {
+                newManifestation.setData(Hibernate.createBlob(new FileInputStream(info.getFile())));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            newManifestation.setOriginal(false);
+            newManifestation.setFormat(info.getFormat());
+            newManifestation.setHeight(info.getHeight());
+            newManifestation.setWidth(info.getWidth());
+            photo.addManifestation(newManifestation);
+            imageInitializer.saveNewImageManifestation(newManifestation);
+            boolean deleted = info.getFile().delete();
+            if (!deleted) {
+                log.warn("Could not delete resize temp file " + info.getFile().getAbsolutePath());
+            }
+        }
     }
 
     public Photo createImage(ImageMetadata imageData) throws IllegalStateException {

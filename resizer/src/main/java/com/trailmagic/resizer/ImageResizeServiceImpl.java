@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -17,23 +19,28 @@ public class ImageResizeServiceImpl implements ImageResizeService {
         this.imageResizer = imageResizer;
     }
 
+    @SuppressWarnings({"ResultOfMethodCallIgnored"})
     @Override
-    public List<ImageFileInfo> scheduleResize(Long imageId, Long imageManifestationId) {
-        File srcFile = saveImageToFile(imageId, imageManifestationId);
+    public List<ImageFileInfo> scheduleResize(InputStream srcInputStream) throws ResizeFailedException {
+        File srcFile = writeFile(srcInputStream);
         ImageFileInfo srcFileInfo = imageResizer.identify(srcFile);
 
         List<ImageFileInfo> resultInfos = new ArrayList<ImageFileInfo>();
 
-        List<Integer> sizes = Arrays.asList(128, 256, 512, 1024, 2048);
-        try {
-            for (Integer size : sizes) {
-                resultInfos.add(resizeAndIdentify(srcFile, srcFileInfo, size));
-            }
-        } catch (ResizeFailedException e) {
-            e.printStackTrace();
+        for (Integer size : Arrays.asList(128, 256, 512, 1024, 2048)) {
+            resultInfos.add(resizeAndIdentify(srcFile, srcFileInfo, size));
         }
 
+        srcFile.delete();
         return resultInfos;
+    }
+
+    private File writeFile(InputStream srcInputStream) throws ResizeFailedException {
+        try {
+            return imageResizer.writeToTempFile(srcInputStream);
+        } catch (IOException e) {
+            throw new ResizeFailedException("Could not write src to temp file", e);
+        }
     }
 
     private ImageFileInfo resizeAndIdentify(File srcFile, ImageFileInfo srcFileInfo, Integer size) throws ResizeFailedException {
@@ -41,9 +48,5 @@ public class ImageResizeServiceImpl implements ImageResizeService {
         ImageFileInfo info = imageResizer.identify(file);
         info.setFile(file);
         return info;
-    }
-
-    private File saveImageToFile(Long imageId, Long imageManifestationId) {
-        return null;
     }
 }

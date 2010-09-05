@@ -6,7 +6,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.InputStream;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -40,12 +42,14 @@ public class ImageResizeServiceImplTest {
                                                                     new ImageFileInfo(),
                                                                     new ImageFileInfo(),
                                                                     new ImageFileInfo());
+        File srcFile = Mockito.mock(File.class);
+        when(imageResizer.writeToTempFile(Mockito.<InputStream>any())).thenReturn(srcFile);
         File resultFile = File.createTempFile("ImageResizeServiceImplTest", "jpg");
         when(imageResizer.resizeImage(Mockito.<File>any(), Mockito.<ImageFileInfo>any(), Mockito.anyInt()))
                 .thenReturn(resultFile);
 
 
-        List<ImageFileInfo> files = imageResizeService.scheduleResize(1234L, 4567L);
+        List<ImageFileInfo> files = imageResizeService.scheduleResize(new ByteArrayInputStream(new byte[]{}));
 
         verify(imageResizer).resizeImage(Mockito.<File>any(), eq(srcFileInfo), eq(128));
         verify(imageResizer).resizeImage(Mockito.<File>any(), eq(srcFileInfo), eq(256));
@@ -58,5 +62,6 @@ public class ImageResizeServiceImplTest {
             assertNotNull(file.getFile());
         }
         resultFile.delete();
+        verify(srcFile).delete();
     }
 }

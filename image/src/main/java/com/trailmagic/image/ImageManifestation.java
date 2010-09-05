@@ -115,12 +115,16 @@ public class ImageManifestation implements Comparable<ImageManifestation>, Owned
     }
 
     public boolean equals(Object obj) {
-        return obj instanceof ImageManifestation && this.getId() == ((ImageManifestation) obj).getId();
+        if (!(obj instanceof ImageManifestation)) {
+            return false;
+        }
+        ImageManifestation that = (ImageManifestation) obj;
+        return compareTo(that) == 0;
 
     }
 
     public int hashCode() {
-        return new Long(getId()).hashCode();
+        return getArea();
     }
 
     @Override
