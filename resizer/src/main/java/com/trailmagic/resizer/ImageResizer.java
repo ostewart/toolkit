@@ -6,6 +6,6 @@ import java.io.InputStream;
 
 public interface ImageResizer {
     public File resizeImage(File srcFile, ImageFileInfo dimensionLength, int shortestDimensionLength) throws ResizeFailedException;
-    public ImageFileInfo identify(File file);
+    public ImageFileInfo identify(File file) throws CouldNotIdentifyException;
     public File writeToTempFile(InputStream imageInputStream) throws IOException;
 }

@@ -10,6 +10,7 @@ import java.io.File;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -17,6 +18,7 @@ import static org.mockito.Mockito.when;
 /**
  * Created by: oliver on Date: Sep 4, 2010 Time: 1:44:25 AM
  */
+@SuppressWarnings({"ResultOfMethodCallIgnored"})
 public class ImageResizeServiceImplTest {
     @Mock
     private ImageResizer imageResizer;
@@ -30,17 +32,31 @@ public class ImageResizeServiceImplTest {
 
     @Test
     public void testScheduleResize() throws Exception {
-        ImageFileInfo imageFileInfo = new ImageFileInfo();
-        when(imageResizer.identify(Mockito.<File>any())).thenReturn(imageFileInfo);
+        ImageFileInfo srcFileInfo = new ImageFileInfo();
+        when(imageResizer.identify(Mockito.<File>any())).thenReturn(srcFileInfo,
+                                                                    new ImageFileInfo(),
+                                                                    new ImageFileInfo(),
+                                                                    new ImageFileInfo(),
+                                                                    new ImageFileInfo(),
+                                                                    new ImageFileInfo(),
+                                                                    new ImageFileInfo());
+        File resultFile = File.createTempFile("ImageResizeServiceImplTest", "jpg");
+        when(imageResizer.resizeImage(Mockito.<File>any(), Mockito.<ImageFileInfo>any(), Mockito.anyInt()))
+                .thenReturn(resultFile);
 
-        List<File> files = imageResizeService.scheduleResize(1234L, 4567L);
 
-        verify(imageResizer).resizeImage(Mockito.<File>any(), eq(imageFileInfo), eq(128));
-        verify(imageResizer).resizeImage(Mockito.<File>any(), eq(imageFileInfo), eq(256));
-        verify(imageResizer).resizeImage(Mockito.<File>any(), eq(imageFileInfo), eq(512));
-        verify(imageResizer).resizeImage(Mockito.<File>any(), eq(imageFileInfo), eq(1024));
-        verify(imageResizer).resizeImage(Mockito.<File>any(), eq(imageFileInfo), eq(2048));
+        List<ImageFileInfo> files = imageResizeService.scheduleResize(1234L, 4567L);
+
+        verify(imageResizer).resizeImage(Mockito.<File>any(), eq(srcFileInfo), eq(128));
+        verify(imageResizer).resizeImage(Mockito.<File>any(), eq(srcFileInfo), eq(256));
+        verify(imageResizer).resizeImage(Mockito.<File>any(), eq(srcFileInfo), eq(512));
+        verify(imageResizer).resizeImage(Mockito.<File>any(), eq(srcFileInfo), eq(1024));
+        verify(imageResizer).resizeImage(Mockito.<File>any(), eq(srcFileInfo), eq(2048));
 
         assertEquals(5, files.size());
+        for (ImageFileInfo file : files) {
+            assertNotNull(file.getFile());
+        }
+        resultFile.delete();
     }
 }

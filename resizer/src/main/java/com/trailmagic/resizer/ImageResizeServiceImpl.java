@@ -18,18 +18,29 @@ public class ImageResizeServiceImpl implements ImageResizeService {
     }
 
     @Override
-    public List<File> scheduleResize(Long imageId, Long imageManifestationId) {
+    public List<ImageFileInfo> scheduleResize(Long imageId, Long imageManifestationId) {
         File srcFile = saveImageToFile(imageId, imageManifestationId);
-        List<File> resultFiles = new ArrayList<File>();
+        ImageFileInfo srcFileInfo = imageResizer.identify(srcFile);
+
+        List<ImageFileInfo> resultInfos = new ArrayList<ImageFileInfo>();
+
         List<Integer> sizes = Arrays.asList(128, 256, 512, 1024, 2048);
         try {
             for (Integer size : sizes) {
-                resultFiles.add(imageResizer.resizeImage(srcFile, imageResizer.identify(srcFile), size));
+                resultInfos.add(resizeAndIdentify(srcFile, srcFileInfo, size));
             }
         } catch (ResizeFailedException e) {
             e.printStackTrace();
         }
-        return resultFiles;
+
+        return resultInfos;
+    }
+
+    private ImageFileInfo resizeAndIdentify(File srcFile, ImageFileInfo srcFileInfo, Integer size) throws ResizeFailedException {
+        File file = imageResizer.resizeImage(srcFile, srcFileInfo, size);
+        ImageFileInfo info = imageResizer.identify(file);
+        info.setFile(file);
+        return info;
     }
 
     private File saveImageToFile(Long imageId, Long imageManifestationId) {

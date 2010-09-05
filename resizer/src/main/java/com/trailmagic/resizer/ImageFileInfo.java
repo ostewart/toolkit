@@ -1,5 +1,7 @@
 package com.trailmagic.resizer;
 
+import java.io.File;
+
 /**
  * Created by: oliver on Date: Aug 28, 2010 Time: 6:41:03 PM
  */
@@ -7,6 +9,7 @@ public class ImageFileInfo {
     private int height;
     private int width;
     private String format;
+    private File file;
 
     public ImageFileInfo(int height, int width, String format) {
         this.height = height;
@@ -31,5 +34,13 @@ public class ImageFileInfo {
 
     public boolean isLandscape() {
         return width > height;
+    }
+
+    public File getFile() {
+        return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
     }
 }
