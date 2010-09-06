@@ -23,6 +23,13 @@ public class ImageResizeServiceImpl implements ImageResizeService {
     @Override
     public List<ImageFileInfo> scheduleResize(InputStream srcInputStream) throws ResizeFailedException {
         File srcFile = writeFile(srcInputStream);
+        List<ImageFileInfo> resultInfos = scheduleResize(srcFile);
+
+        srcFile.delete();
+        return resultInfos;
+    }
+
+    public List<ImageFileInfo> scheduleResize(File srcFile) {
         ImageFileInfo srcFileInfo = imageResizer.identify(srcFile);
 
         List<ImageFileInfo> resultInfos = new ArrayList<ImageFileInfo>();
@@ -30,12 +37,11 @@ public class ImageResizeServiceImpl implements ImageResizeService {
         for (Integer size : Arrays.asList(128, 256, 512, 1024, 2048)) {
             resultInfos.add(resizeAndIdentify(srcFile, srcFileInfo, size));
         }
-
-        srcFile.delete();
         return resultInfos;
     }
 
-    private File writeFile(InputStream srcInputStream) throws ResizeFailedException {
+
+    public File writeFile(InputStream srcInputStream) throws ResizeFailedException {
         try {
             return imageResizer.writeToTempFile(srcInputStream);
         } catch (IOException e) {

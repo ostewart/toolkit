@@ -101,8 +101,8 @@ public class ImageFrame implements Owned, Comparable<ImageFrame> {
     }
 
     private String comparisonString() {
-        return imageGroup != null ? imageGroup.getName() : "null"
-            + image != null ? image.getName() : "null" + position;
+        return (imageGroup != null ? imageGroup.getName() : "null")
+            + (image != null ? image.getName() : "null") + position;
     }
 
     /**

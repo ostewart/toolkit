@@ -20,6 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Date;
@@ -40,6 +41,7 @@ public class ImageServiceImplTest {
     @Mock private SecurityUtil securityUtil;
     @Mock private TimeSource timeSource;
     @Mock private ImageResizeService imageResizeService;
+    @Mock private HibernateUtil hibernateUtil;
     private static final long DEFAULT_GROUP_ID = 1234L;
     private static final Date TEST_TIME = new Date();
     private ImageGroup defaultGroup;
@@ -53,7 +55,7 @@ public class ImageServiceImplTest {
         testUser = new User("testy");
         when(timeSource.today()).thenReturn(TEST_TIME);
         when(securityUtil.getCurrentUser()).thenReturn(testUser);
-        imageService = new ImageServiceImpl(imageGroupRepository, imageRepository, imageSecurityService, userRepository, securityUtil, imageInitializer, timeSource, imageResizeService);
+        imageService = new ImageServiceImpl(imageGroupRepository, imageRepository, imageSecurityService, userRepository, securityUtil, imageInitializer, timeSource, imageResizeService, hibernateUtil);
     }
 
     private void withCurrentUser(User currentUser, boolean hasDefaultGroup) {
@@ -112,33 +114,40 @@ public class ImageServiceImplTest {
     @Test
     public void testSavesImageMetaData() throws IOException, SQLException, ResizeFailedException {
         securityTestHelper.disableSecurityInterceptor();
-        User currentUser = testUser;
-        withCurrentUser(currentUser, true);
+        withCurrentUser(testUser, true);
 
         ImageMetadata imageMetadata = setupImageMetadata();
-        final byte[] testBytes = "this is not actual image data but it ought to work for now".getBytes();
-        final InputStream imageInputStream = new ByteArrayInputStream(testBytes);
 
+        File resizeTempFile = mock(File.class);
+        when(resizeTempFile.delete()).thenReturn(true);
+        ImageFileInfo fileInfo = testFileInfo(resizeTempFile);
+
+        File srcFile = mock(File.class);
+        when(srcFile.delete()).thenReturn(true);
+        when(imageResizeService.writeFile(Mockito.<InputStream>any())).thenReturn(srcFile);
+        when(imageResizeService.scheduleResize(srcFile)).thenReturn(Arrays.asList(fileInfo));
+        Blob data = mock(Blob.class);
+        when(hibernateUtil.toBlob(srcFile)).thenReturn(data);
+        final Photo photo = imageService.createImage(imageMetadata, new ByteArrayInputStream(new byte[]{}), "image/jpeg");
+
+        assertEquals(2, photo.getManifestations().size());
+        final HeavyImageManifestation mf = (HeavyImageManifestation) photo.getManifestations().first();
+        assertEquals("image/jpeg", mf.getFormat());
+        assertEquals(photo, mf.getImage());
+        assertEquals(data, mf.getData());
+
+        verify(imageInitializer).saveNewImage(photo);
+        verify(imageInitializer).saveNewImageManifestation((HeavyImageManifestation) photo.getManifestations().first(), false);
+        verify(imageResizeService).scheduleResize(srcFile);
+        verify(imageInitializer).saveNewImageManifestation((HeavyImageManifestation) photo.getManifestations().last(), false);
+        verify(srcFile).delete();
+        verify(resizeTempFile).delete();
+    }
+
+    private ImageFileInfo testFileInfo(File file) {
         ImageFileInfo fileInfo = new ImageFileInfo(128, 128, "image/jpeg");
-        File tempFile = File.createTempFile("testSavesImageMetaData", "jpg");
-        fileInfo.setFile(tempFile);
-        try {
-            when(imageResizeService.scheduleResize(imageInputStream)).thenReturn(Arrays.asList(fileInfo));
-            final Photo photo = imageService.createImage(imageMetadata, imageInputStream, "image/jpeg");
-
-            assertEquals(2, photo.getManifestations().size());
-            final HeavyImageManifestation mf = (HeavyImageManifestation) photo.getManifestations().first();
-            assertEquals("image/jpeg", mf.getFormat());
-            assertEquals(photo, mf.getImage());
-            assertEquals(testBytes.length, mf.getData().getBinaryStream().available());
-
-            verify(imageInitializer).saveNewImage(photo);
-            verify(imageInitializer).saveNewImageManifestation((HeavyImageManifestation) photo.getManifestations().first());
-            verify(imageResizeService).scheduleResize(imageInputStream);
-            verify(imageInitializer).saveNewImageManifestation((HeavyImageManifestation) photo.getManifestations().last());
-        } finally {
-            tempFile.delete();
-        }
+        fileInfo.setFile(file);
+        return fileInfo;
     }
 
     @Test

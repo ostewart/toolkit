@@ -23,9 +23,9 @@ public class ImageMagickImageResizer implements ImageResizer {
     @Override
     public File resizeImage(File srcFile, ImageFileInfo imageInfo, int shortestDimensionLength) throws ResizeFailedException {
         try {
-            File destFile = File.createTempFile("image-resizer-output", "jpg");
+            File destFile = File.createTempFile("image-resizer-output", ".jpg");
 
-            executor.exec("convert -quality 80 -resize",
+            executor.exec("/opt/local/bin/convert -quality 80 -resize",
                           geometryString(imageInfo, shortestDimensionLength),
                           srcFile.getAbsolutePath(),
                           destFile.getAbsolutePath());
@@ -44,14 +44,14 @@ public class ImageMagickImageResizer implements ImageResizer {
     }
 
     public File writeToTempFile(InputStream imageInputStream) throws IOException {
-        File file = File.createTempFile("image-resizer-input", "jpg");
+        File file = File.createTempFile("image-resizer-input", ".jpg");
         IOUtils.copy(imageInputStream, new FileOutputStream(file));
         return file;
     }
 
     @Override
     public ImageFileInfo identify(File file) throws CouldNotIdentifyException {
-        String output = executor.exec("identify " + file.getAbsolutePath()).get(0);
+        String output = executor.exec("/opt/local/bin/identify " + file.getAbsolutePath()).get(0);
 
         Pattern pattern = Pattern.compile(".*?([A-Z]+) (\\d+)x(\\d+).*?");
 
@@ -61,8 +61,8 @@ public class ImageMagickImageResizer implements ImageResizer {
             throw new CouldNotIdentifyException("Failed to match output: " + output);
         }
         String format = matcher.group(1);
-        String height = matcher.group(2);
-        String width = matcher.group(3);
+        String width = matcher.group(2);
+        String height = matcher.group(3);
         return new ImageFileInfo(Integer.parseInt(height), Integer.parseInt(width), mimeTypeFromFormat(format));
     }
 

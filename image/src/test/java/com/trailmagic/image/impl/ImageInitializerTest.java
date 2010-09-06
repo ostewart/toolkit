@@ -14,6 +14,7 @@ import org.mockito.MockitoAnnotations;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -136,6 +137,17 @@ public class ImageInitializerTest {
 
         verify(imageManifestationRepository).saveNewImageManifestation(mf);
         verify(imageManifestationRepository).cleanFromSession(mf);
+    }
+
+    @Test
+    public void testSaveNewImageManifestationWithoutClear() throws Exception {
+        HeavyImageManifestation mf = new HeavyImageManifestation();
+        mf.setData(Hibernate.createBlob(new byte[0]));
+
+        imageInitializer.saveNewImageManifestation(mf, false);
+
+        verify(imageManifestationRepository).saveNewImageManifestation(mf);
+        verify(imageManifestationRepository, never()).cleanFromSession(mf);
     }
 
     @Test

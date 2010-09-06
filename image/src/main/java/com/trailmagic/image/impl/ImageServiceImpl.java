@@ -24,14 +24,13 @@ import com.trailmagic.user.UserRepository;
 import com.trailmagic.util.SecurityUtil;
 import com.trailmagic.util.TimeSource;
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.FileInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
@@ -52,6 +51,7 @@ public class ImageServiceImpl implements ImageService {
     private UserRepository userRepository;
     private ImageSecurityService imageSecurityService;
     private ImageResizeService imageResizeService;
+    private HibernateUtil hibernateUtil;
 
     @SuppressWarnings({"SpringJavaAutowiringInspection"})
     @Autowired
@@ -59,7 +59,7 @@ public class ImageServiceImpl implements ImageService {
                             ImageRepository imageRepository,
                             ImageSecurityService imageSecurityService,
                             UserRepository userRepository,
-                            SecurityUtil securityUtil, ImageInitializer imageInitializer, TimeSource timeSource, ImageResizeService imageResizeService) {
+                            SecurityUtil securityUtil, ImageInitializer imageInitializer, TimeSource timeSource, ImageResizeService imageResizeService, HibernateUtil hibernateUtil) {
         super();
         this.imageGroupRepository = imageGroupRepository;
         this.imageRepository = imageRepository;
@@ -69,51 +69,65 @@ public class ImageServiceImpl implements ImageService {
         this.imageInitializer = imageInitializer;
         this.timeSource = timeSource;
         this.imageResizeService = imageResizeService;
+        this.hibernateUtil = hibernateUtil;
     }
 
     public Photo createImage(ImageMetadata imageMetadata, InputStream inputStream, String contentType) throws IllegalStateException, IOException {
         Photo photo = createImage(imageMetadata);
 
-        final HeavyImageManifestation manifestation = new HeavyImageManifestation();
-        manifestation.setData(Hibernate.createBlob(inputStream));
-        manifestation.setOriginal(true);
-        manifestation.setFormat(contentType);
-        photo.addManifestation(manifestation);
-
-        // need to save manifestation first because it isn't mapped as a heavy from the image side
-        // so transitive persistence doesn't save the image data
-        imageInitializer.saveNewImageManifestation(manifestation);
+        File srcFile = imageResizeService.writeFile(inputStream);
 
         try {
-            scheduleResize(photo, manifestation);
-        } catch (SQLException e) {
-            throw new IllegalStateException("Error resizing image " + photo.getName(), e);
-        } catch (ResizeFailedException e) {
-            log.error("Resize failed: ", e);
+            addNewManifestation(photo, srcFile, contentType, true);
+
+            try {
+                scheduleResize(photo, srcFile);
+            } catch (SQLException e) {
+                throw new IllegalStateException("Error resizing image " + photo.getName(), e);
+            } catch (ResizeFailedException e) {
+                log.error("Resize failed: ", e);
+            }
+        } finally {
+            boolean deleted = srcFile.delete();
+            if (!deleted) {
+                log.warn("Failed to delete temporary image file: " + srcFile.getAbsolutePath());
+            }
         }
 
         return photo;
     }
 
-    private void scheduleResize(Photo photo, HeavyImageManifestation manifestation) throws SQLException, ResizeFailedException {
-        List<ImageFileInfo> fileInfos = imageResizeService.scheduleResize(manifestation.getData().getBinaryStream());
+    private void addNewManifestation(Photo photo, File srcFile, String contentType, boolean original) throws IOException {
+        final HeavyImageManifestation manifestation = new HeavyImageManifestation();
+        manifestation.setData(hibernateUtil.toBlob(srcFile));
+        manifestation.setOriginal(original);
+        manifestation.setFormat(contentType);
+        photo.addManifestation(manifestation);
+
+        // need to save manifestation first because it isn't mapped as a heavy from the image side
+        // so transitive persistence doesn't save the image data
+        imageInitializer.saveNewImageManifestation(manifestation, false);
+    }
+
+    private void scheduleResize(Photo photo, File srcFile) throws SQLException, ResizeFailedException, IOException {
+        List<ImageFileInfo> fileInfos = imageResizeService.scheduleResize(srcFile);
         for (ImageFileInfo info : fileInfos) {
-            final HeavyImageManifestation newManifestation = new HeavyImageManifestation();
-            try {
-                newManifestation.setData(Hibernate.createBlob(new FileInputStream(info.getFile())));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            newManifestation.setOriginal(false);
-            newManifestation.setFormat(info.getFormat());
-            newManifestation.setHeight(info.getHeight());
-            newManifestation.setWidth(info.getWidth());
-            photo.addManifestation(newManifestation);
-            imageInitializer.saveNewImageManifestation(newManifestation);
-            boolean deleted = info.getFile().delete();
-            if (!deleted) {
-                log.warn("Could not delete resize temp file " + info.getFile().getAbsolutePath());
-            }
+            addManifestation(photo, info, false);
+        }
+    }
+
+    private void addManifestation(Photo photo, ImageFileInfo info, boolean original) throws IOException {
+        final HeavyImageManifestation manifestation = new HeavyImageManifestation();
+        manifestation.setData(hibernateUtil.toBlob(info.getFile()));
+        manifestation.setOriginal(original);
+        manifestation.setFormat(info.getFormat());
+        manifestation.setHeight(info.getHeight());
+        manifestation.setWidth(info.getWidth());
+        photo.addManifestation(manifestation);
+        imageInitializer.saveNewImageManifestation(manifestation, false);
+        boolean deleted = info.getFile().delete();
+        if (!deleted) {
+            log.warn("Could not delete resize temp file " + info.getFile().getAbsolutePath());
         }
     }
 

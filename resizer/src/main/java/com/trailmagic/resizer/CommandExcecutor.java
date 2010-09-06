@@ -29,7 +29,7 @@ public class CommandExcecutor {
                 throw new CommandFailedException("Failed to execute " + command + ", exit code was: " + exitCode);
             }
         } catch (IOException e) {
-            throw new CommandFailedException("Failed to execute " + command + ": ", e);
+            throw new CommandFailedException("Failed to execute " + command + ": " + e.getMessage(), e);
         }
         return outputHandler.getOutputLines();
     }

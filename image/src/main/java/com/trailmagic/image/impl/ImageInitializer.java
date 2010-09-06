@@ -75,13 +75,19 @@ public class ImageInitializer {
     }
 
     public void saveNewImageManifestation(HeavyImageManifestation imageManifestation) {
-        imageManifestationRepository.saveNewImageManifestation(imageManifestation);
-
-
-        log.info("Saved image manifestation (before flush/evict): "
-                 + imageManifestation);
         // for now we'll clear/evict here since the normal case is probably
         // that we want this out of memory quickly
-        imageManifestationRepository.cleanFromSession(imageManifestation);
+        saveNewImageManifestation(imageManifestation, true);
+    }
+
+    public void saveNewImageManifestation(HeavyImageManifestation imageManifestation, boolean clearFromSession) {
+        imageManifestationRepository.saveNewImageManifestation(imageManifestation);
+
+        log.info("Saved image manifestation"
+                 + (clearFromSession ? " (before flush/evict)" : "")
+                 + ": " + imageManifestation);
+        if (clearFromSession) {
+            imageManifestationRepository.cleanFromSession(imageManifestation);
+        }
     }
 }
