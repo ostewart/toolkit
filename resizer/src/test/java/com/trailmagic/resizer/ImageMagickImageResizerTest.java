@@ -36,7 +36,7 @@ public class ImageMagickImageResizerTest {
 
     @Test
     public void testResizePortraitImage() throws Exception {
-        File file = resizer.resizeImage(srcFile, new ImageFileInfo(192, 128, "image/jpeg"), 128);
+        File file = resizer.resizeImage(srcFile, new ImageFileInfo(128, 192, "image/jpeg"), 128);
 
         verify(executor, times(1)).exec(startsWith(PORTRAIT_COMMAND), eq("128x>"), anyString(), anyString());
         assertNotNull(file);
@@ -45,7 +45,7 @@ public class ImageMagickImageResizerTest {
 
     @Test
     public void testResizeLandscapeImage() throws Exception {
-        File file = resizer.resizeImage(srcFile, new ImageFileInfo(128, 192, "image/jpeg"), 128);
+        File file = resizer.resizeImage(srcFile, new ImageFileInfo(192, 128, "image/jpeg"), 128);
 
         verify(executor, times(1)).exec(startsWith(LANDSCAPE_COMMAND), eq("x128>"), anyString(), anyString());
         assertNotNull(file);
@@ -54,14 +54,15 @@ public class ImageMagickImageResizerTest {
 
     @Test
     public void testIdentify() throws IOException {
-        File file = File.createTempFile("testIdentify", "jpg");
+        File file = File.createTempFile("testIdentify", ".jpg");
         when(executor.exec("identify " + file.getAbsolutePath())).thenReturn(Arrays.asList(PORTRAIT_RESULT_IDENTIFY));
 
         ImageFileInfo info = resizer.identify(file);
 
-        assertEquals(128, info.getHeight());
-        assertEquals(171, info.getWidth());
+        assertEquals(171, info.getHeight());
+        assertEquals(128, info.getWidth());
         assertEquals("image/jpeg", info.getFormat());
+        assertEquals(file, info.getFile());
         file.delete();
     }
 

@@ -25,7 +25,7 @@ public class ImageMagickImageResizer implements ImageResizer {
         try {
             File destFile = File.createTempFile("image-resizer-output", ".jpg");
 
-            executor.exec("/opt/local/bin/convert -quality 80 -resize",
+            executor.exec("convert -quality 80 -resize",
                           geometryString(imageInfo, shortestDimensionLength),
                           srcFile.getAbsolutePath(),
                           destFile.getAbsolutePath());
@@ -51,7 +51,7 @@ public class ImageMagickImageResizer implements ImageResizer {
 
     @Override
     public ImageFileInfo identify(File file) throws CouldNotIdentifyException {
-        String output = executor.exec("/opt/local/bin/identify " + file.getAbsolutePath()).get(0);
+        String output = executor.exec("identify " + file.getAbsolutePath()).get(0);
 
         Pattern pattern = Pattern.compile(".*?([A-Z]+) (\\d+)x(\\d+).*?");
 
@@ -63,7 +63,7 @@ public class ImageMagickImageResizer implements ImageResizer {
         String format = matcher.group(1);
         String width = matcher.group(2);
         String height = matcher.group(3);
-        return new ImageFileInfo(Integer.parseInt(height), Integer.parseInt(width), mimeTypeFromFormat(format));
+        return new ImageFileInfo(Integer.parseInt(width), Integer.parseInt(height), mimeTypeFromFormat(format), file);
     }
 
     private String mimeTypeFromFormat(String format) throws CouldNotIdentifyException {

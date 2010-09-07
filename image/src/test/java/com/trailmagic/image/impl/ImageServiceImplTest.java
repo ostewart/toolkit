@@ -48,6 +48,8 @@ public class ImageServiceImplTest {
     private static final String TEST_ROLL_NAME = "my-awesome-roll";
     private final SecurityTestHelper securityTestHelper = new SecurityTestHelper();
     private User testUser;
+    private static final int PORTRAIT_WIDTH = 1935;
+    private static final int PORTRAIT_HEIGHT = 2592;
 
     @Before
     public void setUp() {
@@ -120,32 +122,38 @@ public class ImageServiceImplTest {
 
         File resizeTempFile = mock(File.class);
         when(resizeTempFile.delete()).thenReturn(true);
-        ImageFileInfo fileInfo = testFileInfo(resizeTempFile);
+        ImageFileInfo fileInfo = testFileInfo(resizeTempFile, 10, 10);
 
         File srcFile = mock(File.class);
         when(srcFile.delete()).thenReturn(true);
+
         when(imageResizeService.writeFile(Mockito.<InputStream>any())).thenReturn(srcFile);
+        when(imageResizeService.identify(srcFile)).thenReturn(testFileInfo(srcFile, PORTRAIT_WIDTH, PORTRAIT_HEIGHT));
+        Blob srcBlob = mock(Blob.class);
+        when(hibernateUtil.toBlob(srcFile)).thenReturn(srcBlob);
         when(imageResizeService.scheduleResize(srcFile)).thenReturn(Arrays.asList(fileInfo));
-        Blob data = mock(Blob.class);
-        when(hibernateUtil.toBlob(srcFile)).thenReturn(data);
+
         final Photo photo = imageService.createImage(imageMetadata, new ByteArrayInputStream(new byte[]{}), "image/jpeg");
 
         assertEquals(2, photo.getManifestations().size());
-        final HeavyImageManifestation mf = (HeavyImageManifestation) photo.getManifestations().first();
-        assertEquals("image/jpeg", mf.getFormat());
-        assertEquals(photo, mf.getImage());
-        assertEquals(data, mf.getData());
+        // this one's bigger, so first
+        HeavyImageManifestation original = (HeavyImageManifestation) photo.getManifestations().last();
+        assertEquals("image/jpeg", original.getFormat());
+        assertEquals(photo, original.getImage());
+        assertEquals(srcBlob, original.getData());
+        assertEquals(PORTRAIT_WIDTH, original.getWidth());
+        assertEquals(PORTRAIT_HEIGHT, original.getHeight());
 
         verify(imageInitializer).saveNewImage(photo);
-        verify(imageInitializer).saveNewImageManifestation((HeavyImageManifestation) photo.getManifestations().first(), false);
+        verify(imageInitializer).saveNewImageManifestation(original, false);
         verify(imageResizeService).scheduleResize(srcFile);
-        verify(imageInitializer).saveNewImageManifestation((HeavyImageManifestation) photo.getManifestations().last(), false);
+        verify(imageInitializer).saveNewImageManifestation((HeavyImageManifestation) photo.getManifestations().first(), false);
         verify(srcFile).delete();
         verify(resizeTempFile).delete();
     }
 
-    private ImageFileInfo testFileInfo(File file) {
-        ImageFileInfo fileInfo = new ImageFileInfo(128, 128, "image/jpeg");
+    private ImageFileInfo testFileInfo(File file, int width, int height) {
+        ImageFileInfo fileInfo = new ImageFileInfo(width, height, "image/jpeg");
         fileInfo.setFile(file);
         return fileInfo;
     }

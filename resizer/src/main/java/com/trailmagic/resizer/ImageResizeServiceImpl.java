@@ -40,6 +40,11 @@ public class ImageResizeServiceImpl implements ImageResizeService {
         return resultInfos;
     }
 
+    @Override
+    public ImageFileInfo identify(File srcFile) {
+        return imageResizer.identify(srcFile);
+    }
+
 
     public File writeFile(InputStream srcInputStream) throws ResizeFailedException {
         try {

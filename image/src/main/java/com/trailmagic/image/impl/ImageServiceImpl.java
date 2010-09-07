@@ -33,7 +33,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 
@@ -76,17 +75,11 @@ public class ImageServiceImpl implements ImageService {
         Photo photo = createImage(imageMetadata);
 
         File srcFile = imageResizeService.writeFile(inputStream);
+        ImageFileInfo srcFileInfo = imageResizeService.identify(srcFile);
 
         try {
-            addNewManifestation(photo, srcFile, contentType, true);
-
-            try {
-                scheduleResize(photo, srcFile);
-            } catch (SQLException e) {
-                throw new IllegalStateException("Error resizing image " + photo.getName(), e);
-            } catch (ResizeFailedException e) {
-                log.error("Resize failed: ", e);
-            }
+            addManifestation(photo, srcFileInfo, true);
+            scheduleResize(photo, srcFile);
         } finally {
             boolean deleted = srcFile.delete();
             if (!deleted) {
@@ -95,25 +88,6 @@ public class ImageServiceImpl implements ImageService {
         }
 
         return photo;
-    }
-
-    private void addNewManifestation(Photo photo, File srcFile, String contentType, boolean original) throws IOException {
-        final HeavyImageManifestation manifestation = new HeavyImageManifestation();
-        manifestation.setData(hibernateUtil.toBlob(srcFile));
-        manifestation.setOriginal(original);
-        manifestation.setFormat(contentType);
-        photo.addManifestation(manifestation);
-
-        // need to save manifestation first because it isn't mapped as a heavy from the image side
-        // so transitive persistence doesn't save the image data
-        imageInitializer.saveNewImageManifestation(manifestation, false);
-    }
-
-    private void scheduleResize(Photo photo, File srcFile) throws SQLException, ResizeFailedException, IOException {
-        List<ImageFileInfo> fileInfos = imageResizeService.scheduleResize(srcFile);
-        for (ImageFileInfo info : fileInfos) {
-            addManifestation(photo, info, false);
-        }
     }
 
     private void addManifestation(Photo photo, ImageFileInfo info, boolean original) throws IOException {
@@ -125,10 +99,22 @@ public class ImageServiceImpl implements ImageService {
         manifestation.setWidth(info.getWidth());
         photo.addManifestation(manifestation);
         imageInitializer.saveNewImageManifestation(manifestation, false);
-        boolean deleted = info.getFile().delete();
-        if (!deleted) {
-            log.warn("Could not delete resize temp file " + info.getFile().getAbsolutePath());
+    }
+
+    private void scheduleResize(Photo photo, File srcFile) throws IOException {
+        try {
+        List<ImageFileInfo> fileInfos = imageResizeService.scheduleResize(srcFile);
+        for (ImageFileInfo info : fileInfos) {
+            addManifestation(photo, info, false);
+            boolean deleted = info.getFile().delete();
+            if (!deleted) {
+                log.warn("Could not delete resize temp file " + info.getFile().getAbsolutePath());
+            }
         }
+        } catch (ResizeFailedException e) {
+            log.error("Resize failed on " + photo, e);
+        }
+
     }
 
     public Photo createImage(ImageMetadata imageData) throws IllegalStateException {

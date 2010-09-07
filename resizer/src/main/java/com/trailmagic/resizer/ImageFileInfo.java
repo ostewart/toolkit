@@ -11,10 +11,17 @@ public class ImageFileInfo {
     private String format;
     private File file;
 
-    public ImageFileInfo(int height, int width, String format) {
+    public ImageFileInfo(int width, int height, String format) {
         this.height = height;
         this.width = width;
         this.format = format;
+    }
+
+    public ImageFileInfo(int width, int height, String format, File file) {
+        this.height = height;
+        this.width = width;
+        this.format = format;
+        this.file = file;
     }
 
     public ImageFileInfo() {
