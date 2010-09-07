@@ -59,8 +59,9 @@ public class ImageTag extends TagSupport {
             // XXX: end kludge
 
             String size = req.getParameter(SIZE_ATTR);
+            String originalp = req.getParameter("original");
             if (size != null) {
-                mf = WebSupport.getMFBySize(m_image, Integer.parseInt(size));
+                mf = WebSupport.getMFBySize(m_image, Integer.parseInt(size), Boolean.parseBoolean(originalp));
             } else {
                 // get label by precedence: req param, tag spec, sess attr
                 String label = req.getParameter(LABEL_ATTR);

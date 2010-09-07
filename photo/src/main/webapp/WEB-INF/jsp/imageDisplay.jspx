@@ -144,9 +144,20 @@
         </c:if>
         </c:otherwise>
       </c:choose>
+
       <div class="image-sizes">
         | <c:forEach var="imf" items="${image.manifestations}">
-          <a href="?size=${imf.area}">${imf.width}x${imf.height}</a> |
+          <c:choose>
+            <c:when test="${imf.original}">
+                <c:set var="origText" value=" (orig)"/>
+                <c:set var="origParam" value="&amp;original=true"/>
+            </c:when>
+            <c:otherwise>
+                <c:set var="origText" value=""/>
+                <c:set var="origParam" value=""/>
+            </c:otherwise>
+        </c:choose>
+          <a href="?size=${imf.area}${origParam}">${imf.width}x${imf.height}${origText}</a> |
         </c:forEach>
       </div>
 

@@ -33,7 +33,7 @@ public class WebSupport {
 
     public static ImageManifestation getDefaultMF(User user, Image image) {
         // default is small (384x256), so find the closest
-        return getMFBySize(image, 384 * 256);
+        return getMFBySize(image, 384 * 256, false);
     }
 
     public static ImageManifestation getMFByLabel(Image image,
@@ -53,11 +53,13 @@ public class WebSupport {
             throw new IllegalArgumentException("Unsupported label: " + label);
         }
 
-        return getMFBySize(image, target);
+        return getMFBySize(image, target, false);
     }
 
-    public static ImageManifestation getMFBySize(Image image,
-                                                 int size) {
+    public static ImageManifestation getMFBySize(Image image, int size, boolean original) {
+        if (original) {
+            return findOriginal(image);
+        }
         SortedSet mfs = image.getManifestations();
         ImageManifestation closest, tmpMF;
 
@@ -71,15 +73,26 @@ public class WebSupport {
         while (iter.hasNext()) {
             tmpMF = (ImageManifestation) iter.next();
 
+            if (tmpMF.isOriginal()) {
+                continue;
+            }
+
             // if tmpMF's area is closer to the target size...
-            if (Math.abs(size - (tmpMF.getHeight() * tmpMF.getWidth())) <
-                Math.abs(size -
-                         (closest.getHeight() * closest.getWidth()))) {
+            if (Math.abs(size - (tmpMF.getArea())) < Math.abs(size - (closest.getArea()))) {
                 closest = tmpMF;
             }
         }
 
         return closest;
+    }
+
+    private static ImageManifestation findOriginal(Image image) {
+        for (ImageManifestation manifestation : image.getManifestations()) {
+            if (manifestation.isOriginal()) {
+                return manifestation;
+            }
+        }
+        return null;
     }
 
     /**
