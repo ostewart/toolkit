@@ -43,8 +43,7 @@ public class ImageGroupDisplayController {
         this.webRequestTools = webRequestTools;
     }
 
-    public ModelAndView handleDisplayGroup(HttpServletRequest request,
-                                           ModelMap model)
+    public ModelAndView handleDisplayGroup(HttpServletRequest request, ModelMap model)
             throws NoSuchImageGroupException, MalformedUrlException {
 
         ImageRequestInfo iri = webRequestTools.getImageRequestInfo(request);

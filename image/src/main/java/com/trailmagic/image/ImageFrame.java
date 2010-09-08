@@ -17,6 +17,9 @@ import com.trailmagic.user.Owned;
 import com.trailmagic.user.User;
 import com.trailmagic.image.security.IdentityProxy;
 
+import java.util.Iterator;
+import java.util.SortedSet;
+
 public class ImageFrame implements Owned, Comparable<ImageFrame> {
     private long id;
     private ImageGroup imageGroup;
@@ -74,6 +77,7 @@ public class ImageFrame implements Owned, Comparable<ImageFrame> {
         this.caption = caption;
     }
 
+    @SuppressWarnings({"RedundantIfStatement"})
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -126,4 +130,23 @@ public class ImageFrame implements Owned, Comparable<ImageFrame> {
             + "; imageGroup=" + imageGroup
             + ")";
     }
+
+    public ImageFrame previous() {
+        final SortedSet<ImageFrame> headSet = imageGroup.getFrames().headSet(this);
+
+        if ( !headSet.isEmpty() ) {
+            return headSet.last();
+        }
+        return null;
+    }
+
+    public ImageFrame next() {
+        Iterator<ImageFrame> framesIter = imageGroup.getFrames().tailSet(this).iterator();
+        framesIter.next();
+        if ( framesIter.hasNext() ) {
+            return framesIter.next();
+        }
+        return null;
+    }
+
 }
