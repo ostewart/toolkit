@@ -366,3 +366,7 @@ a.bigLink:hover {
     margin-left: 2%;
     margin-right: 2%;
 }
+
+.imageAdmin {
+    clear: both;
+}
