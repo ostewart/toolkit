@@ -1,10 +1,9 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-   "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <!--
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 -->
-<html>
+<html lang="en">
   <head>
     <title>Login</title>
 <!--    <base href="/"/> -->
@@ -20,7 +19,7 @@
       <table>
           <tr>
             <td><label for="j_username">Username:</label></td>
-            <td><input type="text" name="j_username"/></td>
+            <td><input id="username" type="text" name="j_username" autofocus/></td>
           </tr>
           <tr>
             <td><label for="j_password">Password:</label></td>
@@ -29,5 +28,10 @@
       </table>
       <input type="submit"/>
     </form>
+    <script>
+        if (!("autofocus" in document.createElement("input"))) {
+          document.getElementById("username").focus();
+        }
+      </script>
   </body>
 </html>
