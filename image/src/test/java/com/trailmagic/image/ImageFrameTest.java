@@ -1,5 +1,8 @@
 package com.trailmagic.image;
 
+import com.trailmagic.image.security.SecurityTestHelper;
+import com.trailmagic.user.User;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Iterator;
@@ -12,10 +15,14 @@ import static org.junit.Assert.assertNull;
  * Created by: oliver on Date: Sep 8, 2010 Time: 5:57:20 PM
  */
 public class ImageFrameTest {
+    @Before
+    public void setUp() {
+        new SecurityTestHelper().disableSecurityInterceptor();
+    }
 
     @Test
     public void testPreviousFrame() {
-        ImageGroup group = new ImageGroup();
+        ImageGroup group = newImageGroup();
         addFrames(group, 1, 2, 3);
         ImageFrame startFrame = index(1, group.getFrames());
 
@@ -25,7 +32,7 @@ public class ImageFrameTest {
 
     @Test
     public void testPreviousFrameAtHeadIsNull() {
-        ImageGroup group = new ImageGroup();
+        ImageGroup group = newImageGroup();
         addFrames(group, 1, 2, 3);
         ImageFrame startFrame = index(0, group.getFrames());
 
@@ -34,7 +41,7 @@ public class ImageFrameTest {
 
     @Test
     public void testNextFrame() {
-        ImageGroup group = new ImageGroup();
+        ImageGroup group = newImageGroup();
         addFrames(group, 1, 2, 3);
         ImageFrame startFrame = index(1, group.getFrames());
 
@@ -44,11 +51,15 @@ public class ImageFrameTest {
 
     @Test
     public void testNextFrameAtTailIsNull() {
-        ImageGroup group = new ImageGroup();
+        ImageGroup group = newImageGroup();
         addFrames(group, 1, 2, 3);
         ImageFrame startFrame = index(2, group.getFrames());
 
         assertNull(startFrame.next());
+    }
+
+    private ImageGroup newImageGroup() {
+        return new ImageGroup("test", new User("tester"), ImageGroup.Type.ROLL);
     }
 
     private ImageFrame index(int index, SortedSet<ImageFrame> frames) {
@@ -69,7 +80,7 @@ public class ImageFrameTest {
     }
 
     private ImageFrame frame(int pos) {
-        ImageFrame imageFrame = new ImageFrame();
+        ImageFrame imageFrame = new ImageFrame(new Image());
         imageFrame.setPosition(pos);
         return imageFrame;
     }

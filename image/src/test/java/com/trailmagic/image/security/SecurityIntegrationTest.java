@@ -188,8 +188,7 @@ public class SecurityIntegrationTest {
     }
 
     private ImageFrame makeFrame(Photo photo, ImageGroup group, int position) {
-        ImageFrame frame = new ImageFrame();
-        frame.setImage(photo);
+        ImageFrame frame = new ImageFrame(photo);
         frame.setPosition(position);
         group.addFrame(frame);
         return frame;

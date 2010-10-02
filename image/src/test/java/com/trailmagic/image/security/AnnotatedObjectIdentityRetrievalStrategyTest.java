@@ -43,8 +43,7 @@ public class AnnotatedObjectIdentityRetrievalStrategyTest extends TestCase {
         Long imageId = 1L;
         final Photo photo = new Photo();
         photo.setId(imageId);
-        final ImageFrame frame = new ImageFrame();
-        frame.setImage(photo);
+        final ImageFrame frame = new ImageFrame(photo);
         assertEquals(new ObjectIdentityImpl(Image.class, imageId), strategy.getObjectIdentity(frame));
     }
 

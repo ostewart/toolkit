@@ -83,12 +83,9 @@ public class MakeAlbum implements ApplicationContextAware {
                 throw new IllegalArgumentException("Invalid roll name");
             }
 
-            ImageGroup album = new ImageGroup();
-            album.setName(albumName);
-            album.setType(ImageGroup.Type.ALBUM);
+            ImageGroup album = new ImageGroup(albumName, roll.getOwner(), ImageGroup.Type.ALBUM);
             album.setDisplayName(roll.getDisplayName());
             album.setDescription(roll.getDescription());
-            album.setOwner(roll.getOwner());
             album.setSupergroup(roll.getSupergroup());
             // XXX: not copying subgroups
             // this is probably a leaf group
@@ -119,8 +116,7 @@ public class MakeAlbum implements ApplicationContextAware {
 
                 Image image = (Image)images.get(0);
 
-                ImageFrame frame = new ImageFrame();
-                frame.setImage(image);
+                ImageFrame frame = new ImageFrame(image);
                 frame.setPosition(position);
                 frame.setImageGroup(album);
                 m_session.save(frame);

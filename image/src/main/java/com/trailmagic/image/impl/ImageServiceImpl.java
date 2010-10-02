@@ -33,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 
@@ -51,6 +52,7 @@ public class ImageServiceImpl implements ImageService {
     private ImageSecurityService imageSecurityService;
     private ImageResizeService imageResizeService;
     private HibernateUtil hibernateUtil;
+    private ImageManifestationService imageManifestationService;
 
     @SuppressWarnings({"SpringJavaAutowiringInspection"})
     @Autowired
@@ -58,7 +60,12 @@ public class ImageServiceImpl implements ImageService {
                             ImageRepository imageRepository,
                             ImageSecurityService imageSecurityService,
                             UserRepository userRepository,
-                            SecurityUtil securityUtil, ImageInitializer imageInitializer, TimeSource timeSource, ImageResizeService imageResizeService, HibernateUtil hibernateUtil) {
+                            SecurityUtil securityUtil,
+                            ImageInitializer imageInitializer,
+                            TimeSource timeSource,
+                            ImageResizeService imageResizeService,
+                            HibernateUtil hibernateUtil,
+                            ImageManifestationService imageManifestationService) {
         super();
         this.imageGroupRepository = imageGroupRepository;
         this.imageRepository = imageRepository;
@@ -69,11 +76,35 @@ public class ImageServiceImpl implements ImageService {
         this.timeSource = timeSource;
         this.imageResizeService = imageResizeService;
         this.hibernateUtil = hibernateUtil;
+        this.imageManifestationService = imageManifestationService;
     }
 
-    public Photo createImage(ImageMetadata imageMetadata, InputStream inputStream, String contentType) throws IllegalStateException, IOException {
+    @Override
+    public Photo createImage(InputStream inputStream) throws IllegalStateException, IOException {
+        ImageMetadata imageMetadata = new ImageMetadata();
+
+        imageMetadata.setCreator(fullNameFromUser());
+        imageMetadata.setCopyright("Copyright " + Calendar.getInstance().get(Calendar.YEAR));
+
+        Photo image = createImage(imageMetadata);
+        imageManifestationService.createManifestation(image, inputStream);
+        return image;
+    }
+
+    private String fullNameFromUser() {
+        User user = securityUtil.getCurrentUser();
+        return user.getFirstName() + " " + user.getLastName();
+    }
+
+    public Photo createImage(ImageMetadata imageMetadata, InputStream inputStream) throws IllegalStateException, IOException {
         Photo photo = createImage(imageMetadata);
 
+        createManifestation(photo, inputStream);
+
+        return photo;
+    }
+
+    private void createManifestation(Photo photo, InputStream inputStream) throws IOException {
         File srcFile = imageResizeService.writeFile(inputStream);
         ImageFileInfo srcFileInfo = imageResizeService.identify(srcFile);
 
@@ -86,8 +117,6 @@ public class ImageServiceImpl implements ImageService {
                 log.warn("Failed to delete temporary image file: " + srcFile.getAbsolutePath());
             }
         }
-
-        return photo;
     }
 
     private void addManifestation(Photo photo, ImageFileInfo info, boolean original) throws IOException {
@@ -151,12 +180,9 @@ public class ImageServiceImpl implements ImageService {
     private ImageGroup getDefaultRollForUser(User currentUser) {
         ImageGroup defaultRoll = imageGroupRepository.getRollByOwnerAndName(currentUser, ImageGroup.DEFAULT_ROLL_NAME);
         if (defaultRoll == null) {
-            defaultRoll = new ImageGroup();
-            defaultRoll.setType(ImageGroup.Type.ROLL);
-            defaultRoll.setOwner(currentUser);
+            defaultRoll = new ImageGroup(ImageGroup.DEFAULT_ROLL_NAME, currentUser, Type.ROLL);
             defaultRoll.setSupergroup(null);
             defaultRoll.setUploadDate(timeSource.today());
-            defaultRoll.setName(ImageGroup.DEFAULT_ROLL_NAME);
             defaultRoll.setDisplayName("Uploads");
             defaultRoll.setDescription("Uploaded Images");
             imageInitializer.saveNewImageGroup(defaultRoll);
@@ -169,8 +195,7 @@ public class ImageServiceImpl implements ImageService {
     }
 
     public ImageFrame addImageToGroup(Image image, ImageGroup group, int position) {
-        ImageFrame frame = new ImageFrame();
-        frame.setImage(image);
+        ImageFrame frame = new ImageFrame(image);
         frame.setPosition(position);
         frame.setImageGroup(group);
         group.addFrame(frame);

@@ -21,7 +21,6 @@ public interface ImageGroupRepository {
     public int ROLL_TYPE = 0;
     public int ALBUM_TYPE = 1;
 
-    public ImageGroup newInstance(int type);
     public ImageGroup getAlbumByOwnerAndName(User owner, String albumName);
     public ImageGroup getRollByOwnerAndName(User owner, String rollName);
     public ImageFrame getImageFrameByImageGroupAndImageId(ImageGroup group,

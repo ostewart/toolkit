@@ -75,10 +75,6 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
         m_hibernateTemplate = template;
     }
 
-    public ImageGroup newInstance(int type) {
-        return new ImageGroup();
-    }
-
     public ImageGroup getAlbumByOwnerAndName(User owner, String albumName) {
         try {
             Session session =

@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 
 import static org.junit.Assert.*;
@@ -42,6 +43,7 @@ public class ImageServiceImplTest {
     @Mock private TimeSource timeSource;
     @Mock private ImageResizeService imageResizeService;
     @Mock private HibernateUtil hibernateUtil;
+    @Mock private ImageManifestationService imageManifestationService;
     private static final long DEFAULT_GROUP_ID = 1234L;
     private static final Date TEST_TIME = new Date();
     private ImageGroup defaultGroup;
@@ -50,14 +52,23 @@ public class ImageServiceImplTest {
     private User testUser;
     private static final int PORTRAIT_WIDTH = 1935;
     private static final int PORTRAIT_HEIGHT = 2592;
+    private static final ByteArrayInputStream EMPTY_INPUT_STREAM = new ByteArrayInputStream(new byte[]{});
+    private static final String FIRST_NAME = "Testy";
+    private static final String LAST_NAME = "McTesterton";
+    private static final int TEST_YEAR = 2010;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         testUser = new User("testy");
+        testUser.setFirstName(FIRST_NAME);
+        testUser.setLastName(LAST_NAME);
         when(timeSource.today()).thenReturn(TEST_TIME);
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(TEST_YEAR, Calendar.FEBRUARY, 28);
+        when(timeSource.calendar()).thenReturn(calendar);
         when(securityUtil.getCurrentUser()).thenReturn(testUser);
-        imageService = new ImageServiceImpl(imageGroupRepository, imageRepository, imageSecurityService, userRepository, securityUtil, imageInitializer, timeSource, imageResizeService, hibernateUtil);
+        imageService = new ImageServiceImpl(imageGroupRepository, imageRepository, imageSecurityService, userRepository, securityUtil, imageInitializer, timeSource, imageResizeService, hibernateUtil, imageManifestationService);
     }
 
     private void withCurrentUser(User currentUser, boolean hasDefaultGroup) {
@@ -133,7 +144,7 @@ public class ImageServiceImplTest {
         when(hibernateUtil.toBlob(srcFile)).thenReturn(srcBlob);
         when(imageResizeService.scheduleResize(srcFile)).thenReturn(Arrays.asList(fileInfo));
 
-        final Photo photo = imageService.createImage(imageMetadata, new ByteArrayInputStream(new byte[]{}), "image/jpeg");
+        final Photo photo = imageService.createImage(imageMetadata, EMPTY_INPUT_STREAM);
 
         assertEquals(2, photo.getManifestations().size());
         // this one's bigger, so first
@@ -150,6 +161,17 @@ public class ImageServiceImplTest {
         verify(imageInitializer).saveNewImageManifestation((HeavyImageManifestation) photo.getManifestations().first(), false);
         verify(srcFile).delete();
         verify(resizeTempFile).delete();
+    }
+
+    @Test
+    public void testSetsDefaultMetaData() throws IOException {
+        Photo image = imageService.createImage(EMPTY_INPUT_STREAM);
+
+        verify(imageManifestationService).createManifestation(image, EMPTY_INPUT_STREAM);
+
+        assertEquals("Copyright " + TEST_YEAR, image.getCopyright());
+        assertEquals(String.format("%s %s", FIRST_NAME, LAST_NAME), image.getCreator());
+        assertEquals(ImageGroup.DEFAULT_ROLL_NAME, image.getRoll().getName());
     }
 
     private ImageFileInfo testFileInfo(File file, int width, int height) {

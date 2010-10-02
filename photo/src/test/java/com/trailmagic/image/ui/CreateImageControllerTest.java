@@ -26,7 +26,7 @@ public class CreateImageControllerTest extends TestCase {
     public void testSetsStatusAndOutputsAnId() throws IOException {
         final Photo photo = new Photo();
         photo.setId(TEST_PHOTO_ID);
-        Mockito.when(imageService.createImage(Mockito.any(ImageMetadata.class), Mockito.any(InputStream.class), Mockito.any(String.class))).thenReturn(photo);
+        Mockito.when(imageService.createImage(Mockito.any(ImageMetadata.class), Mockito.any(InputStream.class))).thenReturn(photo);
 
         final ImageUpload imageUpload = new ImageUpload();
         imageUpload.setFile(new MockMultipartFile("name", "filename", "image/jpeg", "image data".getBytes()));

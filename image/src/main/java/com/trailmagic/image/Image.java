@@ -144,10 +144,17 @@ public class Image implements Owned, AccessControlled {
     }
 
     public boolean equals(Object obj) {
-        return (obj instanceof Image) &&
-                //            (this.getId() == ((Image)obj).getId());
-                (this.getName().equals(((Image) obj).getName())) &&
-                (this.getOwner().equals(((Image) obj).getOwner()));
+        if (!(obj instanceof Image)) {
+            return false;
+        }
+        Image that = (Image) obj;
+        return this.getOwner().equals(((Image) obj).getOwner())
+               && (namesAreNullAndIdIsEqual(that) ||
+                   this.getName().equals(((Image) obj).getName()));
+    }
+
+    private boolean namesAreNullAndIdIsEqual(Image that) {
+        return this.getName() == null && that.getName() == null && this.getId() == that.getId();
     }
 
     @Override

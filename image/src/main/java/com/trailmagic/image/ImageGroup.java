@@ -78,7 +78,7 @@ public class ImageGroup implements Owned, AccessControlled {
     private User owner;
     private Image previewImage;
 
-    public ImageGroup() {
+    protected ImageGroup() {
     }
 
     public long getId() {

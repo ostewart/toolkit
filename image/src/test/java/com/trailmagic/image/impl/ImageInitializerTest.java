@@ -122,8 +122,7 @@ public class ImageInitializerTest {
     }
 
     private ImageFrame makeFrame(Photo photo, int pos) {
-        ImageFrame frame = new ImageFrame();
-        frame.setImage(photo);
+        ImageFrame frame = new ImageFrame(photo);
         frame.setPosition(pos);
         return frame;
     }

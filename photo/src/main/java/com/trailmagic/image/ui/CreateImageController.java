@@ -51,7 +51,7 @@ public class CreateImageController {
         imageMetadata.setDisplayName(imageUpload.getTitle());
         imageMetadata.setRollName(imageUpload.getRollName());
 
-        Image image = imageService.createImage(imageMetadata, multipartFile.getInputStream(), multipartFile.getContentType());
+        Image image = imageService.createImage(imageMetadata, multipartFile.getInputStream());
 
         response.setStatus(HttpServletResponse.SC_CREATED);
         response.getWriter().println(image.getId());

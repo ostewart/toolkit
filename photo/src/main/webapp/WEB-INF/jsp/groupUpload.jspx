@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0"
+          xmlns:c="http://java.sun.com/jsp/jstl/core"
+          xmlns:fmt="http://java.sun.com/jsp/jstl/fmt"
+          xmlns:tm="http://trailmagic.com/taglibs/image"
+          xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+          xmlns:authz="http://www.springframework.org/security/tags">
+    <jsp:output
+            omit-xml-declaration="true"
+            doctype-root-element="html"
+            doctype-system="about:legacy-compat"/>
+    <jsp:directive.page contentType="text/html" pageEncoding="UTF-8"/>
+
+    <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+    <head>
+        <title>Add Images to GROUP NAME</title>
+        <style type="text/css">
+            #drop-area {
+                border: 2px dashed #ddd;
+                padding: 10px;
+                margin-bottom: 2em;
+                background: #ddd;
+                width: 80%;
+                border-radius: 1em;
+                -moz-border-radius: 1em;
+                margin-left: auto;
+                margin-right: auto;
+                height: 10em;
+            }
+
+            #drop-area.hover {
+                background: gray;
+            }
+
+        </style>
+    </head>
+    <body>
+    <h1>Add Images to Group: GROUP NAME</h1>
+    <div id="drop-area" class="hover">
+        <p>Drag and drop files here to upload.</p>
+    </div>
+
+    <div id="progress-container" style="width: 90%; height: 2em;">
+        <div id="progress-bar" style="background-color: blue; width: 0%;">foo</div>
+    </div>
+
+
+    <div id="image-summary">
+        <!--<div class="metadata">-->
+            <!--<form action="">-->
+                <!--<label for="name">Name: </label>-->
+                <!--<input id="name" type="text"/>-->
+            <!--</form>-->
+        <!--</div>-->
+        <ul id="preview">
+            <li><img src="${pageContext.request.contextPath}/mf/by-id/8" alt="Upload Preview"/></li>
+        </ul>
+    </div>
+
+    <ul id="file-list"></ul>
+    <!--<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"><jsp:text>-->
+    <script type="text/javascript" src="${pageContext.request.contextPath}/jquery-1.3.2.js"><jsp:text>
+        </jsp:text></script>
+    <script language="javascript" type="text/javascript">
+        <![CDATA[
+// <![CDATA[
+        $(document).ready(function () {
+//            var filesUpload = document.getElementById("files-upload"),
+
+
+            function toggleHover(event) {
+                $("#drop-area").toggleClass("hover");
+                handleDragDrop(event);
+            }
+
+            var dropArea = document.getElementById("drop-area");
+            var fileList = document.getElementById("file-list");
+
+//            $(document).ready(function() {
+//                $("#drop-area").toggleClass("hover");
+//            });
+
+            var handleDragDrop = function (event) {
+                event.stopPropagation();
+                event.preventDefault();
+            };
+
+            function handleLoaded(event) {
+                $("#output").append("<li>In handleLoaded</li>");
+//                var reader = event.target;
+                var img = $("<img/>").attr("src", event.target.result).attr("width", 200).attr("height", 100);
+                $("#preview").append($("<li/>").append(img));
+
+                var uploadReader = new FileReader();
+                uploadReader.addEventListener("loadend", function(evt) {uploadPhoto(evt, event.target.index)}, false);
+                uploadReader.readAsBinaryString(event.target.file);
+
+            }
+
+            var handleDrop = function (event) {
+                handleDragDrop(event);
+
+                var dt = event.dataTransfer;
+                var files = dt.files;
+
+                $("#output").append("<li>Processing " + files.length + " files</li>");
+                
+
+                for (var i=0; i < files.length; i++) {
+                    var file = files[i];
+                    var previewReader = new FileReader();
+                    previewReader.index = i;
+                    previewReader.file = file;
+
+                    previewReader.addEventListener("loadend", handleLoaded, false);
+                    previewReader.readAsDataURL(file);
+                }
+            };
+
+            function uploadPhoto(event, index) {
+                $("#output").append("<li>Uploading image " + index + ".</li>");
+
+                var xhr = new XMLHttpRequest();
+                xhr.upload.addEventListener("progress", updateProgress, false);
+                xhr.open("POST", "${pageContext.request.contextPath}/image");
+                xhr.sendAsBinary(event.target.result);
+            }
+
+            function updateProgress(event) {
+                var percentage = Math.round((event.loaded * 100) / event.total);
+                $("#progress-bar").css("width", percentage + "%");
+            }
+
+            dropArea.addEventListener("dragenter", toggleHover, false);
+            dropArea.addEventListener("dragleave", toggleHover, false);
+            dropArea.addEventListener("dragover", handleDragDrop, false);
+            dropArea.addEventListener("drop", handleDrop, false);
+
+        });
+            
+
+//            function traverseFiles (files) {
+//                var li,
+//                    file,
+//                    fileInfo;
+//
+//                fileList.innerHTML = "";
+//                for (var i=0, il=files.length; i<il; i++) {
+//                    li = document.createElement("li");
+//                    file = files[i];
+//                    fileInfo = "<div><strong>Name:</strong> " + file.name + "</div>";
+//                    fileInfo += "<div><strong>Size:</strong> " + file.size + " bytes</div>";
+//                    fileInfo += "<div><strong>Type:</strong> " + file.type + "</div>";
+//                    li.innerHTML = fileInfo;
+//                    fileList.appendChild(li);
+//
+//                };
+//            };
+
+//            filesUpload.onchange = function () {
+//                traverseFiles(this.files);
+//            };
+//
+//            dropArea.ondragenter = function () {
+//                toggleHover();
+//                return false;
+//            };
+//
+//            dropArea.ondragleave = function() {
+//                toggleHover();
+//            }
+//
+//            dropArea.ondragover = function () {
+////                $("drop-area").toggleClass("hover");
+////                alert("dragover");
+//
+//                return false;
+//            };
+//
+//            dropArea.ondrop = function (evt) {
+//                traverseFiles(evt.dataTransfer.files);
+//                return false;
+//            };
+//
+//        })();
+//
+
+        ]]>
+        // ]]&gt;
+
+    </script>
+
+
+
+
+
+
+
+
+            <script src="${pageContext.request.contextPath}/jquery.html5_upload.js" type="text/javascript"><jsp:text>
+            </jsp:text></script>
+
+            <input type="file" multiple="multiple" id="upload_field" />
+            <div id="progress_report">
+                    <div id="progress_report_name"><jsp:text>
+
+                    </jsp:text>
+                        </div>
+                    <div id="progress_report_status" style="font-style: italic;"><jsp:text>
+
+                    </jsp:text>
+                        </div>
+                    <div id="progress_report_bar_container" style="width: 90%; height: 5px;"><jsp:text>
+
+                    </jsp:text>
+                            <div id="progress_report_bar" style="background-color: blue; width: 2%; height: 100%;"><jsp:text>
+                                
+                            </jsp:text>
+                                
+                            </div>
+                    </div>
+                <ul id="output">
+
+                </ul>
+            </div>
+            <script type="text/javascript">
+                <![CDATA[
+// <![CDATA[
+//                    $(function() {
+//                            $("#upload_field").html5_upload({
+//                                    url: "${pageContext.request.contextPath}/image",
+//                                    fieldName: "file",
+//                                    sendBoundary: window.FormData || $.browser.mozilla,
+//                                    onStart: function(event, total) {
+//                                        var files = event.dataTransfer.files;
+//                                        var img = $("<img>");
+//                                        files.each(function (file) {
+//                                            var reader = new FileReader();
+//                                            reader.onload = (function(aImg) { return function(e) { aImg.src = e.target.result; }; })(img);
+////                                            img.setAttribute("src", reader.readAsDataURL(file))
+//                                            $("#output").append(img);
+//                                        });
+//                                            return confirm("You are trying to upload " + total + " files. Are you sure?");
+//                                    },
+//                                    setName: function(text) {
+//                                                    $("#progress_report_name").text(text);
+//                                    },
+//                                    setStatus: function(text) {
+//                                            $("#progress_report_status").text(text);
+//                                    },
+//                                    setProgress: function(val) {
+//                                        alert(val);
+//
+//                                            $("#progress_report_bar").css('width', Math.ceil(val*100)+"%");
+//                                        $("#output").append("<li>" + val + "</li>");
+//                                    },
+//                                    onFinishOne: function(event, response, name, number, total) {
+//                                            //alert(response);
+//                                    }
+//                            });
+//                    });
+                ]]>
+                // ]]&gt;
+            </script>
+
+
+    </body>
+    </html>
+</jsp:root>

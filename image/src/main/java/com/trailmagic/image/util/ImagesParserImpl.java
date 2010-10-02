@@ -193,8 +193,7 @@ public class ImagesParserImpl extends DefaultHandler implements ImagesParser {
     }
 
     public void startRoll() {
-        m_roll = new ImageGroup();
-        m_roll.setType(ImageGroup.Type.ROLL);
+        m_roll = new ImageGroup("", null, ImageGroup.Type.ROLL);
         m_roll.setSupergroup(null);
         m_roll.setUploadDate(new Date());
         m_inRoll = true;

@@ -3,7 +3,7 @@ package com.trailmagic.image.ui;
 import org.springframework.web.multipart.MultipartFile;
 
 public class ImageUpload {
-    private String title;
+    private String title = "";
     private String caption;
     private String creator;
     private String copyright;

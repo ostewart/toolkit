@@ -28,7 +28,12 @@ public class ImageFrame implements Owned, Comparable<ImageFrame> {
     private Image image;
     private String caption;
 
-    public ImageFrame() {
+    protected ImageFrame() {
+        // for hibernate only, always need image for security check
+    }
+
+    public ImageFrame(Image image) {
+        this.image = image;
     }
 
     public long getId() {
@@ -101,12 +106,12 @@ public class ImageFrame implements Owned, Comparable<ImageFrame> {
     }
 
     public int compareTo(ImageFrame other) {
-        return this.comparisonString().compareTo(other.comparisonString());
-    }
-
-    private String comparisonString() {
-        return (imageGroup != null ? imageGroup.getName() : "null")
-            + (image != null ? image.getName() : "null") + position;
+        int positionDifference = Integer.valueOf(position).compareTo(other.position);
+        if (imageGroup == null || imageGroup == other.imageGroup || imageGroup.equals(other.imageGroup)) {
+            return positionDifference;
+        } else {
+            return imageGroup.getName().compareTo(other.getImageGroup().getName()) + positionDifference;
+        }
     }
 
     /**

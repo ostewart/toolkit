@@ -61,12 +61,9 @@ public class MakeAlbumFromRoll implements ApplicationContextAware {
                 gf.getRollByOwnerAndName(uf.getByScreenName(userName),
                                          rollName);
 
-            ImageGroup album = new ImageGroup();
-            album.setName(albumName);
-            album.setType(ImageGroup.Type.ALBUM);
+            ImageGroup album = new ImageGroup(albumName, roll.getOwner(), ImageGroup.Type.ALBUM);
             album.setDisplayName(roll.getDisplayName());
             album.setDescription(roll.getDescription());
-            album.setOwner(roll.getOwner());
             album.setSupergroup(roll.getSupergroup());
             // XXX: not copying subgroups
             // this is probably a leaf group
@@ -77,8 +74,7 @@ public class MakeAlbumFromRoll implements ApplicationContextAware {
             ImageFrame oldFrame, newFrame;
             while (iter.hasNext()) {
                 oldFrame = (ImageFrame)iter.next();
-                newFrame = new ImageFrame();
-                newFrame.setImage(oldFrame.getImage());
+                newFrame = new ImageFrame(oldFrame.getImage());
                 newFrame.setPosition(oldFrame.getPosition());
                 newFrame.setCaption(oldFrame.getCaption());
                 newFrame.setImageGroup(album);
