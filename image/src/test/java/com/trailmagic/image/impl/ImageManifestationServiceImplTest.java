@@ -63,7 +63,7 @@ public class ImageManifestationServiceImplTest {
 
         Photo photo = new Photo();
         photo.setOwner(new User("tester"));
-        imageManifestationService.createManifestation(photo, EMPTY_INPUT_STREAM);
+        imageManifestationService.createManifestationsFromOriginal(photo, EMPTY_INPUT_STREAM);
 
         assertEquals(2, photo.getManifestations().size());
         // this one's bigger, so first

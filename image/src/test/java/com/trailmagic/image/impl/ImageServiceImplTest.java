@@ -3,7 +3,6 @@ package com.trailmagic.image.impl;
 import com.trailmagic.image.*;
 import com.trailmagic.image.security.ImageSecurityService;
 import com.trailmagic.image.security.SecurityTestHelper;
-import com.trailmagic.resizer.ImageFileInfo;
 import com.trailmagic.resizer.ImageResizeService;
 import com.trailmagic.resizer.ResizeFailedException;
 import com.trailmagic.user.User;
@@ -17,12 +16,8 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.sql.Blob;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -50,8 +45,6 @@ public class ImageServiceImplTest {
     private static final String TEST_ROLL_NAME = "my-awesome-roll";
     private final SecurityTestHelper securityTestHelper = new SecurityTestHelper();
     private User testUser;
-    private static final int PORTRAIT_WIDTH = 1935;
-    private static final int PORTRAIT_HEIGHT = 2592;
     private static final ByteArrayInputStream EMPTY_INPUT_STREAM = new ByteArrayInputStream(new byte[]{});
     private static final String FIRST_NAME = "Testy";
     private static final String LAST_NAME = "McTesterton";
@@ -68,7 +61,7 @@ public class ImageServiceImplTest {
         calendar.set(TEST_YEAR, Calendar.FEBRUARY, 28);
         when(timeSource.calendar()).thenReturn(calendar);
         when(securityUtil.getCurrentUser()).thenReturn(testUser);
-        imageService = new ImageServiceImpl(imageGroupRepository, imageRepository, imageSecurityService, userRepository, securityUtil, imageInitializer, timeSource, imageResizeService, hibernateUtil, imageManifestationService);
+        imageService = new ImageServiceImpl(imageGroupRepository, imageRepository, imageSecurityService, userRepository, securityUtil, imageInitializer, timeSource, imageManifestationService);
     }
 
     private void withCurrentUser(User currentUser, boolean hasDefaultGroup) {
@@ -131,53 +124,28 @@ public class ImageServiceImplTest {
 
         ImageMetadata imageMetadata = setupImageMetadata();
 
-        File resizeTempFile = mock(File.class);
-        when(resizeTempFile.delete()).thenReturn(true);
-        ImageFileInfo fileInfo = testFileInfo(resizeTempFile, 10, 10);
-
-        File srcFile = mock(File.class);
-        when(srcFile.delete()).thenReturn(true);
-
-        when(imageResizeService.writeFile(Mockito.<InputStream>any())).thenReturn(srcFile);
-        when(imageResizeService.identify(srcFile)).thenReturn(testFileInfo(srcFile, PORTRAIT_WIDTH, PORTRAIT_HEIGHT));
-        Blob srcBlob = mock(Blob.class);
-        when(hibernateUtil.toBlob(srcFile)).thenReturn(srcBlob);
-        when(imageResizeService.scheduleResize(srcFile)).thenReturn(Arrays.asList(fileInfo));
-
         final Photo photo = imageService.createImage(imageMetadata, EMPTY_INPUT_STREAM);
 
-        assertEquals(2, photo.getManifestations().size());
-        // this one's bigger, so first
-        HeavyImageManifestation original = (HeavyImageManifestation) photo.getManifestations().last();
-        assertEquals("image/jpeg", original.getFormat());
-        assertEquals(photo, original.getImage());
-        assertEquals(srcBlob, original.getData());
-        assertEquals(PORTRAIT_WIDTH, original.getWidth());
-        assertEquals(PORTRAIT_HEIGHT, original.getHeight());
+        assertEquals(imageMetadata.getCaption(), photo.getCaption());
+        assertEquals(imageMetadata.getCopyright(), photo.getCopyright());
+        assertEquals(imageMetadata.getCreator(), photo.getCreator());
+        assertEquals(imageMetadata.getDisplayName(), photo.getDisplayName());
+        assertEquals(imageMetadata.getShortName(), photo.getName());
 
         verify(imageInitializer).saveNewImage(photo);
-        verify(imageInitializer).saveNewImageManifestation(original, false);
-        verify(imageResizeService).scheduleResize(srcFile);
-        verify(imageInitializer).saveNewImageManifestation((HeavyImageManifestation) photo.getManifestations().first(), false);
-        verify(srcFile).delete();
-        verify(resizeTempFile).delete();
+        verify(imageManifestationService).createManifestationsFromOriginal(Mockito.<Image>any(), eq(EMPTY_INPUT_STREAM));
+        verify(imageGroupRepository).saveGroup(Mockito.<ImageGroup>any());
     }
 
     @Test
     public void testSetsDefaultMetaData() throws IOException {
         Photo image = imageService.createImage(EMPTY_INPUT_STREAM);
 
-        verify(imageManifestationService).createManifestation(image, EMPTY_INPUT_STREAM);
+        verify(imageManifestationService).createManifestationsFromOriginal(image, EMPTY_INPUT_STREAM);
 
         assertEquals("Copyright " + TEST_YEAR, image.getCopyright());
         assertEquals(String.format("%s %s", FIRST_NAME, LAST_NAME), image.getCreator());
         assertEquals(ImageGroup.DEFAULT_ROLL_NAME, image.getRoll().getName());
-    }
-
-    private ImageFileInfo testFileInfo(File file, int width, int height) {
-        ImageFileInfo fileInfo = new ImageFileInfo(width, height, "image/jpeg");
-        fileInfo.setFile(file);
-        return fileInfo;
     }
 
     @Test

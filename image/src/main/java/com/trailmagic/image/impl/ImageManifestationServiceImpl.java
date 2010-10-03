@@ -31,7 +31,7 @@ public class ImageManifestationServiceImpl implements ImageManifestationService 
     }
 
     @Override
-    public void createManifestation(Image image, InputStream inputStream) throws IOException {
+    public void createManifestationsFromOriginal(Image image, InputStream inputStream) throws IOException {
         File srcFile = imageResizeService.writeFile(inputStream);
         ImageFileInfo srcFileInfo = imageResizeService.identify(srcFile);
 

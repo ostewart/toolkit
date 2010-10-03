@@ -16,9 +16,6 @@ package com.trailmagic.image.impl;
 import com.trailmagic.image.*;
 import com.trailmagic.image.ImageGroup.Type;
 import com.trailmagic.image.security.ImageSecurityService;
-import com.trailmagic.resizer.ImageFileInfo;
-import com.trailmagic.resizer.ImageResizeService;
-import com.trailmagic.resizer.ResizeFailedException;
 import com.trailmagic.user.User;
 import com.trailmagic.user.UserRepository;
 import com.trailmagic.util.SecurityUtil;
@@ -30,12 +27,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.List;
 
 @Transactional
 @Service("imageService")
@@ -50,8 +45,6 @@ public class ImageServiceImpl implements ImageService {
     private ImageGroupRepository imageGroupRepository;
     private UserRepository userRepository;
     private ImageSecurityService imageSecurityService;
-    private ImageResizeService imageResizeService;
-    private HibernateUtil hibernateUtil;
     private ImageManifestationService imageManifestationService;
 
     @SuppressWarnings({"SpringJavaAutowiringInspection"})
@@ -63,8 +56,6 @@ public class ImageServiceImpl implements ImageService {
                             SecurityUtil securityUtil,
                             ImageInitializer imageInitializer,
                             TimeSource timeSource,
-                            ImageResizeService imageResizeService,
-                            HibernateUtil hibernateUtil,
                             ImageManifestationService imageManifestationService) {
         super();
         this.imageGroupRepository = imageGroupRepository;
@@ -74,8 +65,6 @@ public class ImageServiceImpl implements ImageService {
         this.securityUtil = securityUtil;
         this.imageInitializer = imageInitializer;
         this.timeSource = timeSource;
-        this.imageResizeService = imageResizeService;
-        this.hibernateUtil = hibernateUtil;
         this.imageManifestationService = imageManifestationService;
     }
 
@@ -86,9 +75,7 @@ public class ImageServiceImpl implements ImageService {
         imageMetadata.setCreator(fullNameFromUser());
         imageMetadata.setCopyright("Copyright " + Calendar.getInstance().get(Calendar.YEAR));
 
-        Photo image = createImage(imageMetadata);
-        imageManifestationService.createManifestation(image, inputStream);
-        return image;
+        return createImage(imageMetadata, inputStream);
     }
 
     private String fullNameFromUser() {
@@ -99,51 +86,9 @@ public class ImageServiceImpl implements ImageService {
     public Photo createImage(ImageMetadata imageMetadata, InputStream inputStream) throws IllegalStateException, IOException {
         Photo photo = createImage(imageMetadata);
 
-        createManifestation(photo, inputStream);
+        imageManifestationService.createManifestationsFromOriginal(photo, inputStream);
 
         return photo;
-    }
-
-    private void createManifestation(Photo photo, InputStream inputStream) throws IOException {
-        File srcFile = imageResizeService.writeFile(inputStream);
-        ImageFileInfo srcFileInfo = imageResizeService.identify(srcFile);
-
-        try {
-            addManifestation(photo, srcFileInfo, true);
-            scheduleResize(photo, srcFile);
-        } finally {
-            boolean deleted = srcFile.delete();
-            if (!deleted) {
-                log.warn("Failed to delete temporary image file: " + srcFile.getAbsolutePath());
-            }
-        }
-    }
-
-    private void addManifestation(Photo photo, ImageFileInfo info, boolean original) throws IOException {
-        final HeavyImageManifestation manifestation = new HeavyImageManifestation();
-        manifestation.setData(hibernateUtil.toBlob(info.getFile()));
-        manifestation.setOriginal(original);
-        manifestation.setFormat(info.getFormat());
-        manifestation.setHeight(info.getHeight());
-        manifestation.setWidth(info.getWidth());
-        photo.addManifestation(manifestation);
-        imageInitializer.saveNewImageManifestation(manifestation, false);
-    }
-
-    private void scheduleResize(Photo photo, File srcFile) throws IOException {
-        try {
-        List<ImageFileInfo> fileInfos = imageResizeService.scheduleResize(srcFile);
-        for (ImageFileInfo info : fileInfos) {
-            addManifestation(photo, info, false);
-            boolean deleted = info.getFile().delete();
-            if (!deleted) {
-                log.warn("Could not delete resize temp file " + info.getFile().getAbsolutePath());
-            }
-        }
-        } catch (ResizeFailedException e) {
-            log.error("Resize failed on " + photo, e);
-        }
-
     }
 
     public Photo createImage(ImageMetadata imageData) throws IllegalStateException {
@@ -167,7 +112,7 @@ public class ImageServiceImpl implements ImageService {
 
     public ImageGroup findNamedOrDefaultRoll(String rollName, User owner) {
         if (StringUtils.isBlank(rollName)) {
-            return getDefaultRollForUser(owner);
+            return findOrCreateDefaultRollForUser(owner);
         } else {
             ImageGroup roll = imageGroupRepository.getRollByOwnerAndName(owner, rollName);
             if (roll == null) {
@@ -177,7 +122,7 @@ public class ImageServiceImpl implements ImageService {
         }
     }
 
-    private ImageGroup getDefaultRollForUser(User currentUser) {
+    private ImageGroup findOrCreateDefaultRollForUser(User currentUser) {
         ImageGroup defaultRoll = imageGroupRepository.getRollByOwnerAndName(currentUser, ImageGroup.DEFAULT_ROLL_NAME);
         if (defaultRoll == null) {
             defaultRoll = new ImageGroup(ImageGroup.DEFAULT_ROLL_NAME, currentUser, Type.ROLL);
@@ -207,29 +152,23 @@ public class ImageServiceImpl implements ImageService {
 
     public void makeImageGroupAndImagesPublic(ImageGroup group) {
         imageSecurityService.makePublic(group);
-        log.info("Added public permission for group: "
-                 + group.getName());
+        log.info("Added public permission for group: " + group.getName());
 
         Collection<ImageFrame> frames = group.getFrames();
 
         for (ImageFrame frame : frames) {
             Image image = frame.getImage();
             imageSecurityService.makePublic(image);
-            log.info("Added public permission for image: "
-                     + image.getDisplayName());
+            log.info("Added public permission for image: " + image.getDisplayName());
         }
     }
 
     public void makeImageGroupAndImagesPublic(String ownerName, Type type, String imageGroupName)
             throws NoSuchImageGroupException {
         User owner = userRepository.getByScreenName(ownerName);
-        ImageGroup group =
-                imageGroupRepository.getByOwnerNameAndTypeWithFrames(owner,
-                                                                     imageGroupName,
-                                                                     type);
+        ImageGroup group = imageGroupRepository.getByOwnerNameAndTypeWithFrames(owner, imageGroupName, type);
         if (group == null) {
-            log.error("No " + type + " found with name " + imageGroupName
-                      + " owned by " + owner);
+            log.error("No " + type + " found with name " + imageGroupName + " owned by " + owner);
         }
         makeImageGroupAndImagesPublic(group);
     }
