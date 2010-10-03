@@ -64,6 +64,7 @@
         <module>image</module>
         <module>resizer</module>
         <module>photo</module>
+        <module>integration-test</module>
     </modules>
 
     <repositories>
@@ -74,7 +75,7 @@
                     <enabled>true</enabled>
                   </releases>
                   <snapshots>
-                    <enabled>true</enabled>
+                    <enabled>false</enabled>
                   </snapshots>            
         </repository>
     </repositories>
@@ -326,6 +327,11 @@
                 <groupId>org.liquibase</groupId>
                 <artifactId>liquibase-core</artifactId>
                 <version>1.9.5</version>
+            </dependency>
+            <dependency>
+                <groupId>org.seleniumhq.webdriver</groupId>
+                <artifactId>webdriver-firefox</artifactId>
+                <version>0.9.7376</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
