@@ -2,6 +2,7 @@ package com.trailmagic.image.impl;
 
 import com.trailmagic.image.*;
 import com.trailmagic.image.security.ImageSecurityService;
+import com.trailmagic.image.security.SecurityTestHelper;
 import com.trailmagic.user.User;
 import com.trailmagic.util.SecurityUtil;
 import org.hibernate.Hibernate;
@@ -33,6 +34,8 @@ public class ImageInitializerTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
+
+        new SecurityTestHelper().disableSecurityInterceptor();
 
         imageInitializer = new ImageInitializer(imageGroupRepository, imageRepository, imageSecurityService, imageManifestationRepository, securityUtil);
         testUser = new User("testy");
