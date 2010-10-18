@@ -157,7 +157,13 @@
                 <c:set var="origParam" value=""/>
             </c:otherwise>
         </c:choose>
-          <a href="?size=${imf.area}${origParam}">${imf.width}x${imf.height}${origText}</a> |
+          <c:url value="" var="imgUrl">
+              <c:param name="size" value="${imf.area}"/>
+              <c:if test="${imf.original}">
+                  <c:param name="original" value="true"/>
+              </c:if>
+          </c:url>
+          <a href="${fn:escapeXml(imgUrl)}">${imf.width}x${imf.height}${origText}</a> |
         </c:forEach>
       </div>
 
@@ -176,7 +182,7 @@
       
       <br/>
       Set default image size: 
-      <a href="?defaultLabel=thumbnail">thumbnail</a> |
+      <a href="${fn:escapeXml('?defaultLabel=thumbnail')}">thumbnail</a> |
       <a href="?defaultLabel=small">small</a> |
       <a href="?defaultLabel=medium">medium</a> |
       <a href="?defaultLabel=large">large</a> |

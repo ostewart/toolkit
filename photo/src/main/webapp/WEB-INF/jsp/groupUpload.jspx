@@ -13,7 +13,7 @@
 
     <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
     <head>
-        <title>Add Images to GROUP NAME</title>
+        <title>Add Images to ${imageGroup.displayName}</title>
         <style type="text/css">
             #drop-area {
                 border: 2px dashed #ddd;
@@ -35,7 +35,7 @@
         </style>
     </head>
     <body>
-    <h1>Add Images to Group: GROUP NAME</h1>
+    <h1>Add Images to Group: ${imageGroup.displayName}</h1>
     <div id="drop-area" class="hover">
         <p>Drag and drop files here to upload.</p>
     </div>

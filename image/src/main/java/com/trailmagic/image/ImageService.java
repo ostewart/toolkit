@@ -29,4 +29,5 @@ public interface ImageService {
     public void setImageGroupPreview(long imageGroupId, long imageId) throws NoSuchImageGroupException;
 
     public ImageGroup findNamedOrDefaultRoll(String rollName, User owner);
+    public ImageGroup findOrCreateDefaultRollForUser(User currentUser);    
 }

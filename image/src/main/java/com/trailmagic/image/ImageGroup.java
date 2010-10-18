@@ -31,6 +31,14 @@ public class ImageGroup implements Owned, AccessControlled {
         this.type = type;
     }
 
+    public int nextFramePosition() {
+        if (frames.isEmpty()) {
+            return 1;
+        } else {
+            return frames.last().getPosition() + 1;
+        }
+    }
+
     public enum Type {
         ROLL("roll", "Roll", "Rolls"), ALBUM("album", "Album", "Albums");
         private String typeName;

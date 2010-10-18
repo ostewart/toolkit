@@ -8,9 +8,6 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 
 import static org.junit.Assert.assertNotNull;
 
-/**
- * Created by: oliver on Date: Oct 3, 2010 Time: 2:20:17 AM
- */
 public class PublicAlbumsTest {
     @Test
     public void testShowsPublicAlbums() {

@@ -48,6 +48,4 @@ public interface ImageGroupRepository {
     public ImageGroup saveGroup(ImageGroup imageGroup);
     public int getPublicFrameCount(ImageGroup group);
     public int getAccurateFrameCount(ImageGroup group);
-
-    public int findMaxPosition(ImageGroup group);
 }

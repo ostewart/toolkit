@@ -234,9 +234,4 @@
     -->
     SELECT count(*) AS publicFrames FROM image_frames where group_id = ?
   </sql-query>
-
-    <sql-query name="maxFramePosition">
-        <return-scalar column="maxPos" type="integer"/>
-        SELECT max(pos) AS maxPos FROM image_frames where group_id = ?
-    </sql-query>
 </hibernate-mapping>

@@ -162,6 +162,7 @@
         /login=ROLE_ANONYMOUS,ROLE_USER
         /import=ROLE_USER
         /image=ROLE_USER
+        /upload=ROLE_USER
         /**=ROLE_ANONYMOUS,ROLE_USER
     </value>
 </property>

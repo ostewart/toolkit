@@ -335,12 +335,4 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
         return group.getFrames().size();
     }
 
-    @Override
-    public int findMaxPosition(ImageGroup group) {
-        List results = m_hibernateTemplate.findByNamedQuery("maxFramePosition", group.getId());
-        if (results.isEmpty() || results.get(0) == null) {
-            return 0;
-        }
-        return (Integer) results.get(0);
-    }
 }

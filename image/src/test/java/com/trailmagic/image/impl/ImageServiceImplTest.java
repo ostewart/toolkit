@@ -211,12 +211,11 @@ public class ImageServiceImplTest {
     @Test
     public void testAppendImageToGroup() {
         ImageGroup group = new ImageGroup("test", testUser, ImageGroup.Type.ROLL);
-        when(imageGroupRepository.findMaxPosition(group)).thenReturn(5);
 
         Photo image = new Photo("test", testUser);
         ImageFrame frame = imageService.addImageToGroup(image, group);
 
-        assertEquals(6, frame.getPosition());
+        assertEquals(1, frame.getPosition());
         assertEquals(group, frame.getImageGroup());
         assertEquals(image, frame.getImage());
         assertEquals(testUser, frame.getOwner());

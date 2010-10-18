@@ -72,6 +72,8 @@ public class ImageServiceImpl implements ImageService {
     public Photo createImage(InputStream inputStream) throws IllegalStateException, IOException {
         ImageMetadata imageMetadata = new ImageMetadata();
 
+        imageMetadata.setShortName("");
+        imageMetadata.setDisplayName("");
         imageMetadata.setCreator(fullNameFromUser());
         imageMetadata.setCopyright("Copyright " + Calendar.getInstance().get(Calendar.YEAR));
 
@@ -122,7 +124,7 @@ public class ImageServiceImpl implements ImageService {
         }
     }
 
-    private ImageGroup findOrCreateDefaultRollForUser(User currentUser) {
+    public ImageGroup findOrCreateDefaultRollForUser(User currentUser) {
         ImageGroup defaultRoll = imageGroupRepository.getRollByOwnerAndName(currentUser, ImageGroup.DEFAULT_ROLL_NAME);
         if (defaultRoll == null) {
             defaultRoll = new ImageGroup(ImageGroup.DEFAULT_ROLL_NAME, currentUser, Type.ROLL);
@@ -136,7 +138,7 @@ public class ImageServiceImpl implements ImageService {
     }
 
     public ImageFrame addImageToGroup(Image image, ImageGroup group) {
-        return addImageToGroup(image, group, imageGroupRepository.findMaxPosition(group) + 1);
+        return addImageToGroup(image, group, group.nextFramePosition());
     }
 
     public ImageFrame addImageToGroup(Image image, ImageGroup group, int position) {

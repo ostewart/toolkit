@@ -16,6 +16,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.trailmagic</groupId>
+            <artifactId>webservice-client</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
@@ -97,7 +102,13 @@
                                   <context>/photo</context>
                               </properties>
                           </deployable>
-                      </deployables>                      
+                      </deployables>
+                      <configfiles>
+                          <configfile>
+                              <file>${project.basedir}/src/main/resources/server.xml</file>
+                              <todir>conf</todir>
+                          </configfile>
+                      </configfiles>
                   </configuration>
               </configuration>
             </plugin>            
