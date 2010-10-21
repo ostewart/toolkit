@@ -53,7 +53,7 @@
             <!--</form>-->
         <!--</div>-->
         <ul id="preview">
-            <li><img src="${pageContext.request.contextPath}/mf/by-id/8" alt="Upload Preview"/></li>
+            <!--<li><img src="${pageContext.request.contextPath}/mf/by-id/8" alt="Upload Preview"/></li>-->
         </ul>
     </div>
 
@@ -85,12 +85,21 @@
                 event.preventDefault();
             };
 
-            function handleLoaded(event) {
-                $("#output").append("<li>In handleLoaded</li>");
-//                var reader = event.target;
-                var img = $("<img/>").attr("src", event.target.result).attr("width", 200).attr("height", 100);
-                $("#preview").append($("<li/>").append(img));
+            function addToSummary(index, imgData) {
+                var img = $("<img/>").attr("src", imgData).attr("width", 200).attr("height", 100);
+                $("#preview").append($("<li/>").attr("id", "img_" + index).append(img));
+            }
 
+            function addUrlToSummary(index, url) {
+                $("#img_" + index).append($("<a/>").attr("href", url).text("blah"));
+            }
+
+            function addTextToSummary(index, text) {
+                $("#img_" + index).append($("<p/>").text(text));
+            }
+
+            function handleLoaded(event) {
+                addToSummary(event.target.index, event.target.result);
                 var uploadReader = new FileReader();
                 uploadReader.addEventListener("loadend", function(evt) {uploadPhoto(evt, event.target.index)}, false);
                 uploadReader.readAsBinaryString(event.target.file);
@@ -117,18 +126,55 @@
                 }
             };
 
+            function updateProgress(event) {
+                $("#output").append("<li>Updating progress</li>");
+
+//                var percentage = Math.round((event.loaded * 100) / event.total);
+//                $("#progress-bar").css("width", percentage + "%");
+
+
+                if (event.lengthComputable) {
+                                    var percentage = Math.round((event.loaded * 100) / event.total),
+                                    loaderIndicator = $("#progress-bar");
+                                    if (percentage < 100) {
+                                        loaderIndicator.style.width = (percentage*2) + "px";
+                                        loaderIndicator.textContent = percentage + "%";
+                                    }
+                                }
+
+            }
+
             function uploadPhoto(event, index) {
                 $("#output").append("<li>Uploading image " + index + ".</li>");
 
                 var xhr = new XMLHttpRequest();
                 xhr.upload.addEventListener("progress", updateProgress, false);
-                xhr.open("POST", "${pageContext.request.contextPath}/image");
+                xhr.upload.addEventListener("load", markCompleteHandler(xhr), false);
+                xhr.upload.addEventListener("error", handleUploadError, false);
+                xhr.upload.index = index;
+
+                xhr.open("POST", "${pageContext.request.contextPath}/upload");
                 xhr.sendAsBinary(event.target.result);
             }
 
-            function updateProgress(event) {
-                var percentage = Math.round((event.loaded * 100) / event.total);
-                $("#progress-bar").css("width", percentage + "%");
+            function markCompleteHandler(xhr) {
+                return function markComplete(event) {
+                    var imageIndex = event.target.index;
+
+                    if (xhr.status != 200) {
+                        addTextToSummary(imageIndex, "Upload failed: " + xhr.statusText);
+                    } else {
+                        $("#output").append("<li>Image complete.</li>");
+
+                        addUrlToSummary(imageIndex, xhr.getResponseHeader("Location"));
+                    }
+                }
+
+            }
+
+
+            function handleUploadError(event) {
+                $("#output").append("<li>Image errored.</li>");
             }
 
             dropArea.addEventListener("dragenter", toggleHover, false);
@@ -137,132 +183,11 @@
             dropArea.addEventListener("drop", handleDrop, false);
 
         });
-            
-
-//            function traverseFiles (files) {
-//                var li,
-//                    file,
-//                    fileInfo;
-//
-//                fileList.innerHTML = "";
-//                for (var i=0, il=files.length; i<il; i++) {
-//                    li = document.createElement("li");
-//                    file = files[i];
-//                    fileInfo = "<div><strong>Name:</strong> " + file.name + "</div>";
-//                    fileInfo += "<div><strong>Size:</strong> " + file.size + " bytes</div>";
-//                    fileInfo += "<div><strong>Type:</strong> " + file.type + "</div>";
-//                    li.innerHTML = fileInfo;
-//                    fileList.appendChild(li);
-//
-//                };
-//            };
-
-//            filesUpload.onchange = function () {
-//                traverseFiles(this.files);
-//            };
-//
-//            dropArea.ondragenter = function () {
-//                toggleHover();
-//                return false;
-//            };
-//
-//            dropArea.ondragleave = function() {
-//                toggleHover();
-//            }
-//
-//            dropArea.ondragover = function () {
-////                $("drop-area").toggleClass("hover");
-////                alert("dragover");
-//
-//                return false;
-//            };
-//
-//            dropArea.ondrop = function (evt) {
-//                traverseFiles(evt.dataTransfer.files);
-//                return false;
-//            };
-//
-//        })();
-//
 
         ]]>
         // ]]&gt;
 
     </script>
-
-
-
-
-
-
-
-
-            <script src="${pageContext.request.contextPath}/jquery.html5_upload.js" type="text/javascript"><jsp:text>
-            </jsp:text></script>
-
-            <input type="file" multiple="multiple" id="upload_field" />
-            <div id="progress_report">
-                    <div id="progress_report_name"><jsp:text>
-
-                    </jsp:text>
-                        </div>
-                    <div id="progress_report_status" style="font-style: italic;"><jsp:text>
-
-                    </jsp:text>
-                        </div>
-                    <div id="progress_report_bar_container" style="width: 90%; height: 5px;"><jsp:text>
-
-                    </jsp:text>
-                            <div id="progress_report_bar" style="background-color: blue; width: 2%; height: 100%;"><jsp:text>
-                                
-                            </jsp:text>
-                                
-                            </div>
-                    </div>
-                <ul id="output">
-
-                </ul>
-            </div>
-            <script type="text/javascript">
-                <![CDATA[
-// <![CDATA[
-//                    $(function() {
-//                            $("#upload_field").html5_upload({
-//                                    url: "${pageContext.request.contextPath}/image",
-//                                    fieldName: "file",
-//                                    sendBoundary: window.FormData || $.browser.mozilla,
-//                                    onStart: function(event, total) {
-//                                        var files = event.dataTransfer.files;
-//                                        var img = $("<img>");
-//                                        files.each(function (file) {
-//                                            var reader = new FileReader();
-//                                            reader.onload = (function(aImg) { return function(e) { aImg.src = e.target.result; }; })(img);
-////                                            img.setAttribute("src", reader.readAsDataURL(file))
-//                                            $("#output").append(img);
-//                                        });
-//                                            return confirm("You are trying to upload " + total + " files. Are you sure?");
-//                                    },
-//                                    setName: function(text) {
-//                                                    $("#progress_report_name").text(text);
-//                                    },
-//                                    setStatus: function(text) {
-//                                            $("#progress_report_status").text(text);
-//                                    },
-//                                    setProgress: function(val) {
-//                                        alert(val);
-//
-//                                            $("#progress_report_bar").css('width', Math.ceil(val*100)+"%");
-//                                        $("#output").append("<li>" + val + "</li>");
-//                                    },
-//                                    onFinishOne: function(event, response, name, number, total) {
-//                                            //alert(response);
-//                                    }
-//                            });
-//                    });
-                ]]>
-                // ]]&gt;
-            </script>
-
 
     </body>
     </html>
