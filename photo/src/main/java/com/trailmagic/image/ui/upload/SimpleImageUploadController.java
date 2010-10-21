@@ -6,9 +6,9 @@ import com.trailmagic.image.Photo;
 import com.trailmagic.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,18 +30,21 @@ public class SimpleImageUploadController {
 
     @RequestMapping
     public ModelAndView showForm() {
-        return new ModelAndView("groupUpload", new HashMap<String, Object>());
-    }
-
-    @RequestMapping("{groupId}")
-    public ModelAndView showFormForGroup(@PathVariable("groupId") Long groupId) {
+        final HashMap<String, Object> model = new HashMap<String, Object>();
         final ImageGroup imageGroup = imageService.findOrCreateDefaultRollForUser(securityUtil.getCurrentUser());
-        return new ModelAndView("groupUpload", "imageGroup", imageGroup);
+        model.put("imageGroup", imageGroup);
+        model.put("nextFramePosition", imageGroup.nextFramePosition());
+        return new ModelAndView("groupUpload", model);
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public void handleUpload(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        final Photo image = imageService.createImage(req.getInputStream());
+    public void handleUpload(@RequestParam(value = "pos", required = false) Integer position, HttpServletRequest req, HttpServletResponse res) throws IOException {
+        final Photo image;
+        if (position != null) {
+            image = imageService.createImageAtPosition(req.getInputStream(), position);
+        } else {
+            image = imageService.createImage(req.getInputStream());
+        }
 
 
         res.setStatus(303);

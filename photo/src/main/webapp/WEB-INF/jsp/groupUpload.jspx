@@ -46,15 +46,7 @@
 
 
     <div id="image-summary">
-        <!--<div class="metadata">-->
-            <!--<form action="">-->
-                <!--<label for="name">Name: </label>-->
-                <!--<input id="name" type="text"/>-->
-            <!--</form>-->
-        <!--</div>-->
-        <ul id="preview">
-            <!--<li><img src="${pageContext.request.contextPath}/mf/by-id/8" alt="Upload Preview"/></li>-->
-        </ul>
+        <ul id="preview"/>
     </div>
 
     <ul id="file-list"></ul>
@@ -65,8 +57,7 @@
         <![CDATA[
 // <![CDATA[
         $(document).ready(function () {
-//            var filesUpload = document.getElementById("files-upload"),
-
+            var nextFramePosition = ${nextFramePosition};
 
             function toggleHover(event) {
                 $("#drop-area").toggleClass("hover");
@@ -76,9 +67,6 @@
             var dropArea = document.getElementById("drop-area");
             var fileList = document.getElementById("file-list");
 
-//            $(document).ready(function() {
-//                $("#drop-area").toggleClass("hover");
-//            });
 
             var handleDragDrop = function (event) {
                 event.stopPropagation();
@@ -118,12 +106,13 @@
                 for (var i=0; i < files.length; i++) {
                     var file = files[i];
                     var previewReader = new FileReader();
-                    previewReader.index = i;
+                    previewReader.index = nextFramePosition + i;
                     previewReader.file = file;
 
                     previewReader.addEventListener("loadend", handleLoaded, false);
                     previewReader.readAsDataURL(file);
                 }
+                nextFramePosition += files.length;
             };
 
             function updateProgress(event) {
@@ -153,7 +142,7 @@
                 xhr.upload.addEventListener("error", handleUploadError, false);
                 xhr.upload.index = index;
 
-                xhr.open("POST", "${pageContext.request.contextPath}/upload");
+                xhr.open("POST", "${pageContext.request.contextPath}/upload?pos=" + index);
                 xhr.sendAsBinary(event.target.result);
             }
 

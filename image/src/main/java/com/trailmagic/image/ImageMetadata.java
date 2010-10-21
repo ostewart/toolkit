@@ -7,6 +7,7 @@ public class ImageMetadata {
     private String copyright;
     private String creator;
     private String rollName;
+    private Integer position;
 
     public String getShortName() {
         return shortName;
@@ -54,5 +55,13 @@ public class ImageMetadata {
 
     public void setRollName(String rollName) {
         this.rollName = rollName;
+    }
+
+    public void setPosition(Integer position) {
+        this.position = position;
+    }
+
+    public Integer getPosition() {
+        return position;
     }
 }

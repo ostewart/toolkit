@@ -70,12 +70,25 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public Photo createImage(InputStream inputStream) throws IllegalStateException, IOException {
+        ImageMetadata imageMetadata = createDefaultMetadata();
+
+        return createImage(imageMetadata, inputStream);
+    }
+
+    private ImageMetadata createDefaultMetadata() {
         ImageMetadata imageMetadata = new ImageMetadata();
 
         imageMetadata.setShortName("");
         imageMetadata.setDisplayName("");
         imageMetadata.setCreator(fullNameFromUser());
         imageMetadata.setCopyright("Copyright " + Calendar.getInstance().get(Calendar.YEAR));
+        return imageMetadata;
+    }
+
+    @Override
+    public Photo createImageAtPosition(InputStream inputStream, Integer position) throws IOException {
+        final ImageMetadata imageMetadata = createDefaultMetadata();
+        imageMetadata.setPosition(position);
 
         return createImage(imageMetadata, inputStream);
     }
@@ -107,7 +120,11 @@ public class ImageServiceImpl implements ImageService {
 
         imageInitializer.saveNewImage(photo);
 
-        addImageToGroup(photo, photo.getRoll());
+        if (imageData.getPosition() == null) {
+            addImageToGroup(photo, photo.getRoll());
+        } else {
+            addImageToGroup(photo, photo.getRoll(), imageData.getPosition());
+        }
 
         return photo;
     }

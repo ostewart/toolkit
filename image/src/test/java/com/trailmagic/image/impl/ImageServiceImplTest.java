@@ -49,6 +49,7 @@ public class ImageServiceImplTest {
     private static final String FIRST_NAME = "Testy";
     private static final String LAST_NAME = "McTesterton";
     private static final int TEST_YEAR = 2010;
+    private static final int ARBITRARY_POSITION = 62;
 
     @Before
     public void setUp() {
@@ -146,6 +147,14 @@ public class ImageServiceImplTest {
         assertEquals("Copyright " + TEST_YEAR, image.getCopyright());
         assertEquals(String.format("%s %s", FIRST_NAME, LAST_NAME), image.getCreator());
         assertEquals(ImageGroup.DEFAULT_ROLL_NAME, image.getRoll().getName());
+    }
+
+    @Test
+    public void testSetsDefaultMetaDataWithPosition() throws IOException {
+        Photo image = imageService.createImageAtPosition(EMPTY_INPUT_STREAM, ARBITRARY_POSITION);
+
+        verify(imageManifestationService).createManifestationsFromOriginal(image, EMPTY_INPUT_STREAM);
+        assertEquals(ARBITRARY_POSITION, image.getRoll().getFrames().first().getPosition());
     }
 
     @Test
