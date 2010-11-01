@@ -68,10 +68,10 @@
             var fileList = document.getElementById("file-list");
 
 
-            var handleDragDrop = function (event) {
+            function handleDragDrop(event) {
                 event.stopPropagation();
                 event.preventDefault();
-            };
+            }
 
             function addToSummary(index, imgData) {
                 var img = $("<img/>").attr("src", imgData).attr("width", 200).attr("height", 100);
@@ -86,34 +86,42 @@
                 $("#img_" + index).append($("<p/>").text(text));
             }
 
-            function handleLoaded(event) {
-                addToSummary(event.target.index, event.target.result);
-                var uploadReader = new FileReader();
-                uploadReader.addEventListener("loadend", function(evt) {uploadPhoto(evt, event.target.index)}, false);
-                uploadReader.readAsBinaryString(event.target.file);
 
+            function prepareUpload(index, file) {
+                var uploadReader = new FileReader();
+                uploadReader.addEventListener("loadend", function(evt) {
+                    uploadPhoto(evt, index, 0)
+                }, false);
+                uploadReader.readAsBinaryString(file);
             }
 
-            var handleDrop = function (event) {
+            function previewLoadedHandler(index, file) {
+                return function(event) {
+                    addToSummary(index, event.target.result);
+                    prepareUpload(index, file);
+                }
+            }
+
+            function startPreviewLoad(file, framePosition) {
+                var previewReader = new FileReader();
+
+                previewReader.addEventListener("loadend", previewLoadedHandler(framePosition, file), false);
+                previewReader.readAsDataURL(file);
+            }
+
+            function handleDrop(event) {
                 handleDragDrop(event);
 
                 var dt = event.dataTransfer;
                 var files = dt.files;
 
                 $("#output").append("<li>Processing " + files.length + " files</li>");
-                
+
 
                 for (var i=0; i < files.length; i++) {
-                    var file = files[i];
-                    var previewReader = new FileReader();
-                    previewReader.index = nextFramePosition + i;
-                    previewReader.file = file;
-
-                    previewReader.addEventListener("loadend", handleLoaded, false);
-                    previewReader.readAsDataURL(file);
+                    startPreviewLoad(files[i], nextFramePosition++);
                 }
-                nextFramePosition += files.length;
-            };
+            }
 
             function updateProgress(event) {
                 $("#output").append("<li>Updating progress</li>");
@@ -123,17 +131,17 @@
 
 
                 if (event.lengthComputable) {
-                                    var percentage = Math.round((event.loaded * 100) / event.total),
-                                    loaderIndicator = $("#progress-bar");
-                                    if (percentage < 100) {
-                                        loaderIndicator.style.width = (percentage*2) + "px";
-                                        loaderIndicator.textContent = percentage + "%";
-                                    }
-                                }
-
+                    var percentage = Math.round((event.loaded * 100) / event.total);
+                    var loaderIndicator = $("#progress-bar");
+                    if (percentage < 100) {
+                        loaderIndicator.css("width", (percentage * 2) + "px");
+//                        loaderIndicator.style.width = (percentage * 2) + "px";
+                        loaderIndicator.text(percentage + "%");
+                    }
+                }
             }
 
-            function uploadPhoto(event, index) {
+            function uploadPhoto(event, index, tries) {
                 $("#output").append("<li>Uploading image " + index + ".</li>");
 
                 var xhr = new XMLHttpRequest();
@@ -141,6 +149,7 @@
                 xhr.upload.addEventListener("load", markCompleteHandler(xhr), false);
                 xhr.upload.addEventListener("error", handleUploadError, false);
                 xhr.upload.index = index;
+                xhr.upload.tries = tries + 1;
 
                 xhr.open("POST", "${pageContext.request.contextPath}/upload?pos=" + index);
                 xhr.sendAsBinary(event.target.result);
@@ -151,11 +160,14 @@
                     var imageIndex = event.target.index;
 
                     if (xhr.status != 200) {
-                        addTextToSummary(imageIndex, "Upload failed: " + xhr.statusText);
+                        if (event.target.tries < 5) {
+                            addTextToSummary(imageIndex, "Image errored...retrying");
+                            uploadPhoto(event, imageIndex, event.target.tries);
+                        } else {
+                            addTextToSummary(imageIndex, "Upload failed: " + xhr.statusText);
+                        }
                     } else {
                         $("#output").append("<li>Image complete.</li>");
-
-                        addUrlToSummary(imageIndex, xhr.getResponseHeader("Location"));
                     }
                 }
 
