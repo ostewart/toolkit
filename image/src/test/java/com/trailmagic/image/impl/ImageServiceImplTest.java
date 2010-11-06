@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.security.context.SecurityContext;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -39,7 +40,9 @@ public class ImageServiceImplTest {
     @Mock private ImageResizeService imageResizeService;
     @Mock private HibernateUtil hibernateUtil;
     @Mock private ImageManifestationService imageManifestationService;
-    private static final long DEFAULT_GROUP_ID = 1234L;
+    @Mock private ImageResizeClient imageResizeClient;
+    private static final long MANIFESTATION_ID = 1234L;
+    private static final long DEFAULT_GROUP_ID = MANIFESTATION_ID;
     private static final Date TEST_TIME = new Date();
     private ImageGroup defaultGroup;
     private static final String TEST_ROLL_NAME = "my-awesome-roll";
@@ -62,7 +65,7 @@ public class ImageServiceImplTest {
         calendar.set(TEST_YEAR, Calendar.FEBRUARY, 28);
         when(timeSource.calendar()).thenReturn(calendar);
         when(securityUtil.getCurrentUser()).thenReturn(testUser);
-        imageService = new ImageServiceImpl(imageGroupRepository, imageRepository, imageSecurityService, userRepository, securityUtil, imageInitializer, timeSource, imageManifestationService);
+        imageService = new ImageServiceImpl(imageGroupRepository, imageRepository, imageSecurityService, userRepository, securityUtil, imageInitializer, timeSource, imageResizeClient);
     }
 
     private void withCurrentUser(User currentUser, boolean hasDefaultGroup) {
@@ -125,7 +128,10 @@ public class ImageServiceImplTest {
 
         ImageMetadata imageMetadata = setupImageMetadata();
 
-        final Photo photo = imageService.createImage(imageMetadata, EMPTY_INPUT_STREAM);
+        final ImageManifestation originalManifestation = new ImageManifestation();
+        originalManifestation.setId(MANIFESTATION_ID);
+
+        final Photo photo = imageService.createImage(imageMetadata);
 
         assertEquals(imageMetadata.getCaption(), photo.getCaption());
         assertEquals(imageMetadata.getCopyright(), photo.getCopyright());
@@ -134,26 +140,41 @@ public class ImageServiceImplTest {
         assertEquals(imageMetadata.getShortName(), photo.getName());
 
         verify(imageInitializer).saveNewImage(photo);
-        verify(imageManifestationService).createManifestationsFromOriginal(Mockito.<Image>any(), eq(EMPTY_INPUT_STREAM));
+        verify(imageResizeClient, never()).createOriginalManifestation(Mockito.<Image>any(), eq(EMPTY_INPUT_STREAM));
+        verify(imageResizeClient, never()).createResizedManifestations(Mockito.<Image>any(), Mockito.<SecurityContext>any());
         verify(imageGroupRepository).saveGroup(Mockito.<ImageGroup>any());
     }
 
     @Test
     public void testSetsDefaultMetaData() throws IOException {
-        Photo image = imageService.createImage(EMPTY_INPUT_STREAM);
+        Photo image = imageService.createDefaultImage();
 
-        verify(imageManifestationService).createManifestationsFromOriginal(image, EMPTY_INPUT_STREAM);
+        assertMatchesDefaultMetadata(image);
+    }
 
+    private void assertMatchesDefaultMetadata(Photo image) {
         assertEquals("Copyright " + TEST_YEAR, image.getCopyright());
         assertEquals(String.format("%s %s", FIRST_NAME, LAST_NAME), image.getCreator());
         assertEquals(ImageGroup.DEFAULT_ROLL_NAME, image.getRoll().getName());
     }
 
     @Test
+    public void testCreatesManifestations() throws IOException {
+        Photo image = new Photo("foo", testUser);
+        imageService.createManifestations(image, EMPTY_INPUT_STREAM);
+
+        verify(imageResizeClient).createOriginalManifestation(image, EMPTY_INPUT_STREAM);
+        verify(imageResizeClient).createResizedManifestations(eq(image), Mockito.<SecurityContext>any());
+    }
+
+    @Test
     public void testSetsDefaultMetaDataWithPosition() throws IOException {
         Photo image = imageService.createImageAtPosition(EMPTY_INPUT_STREAM, ARBITRARY_POSITION);
 
-        verify(imageManifestationService).createManifestationsFromOriginal(image, EMPTY_INPUT_STREAM);
+        verify(imageResizeClient, never()).createOriginalManifestation(image, EMPTY_INPUT_STREAM);
+        verify(imageResizeClient, never()).createResizedManifestations(eq(image), Mockito.<SecurityContext>any());
+
+        assertMatchesDefaultMetadata(image);
         assertEquals(ARBITRARY_POSITION, image.getRoll().getFrames().first().getPosition());
     }
 

@@ -76,6 +76,7 @@
     class="org.springframework.orm.hibernate3.HibernateTransactionManager">
     <property name="dataSource"><ref local="dataSource"/></property>
     <property name="sessionFactory"><ref local="sessionFactory"/></property>
+      <property name="defaultTimeout" value="300"/>
   </bean>
 
   <tx:annotation-driven transaction-manager="transactionManager"/>

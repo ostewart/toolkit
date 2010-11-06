@@ -24,6 +24,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,7 +33,6 @@ import java.io.InputStream;
 import java.util.Calendar;
 import java.util.Collection;
 
-@Transactional
 @Service("imageService")
 public class ImageServiceImpl implements ImageService {
     private SecurityUtil securityUtil;
@@ -45,7 +45,7 @@ public class ImageServiceImpl implements ImageService {
     private ImageGroupRepository imageGroupRepository;
     private UserRepository userRepository;
     private ImageSecurityService imageSecurityService;
-    private ImageManifestationService imageManifestationService;
+    private ImageResizeClient imageResizeClient;
 
     @SuppressWarnings({"SpringJavaAutowiringInspection"})
     @Autowired
@@ -56,7 +56,7 @@ public class ImageServiceImpl implements ImageService {
                             SecurityUtil securityUtil,
                             ImageInitializer imageInitializer,
                             TimeSource timeSource,
-                            ImageManifestationService imageManifestationService) {
+                            ImageResizeClient imageResizeClient) {
         super();
         this.imageGroupRepository = imageGroupRepository;
         this.imageRepository = imageRepository;
@@ -65,14 +65,15 @@ public class ImageServiceImpl implements ImageService {
         this.securityUtil = securityUtil;
         this.imageInitializer = imageInitializer;
         this.timeSource = timeSource;
-        this.imageManifestationService = imageManifestationService;
+        this.imageResizeClient = imageResizeClient;
     }
 
     @Override
-    public Photo createImage(InputStream inputStream) throws IllegalStateException, IOException {
+    @Transactional(readOnly = false)
+    public Photo createDefaultImage() throws IllegalStateException, IOException {
         ImageMetadata imageMetadata = createDefaultMetadata();
 
-        return createImage(imageMetadata, inputStream);
+        return createImage(imageMetadata);
     }
 
     private ImageMetadata createDefaultMetadata() {
@@ -86,11 +87,12 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
+    @Transactional(readOnly = false)
     public Photo createImageAtPosition(InputStream inputStream, Integer position) throws IOException {
         final ImageMetadata imageMetadata = createDefaultMetadata();
         imageMetadata.setPosition(position);
 
-        return createImage(imageMetadata, inputStream);
+        return createImage(imageMetadata);
     }
 
     private String fullNameFromUser() {
@@ -98,14 +100,13 @@ public class ImageServiceImpl implements ImageService {
         return user.getFirstName() + " " + user.getLastName();
     }
 
-    public Photo createImage(ImageMetadata imageMetadata, InputStream inputStream) throws IllegalStateException, IOException {
-        Photo photo = createImage(imageMetadata);
-
-        imageManifestationService.createManifestationsFromOriginal(photo, inputStream);
-
-        return photo;
+    @Override
+    public void createManifestations(Photo photo, InputStream imageDataInputStream) throws IOException {
+        imageResizeClient.createOriginalManifestation(photo, imageDataInputStream);
+        imageResizeClient.createResizedManifestations(photo, SecurityContextHolder.getContext());
     }
 
+    @Transactional(readOnly = false)
     public Photo createImage(ImageMetadata imageData) throws IllegalStateException {
         Photo photo = new Photo();
         photo.setCaption(imageData.getCaption());
@@ -129,6 +130,7 @@ public class ImageServiceImpl implements ImageService {
         return photo;
     }
 
+    @Transactional(readOnly = false)
     public ImageGroup findNamedOrDefaultRoll(String rollName, User owner) {
         if (StringUtils.isBlank(rollName)) {
             return findOrCreateDefaultRollForUser(owner);
@@ -141,6 +143,7 @@ public class ImageServiceImpl implements ImageService {
         }
     }
 
+    @Transactional(readOnly = false)
     public ImageGroup findOrCreateDefaultRollForUser(User currentUser) {
         ImageGroup defaultRoll = imageGroupRepository.getRollByOwnerAndName(currentUser, ImageGroup.DEFAULT_ROLL_NAME);
         if (defaultRoll == null) {
@@ -154,10 +157,12 @@ public class ImageServiceImpl implements ImageService {
         return defaultRoll;
     }
 
+    @Transactional(readOnly = false)
     public ImageFrame addImageToGroup(Image image, ImageGroup group) {
         return addImageToGroup(image, group, group.nextFramePosition());
     }
 
+    @Transactional(readOnly = false)
     public ImageFrame addImageToGroup(Image image, ImageGroup group, int position) {
         ImageFrame frame = new ImageFrame(image);
         frame.setPosition(position);
@@ -169,6 +174,7 @@ public class ImageServiceImpl implements ImageService {
         return frame;
     }
 
+    @Transactional(readOnly = false)
     public void makeImageGroupAndImagesPublic(ImageGroup group) {
         imageSecurityService.makePublic(group);
         log.info("Added public permission for group: " + group.getName());
@@ -182,6 +188,7 @@ public class ImageServiceImpl implements ImageService {
         }
     }
 
+    @Transactional(readOnly = false)
     public void makeImageGroupAndImagesPublic(String ownerName, Type type, String imageGroupName)
             throws NoSuchImageGroupException {
         User owner = userRepository.getByScreenName(ownerName);
@@ -192,6 +199,7 @@ public class ImageServiceImpl implements ImageService {
         makeImageGroupAndImagesPublic(group);
     }
 
+    @Transactional(readOnly = false)
     public void setImageGroupPreview(long imageGroupId, long imageId)
             throws NoSuchImageGroupException, NoSuchImageException {
         ImageGroup imageGroup = imageGroupRepository.loadById(imageGroupId);

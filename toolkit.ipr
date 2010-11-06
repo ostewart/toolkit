@@ -456,6 +456,13 @@
   <component name="ProjectDetails">
     <option name="projectName" value="toolkit" />
   </component>
+  <component name="ProjectDictionaryState">
+    <dictionary name="oliver">
+      <words>
+        <w>resized</w>
+      </words>
+    </dictionary>
+  </component>
   <component name="ProjectKey">
     <option name="state" value="project:///Users/oliver/devel/toolkit-git/toolkit.ipr" />
   </component>

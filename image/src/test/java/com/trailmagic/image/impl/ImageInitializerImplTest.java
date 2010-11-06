@@ -22,7 +22,7 @@ import static org.mockito.Mockito.when;
 /**
  * Created by: oliver on Date: Jun 25, 2010 Time: 9:40:33 PM
  */
-public class ImageInitializerTest {
+public class ImageInitializerImplTest {
     private ImageInitializer imageInitializer;
     private User testUser;
     @Mock private ImageSecurityService imageSecurityService;
@@ -37,7 +37,7 @@ public class ImageInitializerTest {
 
         new SecurityTestHelper().disableSecurityInterceptor();
 
-        imageInitializer = new ImageInitializer(imageGroupRepository, imageRepository, imageSecurityService, imageManifestationRepository, securityUtil);
+        imageInitializer = new ImageInitializerImpl(imageGroupRepository, imageRepository, imageSecurityService, imageManifestationRepository, securityUtil);
         testUser = new User("testy");
 
     }

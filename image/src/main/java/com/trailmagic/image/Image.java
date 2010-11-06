@@ -32,11 +32,6 @@ public class Image implements Owned, AccessControlled {
     private ImageCD imageCD;
     private Integer number;
 
-    public Image(long id) {
-        super();
-        this.id = id;
-    }
-
     public Image() {
     }
 

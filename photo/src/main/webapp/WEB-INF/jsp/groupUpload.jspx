@@ -161,8 +161,11 @@
 
                     if (xhr.status != 200) {
                         if (event.target.tries < 5) {
-                            addTextToSummary(imageIndex, "Image errored...retrying");
-                            uploadPhoto(event, imageIndex, event.target.tries);
+                            var cooloffMillis = 200;
+                            addTextToSummary(imageIndex, "Image errored...retrying in " + cooloffMillis + "ms");
+                            setTimeout(function() {
+                                uploadPhoto(event, imageIndex, event.target.tries);
+                            }, cooloffMillis);
                         } else {
                             addTextToSummary(imageIndex, "Upload failed: " + xhr.statusText);
                         }

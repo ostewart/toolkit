@@ -42,8 +42,10 @@ public class SimpleImageUploadController {
         final Photo image;
         if (position != null) {
             image = imageService.createImageAtPosition(req.getInputStream(), position);
+            imageService.createManifestations(image, req.getInputStream());
         } else {
-            image = imageService.createImage(req.getInputStream());
+            image = imageService.createDefaultImage();
+            imageService.createManifestations(image, req.getInputStream());            
         }
 
 

@@ -1,65 +1,72 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns:tx="http://www.springframework.org/schema/tx"
-  xmlns:aop="http://www.springframework.org/schema/aop"
-  xmlns:context="http://www.springframework.org/schema/context"
-  xsi:schemaLocation="http://www.springframework.org/schema/beans
-							http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-							http://www.springframework.org/schema/tx
-							http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
-							http://www.springframework.org/schema/context
-							http://www.springframework.org/schema/context/spring-context-2.5.xsd
-                            http://www.springframework.org/schema/aop
-                            http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/tx
+                           http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+                           http://www.springframework.org/schema/context
+                           http://www.springframework.org/schema/context/spring-context-2.5.xsd
+                           http://www.springframework.org/schema/aop
+                           http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+                           http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
 
-  <!--
-    Copyright (c) 2006, 2007 Oliver Stewart.  All Rights Reserved.
-    
-    This file is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2, or (at your option)
-    any later version.
-    
-    This file is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-  -->
+    <!--
+      Copyright (c) 2006, 2007 Oliver Stewart.  All Rights Reserved.
 
-  <!-- basic stuff is setup in applicationContext-global.xml -->
+      This file is free software; you can redistribute it and/or modify
+      it under the terms of the GNU General Public License as published by
+      the Free Software Foundation; either version 2, or (at your option)
+      any later version.
+
+      This file is distributed in the hope that it will be useful,
+      but WITHOUT ANY WARRANTY; without even the implied warranty of
+      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+      GNU General Public License for more details.
+    -->
+
+    <!-- basic stuff is setup in applicationContext-global.xml -->
     <import resource="classpath:applicationContext-resizer.xml"/>
     <context:component-scan base-package="com.trailmagic.util"/>
     <context:component-scan base-package="com.trailmagic.image.impl"/>
 
-  <bean id="imageGroupRepository"
-    class="com.trailmagic.image.hibernate.HibernateImageGroupRepository">
-    <property name="sessionFactory" ref="sessionFactory"/>
-    <property name="hibernateTemplate" ref="hibernateTemplate"/>
-  </bean>
+    <task:annotation-driven executor="imageResizeExecutor"/>
+    <task:executor id="imageResizeExecutor" pool-size="1-10" queue-capacity="500" rejection-policy="CALLER_RUNS"/>
 
-  <bean id="imageManifestationRepository"
-    class="com.trailmagic.image.hibernate.HibernateImageManifestationRepository">
-    <constructor-arg ref="hibernateTemplate" />
-  </bean>
+    <bean id="imageGroupRepository"
+          class="com.trailmagic.image.hibernate.HibernateImageGroupRepository">
+        <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="hibernateTemplate" ref="hibernateTemplate"/>
+    </bean>
 
-  <tx:annotation-driven transaction-manager="transactionManager" />
+    <bean id="imageManifestationRepository"
+          class="com.trailmagic.image.hibernate.HibernateImageManifestationRepository">
+        <constructor-arg ref="hibernateTemplate"/>
+    </bean>
 
-  <bean id="imagesParser"
-    class="com.trailmagic.image.util.ImagesParserImpl">
-    <constructor-arg ref="hibernateTemplate"/>
-    <constructor-arg ref="imageGroupRepository"/>
-    <constructor-arg ref="userFactory"/>
-    <constructor-arg ref="imageService"/>
-      <constructor-arg ref="imageInitializer"/>
-  </bean>
+    <tx:annotation-driven transaction-manager="transactionManager"/>
 
-  <bean id="testInterceptor"
-    class="com.trailmagic.image.security.TestMethodInterceptor" />
+    <bean id="imagesParser"
+          class="com.trailmagic.image.util.ImagesParserImpl">
+        <constructor-arg ref="hibernateTemplate"/>
+        <constructor-arg ref="imageGroupRepository"/>
+        <constructor-arg ref="userFactory"/>
+        <constructor-arg ref="imageService"/>
+        <constructor-arg ref="imageInitializer"/>
+    </bean>
+
+    <bean id="testInterceptor"
+          class="com.trailmagic.image.security.TestMethodInterceptor"/>
 
 
-  <bean id="imageRepository"
-    class="com.trailmagic.image.hibernate.HibernateImageRepository">
-    <property name="hibernateTemplate" ref="hibernateTemplate"/>
-  </bean>
+    <bean id="imageRepository"
+          class="com.trailmagic.image.hibernate.HibernateImageRepository">
+        <property name="hibernateTemplate" ref="hibernateTemplate"/>
+    </bean>
+
+
 </beans>

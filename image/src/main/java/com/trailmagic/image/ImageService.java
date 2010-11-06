@@ -15,13 +15,13 @@ package com.trailmagic.image;
 
 import com.trailmagic.user.User;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.IOException;
 
 public interface ImageService {
-    public Photo createImage(InputStream inputStream) throws IllegalStateException, IOException;
+    public Photo createDefaultImage() throws IllegalStateException, IOException;
     public Photo createImageAtPosition(InputStream inputStream, Integer position) throws IOException;
-    public Photo createImage(ImageMetadata imageMetadata, InputStream inputStream) throws IllegalStateException, IOException;
     public Photo createImage(ImageMetadata imageData) throws IllegalStateException;
     public ImageFrame addImageToGroup(Image image, ImageGroup group, int position);
     public ImageFrame addImageToGroup(Image image, ImageGroup group);
@@ -32,4 +32,6 @@ public interface ImageService {
     public ImageGroup findNamedOrDefaultRoll(String rollName, User owner);
 
     public ImageGroup findOrCreateDefaultRollForUser(User currentUser);
+
+    public void createManifestations(Photo photo, InputStream imageDataInputStream) throws IOException;
 }

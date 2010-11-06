@@ -101,4 +101,10 @@
     WHERE imf.image.id = :imageId
     ORDER BY (imf.height * imf.width) ASCENDING
   </query>
+
+    <query name="originalHeavyManifestationForImageId">
+        FROM com.trailmagic.image.HeavyImageManifestation imf
+        WHERE imf.image.id = :imageId
+        AND imf.original = true
+    </query>
 </hibernate-mapping>

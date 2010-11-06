@@ -20,10 +20,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 import java.net.URISyntaxException;
 import java.security.KeyManagementException;
@@ -35,9 +35,7 @@ import java.security.cert.CertificateException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class SimpleImageUploadIntegrationTest {
     private static final String HOST_PORT_URL = "http://localhost:8081";
@@ -56,7 +54,7 @@ public class SimpleImageUploadIntegrationTest {
         try {
             SchemeRegistry schemeRegistry = new SchemeRegistry();
             KeyStore trustStore = KeyStore.getInstance("JKS");
-            final FileInputStream inputStream = new FileInputStream("/tmp/server.truststore");
+            final InputStream inputStream = getClass().getClassLoader().getResourceAsStream("client.truststore");
             try {
                 trustStore.load(inputStream, "password".toCharArray());
             } finally {
