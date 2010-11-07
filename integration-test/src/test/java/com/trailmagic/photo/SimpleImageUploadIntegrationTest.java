@@ -90,7 +90,7 @@ public class SimpleImageUploadIntegrationTest {
     @Test
     public void testImageUpload() throws URISyntaxException {
         login();
-        final WebResponse response = webserviceClient.postFile(BASE_URL, imageFile, "application/octet-stream");
+        final WebResponse response = webserviceClient.postFile(BASE_URL + "?fileName=foo.jpg", imageFile, "application/octet-stream");
 
         System.out.println(response);
 

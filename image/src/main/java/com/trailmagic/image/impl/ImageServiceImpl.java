@@ -70,8 +70,9 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     @Transactional(readOnly = false)
-    public Photo createDefaultImage() throws IllegalStateException, IOException {
+    public Photo createDefaultImage(String fileName) throws IllegalStateException, IOException {
         ImageMetadata imageMetadata = createDefaultMetadata();
+        imageMetadata.setShortName(fileName);
 
         return createImage(imageMetadata);
     }
@@ -88,9 +89,10 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     @Transactional(readOnly = false)
-    public Photo createImageAtPosition(InputStream inputStream, Integer position) throws IOException {
+    public Photo createImageAtPosition(String fileName, InputStream inputStream, Integer position) throws IOException {
         final ImageMetadata imageMetadata = createDefaultMetadata();
         imageMetadata.setPosition(position);
+        imageMetadata.setShortName(fileName);
 
         return createImage(imageMetadata);
     }

@@ -20,8 +20,8 @@ import java.io.InputStream;
 import java.io.IOException;
 
 public interface ImageService {
-    public Photo createDefaultImage() throws IllegalStateException, IOException;
-    public Photo createImageAtPosition(InputStream inputStream, Integer position) throws IOException;
+    public Photo createDefaultImage(String fileName) throws IllegalStateException, IOException;
+    public Photo createImageAtPosition(String fileName, InputStream inputStream, Integer position) throws IOException;
     public Photo createImage(ImageMetadata imageData) throws IllegalStateException;
     public ImageFrame addImageToGroup(Image image, ImageGroup group, int position);
     public ImageFrame addImageToGroup(Image image, ImageGroup group);

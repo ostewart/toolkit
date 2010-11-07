@@ -22,7 +22,9 @@
         <br />
         ${fn:escapeXml(image.copyright)} ${fn:escapeXml(image.creator)}
         <br />
-      
+      <c:if test="${!empty image.name}">
+            Image Name: ${fn:escapeXml(image.name)}<br/>
+          </c:if>
       <!-- Photo properties -->
       <c:if test="${image.class.name eq 'com.trailmagic.image.Photo'}">
         <div class="photoProperties">

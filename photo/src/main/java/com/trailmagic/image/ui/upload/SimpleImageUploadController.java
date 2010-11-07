@@ -38,13 +38,15 @@ public class SimpleImageUploadController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public void handleUpload(@RequestParam(value = "pos", required = false) Integer position, HttpServletRequest req, HttpServletResponse res) throws IOException {
+    public void handleUpload(@RequestParam(value = "pos", required = false) Integer position,
+                             @RequestParam(value="fileName") String fileName,
+                             HttpServletRequest req, HttpServletResponse res) throws IOException {
         final Photo image;
         if (position != null) {
-            image = imageService.createImageAtPosition(req.getInputStream(), position);
+            image = imageService.createImageAtPosition(fileName, req.getInputStream(), position);
             imageService.createManifestations(image, req.getInputStream());
         } else {
-            image = imageService.createDefaultImage();
+            image = imageService.createDefaultImage(fileName);
             imageService.createManifestations(image, req.getInputStream());            
         }
 

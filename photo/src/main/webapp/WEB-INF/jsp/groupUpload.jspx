@@ -86,11 +86,20 @@
                 $("#img_" + index).append($("<p/>").text(text));
             }
 
+            function fileNameFrom(file) {
+                var fileName;
+                if (file.fileName === undefined) {
+                    fileName = file.name;
+                } else {
+                    fileName = file.fileName;
+                }
+                return fileName;
+            }
 
             function prepareUpload(index, file) {
                 var uploadReader = new FileReader();
                 uploadReader.addEventListener("loadend", function(evt) {
-                    uploadPhoto(evt, index, 0)
+                    uploadPhoto(evt, index, 0, fileNameFrom(file))
                 }, false);
                 uploadReader.readAsBinaryString(file);
             }
@@ -141,21 +150,21 @@
                 }
             }
 
-            function uploadPhoto(event, index, tries) {
+            function uploadPhoto(event, index, tries, fileName) {
                 $("#output").append("<li>Uploading image " + index + ".</li>");
 
                 var xhr = new XMLHttpRequest();
                 xhr.upload.addEventListener("progress", updateProgress, false);
-                xhr.upload.addEventListener("load", markCompleteHandler(xhr), false);
+                xhr.upload.addEventListener("load", markCompleteHandler(xhr, fileName), false);
                 xhr.upload.addEventListener("error", handleUploadError, false);
                 xhr.upload.index = index;
                 xhr.upload.tries = tries + 1;
 
-                xhr.open("POST", "${pageContext.request.contextPath}/upload?pos=" + index);
+                xhr.open("POST", "${pageContext.request.contextPath}/upload?pos=" + index + "&fileName=" + fileName);
                 xhr.sendAsBinary(event.target.result);
             }
 
-            function markCompleteHandler(xhr) {
+            function markCompleteHandler(xhr, fileName) {
                 return function markComplete(event) {
                     var imageIndex = event.target.index;
 
@@ -164,7 +173,7 @@
                             var cooloffMillis = 200;
                             addTextToSummary(imageIndex, "Image errored...retrying in " + cooloffMillis + "ms");
                             setTimeout(function() {
-                                uploadPhoto(event, imageIndex, event.target.tries);
+                                uploadPhoto(event, imageIndex, event.target.tries, fileName);
                             }, cooloffMillis);
                         } else {
                             addTextToSummary(imageIndex, "Upload failed: " + xhr.statusText);

@@ -147,9 +147,10 @@ public class ImageServiceImplTest {
 
     @Test
     public void testSetsDefaultMetaData() throws IOException {
-        Photo image = imageService.createDefaultImage();
+        Photo image = imageService.createDefaultImage("foo.jpg");
 
         assertMatchesDefaultMetadata(image);
+        assertEquals("foo.jpg", image.getName());
     }
 
     private void assertMatchesDefaultMetadata(Photo image) {
@@ -169,13 +170,15 @@ public class ImageServiceImplTest {
 
     @Test
     public void testSetsDefaultMetaDataWithPosition() throws IOException {
-        Photo image = imageService.createImageAtPosition(EMPTY_INPUT_STREAM, ARBITRARY_POSITION);
+        Photo image = imageService.createImageAtPosition("foo.jpg", EMPTY_INPUT_STREAM, ARBITRARY_POSITION);
 
         verify(imageResizeClient, never()).createOriginalManifestation(image, EMPTY_INPUT_STREAM);
         verify(imageResizeClient, never()).createResizedManifestations(eq(image), Mockito.<SecurityContext>any());
 
         assertMatchesDefaultMetadata(image);
+
         assertEquals(ARBITRARY_POSITION, image.getRoll().getFrames().first().getPosition());
+        assertEquals("foo.jpg", image.getName());
     }
 
     @Test
