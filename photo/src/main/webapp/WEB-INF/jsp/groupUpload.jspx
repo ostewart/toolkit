@@ -74,7 +74,9 @@
                 var fileUploader = createFileUploader("${pageContext.request.contextPath}/upload");
                 fileUploader.addFiles(files, nextFramePosition);
                 fileUploader.previewLoadedHook = function(file, fileData) {
-                    addToSummary(file.index, fileData);
+                    $("#preview").append($("<li/>").attr("id", "img_" + file.index).text(file.name));
+
+//                    addToSummary(file.index, fileData);
                 };
                 fileUploader.beforeUploadHook = function(file) {
                     $("#output").append("<li>Uploading image " + file.index + ".</li>");

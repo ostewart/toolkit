@@ -2,12 +2,14 @@ function createFileUploader(basePath) {
     var files = [];
     var maxTries = 3;
     return {
+        loadPreviews: false,
         previewLoadedHook: function(file, fileData) {
         },
         addFile: function(index, file, frameNumber) {
             files.push({
                 index: index,
                 file: file,
+                name: fileNameFrom(file),
                 tries: 0,
                 isComplete: false,
                 frameNumber: frameNumber,
@@ -25,11 +27,16 @@ function createFileUploader(basePath) {
         startNextPreviewLoad: function() {
             for (i = 0; i < files.length; i++) {
                 if (!files[i].isPreviewLoaded) {
-                    var previewReader = new FileReader();
-                    var previewLoadFinishedHandler = this.previewLoadFinishedHandler(files[i]);
-                    previewReader.addEventListener("loadend", previewLoadFinishedHandler, false);
-                    previewReader.readAsDataURL(files[i].file);
-                    return;
+                    if (!this.loadPreviews) {
+                        this.previewLoadFinishedHandler(files[i])(null);
+                        return;
+                    } else {
+                        var previewReader = new FileReader();
+                        var previewLoadFinishedHandler = this.previewLoadFinishedHandler(files[i]);
+                        previewReader.addEventListener("loadend", previewLoadFinishedHandler, false);
+                        previewReader.readAsDataURL(files[i].file);
+                        return;
+                    }
                 }
             }
             this.startNextUpload(); //after all the previews are loaded
@@ -38,7 +45,8 @@ function createFileUploader(basePath) {
             var that = this;
             return function(event) {
                 file.isPreviewLoaded = true;
-                that.previewLoadedHook(file, event.target.result);
+                var fileData = that.loadPreviews ? event.target.result : null;
+                that.previewLoadedHook(file, fileData);
                 that.startNextPreviewLoad();
             }
         },
