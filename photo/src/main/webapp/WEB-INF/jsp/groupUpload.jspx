@@ -54,24 +54,55 @@
     <!--<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"><jsp:text>-->
     <script type="text/javascript" src="${pageContext.request.contextPath}/jquery-1.3.2.js"><jsp:text>
         </jsp:text></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/file-uploader.js"><jsp:text>
+        </jsp:text></script>
     <script language="javascript" type="text/javascript">
         <![CDATA[
 // <![CDATA[
         $(document).ready(function () {
             var nextFramePosition = ${nextFramePosition};
 
-            function toggleHover(event) {
-                $("#drop-area").toggleClass("hover");
+
+            function handleDrop(event) {
                 handleDragDrop(event);
+
+                var dt = event.dataTransfer;
+                var files = dt.files;
+
+                $("#output").append("<li>Processing " + files.length + " files</li>");
+
+                var fileUploader = createFileUploader("${pageContext.request.contextPath}/upload");
+                fileUploader.addFiles(files, nextFramePosition);
+                fileUploader.previewLoadedHook = function(file, fileData) {
+                    addToSummary(file.index, fileData);
+                };
+                fileUploader.beforeUploadHook = function(file) {
+                    $("#output").append("<li>Uploading image " + file.index + ".</li>");
+                    $("#statusText").text("Uploading " + fileNameFrom(file.file));
+                };
+                fileUploader.uploadRetryHook = function(file) {
+                    addTextToSummary(file.index, "Image errored...retrying in " + cooloffMillis + "ms");
+                };
+                fileUploader.fileCompleteHook = function(file) {
+                    $("#output").append("<li>Image complete.</li>");
+                };
+                fileUploader.uploadFailedHook = function(file, xhr) {
+                    addTextToSummary(file.index, "Upload failed: " + xhr.statusText);
+                };
+                fileUploader.uploadProgressHandler = updateProgress;
+                fileUploader.uploadErrorHandler = handleUploadError;
+
+                fileUploader.start();
             }
-
-            var dropArea = document.getElementById("drop-area");
-            var fileList = document.getElementById("file-list");
-
 
             function handleDragDrop(event) {
                 event.stopPropagation();
                 event.preventDefault();
+            }
+
+            function toggleHover(event) {
+                $("#drop-area").toggleClass("hover");
+                handleDragDrop(event);
             }
 
             function addToSummary(index, imgData) {
@@ -87,222 +118,24 @@
                 $("#img_" + index).append($("<p/>").text(text));
             }
 
-            function fileNameFrom(file) {
-                var fileName;
-                if (file.fileName === undefined) {
-                    fileName = file.name;
-                } else {
-                    fileName = file.fileName;
-                }
-                return fileName;
-            }
-
-            function prepareUpload(index, file) {
-                var uploadReader = new FileReader();
-                uploadReader.addEventListener("loadend", function(evt) {
-                    uploadPhoto(evt, index, 0, fileNameFrom(file))
-                }, false);
-                uploadReader.readAsBinaryString(file);
-            }
-
-            function previewLoadedHandler(index, file) {
-                return function(event) {
-                    addToSummary(index, event.target.result);
-                    prepareUpload(index, file);
-                }
-            }
-
-            function startPreviewLoad(file, framePosition) {
-                var previewReader = new FileReader();
-
-                previewReader.addEventListener("loadend", previewLoadedHandler(framePosition, file), false);
-                previewReader.readAsDataURL(file);
-            }
-
-            var fileUploader = function () {
-                var files = [];
-                var maxTries = 3;
-                return {
-                    previewLoadedHook: function(file, fileData) {
-                    },
-                    addFile: function(index, file, frameNumber) {
-                        files.push({
-                            index: index,
-                            file: file,
-                            tries: 0,
-                            isComplete: false,
-                            frameNumber: frameNumber,
-                            isPreviewLoaded: false
-                        });
-                    },
-                    addFiles: function(files, firstFrameNumber) {
-                        for (i = 0; i < files.length; i++) {
-                            this.addFile(i, files[i], firstFrameNumber++);
-                        }
-                    },
-                    start: function() {
-                        this.startNextPreviewLoad();
-                    },
-                    startNextPreviewLoad: function() {
-                        for (i=0; i < files.length; i++) {
-                            if (!files[i].isPreviewLoaded) {
-                                var previewReader = new FileReader();
-                                var previewLoadFinishedHandler = this.previewLoadFinishedHandler(files[i]);
-                                previewReader.addEventListener("loadend", previewLoadFinishedHandler, false);
-                                previewReader.readAsDataURL(files[i].file);
-                                return;
-                            }
-                        }
-                        this.startNextUpload(); //after all the previews are loaded
-                    },
-                    previewLoadFinishedHandler: function(file) {
-                        var that = this;
-                        return function(event) {
-                            file.isPreviewLoaded = true;
-                            that.previewLoadedHook(file, event.target.result);
-                            that.startNextPreviewLoad();
-                        }
-                    },
-                    startNextUpload: function() {
-                        for (i = 0; i < files.length; i++) {
-                            if (!files[i].isComplete && files[i].tries < maxTries) {
-                                this.beginUpload(i, files[i]);
-                                return;
-                            }
-                        }
-                    },
-                    beginUpload: function(index, file) {
-                        var uploadReader = new FileReader();
-                        uploadReader.addEventListener("loadend", this.uploadPhotoHandler(file), false);
-                        uploadReader.readAsBinaryString(file.file);
-                    },
-                    beforeUploadHook: function (file) {
-                        $("#output").append("<li>Uploading image " + file.index + ".</li>");
-                        $("#statusText").text("Uploading " + fileNameFrom(file.file));
-                    },
-                    uploadProgressHook: function() {},
-                    uploadErrorHook: function() {},
-                    uploadPhotoHandler: function(file) {
-                        var that = this;
-                        return function(event) {
-                            that.beforeUploadHook(file);
-                            file.tries++;
-
-                            var xhr = new XMLHttpRequest();
-                            xhr.upload.addEventListener("progress", that.uploadProgressHook, false);
-                            xhr.upload.addEventListener("load", that.uploadCompleteHandler(xhr, file), false);
-                            xhr.upload.addEventListener("error", that.uploadErrorHook, false);
-
-                            xhr.open("POST", "${pageContext.request.contextPath}/upload?pos=" + file.frameNumber + "&fileName=" + fileNameFrom(file.file));
-                            xhr.sendAsBinary(event.target.result);
-                        };
-                    },
-                    uploadCompleteHandler: function(xhr, file) {
-                        var that = this;
-                        return function(event) {
-                            var imageIndex = file.index;
-
-                            if (xhr.status != 200) {
-                                if (file.tries < maxTries) {
-                                    var cooloffMillis = 200;
-                                    addTextToSummary(imageIndex, "Image errored...retrying in " + cooloffMillis + "ms");
-                                    setTimeout(function() {
-                                        that.uploadPhotoHandler(file)(event, imageIndex, file.tries, fileNameFrom(file.file));
-                                    }, cooloffMillis);
-                                } else {
-                                    addTextToSummary(imageIndex, "Upload failed: " + xhr.statusText);
-                                }
-                            } else {
-                                file.isComplete = true;
-                                $("#output").append("<li>Image complete.</li>");
-                                that.startNextUpload();
-                            }
-                        }
-                    }
-                };
-            }();
-
-            function handleDrop(event) {
-                handleDragDrop(event);
-
-                var dt = event.dataTransfer;
-                var files = dt.files;
-
-                $("#output").append("<li>Processing " + files.length + " files</li>");
-
-
-//                for (var i=0; i < files.length; i++) {
-//                    startPreviewLoad(files[i], nextFramePosition++);
-//                }
-                fileUploader.addFiles(files, nextFramePosition);
-                fileUploader.previewLoadedHook = function(file, fileData) {
-                    addToSummary(file.index, fileData);
-//                    prepareUpload(file.index, file);
-                };
-
-                fileUploader.start();
-            }
-
-
             function updateProgress(event) {
                 $("#output").append("<li>Updating progress</li>");
-
-//                var percentage = Math.round((event.loaded * 100) / event.total);
-//                $("#progress-bar").css("width", percentage + "%");
-
 
                 if (event.lengthComputable) {
                     var percentage = Math.round((event.loaded * 100) / event.total);
                     var loaderIndicator = $("#progress-bar");
                     if (percentage < 100) {
                         loaderIndicator.css("width", (percentage * 2) + "px");
-//                        loaderIndicator.style.width = (percentage * 2) + "px";
                         loaderIndicator.text(percentage + "%");
                     }
                 }
             }
 
-            function uploadPhoto(event, index, tries, fileName) {
-                $("#output").append("<li>Uploading image " + index + ".</li>");
-                $("#statusText").text("Uploading " + fileName);
-
-                var xhr = new XMLHttpRequest();
-                xhr.upload.addEventListener("progress", updateProgress, false);
-                xhr.upload.addEventListener("load", markCompleteHandler(xhr, fileName), false);
-                xhr.upload.addEventListener("error", handleUploadError, false);
-                xhr.upload.index = index;
-                xhr.upload.tries = tries + 1;
-
-                xhr.open("POST", "${pageContext.request.contextPath}/upload?pos=" + index + "&fileName=" + fileName);
-                xhr.sendAsBinary(event.target.result);
-            }
-
-            function markCompleteHandler(xhr, fileName) {
-                return function markComplete(event) {
-                    var imageIndex = event.target.index;
-
-                    if (xhr.status != 200) {
-                        if (event.target.tries < 5) {
-                            var cooloffMillis = 200;
-                            addTextToSummary(imageIndex, "Image errored...retrying in " + cooloffMillis + "ms");
-                            setTimeout(function() {
-                                uploadPhoto(event, imageIndex, event.target.tries, fileName);
-                            }, cooloffMillis);
-                        } else {
-                            addTextToSummary(imageIndex, "Upload failed: " + xhr.statusText);
-                        }
-                    } else {
-                        $("#output").append("<li>Image complete.</li>");
-                    }
-                }
-
-            }
-
-
             function handleUploadError(event) {
                 $("#output").append("<li>Image errored.</li>");
             }
 
+            var dropArea = document.getElementById("drop-area");
             dropArea.addEventListener("dragenter", toggleHover, false);
             dropArea.addEventListener("dragleave", toggleHover, false);
             dropArea.addEventListener("dragover", handleDragDrop, false);
