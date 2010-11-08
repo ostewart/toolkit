@@ -41,7 +41,8 @@
     </div>
 
     <div id="progress-container" style="width: 90%; height: 2em;">
-        <div id="progress-bar" style="background-color: blue; width: 0%;">foo</div>
+        <div id="progress-bar" style="background-color: blue; width: 0%;"></div>
+        <p id="statusText"/>
     </div>
 
 
@@ -118,6 +119,109 @@
                 previewReader.readAsDataURL(file);
             }
 
+            var fileUploader = function () {
+                var files = [];
+                var maxTries = 3;
+                return {
+                    previewLoadedHook: function(file, fileData) {
+                    },
+                    addFile: function(index, file, frameNumber) {
+                        files.push({
+                            index: index,
+                            file: file,
+                            tries: 0,
+                            isComplete: false,
+                            frameNumber: frameNumber,
+                            isPreviewLoaded: false
+                        });
+                    },
+                    addFiles: function(files, firstFrameNumber) {
+                        for (i = 0; i < files.length; i++) {
+                            this.addFile(i, files[i], firstFrameNumber++);
+                        }
+                    },
+                    start: function() {
+                        this.startNextPreviewLoad();
+                    },
+                    startNextPreviewLoad: function() {
+                        for (i=0; i < files.length; i++) {
+                            if (!files[i].isPreviewLoaded) {
+                                var previewReader = new FileReader();
+                                var previewLoadFinishedHandler = this.previewLoadFinishedHandler(files[i]);
+                                previewReader.addEventListener("loadend", previewLoadFinishedHandler, false);
+                                previewReader.readAsDataURL(files[i].file);
+                                return;
+                            }
+                        }
+                        this.startNextUpload(); //after all the previews are loaded
+                    },
+                    previewLoadFinishedHandler: function(file) {
+                        var that = this;
+                        return function(event) {
+                            file.isPreviewLoaded = true;
+                            that.previewLoadedHook(file, event.target.result);
+                            that.startNextPreviewLoad();
+                        }
+                    },
+                    startNextUpload: function() {
+                        for (i = 0; i < files.length; i++) {
+                            if (!files[i].isComplete && files[i].tries < maxTries) {
+                                this.beginUpload(i, files[i]);
+                                return;
+                            }
+                        }
+                    },
+                    beginUpload: function(index, file) {
+                        var uploadReader = new FileReader();
+                        uploadReader.addEventListener("loadend", this.uploadPhotoHandler(file), false);
+                        uploadReader.readAsBinaryString(file.file);
+                    },
+                    beforeUploadHook: function (file) {
+                        $("#output").append("<li>Uploading image " + file.index + ".</li>");
+                        $("#statusText").text("Uploading " + fileNameFrom(file.file));
+                    },
+                    uploadProgressHook: function() {},
+                    uploadErrorHook: function() {},
+                    uploadPhotoHandler: function(file) {
+                        var that = this;
+                        return function(event) {
+                            that.beforeUploadHook(file);
+                            file.tries++;
+
+                            var xhr = new XMLHttpRequest();
+                            xhr.upload.addEventListener("progress", that.uploadProgressHook, false);
+                            xhr.upload.addEventListener("load", that.uploadCompleteHandler(xhr, file), false);
+                            xhr.upload.addEventListener("error", that.uploadErrorHook, false);
+
+                            xhr.open("POST", "${pageContext.request.contextPath}/upload?pos=" + file.frameNumber + "&fileName=" + fileNameFrom(file.file));
+                            xhr.sendAsBinary(event.target.result);
+                        };
+                    },
+                    uploadCompleteHandler: function(xhr, file) {
+                        var that = this;
+                        return function(event) {
+                            var imageIndex = file.index;
+
+                            if (xhr.status != 200) {
+                                if (file.tries < maxTries) {
+                                    var cooloffMillis = 200;
+                                    addTextToSummary(imageIndex, "Image errored...retrying in " + cooloffMillis + "ms");
+                                    setTimeout(function() {
+                                        that.uploadPhotoHandler(file)(event, imageIndex, file.tries, fileNameFrom(file.file));
+                                    }, cooloffMillis);
+                                } else {
+                                    addTextToSummary(imageIndex, "Upload failed: " + xhr.statusText);
+                                }
+                            } else {
+                                file.isComplete = true;
+                                $("#output").append("<li>Image complete.</li>");
+                                that.startNextUpload();
+                            }
+                        }
+                    }
+                };
+            }();
+
             function handleDrop(event) {
                 handleDragDrop(event);
 
@@ -127,10 +231,18 @@
                 $("#output").append("<li>Processing " + files.length + " files</li>");
 
 
-                for (var i=0; i < files.length; i++) {
-                    startPreviewLoad(files[i], nextFramePosition++);
-                }
+//                for (var i=0; i < files.length; i++) {
+//                    startPreviewLoad(files[i], nextFramePosition++);
+//                }
+                fileUploader.addFiles(files, nextFramePosition);
+                fileUploader.previewLoadedHook = function(file, fileData) {
+                    addToSummary(file.index, fileData);
+//                    prepareUpload(file.index, file);
+                };
+
+                fileUploader.start();
             }
+
 
             function updateProgress(event) {
                 $("#output").append("<li>Updating progress</li>");
@@ -152,6 +264,7 @@
 
             function uploadPhoto(event, index, tries, fileName) {
                 $("#output").append("<li>Uploading image " + index + ".</li>");
+                $("#statusText").text("Uploading " + fileName);
 
                 var xhr = new XMLHttpRequest();
                 xhr.upload.addEventListener("progress", updateProgress, false);
