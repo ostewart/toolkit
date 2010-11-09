@@ -15,5 +15,7 @@ public class PublicAlbumsTest {
         driver.get("http://localhost:8081/photo/albums/");
         WebElement header = driver.findElement(By.tagName("h1"));
         assertNotNull(header.getText());
+
+        driver.close();
     }
 }

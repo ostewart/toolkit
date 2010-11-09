@@ -1,6 +1,17 @@
 function createFileUploader(basePath) {
     var files = [];
     var maxTries = 3;
+
+    function collect(array, fn) {
+        var results = [];
+        for (i=0; i<array.length; i++) {
+            if (fn(array[i])) {
+                results.push(array[i]);
+            }
+        }
+        return results;
+    }
+
     return {
         loadPreviews: false,
         previewLoadedHook: function(file, fileData) {
@@ -20,6 +31,23 @@ function createFileUploader(basePath) {
             for (i = 0; i < files.length; i++) {
                 this.addFile(i, files[i], firstFrameNumber++);
             }
+        },
+        completedFiles: function() {
+            return collect(files, function(file) {
+                return file.isComplete;
+            });
+        },
+        pendingFiles: function() {
+            return collect(files, function(file) {
+                return !file.isComplete;
+            });
+//            var pendingFiles = [];
+//            for (i=0; i<files.length;i++) {
+//                if (!files[i].isComplete) {
+//                    pendingFiles.push(files[i]);
+//                }
+//            }
+//            return pendingFiles;
         },
         start: function() {
             this.startNextPreviewLoad();
@@ -58,10 +86,13 @@ function createFileUploader(basePath) {
                 }
             }
         },
-        beginUpload: function(index, file) {
+        readFileWithHandler: function(file, handler) {
             var uploadReader = new FileReader();
-            uploadReader.addEventListener("loadend", this.uploadPhotoHandler(file), false);
-            uploadReader.readAsBinaryString(file.file);
+            uploadReader.addEventListener("loadend", handler, false);
+            uploadReader.readAsBinaryString(file);
+        },
+        beginUpload: function(index, file) {
+            this.readFileWithHandler(file.file, this.uploadPhotoHandler(file));
         },
         beforeUploadHook: function (file) {
         },
@@ -69,13 +100,16 @@ function createFileUploader(basePath) {
         },
         uploadErrorHandler: function() {
         },
+        newXhr: function() {
+            return new XMLHttpRequest();
+        },
         uploadPhotoHandler: function(file) {
             var that = this;
             return function(event) {
                 that.beforeUploadHook(file);
                 file.tries++;
 
-                var xhr = new XMLHttpRequest();
+                var xhr = that.newXhr();
                 xhr.upload.addEventListener("progress", that.uploadProgressHandler, false);
                 xhr.upload.addEventListener("load", that.uploadCompleteHandler(xhr, file), false);
                 xhr.upload.addEventListener("error", that.uploadErrorHandler, false);
