@@ -117,11 +117,6 @@
     FROM com.trailmagic.image.Image
   </query>
 
-  <query name="imagesByName">
-    FROM com.trailmagic.image.Image
-    WHERE name = :name
-  </query>
-
   <query name="imagesById">
     FROM com.trailmagic.image.Image AS image
     WHERE image.id = :imageId

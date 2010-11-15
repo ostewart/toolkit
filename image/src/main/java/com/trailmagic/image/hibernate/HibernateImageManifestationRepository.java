@@ -21,7 +21,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Transactional(readOnly = true)
@@ -47,18 +46,6 @@ public class HibernateImageManifestationRepository
     public HeavyImageManifestation getHeavyById(long id) {
         return (HeavyImageManifestation)
                 hibernateTemplate.get(HeavyImageManifestation.class, id);
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<ImageManifestation> getAllForImageId(long imageId) {
-        List results =
-                hibernateTemplate.findByNamedQueryAndNamedParam(ALL_FOR_IMAGE_ID_QUERY_NAME, "imageId", imageId);
-        List<ImageManifestation> typedResults =
-                new ArrayList<ImageManifestation>();
-        for (Object result : results) {
-            typedResults.add((ImageManifestation) result);
-        }
-        return typedResults;
     }
 
     @Transactional(readOnly = false)

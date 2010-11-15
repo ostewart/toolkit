@@ -146,13 +146,6 @@
     AND owner.screenName = :screenName
   </query>
 
-  <query name="albumOwners">
-    SELECT DISTINCT album.owner
-    FROM com.trailmagic.image.ImageGroup
-    AS album INNER JOIN album.owner
-    WHERE album.type = 'album'
-  </query>
-
   <query name="groupOwnersByType">
     SELECT DISTINCT grp.owner
     FROM com.trailmagic.image.ImageGroup
@@ -182,22 +175,11 @@
     AND grp.type = :groupType
   </query>
 
-  <query name="imageFrameByImageGroupAndImageId">
-    FROM com.trailmagic.image.ImageFrame frame
-    WHERE frame.imageGroup = :imageGroup
-    AND frame.image.id = :imageId
-  </query>
-
   <query name="imageFrameByGroupNameTypeAndImageId">
     FROM com.trailmagic.image.ImageFrame frame
     WHERE frame.imageGroup.name = :groupName
     AND frame.imageGroup.type = :groupType
     AND frame.image.id = :imageId
-  </query>
-
-  <query name="framesContainingImage">
-    FROM com.trailmagic.image.ImageFrame frame
-    WHERE frame.image = :image
   </query>
 
   <query name="groupsByImage">

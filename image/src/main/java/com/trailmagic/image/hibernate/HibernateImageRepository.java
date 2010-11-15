@@ -26,17 +26,15 @@ import org.springframework.transaction.annotation.Transactional;
 @SuppressWarnings("unchecked") // for query.list()
 public class HibernateImageRepository extends HibernateDaoSupport implements ImageRepository{
     private static final String ALL_IMAGES_QUERY_NAME = "allImages";
-    private static final String IMAGES_BY_NAME_QUERY_NAME = "imagesByName";
-    private static final String IMAGES_BY_NAME_GROUP_QUERY_NAME =
-        "imagesByNameAndGroup";
+    private static final String IMAGES_BY_NAME_GROUP_QUERY_NAME = "imagesByNameAndGroup";
 
     public Image getById(long id) {
-        return (Image) getHibernateTemplate().get(Image.class, new Long(id));
+        return getHibernateTemplate().get(Image.class, id);
     }
     
     public Image loadById(long imageId) {
         try {
-            return (Image) getHibernateTemplate().load(Image.class, imageId);
+            return getHibernateTemplate().load(Image.class, imageId);
         } catch (ObjectRetrievalFailureException e) {
             throw new NoSuchImageException(imageId, e);
         }
@@ -44,10 +42,6 @@ public class HibernateImageRepository extends HibernateDaoSupport implements Ima
 
     public List<Image> getAll() {
         return getHibernateTemplate().findByNamedQuery(ALL_IMAGES_QUERY_NAME);
-    }
-
-    public List<Image> getByName(String name) {
-        return getHibernateTemplate().findByNamedQuery(IMAGES_BY_NAME_QUERY_NAME);
     }
 
     public List<Image> getByNameAndGroup(String name, ImageGroup group) {

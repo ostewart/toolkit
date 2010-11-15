@@ -37,14 +37,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class HibernateImageGroupRepository implements ImageGroupRepository {
     private static final String ALBUM_BY_OWNER_AND_NAME_QRY =
         "albumByOwnerAndName";
-    private static final String IMGFRAME_BY_IMG_GROUP_AND_IMAGE_QRY =
-        "imageFrameByImageGroupAndImageId";
     private static final String IMGFRAME_BY_GROUP_NAME_TYPE_AND_IMAGE_ID_QRY =
             "imageFrameByGroupNameTypeAndImageId";
     private static final String ALBUMS_BY_OWNER_NAME_QRY =
         "albumsByOwnerScreenName";
-    private static final String ALBUM_OWNERS_QRY =
-        "albumOwners";
     private static final String ROLLS_BY_OWNER_NAME_QRY =
         "rollsByOwnerScreenName";
     private static final String GROUP_OWNERS_QRY =
@@ -59,8 +55,6 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
         "groupsByImage";
     private static final String ROLL_FOR_IMAGE_QRY =
         "rollForImage";
-    private static final String FRAMES_CONTAINING_IMAGE_QRY =
-        "framesContainingImage";
     private static final String ALL_GROUPS_QUERY =
         "allImageGroups";
 
@@ -104,28 +98,6 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
         }
     }
 
-    public ImageFrame getImageFrameByImageGroupAndImageId(ImageGroup group,
-                                                          long imageId)
-        throws NoSuchImageFrameException {
-        try {
-            Session session =
-                SessionFactoryUtils.getSession(m_sessionFactory, false);
-            Query qry =
-                session.getNamedQuery(IMGFRAME_BY_IMG_GROUP_AND_IMAGE_QRY);
-            qry.setEntity("imageGroup", group);
-            qry.setLong("imageId", imageId);
-            qry.setCacheable(true);
-            ImageFrame result = (ImageFrame)qry.uniqueResult();
-            if (result == null) {
-                throw new NoSuchImageFrameException(group, imageId);
-            } else {
-                return result;
-            }
-        } catch (HibernateException e) {
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
-        }
-    }
-
     public ImageFrame getImageFrameByGroupNameTypeAndImageId(String groupName, Type groupType, long imageId)
             throws NoSuchImageFrameException {
         List results =
@@ -145,38 +117,12 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
         }
     }
 
-    public List<ImageFrame> getFramesContainingImage(Image image) {
-        try {
-            Session session =
-                SessionFactoryUtils.getSession(m_sessionFactory, false);
-            Query qry =
-                session.getNamedQuery(FRAMES_CONTAINING_IMAGE_QRY);
-            qry.setEntity("image", image);
-            qry.setCacheable(true);
-            return qry.list();
-        } catch (HibernateException e) {
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
-        }
-    }
-
     public List<ImageGroup> getAlbumsByOwnerScreenName(String screenName) {
         try {
             Session session =
                 SessionFactoryUtils.getSession(m_sessionFactory, false);
             Query qry = session.getNamedQuery(ALBUMS_BY_OWNER_NAME_QRY);
             qry.setString("screenName", screenName);
-            qry.setCacheable(true);
-            return qry.list();
-        } catch (HibernateException e) {
-            throw SessionFactoryUtils.convertHibernateAccessException(e);
-        }
-    }
-
-    public List<User> getAlbumOwners() {
-        try {
-            Session session =
-                SessionFactoryUtils.getSession(m_sessionFactory, false);
-            Query qry = session.getNamedQuery(ALBUM_OWNERS_QRY);
             qry.setCacheable(true);
             return qry.list();
         } catch (HibernateException e) {
@@ -327,12 +273,6 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
         return (Integer)
                 m_hibernateTemplate.findByNamedQuery("publicFrameCount", group.getId()).get(0);
 
-    }
-
-    public int getAccurateFrameCount(ImageGroup group) {
-        // need to get all the frames in order to get an
-        // accurate count of how many we have access to :(
-        return group.getFrames().size();
     }
 
 }
