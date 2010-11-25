@@ -18,20 +18,20 @@ import com.trailmagic.image.ImageGroup;
 import com.trailmagic.image.ImageGroupRepository;
 import com.trailmagic.image.ImageRepository;
 import com.trailmagic.image.security.ImageSecurityService;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import org.springframework.security.ui.AbstractProcessingFilter;
-import org.springframework.security.ui.savedrequest.SavedRequest;
+import org.springframework.security.web.savedrequest.RequestCache;
+import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 public class ImageAccessController extends SimpleFormController {
     private ImageSecurityService imageSecurityService;
     private ImageRepository imageRepository;
     private ImageGroupRepository imageGroupRepository;
+    private RequestCache requestCache;
 
     private static final String MAKE_PUBLIC_ACTION = "makePublic";
     private static final String MAKE_PRIVATE_ACTION = "makePrivate";
@@ -39,6 +39,10 @@ public class ImageAccessController extends SimpleFormController {
     private static final String MAKE_FRAMES_PRIVATE_ACTION = "makeImagesPrivate";
     private static final String IMAGE_TARGET = "image";
     private static final String IMAGE_GROUP_TARGET = "imageGroup";
+
+    public ImageAccessController(RequestCache requestCache) {
+        this.requestCache = requestCache;
+    }
 
     public void setImageSecurityService(ImageSecurityService imageSecurityService) {
         this.imageSecurityService = imageSecurityService;
@@ -57,17 +61,6 @@ public class ImageAccessController extends SimpleFormController {
                                     Object command,
                                     BindException errors) throws Exception {
         ImageAccessBean bean = (ImageAccessBean) command;
-
-        // save the request for later...if this takes a long time, maybe
-        // the session could time out
-        final HttpSession session = req.getSession(false);
-        final SavedRequest savedRequest;
-        if (session == null) {
-            savedRequest = null;
-        } else {
-            savedRequest =
-                (SavedRequest) session.getAttribute(AbstractProcessingFilter.SPRING_SECURITY_SAVED_REQUEST_KEY);
-        }
 
         if (bean == null) {
             throw new Exception("null command");
@@ -100,8 +93,9 @@ public class ImageAccessController extends SimpleFormController {
         }
 
         // if all goes well, redirect back to the last page
+        final SavedRequest savedRequest = requestCache.getRequest(req, res);
         if (savedRequest != null) {
-            res.sendRedirect(savedRequest.getFullRequestUrl());
+            res.sendRedirect(savedRequest.getRedirectUrl());
             return null;
         } else {
             return super.onSubmit(req, res, command, errors);

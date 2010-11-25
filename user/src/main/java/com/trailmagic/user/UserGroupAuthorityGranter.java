@@ -19,7 +19,7 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.providers.jaas.AuthorityGranter;
+import org.springframework.security.authentication.jaas.AuthorityGranter;
 
 /**
  * Grants authorities based on the User's roles and the roles of the groups

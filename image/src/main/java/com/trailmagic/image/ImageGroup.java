@@ -157,7 +157,7 @@ public class ImageGroup implements Owned, AccessControlled {
         return frames;
     }
 
-    public void setFrames(SortedSet<ImageFrame> frames) {
+    private void setFrames(SortedSet<ImageFrame> frames) {
         this.frames = frames;
     }
 

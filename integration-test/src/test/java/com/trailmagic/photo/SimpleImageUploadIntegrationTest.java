@@ -140,10 +140,11 @@ public class SimpleImageUploadIntegrationTest {
         Map<String, String> paramMap = new HashMap<String, String>();
         paramMap.put("j_username", "tester");
         paramMap.put("j_password", "password");
-        webserviceClient.post(HOST_PORT_URL + "/photo/rolls/", paramMap);
+        webserviceClient.get(HOST_PORT_URL + "/photo/rolls/", new NoOpEntityContentProcessor());
         final WebResponse response = webserviceClient.post("https://localhost:8443/photo/j_spring_security_check", paramMap);
         assertEquals(302, response.getStatusCode());
         assertFalse(response.isRedirected());
+        assertFalse(response.getFinalUrl().contains("login"));
 
     }
 
@@ -151,4 +152,10 @@ public class SimpleImageUploadIntegrationTest {
         return IOUtils.contentEquals(new FileReader(file), reader);
     }
 
+    private static class NoOpEntityContentProcessor implements EntityContentProcessor<Object> {
+        @Override
+        public Object process(Reader content) throws Exception {
+            return null;
+        }
+    }
 }

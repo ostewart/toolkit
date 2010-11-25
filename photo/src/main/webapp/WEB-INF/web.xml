@@ -45,30 +45,16 @@
   (not sure if I actually need this)
   -->  
   <listener>
-    <listener-class>org.springframework.security.ui.session.HttpSessionEventPublisher</listener-class>
+    <listener-class>org.springframework.security.web.session.HttpSessionEventPublisher</listener-class>
   </listener>
-<!-- 
-  <filter>
-    <filter-name>Session Request Binder</filter-name>
-    <filter-class>org.springframework.orm.hibernate3.support.OpenSessionInViewFilter</filter-class>
-  </filter>
 
-  <filter-mapping>
-    <filter-name>Session Request Binder</filter-name>
-    <servlet-name>images</servlet-name>
-  </filter-mapping>
--->
   <filter>
-    <filter-name>Spring Security Filter Chain Proxy</filter-name>
-    <filter-class>org.springframework.security.util.FilterToBeanProxy</filter-class>
-    <init-param>
-      <param-name>targetBean</param-name>
-      <param-value>filterChainProxy</param-value>
-    </init-param>
+    <filter-name>springSecurityFilterChain</filter-name>
+    <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
   </filter>
   
   <filter-mapping>
-    <filter-name>Spring Security Filter Chain Proxy</filter-name>
+    <filter-name>springSecurityFilterChain</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
 

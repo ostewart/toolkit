@@ -5,7 +5,7 @@ import com.trailmagic.image.Photo;
 import com.trailmagic.image.Image;
 import com.trailmagic.image.ImageFrame;
 import junit.framework.TestCase;
-import org.springframework.security.acls.objectidentity.ObjectIdentityImpl;
+import org.springframework.security.acls.domain.ObjectIdentityImpl;
 
 public class AnnotatedObjectIdentityRetrievalStrategyTest extends TestCase {
     private static final long ID = 1L;
@@ -76,6 +76,7 @@ public class AnnotatedObjectIdentityRetrievalStrategyTest extends TestCase {
 
     }
 
+    @SuppressWarnings({"UnusedDeclaration"})
     public class ProxiedIdentityThing {
         private long id = ID;
         @IdentityProxy

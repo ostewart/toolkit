@@ -27,7 +27,6 @@
 
     <bean id="userFactory"
           class="com.trailmagic.user.hibernate.HibernateUserRepository">
-        <property name="sessionFactory" ref="sessionFactory"/>
         <property name="hibernateTemplate" ref="hibernateTemplate"/>
     </bean>
 
@@ -36,8 +35,7 @@
         <property name="hibernateTemplate" ref="hibernateTemplate"/>
     </bean>
 
-    <bean id="hibernateUserDetailsService"
-          class="com.trailmagic.user.security.HibernateUserDetailsService">
+    <bean id="hibernateUserDetailsService" class="com.trailmagic.user.security.HibernateUserDetailsService">
         <property name="userFactory">
             <ref local="userFactory"/>
         </property>

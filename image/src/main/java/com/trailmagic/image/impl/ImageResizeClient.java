@@ -2,7 +2,7 @@ package com.trailmagic.image.impl;
 
 import com.trailmagic.image.Image;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.security.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContext;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import com.trailmagic.image.ImageGroup;
-import org.springframework.security.util.PortResolverImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -14,7 +13,7 @@ public class WebRequestToolsTest {
     
     @Before
     public void setUp() {
-        webRequestTools = new WebRequestTools(new PortResolverImpl());
+        webRequestTools = new WebRequestTools();
     }
     
     @Test(expected=MalformedUrlException.class)

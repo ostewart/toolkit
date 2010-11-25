@@ -14,27 +14,31 @@
 package com.trailmagic.user.security;
 
 import com.trailmagic.user.User;
-import org.springframework.security.GrantedAuthority;
-import org.springframework.security.userdetails.UserDetails;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
 public class ToolkitUserDetails implements UserDetails {
     private User user;
-    private GrantedAuthority[] grantedAuthorities;
+    private Collection<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
 
     public ToolkitUserDetails(User realUser) {
-        this(realUser, new GrantedAuthority[] {});
+        this(realUser, Collections.<GrantedAuthority>emptyList());
     }
-    
-    public ToolkitUserDetails(User realUser,
-                              GrantedAuthority[] grantedAuthorities) {
+
+    public ToolkitUserDetails(User realUser, Collection<GrantedAuthority> grantedAuthorities) {
         this.user = realUser;
-        this.grantedAuthorities = grantedAuthorities;
+        this.grantedAuthorities.addAll(grantedAuthorities);
     }
 
     /**
      * Returns the toolkit <code>User</code> object.
+     *
      * @return <code>User</code> object backing this <code>UserDetails</code>.
-     **/
+     */
     public User getRealUser() {
         return this.user;
     }
@@ -70,7 +74,7 @@ public class ToolkitUserDetails implements UserDetails {
      *
      * @return the authorities (never <code>null</code>)
      */
-    public GrantedAuthority[] getAuthorities() {
+    public Collection<GrantedAuthority> getAuthorities() {
         return this.grantedAuthorities;
     }
 
@@ -118,7 +122,7 @@ public class ToolkitUserDetails implements UserDetails {
     public String getUsername() {
         return this.user.getScreenName();
     }
-    
+
     public String toString() {
         return "ToolkitUserDetails {username: " + getUsername() + "}";
     }

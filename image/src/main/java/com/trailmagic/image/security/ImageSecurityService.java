@@ -14,28 +14,40 @@
 package com.trailmagic.image.security;
 
 import com.trailmagic.image.Image;
-import com.trailmagic.image.ImageFrame;
 import com.trailmagic.image.ImageGroup;
-import com.trailmagic.image.ImageManifestation;
 import com.trailmagic.user.User;
-import org.springframework.security.acls.Permission;
+import org.springframework.security.acls.model.Permission;
 
 import java.util.Set;
 
 public interface ImageSecurityService {
     public void addOwnerAcl(Image image);
+
     public void addOwnerAcl(ImageGroup group);
+
     public void makePublic(AccessControlled obj);
+
     public void makePrivate(AccessControlled obj);
+
     public void makeImagesPublic(ImageGroup group);
+
     public void makeImagesPrivate(ImageGroup group);
+
     public void addReadPermission(Object obj, User recipient);
+
     public void addReadPermission(Object obj, String recipientRole);
+
     public void addPermission(Object obj, String recipientRole, Permission permission);
+
     public void addPermissions(Object obj, User recipient, Set<Permission> permissions);
+
     public boolean isPublic(Object obj);
+
     public boolean isReadableByUser(Object target, User recipient);
+
     public boolean isAvailableToUser(Object target, User recipient, Permission permission);
+
     public boolean isReadableByRole(Object target, String role);
+
     public boolean isAvailableToRole(Object target, String role, Permission permission);
 }

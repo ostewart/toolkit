@@ -1,8 +1,8 @@
 package com.trailmagic.image.security;
 
-import org.springframework.security.acls.objectidentity.ObjectIdentityRetrievalStrategy;
-import org.springframework.security.acls.objectidentity.ObjectIdentity;
-import org.springframework.security.acls.objectidentity.ObjectIdentityImpl;
+import org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy;
+import org.springframework.security.acls.model.ObjectIdentity;
+import org.springframework.security.acls.domain.ObjectIdentityImpl;
 import org.springframework.util.ClassUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 

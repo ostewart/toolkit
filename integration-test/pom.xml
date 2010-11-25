@@ -91,7 +91,7 @@
                       <home>${project.build.directory}/tomcat6x</home>
                       <properties>
                           <cargo.servlet.port>8081</cargo.servlet.port>
-                          <cargo.jvmargs>-javaagent:${settings.localRepository}/org/aspectj/aspectjweaver/1.6.2/aspectjweaver-1.6.2.jar</cargo.jvmargs>
+                          <cargo.jvmargs>-javaagent:${settings.localRepository}/org/aspectj/aspectjweaver/1.6.10/aspectjweaver-1.6.10.jar</cargo.jvmargs>
                       </properties>
                       <deployables>
                           <deployable>

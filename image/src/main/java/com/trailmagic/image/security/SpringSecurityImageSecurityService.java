@@ -21,22 +21,16 @@ import com.trailmagic.user.Owned;
 import com.trailmagic.user.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.acls.AccessControlEntry;
-import org.springframework.security.acls.Acl;
-import org.springframework.security.acls.MutableAcl;
-import org.springframework.security.acls.MutableAclService;
-import org.springframework.security.acls.NotFoundException;
-import org.springframework.security.acls.Permission;
 import org.springframework.security.acls.domain.BasePermission;
-import org.springframework.security.acls.objectidentity.ObjectIdentity;
-import org.springframework.security.acls.objectidentity.ObjectIdentityRetrievalStrategy;
-import org.springframework.security.acls.sid.GrantedAuthoritySid;
-import org.springframework.security.acls.sid.PrincipalSid;
-import org.springframework.security.acls.sid.Sid;
+import org.springframework.security.acls.domain.GrantedAuthoritySid;
+import org.springframework.security.acls.domain.PrincipalSid;
+import org.springframework.security.acls.model.*;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Transactional
@@ -106,7 +100,7 @@ public class SpringSecurityImageSecurityService implements ImageSecurityService 
             final ObjectIdentity parentIdentity = identityRetrievalStrategy.getObjectIdentity(parent);
             if (parentIdentity != null) {
                 try {
-                    final Acl parentAcl = aclService.readAclById(parentIdentity, new Sid[]{ownerSid});
+                    final Acl parentAcl = aclService.readAclById(parentIdentity, Arrays.asList(ownerSid));
                     acl.setParent(parentAcl);
                 } catch (NotFoundException e) {
                     // don't care
@@ -150,10 +144,10 @@ public class SpringSecurityImageSecurityService implements ImageSecurityService 
     }
 
     private boolean isGranted(Object target, Sid recipient, Permission permission) {
-        Sid[] sids = new Sid[]{recipient};
+        List<Sid> sids = Arrays.asList(recipient);
         try {
             final Acl acl = aclService.readAclById(identityRetrievalStrategy.getObjectIdentity(target), sids);
-            return acl != null && acl.isGranted(new Permission[]{permission}, sids, false);
+            return acl != null && acl.isGranted(Arrays.asList(permission), sids, false);
         } catch (NotFoundException e) {
             return false;
         }
@@ -218,7 +212,7 @@ public class SpringSecurityImageSecurityService implements ImageSecurityService 
         permsToAdd.addAll(newPermissions);
         permsToAdd.removeAll(existingPermissions);
         for (Permission perm : permsToAdd) {
-            acl.insertAce(acl.getEntries().length, perm, recipient, true);
+            acl.insertAce(acl.getEntries().size(), perm, recipient, true);
             if (log.isDebugEnabled()) {
                 log.debug("Added ACE for permission " + perm + ", recipient " + recipient + ", on object " + acl.getObjectIdentity());
             }
@@ -238,9 +232,9 @@ public class SpringSecurityImageSecurityService implements ImageSecurityService 
     }
 
     private int indexOf(Sid recipient, Permission permission, MutableAcl acl) {
-        final AccessControlEntry[] entries = acl.getEntries();
-        for (int i = 0; i < entries.length; i++) {
-            final AccessControlEntry entry = entries[i];
+        final List<AccessControlEntry> entries = acl.getEntries();
+        for (int i = 0; i < entries.size(); i++) {
+            final AccessControlEntry entry = entries.get(i);
             if (entry.getSid().equals(recipient) && permission.equals(entry.getPermission())) {
                 return i;
             }
@@ -250,7 +244,7 @@ public class SpringSecurityImageSecurityService implements ImageSecurityService 
 
     private MutableAcl findAcl(Object obj, Sid sid) {
         final ObjectIdentity identity = identityRetrievalStrategy.getObjectIdentity(obj);
-        return (MutableAcl) aclService.readAclById(identity, new Sid[]{sid});
+        return (MutableAcl) aclService.readAclById(identity, Arrays.asList(sid));
     }
 
     public void makePrivate(AccessControlled obj) {

@@ -1,18 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!--
- Copyright (c) 2006 Oliver Stewart.  All Rights Reserved.
-
- This file is free software; you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation; either version 2, or (at your option)
- any later version.
-
- This file is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
--->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:tx="http://www.springframework.org/schema/tx"
@@ -20,6 +7,7 @@
        xmlns:p="http://www.springframework.org/schema/p"
        xmlns:util="http://www.springframework.org/schema/util"
        xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:security="http://www.springframework.org/schema/security"       
        xsi:schemaLocation="http://www.springframework.org/schema/beans
   http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
   http://www.springframework.org/schema/aop
@@ -27,40 +15,25 @@
   http://www.springframework.org/schema/tx
   http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
   http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+  http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.4.xsd
   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <bean id="authenticationManager" class="org.springframework.security.providers.ProviderManager">
-        <property name="providers">
-            <list>
-                <!--        <ref local="jaasAuthenticationProvider"/>-->
-                <ref local="daoAuthenticationProvider"/>
-                <ref local="anonymousAuthenticationProvider"/>
-                <ref local="rememberMeAuthenticationProvider"/>
-            </list>
-        </property>
-    </bean>
+    <security:global-method-security secured-annotations="enabled" access-decision-manager-ref="imageAccessDecisionManager"/>
+
+    <security:authentication-manager alias="authenticationManager">
+        <security:authentication-provider ref="daoAuthenticationProvider"/>
+    </security:authentication-manager>
 
     <bean id="daoAuthenticationProvider"
-          class="org.springframework.security.providers.dao.DaoAuthenticationProvider">
+          class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
         <property name="userDetailsService" ref="hibernateUserDetailsService"/>
         <property name="passwordEncoder" ref="passwordEncoder"/>
     </bean>
 
     <bean id="passwordEncoder"
-          class="org.springframework.security.providers.encoding.Md5PasswordEncoder">
+          class="org.springframework.security.authentication.encoding.Md5PasswordEncoder">
     </bean>
 
-
-    <bean id="anonymousAuthenticationProvider"
-          class="org.springframework.security.providers.anonymous.AnonymousAuthenticationProvider">
-        <property name="key" value="foobar"/>
-    </bean>
-
-    <bean id="rememberMeAuthenticationProvider"
-          class="org.springframework.security.providers.rememberme.RememberMeAuthenticationProvider">
-        <property name="key" value="springRocks"/>
-    </bean>
-    
     <bean id="aclService" class="org.springframework.security.acls.jdbc.JdbcMutableAclService">
         <constructor-arg ref="dataSource"/>
         <constructor-arg ref="basicLookupStrategy"/>
@@ -89,31 +62,24 @@
     <bean id="auditLogger" class="com.trailmagic.image.security.Log4jAuditLogger"/>
 
     <!--suppress SpringBeanNameConventionInspection -->
-    <bean id="ROLE_ACL_GENERAL_CHANGES" class="org.springframework.security.GrantedAuthorityImpl">
+    <bean id="ROLE_ACL_GENERAL_CHANGES" class="org.springframework.security.core.authority.GrantedAuthorityImpl">
         <constructor-arg value="ROLE_ACL_GENERAL_CHANGES"/>
     </bean>
     <!--suppress SpringBeanNameConventionInspection -->
-    <bean id="ROLE_ACL_TAKE_OWNERSHIP" class="org.springframework.security.GrantedAuthorityImpl">
+    <bean id="ROLE_ACL_TAKE_OWNERSHIP" class="org.springframework.security.core.authority.GrantedAuthorityImpl">
         <constructor-arg value="ROLE_ACL_TAKE_OWNERSHIP"/>
     </bean>
     <!--suppress SpringBeanNameConventionInspection -->
-    <bean id="ROLE_ACL_MODIFY_AUDITING" class="org.springframework.security.GrantedAuthorityImpl">
+    <bean id="ROLE_ACL_MODIFY_AUDITING" class="org.springframework.security.core.authority.GrantedAuthorityImpl">
         <constructor-arg value="ROLE_ACL_MODIFY_AUDITING"/>
     </bean>
 
-    <bean id="aclCache" class="org.springframework.security.acls.jdbc.EhCacheBasedAclCache">
+    <bean id="aclCache" class="org.springframework.security.acls.domain.EhCacheBasedAclCache">
         <constructor-arg ref="aclCacheBackend"/>
     </bean>
 
-
-    <bean id="messageSource"
-          class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
-        <property name="basename" value="org/springframework/security/messages"/>
-    </bean>
-
-
     <!-- An access decision voter that reads ROLE_* configuration settings -->
-    <bean id="roleVoter" class="org.springframework.security.vote.RoleVoter"/>
+    <bean id="roleVoter" class="org.springframework.security.access.vote.RoleVoter"/>
 
 
     <util:constant id="ADMINISTRATION" static-field="org.springframework.security.acls.domain.BasePermission.ADMINISTRATION"/>
@@ -125,7 +91,7 @@
 
     <!-- An access decision voter for ACL_IMAGE_READ configuration settings -->
     <bean id="aclImageReadVoter"
-          class="org.springframework.security.vote.AclEntryVoter">
+          class="org.springframework.security.acls.AclEntryVoter">
         <constructor-arg ref="aclService"/>
         <constructor-arg value="ACL_IMAGE_READ"/>
         <constructor-arg>
@@ -138,7 +104,7 @@
         <property name="objectIdentityRetrievalStrategy" ref="objectIdentityRetrievalStrategy"/>
     </bean>
     <bean id="aclObjectAdminVoter"
-          class="org.springframework.security.vote.AclEntryVoter">
+          class="org.springframework.security.acls.AclEntryVoter">
         <constructor-arg ref="aclService"/>
         <constructor-arg value="ACL_OBJECT_ADMIN"/>
         <constructor-arg>
@@ -151,7 +117,7 @@
     </bean>
 
     <bean id="aclImageWriteVoter"
-          class="org.springframework.security.vote.AclEntryVoter">
+          class="org.springframework.security.acls.AclEntryVoter">
         <constructor-arg ref="aclService"/>
         <constructor-arg value="ACL_IMAGE_WRITE"/>
         <constructor-arg>
@@ -163,7 +129,7 @@
         <property name="objectIdentityRetrievalStrategy" ref="objectIdentityRetrievalStrategy"/>
     </bean>
     <bean id="aclImageDeleteVoter"
-          class="org.springframework.security.vote.AclEntryVoter">
+          class="org.springframework.security.acls.AclEntryVoter">
         <constructor-arg ref="aclService"/>
         <constructor-arg value="ACL_IMAGE_DELETE"/>
         <constructor-arg>
@@ -175,7 +141,7 @@
         <property name="objectIdentityRetrievalStrategy" ref="objectIdentityRetrievalStrategy"/>
     </bean>
     <bean id="aclImageAdminVoter"
-          class="org.springframework.security.vote.AclEntryVoter">
+          class="org.springframework.security.acls.AclEntryVoter">
         <constructor-arg ref="aclService"/>
         <constructor-arg value="ACL_IMAGE_ADMIN"/>
         <constructor-arg>
@@ -188,8 +154,7 @@
     </bean>
 
 
-    <bean id="imageAccessDecisionManager"
-          class="org.springframework.security.vote.AffirmativeBased">
+    <bean id="imageAccessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
         <property name="allowIfAllAbstainDecisions" value="true"/>
         <property name="decisionVoters">
             <list>
@@ -203,7 +168,7 @@
     </bean>
 
     <bean id="imageFactorySecurity"
-          class="org.springframework.security.intercept.method.aopalliance.MethodSecurityInterceptor">
+          class="org.springframework.security.access.intercept.aopalliance.MethodSecurityInterceptor">
         <property name="validateConfigAttributes" value="true"/>
         <property name="authenticationManager" ref="authenticationManager"/>
         <property name="accessDecisionManager">
@@ -212,7 +177,7 @@
         <property name="afterInvocationManager">
             <ref local="afterInvocationManager"/>
         </property>
-        <property name="objectDefinitionSource">
+        <property name="securityMetadataSource">
             <value>
                 com.trailmagic.image.ImageRepository.getById=AFTER_ACL_READ
                 com.trailmagic.image.ImageRepository.getAll=AFTER_ACL_COLLECTION_READ
@@ -240,7 +205,7 @@
           having to explicitly proxy
     -->
     <bean id="methodDefinitionSourceAdvisor"
-          class="org.springframework.security.intercept.method.aopalliance.MethodDefinitionSourceAdvisor">
+          class="org.springframework.security.access.intercept.aopalliance.MethodSecurityMetadataSourceAdvisor">
         <constructor-arg ref="imageFactorySecurity"/>
     </bean>
 
@@ -267,12 +232,12 @@
     </bean>
 
     <bean id="imageAspectSecurity"
-          class="org.springframework.security.intercept.method.aspectj.AspectJAnnotationSecurityInterceptor">
+          class="org.springframework.security.access.intercept.aspectj.AspectJMethodSecurityInterceptor">
         <property name="validateConfigAttributes" value="true"/>
         <property name="authenticationManager" ref="authenticationManager"/>
         <property name="accessDecisionManager" ref="imageAccessDecisionManager"/>
         <property name="afterInvocationManager" ref="afterInvocationManager"/>
-        <property name="objectDefinitionSource">
+        <property name="securityMetadataSource">
             <value>
                 com.trailmagic.image.ImageGroup.getPreviewImage=AFTER_ACL_READ
                 com.trailmagic.image.ImageGroup.getFrames=AFTER_ACL_COLLECTION_READ
@@ -281,26 +246,28 @@
         </property>
     </bean>
 
-    <bean id="imageInstanceSecurityAspect"
-          class="com.trailmagic.image.ImageSecurityAspect"
-          factory-method="aspectOf">
+    <!--suppress SpringBeanConstructorArgInspection -->
+    <!--suppress SpringModelInspection -->    
+    <bean id="imageInstanceSecurityAspect" class="com.trailmagic.image.ImageSecurityAspect" factory-method="aspectOf">
         <property name="securityInterceptor" ref="imageAspectSecurity"/>
     </bean>
 
     <!-- ======= "AFTER INTERCEPTION" AUTHORIZATION DEFINITIONS =========== -->
 
     <bean id="afterInvocationManager"
-          class="org.springframework.security.afterinvocation.AfterInvocationProviderManager">
+          class="org.springframework.security.access.intercept.AfterInvocationProviderManager">
         <property name="providers">
             <list>
+                <!--suppress InjectionValueTypeInspection -->
                 <ref local="afterAclRead"/>
+                <!--suppress InjectionValueTypeInspection -->
                 <ref local="afterAclCollectionRead"/>
             </list>
         </property>
     </bean>
 
     <!-- Processes AFTER_ACL_COLLECTION_READ configuration settings -->
-    <bean id="afterAclCollectionRead" class="org.springframework.security.afterinvocation.AclEntryAfterInvocationCollectionFilteringProvider">
+    <bean id="afterAclCollectionRead" class="org.springframework.security.acls.afterinvocation.AclEntryAfterInvocationCollectionFilteringProvider">
         <constructor-arg ref="aclService"/>
         <constructor-arg>
             <list>
@@ -312,7 +279,7 @@
     </bean>
 
     <!-- Processes AFTER_ACL_READ configuration settings -->
-    <bean id="afterAclRead" class="org.springframework.security.afterinvocation.AclEntryAfterInvocationProvider">
+    <bean id="afterAclRead" class="org.springframework.security.acls.afterinvocation.AclEntryAfterInvocationProvider">
         <constructor-arg ref="aclService"/>
         <constructor-arg>
             <list>
@@ -341,10 +308,8 @@
     </bean>
 
     <bean id="aclEntryCache"
-          class="org.springframework.security.acl.basic.cache.EhCacheBasedAclEntryCache">
-        <property name="cache">
-            <ref local="aclCacheBackend"/>
-        </property>
+          class="org.springframework.security.acls.domain.EhCacheBasedAclCache">
+            <constructor-arg ref="aclCacheBackend"/>
     </bean>
 
     <bean id="objectIdentityRetrievalStrategy" class="com.trailmagic.image.security.AnnotatedObjectIdentityRetrievalStrategy"/>

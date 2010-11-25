@@ -18,46 +18,47 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.security.intercept.method.aspectj.AspectJAnnotationCallback;
-import org.springframework.security.intercept.method.aspectj.AspectJAnnotationSecurityInterceptor;
+import org.springframework.security.access.intercept.aspectj.AspectJMethodSecurityInterceptor;
 
 @Aspect
 public class ImageSecurityAspect implements InitializingBean {
-    private AspectJAnnotationSecurityInterceptor securityInterceptor;
+    private AspectJMethodSecurityInterceptor securityInterceptor;
 
     @Pointcut(value = "target(g) && call(public java.util.SortedSet<ImageFrame> getFrames())", argNames = "g")
     public void getFrames(ImageGroup g) {
     }
 
     @Pointcut("!within(ImageSecurityAspect) " +
-            "        && !cflow(within(com.trailmagic.image.hibernate.*)) " +
-            "        && !cflow(call(* com.trailmagic.image.security.ImageSecurityService.addOwnerAcl(..))) " +
-            "        && ((execution(public Image *(..)) && target(ImageGroup)) " +
-            "            || (target(ImageGroup) && execution(public java.util.SortedSet<ImageFrame> *(..))) " +
-            "            || (target(Image) && execution(public java.util.SortedSet<ImageManifestation> *(..))))")
+              "        && !cflow(within(com.trailmagic.image.hibernate.*)) " +
+              "        && !cflow(call(* com.trailmagic.image.security.ImageSecurityService.addOwnerAcl(..))) " +
+              "        && ((execution(public Image *(..)) && target(ImageGroup)) " +
+              "            || (target(ImageGroup) && execution(public java.util.SortedSet<ImageFrame> *(..))) " +
+              "            || (target(Image) && execution(public java.util.SortedSet<ImageManifestation> *(..))))")
     public void springAdvised() {
     }
 
     @Around("springAdvised()")
     public Object around(final ProceedingJoinPoint thisJoinPoint) throws Throwable {
         if (securityInterceptor != null) {
-            AspectJAnnotationCallback callback = new AspectJAnnotationCallback() {
-                public Object proceedWithObject() throws Throwable {
-                    return thisJoinPoint.proceed();
+            /** Hack to get around the AroundClosure not getting defined unless we call proceed here **/
+            new Runnable(){
+                @Override
+                public void run() {
+                    try {
+                        thisJoinPoint.proceed();
+                    } catch (Throwable throwable) {
+                        throwable.printStackTrace();
+                    }
                 }
             };
-            return securityInterceptor.invoke(thisJoinPoint, callback);
+            return securityInterceptor.invoke(thisJoinPoint);
         } else {
             throw new IllegalStateException("null security interceptor");
         }
 
     }
 
-    public AspectJAnnotationSecurityInterceptor getSecurityInterceptor() {
-        return securityInterceptor;
-    }
-
-    public void setSecurityInterceptor(AspectJAnnotationSecurityInterceptor securityInterceptor) {
+    public void setSecurityInterceptor(AspectJMethodSecurityInterceptor securityInterceptor) {
         this.securityInterceptor = securityInterceptor;
     }
 

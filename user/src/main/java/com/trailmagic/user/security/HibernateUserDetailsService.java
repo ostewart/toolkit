@@ -17,17 +17,16 @@ import com.trailmagic.user.Group;
 import com.trailmagic.user.GroupFactory;
 import com.trailmagic.user.User;
 import com.trailmagic.user.UserRepository;
+import org.springframework.dao.DataAccessException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.GrantedAuthorityImpl;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import org.springframework.security.GrantedAuthority;
-import org.springframework.security.GrantedAuthorityImpl;
-import org.springframework.security.providers.dao.DaoAuthenticationProvider;
-import org.springframework.security.userdetails.UserDetails;
-import org.springframework.security.userdetails.UserDetailsService;
-import org.springframework.security.userdetails.UsernameNotFoundException;
-import org.springframework.dao.DataAccessException;
 
 public class HibernateUserDetailsService implements UserDetailsService {
     private UserRepository userRepository;
@@ -49,23 +48,21 @@ public class HibernateUserDetailsService implements UserDetailsService {
      * username that is of a different case than what was actually requested..
      *
      * @param username the username presented to the {@link
-     *        DaoAuthenticationProvider}
-     *
+     *                 org.springframework.security.authentication.dao.DaoAuthenticationProvider}
      * @return a fully populated user record (never <code>null</code>)
-     *
      * @throws UsernameNotFoundException if the user could not be found or the
-     *         user has no GrantedAuthority
-     * @throws DataAccessException if user could not be found for a
-     *         repository-specific reason
+     *                                   user has no GrantedAuthority
+     * @throws DataAccessException       if user could not be found for a
+     *                                   repository-specific reason
      */
     public UserDetails loadUserByUsername(String username)
-        throws UsernameNotFoundException, DataAccessException {
+            throws UsernameNotFoundException, DataAccessException {
 
         User user = userRepository.getByScreenName(username);
         if (user == null) {
             throw new UsernameNotFoundException("No such user");
         }
-        
+
         List<Group> groups = m_groupFactory.getForUser(user);
         Collection<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
         for (Group group : groups) {
@@ -74,6 +71,6 @@ public class HibernateUserDetailsService implements UserDetailsService {
         authorities.add(new GrantedAuthorityImpl("ROLE_USER"));
         authorities.add(new GrantedAuthorityImpl(user.getScreenName()));
 
-        return new ToolkitUserDetails(user, authorities.toArray(new GrantedAuthority[authorities.size()]));
+        return new ToolkitUserDetails(user, authorities);
     }
 }

@@ -13,33 +13,32 @@
  */
 package com.trailmagic.image.ui;
 
+import org.springframework.security.web.WebAttributes;
+import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
+import org.springframework.security.web.savedrequest.SavedRequest;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.AbstractController;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import org.springframework.security.ui.AbstractProcessingFilter;
-import org.springframework.security.ui.rememberme.TokenBasedRememberMeServices;
-import org.springframework.security.ui.savedrequest.SavedRequest;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractController;
 
 public class LogoutController extends AbstractController {
     public ModelAndView handleRequestInternal(HttpServletRequest req,
                                               HttpServletResponse res)
-        throws Exception {
+            throws Exception {
 
         HttpSession session = req.getSession(false);
-        SavedRequest savedRequest =
-            (SavedRequest) session.getAttribute(AbstractProcessingFilter.SPRING_SECURITY_SAVED_REQUEST_KEY);
+        SavedRequest savedRequest = (SavedRequest) session.getAttribute(WebAttributes.SAVED_REQUEST);
         session.invalidate();
-        Cookie terminate =
-            new Cookie(TokenBasedRememberMeServices.SPRING_SECURITY_REMEMBER_ME_COOKIE_KEY, null);
+        Cookie terminate = new Cookie(TokenBasedRememberMeServices.SPRING_SECURITY_REMEMBER_ME_COOKIE_KEY, null);
         terminate.setMaxAge(0);
         res.addCookie(terminate);
 
 
         if (savedRequest != null) {
-            res.sendRedirect(savedRequest.getFullRequestUrl());
+            res.sendRedirect(savedRequest.getRedirectUrl());
         } else {
             res.sendRedirect("/photo/albums/");
         }

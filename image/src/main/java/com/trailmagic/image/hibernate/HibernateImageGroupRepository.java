@@ -58,11 +58,11 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
     private static final String ALL_GROUPS_QUERY =
         "allImageGroups";
 
-    private SessionFactory m_sessionFactory;
+    private SessionFactory sessionFactory;
     private HibernateTemplate m_hibernateTemplate;
 
     public void setSessionFactory(SessionFactory sf) {
-        m_sessionFactory = sf;
+        sessionFactory = sf;
     }
 
     public void setHibernateTemplate(HibernateTemplate template) {
@@ -72,7 +72,7 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
     public ImageGroup getAlbumByOwnerAndName(User owner, String albumName) {
         try {
             Session session =
-                SessionFactoryUtils.getSession(m_sessionFactory, false);
+                SessionFactoryUtils.getSession(sessionFactory, false);
             Query qry = session.getNamedQuery(ALBUM_BY_OWNER_AND_NAME_QRY);
             qry.setEntity("owner", owner);
             qry.setString("albumName", albumName);
@@ -86,8 +86,7 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
 
     public ImageGroup getRollByOwnerAndName(User owner, String rollName) {
         try {
-            Session session =
-                SessionFactoryUtils.getSession(m_sessionFactory, false);
+            Session session = SessionFactoryUtils.getSession(sessionFactory, false);
             Query qry = session.getNamedQuery(ROLL_BY_OWNER_AND_NAME_QRY);
             qry.setEntity("owner", owner);
             qry.setString("rollName", rollName);
@@ -120,7 +119,7 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
     public List<ImageGroup> getAlbumsByOwnerScreenName(String screenName) {
         try {
             Session session =
-                SessionFactoryUtils.getSession(m_sessionFactory, false);
+                SessionFactoryUtils.getSession(sessionFactory, false);
             Query qry = session.getNamedQuery(ALBUMS_BY_OWNER_NAME_QRY);
             qry.setString("screenName", screenName);
             qry.setCacheable(true);
@@ -133,7 +132,7 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
     public List<ImageGroup> getRollsByOwnerScreenName(String screenName) {
         try {
             Session session =
-                SessionFactoryUtils.getSession(m_sessionFactory, false);
+                SessionFactoryUtils.getSession(sessionFactory, false);
             Query qry = session.getNamedQuery(ROLLS_BY_OWNER_NAME_QRY);
             qry.setCacheable(true);
             qry.setString("screenName", screenName);
@@ -146,7 +145,7 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
     public List<User> getOwnersByType(Type groupType) {
         try {
             Session session =
-                SessionFactoryUtils.getSession(m_sessionFactory, false);
+                SessionFactoryUtils.getSession(sessionFactory, false);
             Query qry = session.getNamedQuery(GROUP_OWNERS_QRY);
             qry.setString("groupType", groupType.toString());
             qry.setCacheable(true);
@@ -160,7 +159,7 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
                                                         Type groupType) {
         try {
             Session session =
-                SessionFactoryUtils.getSession(m_sessionFactory, false);
+                SessionFactoryUtils.getSession(sessionFactory, false);
             Query qry = session.getNamedQuery(GROUPS_BY_OWNER_NAME_QRY);
             qry.setString("screenName", screenName);
             qry.setString("groupType", groupType.toString());
@@ -175,7 +174,7 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
                                                       Type groupType) {
         try {
             Session session =
-                SessionFactoryUtils.getSession(m_sessionFactory, false);
+                SessionFactoryUtils.getSession(sessionFactory, false);
             Query qry = session.getNamedQuery(GROUP_BY_OWNER_NAME_TYPE_QRY);
             qry.setEntity("owner", owner);
             qry.setString("groupName", groupName);
@@ -195,7 +194,7 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
     public List<ImageGroup> getByImage(Image image) {
         try {
             Session session =
-                SessionFactoryUtils.getSession(m_sessionFactory, false);
+                SessionFactoryUtils.getSession(sessionFactory, false);
             Query qry = session.getNamedQuery(GROUPS_BY_IMAGE_QRY);
             qry.setEntity("image", image);
             qry.setCacheable(true);
@@ -209,7 +208,7 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
         // images should always only be in one roll
         try {
             Session session =
-                SessionFactoryUtils.getSession(m_sessionFactory, false);
+                SessionFactoryUtils.getSession(sessionFactory, false);
             Query qry = session.getNamedQuery(ROLL_FOR_IMAGE_QRY);
             qry.setEntity("image", image);
             qry.setCacheable(true);
@@ -227,7 +226,7 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
     public ImageGroup getById(long id) {
         try {
             Session session =
-                SessionFactoryUtils.getSession(m_sessionFactory, false);
+                SessionFactoryUtils.getSession(sessionFactory, false);
 
             return (ImageGroup)session.get(ImageGroup.class, id);
         } catch (HibernateException e) {

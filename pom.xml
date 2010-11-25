@@ -35,7 +35,7 @@
                 <configuration>
                     <!--<forkMode>pertest</forkMode>-->
                     <argLine>
-                        -javaagent:${settings.localRepository}/org/aspectj/aspectjweaver/1.6.2/aspectjweaver-1.6.2.jar
+                        -javaagent:${settings.localRepository}/org/aspectj/aspectjweaver/1.6.10/aspectjweaver-1.6.10.jar
                     </argLine>
                     <!--  -javaagent:${settings.localRepository}/org/terracotta/hibernate/terracotta-hibernate-agent/1.1.0/terracotta-hibernate-agent-1.1.0.jar -->
                 </configuration>
@@ -82,6 +82,11 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>com.trailmagic</groupId>
+                <artifactId>common</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
             <dependency>
                 <groupId>commons-dbcp</groupId>
                 <artifactId>commons-dbcp</artifactId>
@@ -146,12 +151,12 @@
             <dependency>
                 <groupId>org.aspectj</groupId>
                 <artifactId>aspectjrt</artifactId>
-                <version>1.6.2</version>
+                <version>1.6.10</version>
             </dependency>
             <dependency>
                 <groupId>org.aspectj</groupId>
                 <artifactId>aspectjweaver</artifactId>
-                <version>1.6.2</version>
+                <version>1.6.10</version>
             </dependency>
             <dependency>
                 <groupId>org.mockito</groupId>
@@ -173,7 +178,7 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-context</artifactId>
-                <version>3.0.1.RELEASE</version>
+                <version>3.0.4.RELEASE</version>
                 <exclusions>
                     <exclusion>
                         <groupId>commons-logging</groupId>
@@ -184,32 +189,32 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-context-support</artifactId>
-                <version>3.0.1.RELEASE</version>
+                <version>3.0.5.RELEASE</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-orm</artifactId>
-                <version>3.0.1.RELEASE</version>
+                <version>3.0.5.RELEASE</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-tx</artifactId>
-                <version>3.0.1.RELEASE</version>
+                <version>3.0.5.RELEASE</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-web</artifactId>
-                <version>3.0.1.RELEASE</version>
+                <version>3.0.5.RELEASE</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-webmvc</artifactId>
-                <version>3.0.1.RELEASE</version>
+                <version>3.0.5.RELEASE</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-aop</artifactId>
-                <version>3.0.1.RELEASE</version>
+                <version>3.0.5.RELEASE</version>
             </dependency>
             <dependency>
                 <!-- for spring-aop -->
@@ -221,13 +226,13 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-test</artifactId>
-                <version>3.0.1.RELEASE</version>
+                <version>3.0.5.RELEASE</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-beans</artifactId>
-                <version>3.0.1.RELEASE</version>
+                <version>3.0.5.RELEASE</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -242,8 +247,8 @@
             </dependency>
             <dependency>
                 <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-core-tiger</artifactId>
-                <version>2.0.4</version>
+                <artifactId>spring-security-core</artifactId>
+                <version>3.0.5.RELEASE</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.springframework</groupId>
@@ -258,12 +263,22 @@
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-acl</artifactId>
-                <version>2.0.4</version>
+                <version>3.0.5.RELEASE</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-config</artifactId>
+                <version>3.0.5.RELEASE</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-web</artifactId>
+                <version>3.0.5.RELEASE</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-taglibs</artifactId>
-                <version>2.0.4</version>
+                <version>3.0.5.RELEASE</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.springframework</groupId>

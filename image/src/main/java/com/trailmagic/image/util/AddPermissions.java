@@ -17,7 +17,6 @@ import com.trailmagic.image.Image;
 import com.trailmagic.image.ImageFrame;
 import com.trailmagic.image.ImageGroup;
 import com.trailmagic.image.ImageGroupRepository;
-import com.trailmagic.image.ImageManifestation;
 import com.trailmagic.image.ImageRepository;
 import com.trailmagic.image.ImageService;
 import com.trailmagic.image.NoSuchImageGroupException;
@@ -25,30 +24,23 @@ import com.trailmagic.image.security.ImageSecurityService;
 import com.trailmagic.user.Group;
 import com.trailmagic.user.GroupFactory;
 import com.trailmagic.user.User;
-import com.trailmagic.user.UserRepository;
 import com.trailmagic.user.UserLoginModule;
-import org.slf4j.Logger;
+import com.trailmagic.user.UserRepository;
 import org.hibernate.Session;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
-import org.springframework.security.acls.Permission;
 import org.springframework.security.acls.domain.BasePermission;
+import org.springframework.security.acls.model.Permission;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Set;
-import java.util.StringTokenizer;
+import java.util.*;
 
 @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 public class AddPermissions {
@@ -114,7 +106,7 @@ public class AddPermissions {
                 User user = userRepository.getByScreenName(ownerName);
                 ImageGroup group =
                         imageGroupRepository.getAlbumByOwnerAndName(user,
-                                albumName);
+                                                                    albumName);
                 imageSecurityService.addOwnerAcl(group);
                 for (ImageFrame frame : group.getFrames()) {
                     Image image = frame.getImage();
@@ -193,10 +185,10 @@ public class AddPermissions {
                 try {
                     String sname = st.nextToken();
                     addUserAccount(sname,
-                            st.nextToken(),
-                            st.nextToken(),
-                            st.nextToken(),
-                            st.nextToken());
+                                   st.nextToken(),
+                                   st.nextToken(),
+                                   st.nextToken(),
+                                   st.nextToken());
                     s_log.info("Added account: " + sname);
                 } catch (NoSuchElementException e) {
                     s_log.error("Invalid row:" + input);
@@ -216,10 +208,10 @@ public class AddPermissions {
         ClassPathXmlApplicationContext appContext =
                 new ClassPathXmlApplicationContext(new String[]
                         {"applicationContext-global.xml",
-                                "applicationContext-user.xml",
-                                "applicationContext-imagestore.xml",
-                                "applicationContext-imagestore-authorization.xml",
-                                "applicationContext-standalone.xml"});
+                         "applicationContext-user.xml",
+                         "applicationContext-imagestore.xml",
+                         "applicationContext-imagestore-authorization.xml",
+                         "applicationContext-standalone.xml"});
 
         // can't proxy becuase it's a class :(
         // refactoring to ImageService
@@ -253,8 +245,8 @@ public class AddPermissions {
             for (int i = 3; i < args.length; i++) {
                 try {
                     manager.makeImageGroupAndImagesPublic(args[1],
-                            ImageGroup.Type.fromString(args[2]),
-                            args[i]);
+                                                          ImageGroup.Type.fromString(args[2]),
+                                                          args[i]);
                 } catch (NoSuchImageGroupException e) {
                     s_log.error("Couldn't make group public:", e);
                 }

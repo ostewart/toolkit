@@ -8,15 +8,17 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.security.acls.MutableAcl;
-import org.springframework.security.acls.MutableAclService;
-import org.springframework.security.acls.NotFoundException;
-import org.springframework.security.acls.Permission;
 import org.springframework.security.acls.domain.BasePermission;
-import org.springframework.security.acls.objectidentity.ObjectIdentityImpl;
-import org.springframework.security.acls.objectidentity.ObjectIdentityRetrievalStrategy;
-import org.springframework.security.acls.sid.GrantedAuthoritySid;
-import org.springframework.security.acls.sid.Sid;
+import org.springframework.security.acls.domain.GrantedAuthoritySid;
+import org.springframework.security.acls.domain.ObjectIdentityImpl;
+import org.springframework.security.acls.model.MutableAcl;
+import org.springframework.security.acls.model.MutableAclService;
+import org.springframework.security.acls.model.NotFoundException;
+import org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy;
+import org.springframework.security.acls.model.Permission;
+import org.springframework.security.acls.model.Sid;
+
+import java.util.Arrays;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -62,8 +64,9 @@ public class SpringSecurityImageSecurityServiceTest {
         final GrantedAuthoritySid everyone = new GrantedAuthoritySid("ROLE_EVERYONE");
 
         publicAcl = Mockito.mock(MutableAcl.class);
-        Mockito.when(aclService.readAclById(identity, new Sid[]{everyone})).thenReturn(publicAcl);
-        Mockito.when(publicAcl.isGranted(new Permission[]{BasePermission.READ}, new Sid[]{everyone}, false)).thenThrow(new NotFoundException("not found"));
+        Mockito.when(aclService.readAclById(identity, Arrays.<Sid>asList(everyone))).thenReturn(publicAcl);
+        Mockito.when(publicAcl.isGranted(Arrays.<Permission>asList(BasePermission.READ), Arrays.<Sid>asList(everyone), false))
+                .thenThrow(new NotFoundException("not found"));
 
         assertFalse(service.isPublic(photo));
     }
@@ -76,7 +79,7 @@ public class SpringSecurityImageSecurityServiceTest {
         Mockito.when(identityRetrievalStrategy.getObjectIdentity(photo)).thenReturn(identity);
         final GrantedAuthoritySid everyone = new GrantedAuthoritySid("ROLE_EVERYONE");
 
-        Mockito.when(aclService.readAclById(identity, new Sid[]{everyone})).thenThrow(new NotFoundException("not found"));
+        Mockito.when(aclService.readAclById(identity, Arrays.<Sid>asList(everyone))).thenThrow(new NotFoundException("not found"));
 
         assertFalse(service.isPublic(photo));
     }
@@ -101,8 +104,8 @@ public class SpringSecurityImageSecurityServiceTest {
         final GrantedAuthoritySid everyone = new GrantedAuthoritySid("ROLE_EVERYONE");
 
         publicAcl = Mockito.mock(MutableAcl.class);
-        Mockito.when(aclService.readAclById(identity, new Sid[]{everyone})).thenReturn(publicAcl);
+        Mockito.when(aclService.readAclById(identity, Arrays.<Sid>asList(everyone))).thenReturn(publicAcl);
 
-        Mockito.when(publicAcl.isGranted(new Permission[]{BasePermission.READ}, new Sid[]{everyone}, false)).thenReturn(isPublic);
+        Mockito.when(publicAcl.isGranted(Arrays.<Permission>asList(BasePermission.READ), Arrays.<Sid>asList(everyone), false)).thenReturn(isPublic);
     }
 }

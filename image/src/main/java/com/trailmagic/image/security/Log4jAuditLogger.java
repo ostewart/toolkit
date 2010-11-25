@@ -2,9 +2,9 @@ package com.trailmagic.image.security;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.acls.AccessControlEntry;
-import org.springframework.security.acls.AuditableAccessControlEntry;
 import org.springframework.security.acls.domain.AuditLogger;
+import org.springframework.security.acls.model.AccessControlEntry;
+import org.springframework.security.acls.model.AuditableAccessControlEntry;
 
 public class Log4jAuditLogger implements AuditLogger {
     private static final Logger log = LoggerFactory.getLogger(Log4jAuditLogger.class);

@@ -25,24 +25,22 @@
   http://www.springframework.org/schema/tx
   http://www.springframework.org/schema/tx/spring-tx-2.0.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <bean id="portResolver" class="org.springframework.security.util.PortResolverImpl"/>
+    <bean id="portResolver" class="org.springframework.security.web.PortResolverImpl"/>
 
     <context:component-scan base-package="com.trailmagic.web"/>
     <context:component-scan base-package="com.trailmagic.image.ui"/>
 
-    <bean id="messageSource"
-          class="org.springframework.context.support.ResourceBundleMessageSource">
+    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
         <property name="basenames">
             <list>
                 <value>messages</value>
                 <value>com.trailmagic.image.ui.messages</value>
+                <value>org/springframework/security/messages</value>
             </list>
         </property>
     </bean>
 
-
-    <bean id="handlerMapping"
-          class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+    <bean id="handlerMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
         <property name="mappings">
             <props>
                 <prop key="/albums/**">imageGroupController</prop>
@@ -178,8 +176,8 @@
         <property name="successView" value="imageImportSuccess"/>
     </bean>
 
-    <bean id="imageAccessController"
-          class="com.trailmagic.image.ui.ImageAccessController">
+    <bean id="imageAccessController" class="com.trailmagic.image.ui.ImageAccessController">
+        <constructor-arg ref="requestCache"/>
         <property name="commandName" value="imageAccessBean"/>
         <property name="commandClass" value="com.trailmagic.image.ui.ImageAccessBean"/>
         <property name="formView" value="imageAccessForm"/>
@@ -194,35 +192,19 @@
         <property name="commandName" value="grantAccessBean"/>
         <property name="commandClass" value="com.trailmagic.image.ui.GrantAccessBean"/>
         <property name="formView" value="grantAccessForm"/>
-        <property name="successView">
-            <value>grantAccessSuccess</value>
-        </property>
-        <property name="imageRepository">
-            <ref bean="imageRepository"/>
-        </property>
-        <property name="imageGroupRepository">
-            <ref bean="imageGroupRepository"/>
-        </property>
-        <property name="imageSecurityService">
-            <ref bean="imageSecurityService"/>
-        </property>
+        <property name="successView" value="grantAccessSuccess"/>
+        <property name="imageRepository" ref="imageRepository"/>
+        <property name="imageGroupRepository" ref="imageGroupRepository"/>
+        <property name="imageSecurityService" ref="imageSecurityService"/>
         <property name="userFactory" ref="userFactory"/>
     </bean>
 
     <bean id="imageGroupAddForm"
           class="com.trailmagic.image.ui.ImageGroupAddForm">
-        <property name="commandName">
-            <value>imageGroup</value>
-        </property>
-        <property name="commandClass">
-            <value>com.trailmagic.image.ImageGroup</value>
-        </property>
-        <property name="formView">
-            <value>imageGroupAdd</value>
-        </property>
-        <property name="successView">
-            <value>imageGroupAddSuccess</value>
-        </property>
+        <property name="commandName" value="imageGroup"/>
+        <property name="commandClass" value="com.trailmagic.image.ImageGroup"/>
+        <property name="formView" value="imageGroupAdd"/>
+        <property name="successView" value="imageGroupAddSuccess"/>
         <property name="validateOnBinding" value="false"/>
         <property name="sessionFactory" ref="sessionFactory"/>
         <property name="userFactory" ref="userFactory"/>
@@ -260,4 +242,6 @@
         <property name="formView" value="imageDisplay"/>
         <property name="successView" value="imageDisplay"/>
     </bean>
+
+    <bean id="requestCache" class="org.springframework.security.web.savedrequest.HttpSessionRequestCache"/>
 </beans>
