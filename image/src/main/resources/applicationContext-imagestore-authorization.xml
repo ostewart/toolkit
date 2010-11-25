@@ -158,6 +158,7 @@
         <property name="allowIfAllAbstainDecisions" value="true"/>
         <property name="decisionVoters">
             <list>
+                <ref bean="roleVoter"/>
                 <ref bean="aclImageReadVoter"/>
                 <ref bean="aclImageDeleteVoter"/>
                 <ref bean="aclImageAdminVoter"/>

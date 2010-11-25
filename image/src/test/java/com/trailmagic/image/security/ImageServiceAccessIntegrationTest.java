@@ -9,12 +9,13 @@ import com.trailmagic.user.NoSuchUserException;
 import com.trailmagic.user.User;
 import com.trailmagic.user.UserRepository;
 import com.trailmagic.user.security.ToolkitUserDetails;
-import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
@@ -33,7 +34,7 @@ import java.util.Date;
                                    "classpath:applicationContext-imagestore.xml",
                                    "classpath:applicationContext-imagestore-authorization.xml"})
 @Transactional
-public class AccessControlIntegrationTest {
+public class ImageServiceAccessIntegrationTest {
     @Autowired
     private ImageSecurityService service;
     @Autowired
@@ -43,8 +44,9 @@ public class AccessControlIntegrationTest {
     private User testUser;
     @Autowired
     private ImageInitializer imageInitializer;
+    private static final ByteArrayInputStream EMPTY_INPUT_STREAM = new ByteArrayInputStream(new byte[]{});
 
-    @Test(expected = AuthenticationException.class)
+    @Test(expected = AccessDeniedException.class)
     public void testCreateDefaultImageFailsWithoutUser() throws IOException {
         setupNoAuthenticatedUser();
         imageService.createDefaultImage("foo.jpg");
@@ -56,16 +58,23 @@ public class AccessControlIntegrationTest {
         imageService.createDefaultImage("foo.jpg");
     }
 
-    @Test(expected = AuthenticationException.class)
+    @Test(expected = AccessDeniedException.class)
     public void testCreateImageAtPositionFailsWithoutUser() throws IOException {
         setupNoAuthenticatedUser();
-        imageService.createImageAtPosition("foo.jpg", new ByteArrayInputStream(new byte[]{}), 1);
+        imageService.createImageAtPosition("foo.jpg", EMPTY_INPUT_STREAM, 1);
     }
 
     @Test
     public void testCreateImageAtPositionSucceedsWithUser() throws IOException {
         setupAuthenticatedUser();
-        imageService.createImageAtPosition("foo.jpg", new ByteArrayInputStream(new byte[]{}), 1);
+        imageService.createImageAtPosition("foo.jpg", EMPTY_INPUT_STREAM, 1);
+    }
+
+    @Test(expected = AccessDeniedException.class)
+    public void testCreateManifestationsFailsWithoutUser() throws IOException {
+        setupNoAuthenticatedUser();
+        final Photo photo = makePhoto("foo.jpg", false);
+        imageService.createManifestations(photo, EMPTY_INPUT_STREAM);
     }
 
     private ImageFrame makeFrame(Photo photo, ImageGroup group, int position) {
@@ -83,13 +92,18 @@ public class AccessControlIntegrationTest {
         return group;
     }
 
-
     private Photo makePhoto(String name) {
+        return makePhoto(name, true);
+    }
+
+    private Photo makePhoto(String name, boolean saved) {
         final Photo photo = new Photo();
         photo.setName(name);
         photo.setOwner(testUser);
         photo.setDisplayName("test display");
-        imageInitializer.saveNewImage(photo);
+        if (saved) {
+            imageInitializer.saveNewImage(photo);
+        }
         return photo;
     }
 
@@ -109,12 +123,13 @@ public class AccessControlIntegrationTest {
 
         final UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(new ToolkitUserDetails(this.testUser), "password",
-                                                        Arrays.asList(new GrantedAuthorityImpl("ROLE_EVERYONE")));
+                                                        Arrays.asList(new GrantedAuthorityImpl("ROLE_USER")));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         return this.testUser;
     }
 
     private void setupNoAuthenticatedUser() {
-        SecurityContextHolder.getContext().setAuthentication(null);
+        SecurityContextHolder.getContext().setAuthentication(new AnonymousAuthenticationToken("key", "anonymousUser", Arrays.<GrantedAuthority>asList(new GrantedAuthorityImpl("ROLE_ANONYMOUS"))));
+
     }
 }

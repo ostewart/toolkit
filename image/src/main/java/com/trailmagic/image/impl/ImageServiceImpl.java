@@ -106,6 +106,7 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
+    @Secured("ROLE_USER")
     public void createManifestations(Photo photo, InputStream imageDataInputStream) throws IOException {
         imageResizeClient.createOriginalManifestation(photo, imageDataInputStream);
         imageResizeClient.createResizedManifestations(photo, SecurityContextHolder.getContext());
