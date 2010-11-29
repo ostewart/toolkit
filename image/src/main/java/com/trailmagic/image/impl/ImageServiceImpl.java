@@ -113,6 +113,7 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Transactional(readOnly = false)
+    @Secured("ROLE_USER")
     public Photo createImage(ImageMetadata imageData) throws IllegalStateException {
         Photo photo = new Photo();
         photo.setCaption(imageData.getCaption());
@@ -164,11 +165,13 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Transactional(readOnly = false)
+    @Secured("ROLE_USER")
     public ImageFrame addImageToGroup(Image image, ImageGroup group) {
         return addImageToGroup(image, group, group.nextFramePosition());
     }
 
     @Transactional(readOnly = false)
+    @Secured("ROLE_USER")
     public ImageFrame addImageToGroup(Image image, ImageGroup group, int position) {
         ImageFrame frame = new ImageFrame(image);
         frame.setPosition(position);
@@ -206,6 +209,7 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Transactional(readOnly = false)
+    @Secured("ROLE_USER")
     public void setImageGroupPreview(long imageGroupId, long imageId)
             throws NoSuchImageGroupException, NoSuchImageException {
         ImageGroup imageGroup = imageGroupRepository.loadById(imageGroupId);

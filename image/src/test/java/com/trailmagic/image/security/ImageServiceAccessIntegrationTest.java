@@ -2,6 +2,7 @@ package com.trailmagic.image.security;
 
 import com.trailmagic.image.ImageFrame;
 import com.trailmagic.image.ImageGroup;
+import com.trailmagic.image.ImageMetadata;
 import com.trailmagic.image.ImageService;
 import com.trailmagic.image.Photo;
 import com.trailmagic.image.impl.ImageInitializer;
@@ -52,6 +53,12 @@ public class ImageServiceAccessIntegrationTest {
         imageService.createDefaultImage("foo.jpg");
     }
 
+    @Test(expected = AccessDeniedException.class)
+    public void testCreateImageFailsWithoutUser() throws IOException {
+        setupNoAuthenticatedUser();
+        imageService.createImage(new ImageMetadata());
+    }
+
     @Test
     public void testCreateDefaultImageSucceedsWithUser() throws IOException {
         setupAuthenticatedUser();
@@ -77,6 +84,24 @@ public class ImageServiceAccessIntegrationTest {
         imageService.createManifestations(photo, EMPTY_INPUT_STREAM);
     }
 
+    @Test(expected = AccessDeniedException.class)
+    public void testAddImageToGroupWithPositionFailsWithoutUser() {
+        setupNoAuthenticatedUser();
+        imageService.addImageToGroup(makePhoto("foo.jpg", false), makeRoll(false), 1);
+    }
+
+    @Test(expected = AccessDeniedException.class)
+    public void testAddImageToGroupFailsWithoutUser() {
+        setupNoAuthenticatedUser();
+        imageService.addImageToGroup(makePhoto("foo.jpg", false), makeRoll(false));
+    }
+
+    @Test(expected = AccessDeniedException.class)
+    public void testSetImageGroupPreviewFailsWithoutUser() {
+        setupNoAuthenticatedUser();
+        imageService.setImageGroupPreview(1, 2);
+    }
+
     private ImageFrame makeFrame(Photo photo, ImageGroup group, int position) {
         ImageFrame frame = new ImageFrame(photo);
         frame.setPosition(position);
@@ -85,10 +110,16 @@ public class ImageServiceAccessIntegrationTest {
     }
 
     private ImageGroup makeRoll() {
+        return makeRoll(true);
+    }
+
+    private ImageGroup makeRoll(boolean saved) {
         ImageGroup group = new ImageGroup("testGroup", testUser, ImageGroup.Type.ROLL);
         group.setDisplayName("test group");
         group.setUploadDate(new Date());
-        imageInitializer.saveNewImageGroup(group);
+        if (saved) {
+            imageInitializer.saveNewImageGroup(group);
+        }
         return group;
     }
 
