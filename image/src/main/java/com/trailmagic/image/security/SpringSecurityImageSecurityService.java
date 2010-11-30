@@ -21,6 +21,7 @@ import com.trailmagic.user.Owned;
 import com.trailmagic.user.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.acls.domain.GrantedAuthoritySid;
 import org.springframework.security.acls.domain.PrincipalSid;
@@ -80,10 +81,12 @@ public class SpringSecurityImageSecurityService implements ImageSecurityService 
         log.info("Added access to " + obj + " by ROLE_EVERYONE");
     }
 
+    @Secured("ROLE_USER")
     public void addOwnerAcl(Image image) {
         addOwnerAclInternal(image, imageGroupRepository.getRollForImage(image));
     }
 
+    @Secured("ROLE_USER")
     public void addOwnerAcl(ImageGroup group) {
         addOwnerAclInternal(group, null);
     }

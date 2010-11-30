@@ -222,7 +222,7 @@ public class SecurityIntegrationTest {
 
         final UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(new ToolkitUserDetails(testUser), "password",
-                                                        Arrays.asList(new GrantedAuthorityImpl("ROLE_EVERYONE")));
+                                                        Arrays.asList(new GrantedAuthorityImpl("ROLE_USER")));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         return testUser;
     }
