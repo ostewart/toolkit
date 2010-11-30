@@ -1,18 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:tx="http://www.springframework.org/schema/tx"
-       xmlns:aop="http://www.springframework.org/schema/aop"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:task="http://www.springframework.org/schema/task"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-                           http://www.springframework.org/schema/tx
-                           http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
                            http://www.springframework.org/schema/context
                            http://www.springframework.org/schema/context/spring-context-2.5.xsd
-                           http://www.springframework.org/schema/aop
-                           http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
                            http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
 
     <!--
@@ -33,22 +27,10 @@
     <import resource="classpath:applicationContext-resizer.xml"/>
     <context:component-scan base-package="com.trailmagic.util"/>
     <context:component-scan base-package="com.trailmagic.image.impl"/>
+    <context:component-scan base-package="com.trailmagic.image.hibernate"/>
 
     <task:annotation-driven executor="imageResizeExecutor"/>
     <task:executor id="imageResizeExecutor" pool-size="1-10" queue-capacity="500" rejection-policy="CALLER_RUNS"/>
-
-    <bean id="imageGroupRepository"
-          class="com.trailmagic.image.hibernate.HibernateImageGroupRepository">
-        <property name="sessionFactory" ref="sessionFactory"/>
-        <property name="hibernateTemplate" ref="hibernateTemplate"/>
-    </bean>
-
-    <bean id="imageManifestationRepository"
-          class="com.trailmagic.image.hibernate.HibernateImageManifestationRepository">
-        <constructor-arg ref="hibernateTemplate"/>
-    </bean>
-
-    <tx:annotation-driven transaction-manager="transactionManager"/>
 
     <bean id="imagesParser"
           class="com.trailmagic.image.util.ImagesParserImpl">
@@ -58,15 +40,4 @@
         <constructor-arg ref="imageService"/>
         <constructor-arg ref="imageInitializer"/>
     </bean>
-
-    <bean id="testInterceptor"
-          class="com.trailmagic.image.security.TestMethodInterceptor"/>
-
-
-    <bean id="imageRepository"
-          class="com.trailmagic.image.hibernate.HibernateImageRepository">
-        <property name="hibernateTemplate" ref="hibernateTemplate"/>
-    </bean>
-
-
 </beans>

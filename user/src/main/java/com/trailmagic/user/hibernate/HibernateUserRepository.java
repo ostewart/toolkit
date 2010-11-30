@@ -16,6 +16,8 @@ package com.trailmagic.user.hibernate;
 import com.trailmagic.user.NoSuchUserException;
 import com.trailmagic.user.User;
 import com.trailmagic.user.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.orm.ObjectRetrievalFailureException;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,9 +26,10 @@ import java.util.List;
 
 @Transactional(readOnly = true)
 public class HibernateUserRepository implements UserRepository {
-    private static final String BY_SN_QUERY_NAME = "userByScreenName";
-
     private HibernateTemplate hibernateTemplate;
+    private static Logger log = LoggerFactory.getLogger(HibernateUserRepository.class);
+
+    private static final String BY_SN_QUERY_NAME = "userByScreenName";
 
     public void setHibernateTemplate(HibernateTemplate hibernateTemplate) {
         this.hibernateTemplate = hibernateTemplate;
@@ -56,5 +59,6 @@ public class HibernateUserRepository implements UserRepository {
     @Transactional(readOnly = false)
     public void save(User user) {
         hibernateTemplate.save(user);
+        log.debug("Saved user: {}", user);
     }
 }

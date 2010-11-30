@@ -26,14 +26,17 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.ObjectRetrievalFailureException;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly=true)
 @SuppressWarnings("unchecked") // for query.list()
+@Repository("imageGroupRepository")
 public class HibernateImageGroupRepository implements ImageGroupRepository {
     private static final String ALBUM_BY_OWNER_AND_NAME_QRY =
         "albumByOwnerAndName";
@@ -59,15 +62,14 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
         "allImageGroups";
 
     private SessionFactory sessionFactory;
-    private HibernateTemplate m_hibernateTemplate;
+    private HibernateTemplate hibernateTemplate;
 
-    public void setSessionFactory(SessionFactory sf) {
-        sessionFactory = sf;
+    @Autowired
+    public HibernateImageGroupRepository(SessionFactory sessionFactory, HibernateTemplate hibernateTemplate) {
+        this.sessionFactory = sessionFactory;
+        this.hibernateTemplate = hibernateTemplate;
     }
 
-    public void setHibernateTemplate(HibernateTemplate template) {
-        m_hibernateTemplate = template;
-    }
 
     public ImageGroup getAlbumByOwnerAndName(User owner, String albumName) {
         try {
@@ -100,7 +102,7 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
     public ImageFrame getImageFrameByGroupNameTypeAndImageId(String groupName, Type groupType, long imageId)
             throws NoSuchImageFrameException {
         List results =
-            m_hibernateTemplate
+            hibernateTemplate
             .findByNamedQueryAndNamedParam(IMGFRAME_BY_GROUP_NAME_TYPE_AND_IMAGE_ID_QRY,
                                            new String[] {"groupName", "groupType", "imageId"},
                                            new Object[] {groupName, groupType, imageId});
@@ -242,7 +244,7 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
     
     public ImageGroup loadById(long imageGroupId) throws NoSuchImageGroupException {
         try {
-            return m_hibernateTemplate.load(ImageGroup.class, imageGroupId);
+            return hibernateTemplate.load(ImageGroup.class, imageGroupId);
         } catch (ObjectRetrievalFailureException e) {
             throw new NoSuchImageGroupException(imageGroupId, e);
         }
@@ -250,7 +252,7 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
 
     public List<ImageGroup> getAll() {
         return (List<ImageGroup>)
-            m_hibernateTemplate.execute(new HibernateCallback() {
+            hibernateTemplate.execute(new HibernateCallback() {
                     public Object doInHibernate(Session session) {
                         Query qry = session.getNamedQuery(ALL_GROUPS_QUERY);
                         return qry.list();
@@ -260,17 +262,17 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
 
     @Transactional(readOnly=false)
     public void saveNewGroup(ImageGroup newGroup) {
-        m_hibernateTemplate.save(newGroup);
+        hibernateTemplate.save(newGroup);
     }
 
     @Transactional(readOnly=false)
     public ImageGroup saveGroup(ImageGroup imageGroup) {
-        return m_hibernateTemplate.merge(imageGroup);
+        return hibernateTemplate.merge(imageGroup);
     }
 
     public int getPublicFrameCount(ImageGroup group) {
         return (Integer)
-                m_hibernateTemplate.findByNamedQuery("publicFrameCount", group.getId()).get(0);
+                hibernateTemplate.findByNamedQuery("publicFrameCount", group.getId()).get(0);
 
     }
 

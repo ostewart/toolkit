@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
-           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd">
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:component-scan base-package="com.trailmagic.image.security.test"/>
 
     <!-- override the aspect based security for the tests -->
     <bean id="imageAspectSecurity"
@@ -18,15 +20,15 @@
 
 
     <!--<bean id="h2Database"-->
-          <!--class="org.h2.tools.Server"-->
-          <!--factory-method="createTcpServer"-->
-          <!--init-method="start"-->
-          <!--destroy-method="stop">-->
-        <!--<constructor-arg value="-tcp,-tcpAllowOthers,true,-tcpPort,8043"/>-->
+    <!--class="org.h2.tools.Server"-->
+    <!--factory-method="createTcpServer"-->
+    <!--init-method="start"-->
+    <!--destroy-method="stop">-->
+    <!--<constructor-arg value="-tcp,-tcpAllowOthers,true,-tcpPort,8043"/>-->
     <!--</bean>-->
 
     <!--<bean id="initDatabase" class="liquibase.spring.SpringLiquibase" >-->
-        <!--<property name="dataSource" ref="dataSource"/>-->
-        <!--<property name="changeLog" value="classpath:db-master.xml"/>-->
+    <!--<property name="dataSource" ref="dataSource"/>-->
+    <!--<property name="changeLog" value="classpath:db-master.xml"/>-->
     <!--</bean>-->
 </beans>

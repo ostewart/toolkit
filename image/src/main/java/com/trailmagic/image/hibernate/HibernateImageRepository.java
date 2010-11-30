@@ -17,47 +17,57 @@ import com.trailmagic.image.Image;
 import com.trailmagic.image.ImageGroup;
 import com.trailmagic.image.ImageRepository;
 import com.trailmagic.image.NoSuchImageException;
-import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.ObjectRetrievalFailureException;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly=true)
-@SuppressWarnings("unchecked") // for query.list()
-public class HibernateImageRepository extends HibernateDaoSupport implements ImageRepository{
+import java.util.List;
+
+@SuppressWarnings({"unchecked"})// for query.list()
+@Transactional(readOnly = true)
+@Repository("imageRepository")
+public class HibernateImageRepository implements ImageRepository {
     private static final String ALL_IMAGES_QUERY_NAME = "allImages";
     private static final String IMAGES_BY_NAME_GROUP_QUERY_NAME = "imagesByNameAndGroup";
+    private HibernateTemplate hibernateTemplate;
+
+    @Autowired
+    public HibernateImageRepository(HibernateTemplate hibernateTemplate) {
+        this.hibernateTemplate = hibernateTemplate;
+    }
 
     public Image getById(long id) {
-        return getHibernateTemplate().get(Image.class, id);
+        return hibernateTemplate.get(Image.class, id);
     }
-    
+
     public Image loadById(long imageId) {
         try {
-            return getHibernateTemplate().load(Image.class, imageId);
+            return hibernateTemplate.load(Image.class, imageId);
         } catch (ObjectRetrievalFailureException e) {
             throw new NoSuchImageException(imageId, e);
         }
     }
 
     public List<Image> getAll() {
-        return getHibernateTemplate().findByNamedQuery(ALL_IMAGES_QUERY_NAME);
+        return hibernateTemplate.findByNamedQuery(ALL_IMAGES_QUERY_NAME);
     }
 
     public List<Image> getByNameAndGroup(String name, ImageGroup group) {
-        return getHibernateTemplate()
-            .findByNamedQueryAndNamedParam(IMAGES_BY_NAME_GROUP_QUERY_NAME,
-                                           new String[] {"name", "group"},
-                                           new Object[] {name, group});
+        return hibernateTemplate.findByNamedQueryAndNamedParam(IMAGES_BY_NAME_GROUP_QUERY_NAME,
+                                                               new String[]{"name", "group"},
+                                                               new Object[]{name, group});
     }
 
-    @Transactional(readOnly=false)
+    @Transactional(readOnly = false)
     public void saveNew(Image image) {
-        getHibernateTemplate().save(image);
+        hibernateTemplate.save(image);
     }
 
-    @Transactional(readOnly=false)
+    @Transactional(readOnly = false)
     public Image save(Image image) {
-        return getHibernateTemplate().merge(image);
+        return hibernateTemplate.merge(image);
     }
+
 }
