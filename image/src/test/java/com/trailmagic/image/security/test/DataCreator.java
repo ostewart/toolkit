@@ -41,18 +41,21 @@ public class DataCreator {
     }
 
     public User createTestUser() {
+        return createTestUser(TEST_USERNAME);
+    }
+
+    public User createTestUser(final String testUsername) {
         User testUser;
         try {
-            testUser = userRepository.getByScreenName(TEST_USERNAME);
+            testUser = userRepository.getByScreenName(testUsername);
         } catch (NoSuchUserException e) {
-            testUser = new User(TEST_USERNAME);
+            testUser = new User(testUsername);
             testUser.setFirstName("Testy");
             testUser.setLastName("McTesterton");
             testUser.setPrimaryEmail("test@example.com");
             testUser.setPassword("password");
             userRepository.save(testUser);
         }
-
         return testUser;
     }
 
@@ -63,9 +66,9 @@ public class DataCreator {
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
-    public void setupNoAuthenticatedUser() {
+    public void authenticateAnonymousUser() {
         final AnonymousAuthenticationToken token =
-                new AnonymousAuthenticationToken("key", "anonymousUser", stringsToGrantedAuthorities("ROLE_ANONYMOUS"));
+                new AnonymousAuthenticationToken("key", "anonymousUser", stringsToGrantedAuthorities("ROLE_ANONYMOUS", "ROLE_EVERYONE"));
         SecurityContextHolder.getContext().setAuthentication(token);
     }
 

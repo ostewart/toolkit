@@ -37,13 +37,13 @@ public class ImageServiceAccessIntegrationTest {
 
     @Test(expected = AccessDeniedException.class)
     public void testCreateDefaultImageFailsWithoutUser() throws IOException {
-        dataCreator.setupNoAuthenticatedUser();
+        dataCreator.authenticateAnonymousUser();
         imageService.createDefaultImage("foo.jpg");
     }
 
     @Test(expected = AccessDeniedException.class)
     public void testCreateImageFailsWithoutUser() throws IOException {
-        dataCreator.setupNoAuthenticatedUser();
+        dataCreator.authenticateAnonymousUser();
         imageService.createImage(new ImageMetadata());
     }
 
@@ -56,7 +56,7 @@ public class ImageServiceAccessIntegrationTest {
 
     @Test(expected = AccessDeniedException.class)
     public void testCreateImageAtPositionFailsWithoutUser() throws IOException {
-        dataCreator.setupNoAuthenticatedUser();
+        dataCreator.authenticateAnonymousUser();
         imageService.createImageAtPosition("foo.jpg", EMPTY_INPUT_STREAM, 1);
     }
 
@@ -69,7 +69,7 @@ public class ImageServiceAccessIntegrationTest {
 
     @Test(expected = AccessDeniedException.class)
     public void testCreateManifestationsFailsWithoutUser() throws IOException {
-        dataCreator.setupNoAuthenticatedUser();
+        dataCreator.authenticateAnonymousUser();
         User owner = dataCreator.createTestUser();
         final Photo photo = dataCreator.makePhoto("foo.jpg", false, owner);
         imageService.createManifestations(photo, EMPTY_INPUT_STREAM);
@@ -77,21 +77,21 @@ public class ImageServiceAccessIntegrationTest {
 
     @Test(expected = AccessDeniedException.class)
     public void testAddImageToGroupWithPositionFailsWithoutUser() {
-        dataCreator.setupNoAuthenticatedUser();
+        dataCreator.authenticateAnonymousUser();
         User owner = dataCreator.createTestUser();
         imageService.addImageToGroup(dataCreator.makePhoto("foo.jpg", false, owner), makeRoll(false), 1);
     }
 
     @Test(expected = AccessDeniedException.class)
     public void testAddImageToGroupFailsWithoutUser() {
-        dataCreator.setupNoAuthenticatedUser();
+        dataCreator.authenticateAnonymousUser();
         User owner = dataCreator.createTestUser();
         imageService.addImageToGroup(dataCreator.makePhoto("foo.jpg", false, owner), makeRoll(false));
     }
 
     @Test(expected = AccessDeniedException.class)
     public void testSetImageGroupPreviewFailsWithoutUser() {
-        dataCreator.setupNoAuthenticatedUser();
+        dataCreator.authenticateAnonymousUser();
         imageService.setImageGroupPreview(1, 2);
     }
 

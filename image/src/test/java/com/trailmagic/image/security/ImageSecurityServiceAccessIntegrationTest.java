@@ -2,6 +2,8 @@ package com.trailmagic.image.security;
 
 import com.trailmagic.image.Image;
 import com.trailmagic.image.ImageGroup;
+import com.trailmagic.image.ImageRepository;
+import com.trailmagic.image.Photo;
 import com.trailmagic.image.impl.ImageInitializer;
 import com.trailmagic.image.security.test.DataCreator;
 import com.trailmagic.user.User;
@@ -15,6 +17,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:applicationContext-global.xml",
                                    "classpath:com/trailmagic/image/applicationContext-test.xml",
@@ -26,22 +32,71 @@ public class ImageSecurityServiceAccessIntegrationTest {
     @Autowired private ImageSecurityService securityService;
     @Autowired private ImageInitializer imageInitializer;
     @Autowired private DataCreator dataCreator;
+    @Autowired private ImageRepository imageRepository;
 
     @Test(expected = AccessDeniedException.class)
     public void testAddOwnerAclToImageFailsWithoutUser() throws IOException {
-        dataCreator.setupNoAuthenticatedUser();
+        dataCreator.authenticateAnonymousUser();
         securityService.addOwnerAcl(new Image());
     }
 
     @Test(expected = AccessDeniedException.class)
     public void testAddOwnerAclToImageGroupFailsWithoutUser() throws IOException {
-        dataCreator.setupNoAuthenticatedUser();
+        dataCreator.authenticateAnonymousUser();
         securityService.addOwnerAcl(new ImageGroup("name", new User("owner"), ImageGroup.Type.ROLL));
     }
 
     @Test(expected = AccessDeniedException.class)
     public void testMakePublicFailsWithoutUser() throws IOException {
-        dataCreator.setupNoAuthenticatedUser();
+        dataCreator.authenticateAnonymousUser();
         securityService.makePublic(new Image());
+    }
+
+    @Test(expected = AccessDeniedException.class)
+    public void testRegularUserHasNoAccessAfterPhotoCreation() {
+        final Photo photo = createPhotoAsTestUser();
+
+        final User regularUser = dataCreator.createTestUser("luser");
+        dataCreator.authenticateUserWithAuthorities(regularUser, "ROLE_USER");
+
+        assertNull(imageRepository.getById(photo.getId()));
+    }
+
+    @Test
+    public void testAnonymousUserHasAccessAfterMakePublic() {
+        final Photo photo = createPhotoAsTestUser();
+        securityService.makePublic(photo);
+
+        dataCreator.authenticateAnonymousUser();
+
+        assertEquals(photo, imageRepository.getById(photo.getId()));
+    }
+
+    @Test(expected = AccessDeniedException.class)
+    public void testAnonymousUserHasNoAccessAfterMakePrivate() {
+        final Photo photo = createPhotoAsTestUser();
+        try {
+            securityService.makePublic(photo);
+            securityService.makePrivate(photo);
+        } catch (AccessDeniedException e) {
+            fail("Caught AccessDeniedException before expectation");
+        }
+
+        dataCreator.authenticateAnonymousUser();
+
+        imageRepository.getById(photo.getId());
+    }
+
+
+    private Photo createPhotoAsTestUser() {
+        try {
+            final User owner = dataCreator.createTestUser();
+
+            dataCreator.authenticateUserWithAuthorities(owner, "ROLE_USER");
+            return dataCreator.makePhoto("foo.jpg", true, owner);
+        } catch (AccessDeniedException e) {
+            fail("AccessDenied caught in data setup");
+            throw new IllegalStateException("AccessDenied caught in data setup");
+        }
     }
 }
