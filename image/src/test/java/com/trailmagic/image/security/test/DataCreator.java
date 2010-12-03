@@ -1,5 +1,6 @@
 package com.trailmagic.image.security.test;
 
+import com.trailmagic.image.ImageGroup;
 import com.trailmagic.image.Photo;
 import com.trailmagic.image.impl.ImageInitializer;
 import com.trailmagic.user.NoSuchUserException;
@@ -15,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -39,6 +41,17 @@ public class DataCreator {
         }
         return photo;
     }
+
+    public ImageGroup makeRoll(User owner, boolean saved) {
+        ImageGroup group = new ImageGroup("testGroup", owner, ImageGroup.Type.ROLL);
+        group.setDisplayName("test group");
+        group.setUploadDate(new Date());
+        if (saved) {
+            imageInitializer.saveNewImageGroup(group);
+        }
+        return group;
+    }
+
 
     public User createTestUser() {
         return createTestUser(TEST_USERNAME);
@@ -80,5 +93,4 @@ public class DataCreator {
         }
         return authorities;
     }
-
 }

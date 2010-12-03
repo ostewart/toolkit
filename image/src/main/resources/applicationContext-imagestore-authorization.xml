@@ -9,7 +9,10 @@
   http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
   http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.4.xsd">
 
-    <security:global-method-security secured-annotations="enabled" access-decision-manager-ref="imageAccessDecisionManager"/>
+    <security:global-method-security secured-annotations="enabled" access-decision-manager-ref="imageAccessDecisionManager" pre-post-annotations="enabled">
+        <security:after-invocation-provider ref="afterAclRead"/>
+        <security:after-invocation-provider ref="afterAclCollectionRead"/>
+        </security:global-method-security>
 
     <security:authentication-manager alias="authenticationManager">
         <security:authentication-provider ref="daoAuthenticationProvider"/>

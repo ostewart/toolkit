@@ -2,6 +2,7 @@ package com.trailmagic.image.security;
 
 import com.trailmagic.image.Image;
 import com.trailmagic.image.ImageGroup;
+import com.trailmagic.image.ImageGroupRepository;
 import com.trailmagic.image.ImageRepository;
 import com.trailmagic.image.Photo;
 import com.trailmagic.image.impl.ImageInitializer;
@@ -17,9 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:applicationContext-global.xml",
@@ -33,6 +32,7 @@ public class ImageSecurityServiceAccessIntegrationTest {
     @Autowired private ImageInitializer imageInitializer;
     @Autowired private DataCreator dataCreator;
     @Autowired private ImageRepository imageRepository;
+    @Autowired private ImageGroupRepository imageGroupRepository;
 
     @Test(expected = AccessDeniedException.class)
     public void testAddOwnerAclToImageFailsWithoutUser() throws IOException {
@@ -60,6 +60,16 @@ public class ImageSecurityServiceAccessIntegrationTest {
         dataCreator.authenticateUserWithAuthorities(regularUser, "ROLE_USER");
 
         assertNull(imageRepository.getById(photo.getId()));
+    }
+
+    @Test(expected = AccessDeniedException.class)
+    public void testRegularUserHasNoAccessAfterImageGroupCreation() {
+        final ImageGroup imageGroup = createImageGroupAsTestUser();
+
+        final User regularUser = dataCreator.createTestUser("luser");
+        dataCreator.authenticateUserWithAuthorities(regularUser, "ROLE_USER");
+
+        imageGroupRepository.getById(imageGroup.getId());
     }
 
     @Test
@@ -94,6 +104,18 @@ public class ImageSecurityServiceAccessIntegrationTest {
 
             dataCreator.authenticateUserWithAuthorities(owner, "ROLE_USER");
             return dataCreator.makePhoto("foo.jpg", true, owner);
+        } catch (AccessDeniedException e) {
+            fail("AccessDenied caught in data setup");
+            throw new IllegalStateException("AccessDenied caught in data setup");
+        }
+    }
+
+    private ImageGroup createImageGroupAsTestUser() {
+        try {
+            final User owner = dataCreator.createTestUser();
+
+            dataCreator.authenticateUserWithAuthorities(owner, "ROLE_USER");
+            return dataCreator.makeRoll(owner, true);
         } catch (AccessDeniedException e) {
             fail("AccessDenied caught in data setup");
             throw new IllegalStateException("AccessDenied caught in data setup");

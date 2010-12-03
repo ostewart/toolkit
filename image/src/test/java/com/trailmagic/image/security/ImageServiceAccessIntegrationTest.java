@@ -1,6 +1,5 @@
 package com.trailmagic.image.security;
 
-import com.trailmagic.image.ImageGroup;
 import com.trailmagic.image.ImageMetadata;
 import com.trailmagic.image.ImageService;
 import com.trailmagic.image.Photo;
@@ -18,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.Date;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:applicationContext-global.xml",
@@ -79,14 +77,15 @@ public class ImageServiceAccessIntegrationTest {
     public void testAddImageToGroupWithPositionFailsWithoutUser() {
         dataCreator.authenticateAnonymousUser();
         User owner = dataCreator.createTestUser();
-        imageService.addImageToGroup(dataCreator.makePhoto("foo.jpg", false, owner), makeRoll(false), 1);
+        imageService.addImageToGroup(dataCreator.makePhoto("foo.jpg", false, owner),
+                                     dataCreator.makeRoll(owner, false), 1);
     }
 
     @Test(expected = AccessDeniedException.class)
     public void testAddImageToGroupFailsWithoutUser() {
         dataCreator.authenticateAnonymousUser();
         User owner = dataCreator.createTestUser();
-        imageService.addImageToGroup(dataCreator.makePhoto("foo.jpg", false, owner), makeRoll(false));
+        imageService.addImageToGroup(dataCreator.makePhoto("foo.jpg", false, owner), dataCreator.makeRoll(owner, false));
     }
 
     @Test(expected = AccessDeniedException.class)
@@ -94,17 +93,4 @@ public class ImageServiceAccessIntegrationTest {
         dataCreator.authenticateAnonymousUser();
         imageService.setImageGroupPreview(1, 2);
     }
-
-    private ImageGroup makeRoll(boolean saved) {
-        User owner = dataCreator.createTestUser();
-        ImageGroup group = new ImageGroup("testGroup", owner, ImageGroup.Type.ROLL);
-        group.setDisplayName("test group");
-        group.setUploadDate(new Date());
-        if (saved) {
-            imageInitializer.saveNewImageGroup(group);
-        }
-        return group;
-    }
-
-
 }
