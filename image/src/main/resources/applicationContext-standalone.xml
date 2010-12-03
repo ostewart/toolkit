@@ -178,31 +178,8 @@
                 com.trailmagic.image.hibernate.HibernateImageFactory.getByName=PROPAGATION_REQUIRED,readOnly
                 com.trailmagic.image.hibernate.HibernateImageFactory.getAll=PROPAGATION_REQUIRED,readOnly
                 com.trailmagic.image.hibernate.HibernateImageFactory.getByNameAndGroup=PROPAGATION_REQUIRED,readOnly
-                com.trailmagic.image.util.AddPermissions.add*=PROPAGATION_REQUIRED
-                com.trailmagic.image.util.AddPermissions.make*=PROPAGATION_REQUIRED
                 com.trailmagic.image.util.FixDimensions.fixDimensions=PROPAGATION_REQUIRED
             </value>
-        </property>
-    </bean>
-
-    <!-- Wrap the MakeAlbum with a session -->
-    <bean id="addPermissions"
-          class="org.springframework.aop.framework.ProxyFactoryBean">
-        <property name="target">
-            <bean
-                    class="com.trailmagic.image.util.AddPermissions">
-                <property name="imageSecurityService" ref="imageSecurityService"/>
-                <property name="imageGroupRepository" ref="imageGroupRepository"/>
-                <property name="userFactory" ref="userFactory"/>
-                <property name="hibernateTemplate" ref="hibernateTemplate"/>
-                <property name="groupFactory" ref="groupFactory"/>
-            </bean>
-        </property>
-        <property name="interceptorNames">
-            <list>
-                <value>transactionInterceptor</value>
-                <value>hibernateInterceptor</value>
-            </list>
         </property>
     </bean>
 

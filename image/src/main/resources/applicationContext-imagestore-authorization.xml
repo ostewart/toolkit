@@ -179,14 +179,10 @@
                 com.trailmagic.image.ImageRepository.getByNameAndGroup=AFTER_ACL_COLLECTION_READ
                 com.trailmagic.image.ImageManifestationRepository.getById=AFTER_ACL_READ
                 com.trailmagic.image.ImageManifestationRepository.getHeavyById=AFTER_ACL_READ
-                com.trailmagic.image.ImageGroupRepository.getAlbumByOwnerAndName=AFTER_ACL_READ
                 com.trailmagic.image.ImageGroupRepository.getRollByOwnerAndName=AFTER_ACL_READ
-                com.trailmagic.image.ImageGroupRepository.getAlbumsByOwnerScreenName=AFTER_ACL_COLLECTION_READ
-                com.trailmagic.image.ImageGroupRepository.getRollsByOwnerScreenName=AFTER_ACL_COLLECTION_READ
                 com.trailmagic.image.ImageGroupRepository.getByOwnerScreenNameAndType=AFTER_ACL_COLLECTION_READ
                 com.trailmagic.image.ImageGroupRepository.getByOwnerNameAndTypeWithFrames=AFTER_ACL_READ
                 com.trailmagic.image.ImageGroupRepository.getByImage=AFTER_ACL_COLLECTION_READ
-                com.trailmagic.image.ImageGroupRepository.getRollForImage=AFTER_ACL_READ
                 com.trailmagic.image.security.ImageSecurityService.makePublic=ACL_OBJECT_ADMIN
                 com.trailmagic.image.security.ImageSecurityService.makePrivate=ACL_OBJECT_ADMIN
                 com.trailmagic.image.security.ImageSecurityService.addPermission=ACL_OBJECT_ADMIN

@@ -125,20 +125,6 @@
     </many-to-one>
   </class>
 
-  <query name="albumsByOwnerScreenName">
-    SELECT album FROM com.trailmagic.image.ImageGroup AS album
-    INNER JOIN album.owner AS owner
-    WHERE album.type = 'album'
-    AND owner.screenName = :screenName
-  </query>
-
-  <query name="rollsByOwnerScreenName">
-    SELECT album FROM com.trailmagic.image.ImageGroup AS album
-    INNER JOIN album.owner AS owner
-    WHERE album.type = 'roll'
-    AND owner.screenName = :screenName
-  </query>
-
   <query name="groupsByOwnerScreenNameAndType">
     SELECT grp FROM com.trailmagic.image.ImageGroup
     AS grp INNER JOIN grp.owner AS owner
@@ -151,13 +137,6 @@
     FROM com.trailmagic.image.ImageGroup
     AS grp INNER JOIN grp.owner
     WHERE grp.type = :groupType
-  </query>
-
-  <query name="albumByOwnerAndName">
-    FROM com.trailmagic.image.ImageGroup
-    AS grp WHERE grp.owner = :owner AND
-    grp.name = :albumName
-    AND grp.type = 'album'
   </query>
 
   <query name="rollByOwnerAndName">
