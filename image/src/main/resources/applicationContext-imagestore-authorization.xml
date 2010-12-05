@@ -183,10 +183,6 @@
                 com.trailmagic.image.ImageGroupRepository.getByOwnerScreenNameAndType=AFTER_ACL_COLLECTION_READ
                 com.trailmagic.image.ImageGroupRepository.getByOwnerNameAndTypeWithFrames=AFTER_ACL_READ
                 com.trailmagic.image.ImageGroupRepository.getByImage=AFTER_ACL_COLLECTION_READ
-                com.trailmagic.image.security.ImageSecurityService.makePublic=ACL_OBJECT_ADMIN
-                com.trailmagic.image.security.ImageSecurityService.makePrivate=ACL_OBJECT_ADMIN
-                com.trailmagic.image.security.ImageSecurityService.addPermission=ACL_OBJECT_ADMIN
-                com.trailmagic.image.security.ImageSecurityService.addReadPermission=ACL_OBJECT_ADMIN
                 com.trailmagic.image.ImageRepository.save=ACL_IMAGE_WRITE
             </value>
         </property>

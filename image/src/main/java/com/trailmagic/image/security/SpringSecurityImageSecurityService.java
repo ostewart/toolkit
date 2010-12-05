@@ -76,6 +76,7 @@ public class SpringSecurityImageSecurityService implements ImageSecurityService 
         }
     }
 
+    @Secured("ACL_OBJECT_ADMIN")
     public void makePublic(AccessControlled obj) {
         addReadPermission(obj, ROLE_EVERYONE);
         log.info("Added access to " + obj + " by ROLE_EVERYONE");
@@ -156,10 +157,12 @@ public class SpringSecurityImageSecurityService implements ImageSecurityService 
         }
     }
 
+    @Secured("ACL_OBJECT_ADMIN")
     public void addReadPermission(Object obj, String recipientRole) {
         addPermission(obj, recipientRole, BasePermission.READ);
     }
 
+    @Secured("ACL_OBJECT_ADMIN")    
     public void addReadPermission(Object obj, User recipient) {
         addPermission(obj, recipient, BasePermission.READ);
     }
@@ -250,8 +253,8 @@ public class SpringSecurityImageSecurityService implements ImageSecurityService 
         return (MutableAcl) aclService.readAclById(identity, Arrays.asList(sid));
     }
 
+    @Secured("ACL_OBJECT_ADMIN")
     public void makePrivate(AccessControlled obj) {
-        // TODO: perhaps this should be a blocking permission instead
         final Sid sid = sidForRole(ROLE_EVERYONE);
         effectPermissions(findAcl(obj, sid), sid, Collections.<Permission>emptySet(), false);
         log.info("Removed access to " + obj + " by ROLE_EVERYONE");

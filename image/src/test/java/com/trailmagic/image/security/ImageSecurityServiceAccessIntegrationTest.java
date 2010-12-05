@@ -47,7 +47,7 @@ public class ImageSecurityServiceAccessIntegrationTest {
     }
 
     @Test(expected = AccessDeniedException.class)
-    public void testMakePublicFailsWithoutUser() throws IOException {
+    public void testMakePublicDeniedWithoutUser() throws IOException {
         dataCreator.authenticateAnonymousUser();
         securityService.makePublic(new Image());
     }
@@ -56,8 +56,7 @@ public class ImageSecurityServiceAccessIntegrationTest {
     public void testRegularUserHasNoAccessAfterPhotoCreation() {
         final Photo photo = createPhotoAsTestUser();
 
-        final User regularUser = dataCreator.createTestUser("luser");
-        dataCreator.authenticateUserWithAuthorities(regularUser, "ROLE_USER");
+        authenticateAsRegularUser();
 
         assertNull(imageRepository.getById(photo.getId()));
     }
@@ -66,8 +65,7 @@ public class ImageSecurityServiceAccessIntegrationTest {
     public void testRegularUserHasNoAccessAfterImageGroupCreation() {
         final ImageGroup imageGroup = createImageGroupAsTestUser();
 
-        final User regularUser = dataCreator.createTestUser("luser");
-        dataCreator.authenticateUserWithAuthorities(regularUser, "ROLE_USER");
+        authenticateAsRegularUser();
 
         imageGroupRepository.getById(imageGroup.getId());
     }
@@ -95,6 +93,47 @@ public class ImageSecurityServiceAccessIntegrationTest {
         dataCreator.authenticateAnonymousUser();
 
         imageRepository.getById(photo.getId());
+    }
+
+    @Test(expected = AccessDeniedException.class)
+    public void testNonOwnerDeniedFromMakePublic() {
+        final Photo photo = createPhotoAsTestUser();
+
+        authenticateAsRegularUser();
+
+        securityService.makePublic(photo);
+    }
+
+    @Test(expected = AccessDeniedException.class)
+    public void testNonOwnerDeniedFromMakePrivate() {
+        final Photo photo = createPhotoAsTestUser();
+
+        authenticateAsRegularUser();
+
+        securityService.makePrivate(photo);
+    }
+
+    @Test(expected = AccessDeniedException.class)
+    public void testNonOwnerDeniedFromAddReadPermissionToUser() {
+        final Photo photo = createPhotoAsTestUser();
+
+        authenticateAsRegularUser();
+
+        securityService.addReadPermission(photo, new User("luser"));
+    }
+
+    @Test(expected = AccessDeniedException.class)
+    public void testNonOwnerDeniedFromAddReadPermissionToRole() {
+        final Photo photo = createPhotoAsTestUser();
+
+        authenticateAsRegularUser();
+
+        securityService.addReadPermission(photo, "ROLE_EVERYONE");
+    }
+
+    private void authenticateAsRegularUser() {
+        final User regularUser = dataCreator.createTestUser("luser");
+        dataCreator.authenticateUserWithAuthorities(regularUser, "ROLE_USER");
     }
 
 
