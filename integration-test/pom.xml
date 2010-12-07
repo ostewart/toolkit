@@ -109,6 +109,13 @@
                               <todir>conf</todir>
                           </configfile>
                       </configfiles>
+                      <files>
+                          <file>
+                              <file>${project.basedir}/src/main/resources/server.keystore</file>
+                              <todir>conf</todir>
+                              <configfile>false</configfile>
+                          </file>
+                      </files>
                   </configuration>
               </configuration>
             </plugin>            

@@ -13,8 +13,6 @@
     </scm>
 
     <build>
-        <outputDirectory>${basedir}/${target.dir}/classes</outputDirectory>
-        <testOutputDirectory>${basedir}/${target.dir}/test-classes</testOutputDirectory>
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -66,19 +64,6 @@
         <module>photo</module>
         <module>integration-test</module>
     </modules>
-
-    <repositories>
-        <repository>
-            <id>terracotta-snapshots</id>
-                  <url>http://www.terracotta.org/download/reflector/maven2</url>
-                  <releases>
-                    <enabled>true</enabled>
-                  </releases>
-                  <snapshots>
-                    <enabled>false</enabled>
-                  </snapshots>            
-        </repository>
-    </repositories>
 
     <dependencyManagement>
         <dependencies>
@@ -135,19 +120,6 @@
                 <artifactId>ehcache-terracotta</artifactId>
                 <version>1.8.0</version>
             </dependency>
-            <dependency>
-                <groupId>org.terracotta.hibernate</groupId>
-                <artifactId>terracotta-hibernate-agent</artifactId>
-                <version>1.1.0</version>
-                <scope>provided</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.terracotta.hibernate</groupId>
-                <artifactId>terracotta-hibernate-cache</artifactId>
-                <version>1.1.0</version>
-            </dependency>
-
             <dependency>
                 <groupId>org.aspectj</groupId>
                 <artifactId>aspectjrt</artifactId>
