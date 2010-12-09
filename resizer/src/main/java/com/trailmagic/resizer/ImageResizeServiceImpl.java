@@ -35,7 +35,9 @@ public class ImageResizeServiceImpl implements ImageResizeService {
         List<ImageFileInfo> resultInfos = new ArrayList<ImageFileInfo>();
 
         for (Integer size : Arrays.asList(128, 256, 512, 1024, 2048)) {
-            resultInfos.add(resizeAndIdentify(srcFile, srcFileInfo, size));
+            if (size <= srcFileInfo.getWidth()) {
+                resultInfos.add(resizeAndIdentify(srcFile, srcFileInfo, size));
+            }
         }
         return resultInfos;
     }
