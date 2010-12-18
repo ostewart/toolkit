@@ -12,8 +12,6 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import java.io.File;
 import java.net.URISyntaxException;
 
-import static org.junit.Assert.assertNotNull;
-
 public class MoveImagesToNewRollAcceptanceTest {
     public static final String TEST_IMAGE_FILENAME = "test-image.jpg";
     public static final String BASE_URL = System.getProperty("testing.baseUrl", "http://localhost:8080/photo");
@@ -37,8 +35,8 @@ public class MoveImagesToNewRollAcceptanceTest {
     public void testCanMoveImages() throws Exception {
         client.login();
         uploadSomeImages();
-        loadUploadsPage();
-        clickCreateRollFromImages();
+        final WebElement createRollLink = getUploadsInDisplayStateAndFindCreateLink();
+        getUploadsInCreateNewRollState(createRollLink);
         selectImagesAndSubmit();
         verifyCorrectImagesAppearOnNewRollPage();
     }
@@ -51,11 +49,11 @@ public class MoveImagesToNewRollAcceptanceTest {
 
     }
 
-    private void clickCreateRollFromImages() {
-
+    private void getUploadsInCreateNewRollState(WebElement createRollLink) {
+        createRollLink.click();
     }
 
-    private void loadUploadsPage() {
+    private WebElement getUploadsInDisplayStateAndFindCreateLink() {
         driver.get(UPLOADS_URL);
         
         driver.get(SECURE_BASE_URL + "/login");
@@ -66,8 +64,7 @@ public class MoveImagesToNewRollAcceptanceTest {
 
         driver.get(UPLOADS_URL);
 
-        final WebElement createLink = driver.findElement(By.xpath("//a[@rel='createRoll']"));
-        assertNotNull(createLink.getAttribute("href"));
+        return driver.findElement(By.xpath("//a[@rel='createRoll']"));
     }
 
     private void uploadSomeImages() throws URISyntaxException {

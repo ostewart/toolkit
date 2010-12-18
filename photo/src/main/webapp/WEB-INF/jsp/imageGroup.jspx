@@ -168,7 +168,7 @@ frames: List of ImageFrames for this group
             </jsp:element>
         </authz:accesscontrollist>
 
-        <a rel="createRoll" href="${pageContext.request.contextPath}/createRoll?from=${imageGroup.id}">Create Roll From Images</a>
+        <a rel="createRoll" href="?newRoll=true">Create Roll From Images</a>
 
     </div>
 
