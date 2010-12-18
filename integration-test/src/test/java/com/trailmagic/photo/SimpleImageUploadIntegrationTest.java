@@ -23,8 +23,8 @@ import java.net.URISyntaxException;
 import static org.junit.Assert.assertTrue;
 
 public class SimpleImageUploadIntegrationTest {
-    private static final String HOST_PORT_URL = "http://localhost:8081";
-    private static final String CONTEXT_URL = HOST_PORT_URL + "/photo";
+    private static final String HOST_PORT_URL = System.getProperty("testing.hostPortUrl", "http://localhost:8080");
+    private static final String CONTEXT_URL = HOST_PORT_URL + System.getProperty("testing.contextPath", "/photo");
     private static final String BASE_URL = CONTEXT_URL + "/upload";
     private File imageFile;
     private WebserviceClient webserviceClient;
@@ -34,7 +34,7 @@ public class SimpleImageUploadIntegrationTest {
     @Before
     public void setUp() throws Exception {
         imageFile = new File(ClassLoader.getSystemResource(TEST_IMAGE_FILENAME).toURI());
-        WebClientHelper client = new WebClientHelper(HOST_PORT_URL);
+        WebClientHelper client = new WebClientHelper(CONTEXT_URL);
         client.login();
         webserviceClient = client.getWebserviceClient();
     }
