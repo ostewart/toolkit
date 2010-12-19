@@ -13,10 +13,12 @@
  */
 package com.trailmagic.image.ui;
 
-import javax.servlet.http.HttpServletRequest;
+import com.trailmagic.image.ImageFrame;
+import com.trailmagic.image.ImageGroup;
+import com.trailmagic.image.ImageManifestation;
+import com.trailmagic.user.User;
 
-import com.trailmagic.user.*;
-import com.trailmagic.image.*;
+import javax.servlet.http.HttpServletRequest;
 
 
 public class LinkHelper {
@@ -35,27 +37,8 @@ public class LinkHelper {
         m_albumServletPath = path;
     }
 
-    public String getAlbumServletPath() {
-        return m_albumServletPath;
-    }
-
     public void setRequest(HttpServletRequest req) {
         m_request = req;
-    }
-
-    public HttpServletRequest getRequest() {
-        return m_request;
-    }
-
-    /** 
-     * /albums/user/album-name/image-id
-     * this means that an image can't be in an album more than once
-     * I think I can live with that
-     **/
-    public String getAlbumFrameUrl(ImageFrame frame) {
-        return getAlbumsRootUrl() +
-            frame.getImage().getOwner().getScreenName() + "/" +
-            frame.getImageGroup().getName() + "/" + frame.getImage().getId();
     }
 
     public String getImageGroupFrameUrl(ImageFrame frame) {
@@ -64,32 +47,16 @@ public class LinkHelper {
             frame.getImageGroup().getName() + "/" + frame.getImage().getId();
     }
 
-    public String getAlbumFrameUrl(ImageGroup album, Long imageId) {
-        return getAlbumsRootUrl() +
-            album.getOwner().getScreenName() + "/" +
-            album.getName() + "/" + imageId;
-    }
-
     public String getImageGroupFrameUrl(ImageGroup imageGroup, Long imageId) {
         return getImageGroupsRootUrl(imageGroup.getType()) +
             imageGroup.getOwner().getScreenName() + "/" +
             imageGroup.getName() + "/" + imageId;
     }
 
-    public String getAlbumUrl(ImageGroup album) {
-        return getAlbumsRootUrl() +
-            album.getOwner().getScreenName() + "/" +
-            album.getName() + "/";
-    }
-
     public String getImageGroupUrl(ImageGroup imageGroup) {
         return getImageGroupsRootUrl(imageGroup.getType()) +
             imageGroup.getOwner().getScreenName() + "/" +
             imageGroup.getName() + "/";
-    }
-
-    public String getAlbumsUrl(User owner) {
-        return getAlbumsRootUrl() + owner.getScreenName() + "/";
     }
 
     public String getImageGroupsUrl(ImageGroup.Type groupType, User owner) {
@@ -116,18 +83,9 @@ public class LinkHelper {
         return m_request.getContextPath() + "/" + prettyType + "s/";
     }
 
-    public String getImageDisplayUrl(Image image) {
-        return m_request.getContextPath() + "/images/by-id/" + image.getId();
-    }
-
     public String getImageMFUrl(ImageManifestation imf) {
         return m_request.getContextPath() + "/mf/by-id/" + 
             imf.getId();
-    }
-
-    public String getImageMFUrl(Image image) {
-        return m_request.getContextPath() + "/mf/by-id/" + 
-            ((ImageManifestation)image.getManifestations().first()).getId();
     }
 
 }

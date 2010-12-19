@@ -66,4 +66,11 @@ public class ControllerWiringIntegrationTest {
     @Test
     public void testRollsRedirectsToDirectoryUrl() {
     }
+
+    @Test
+    public void testLogout() {
+        driver.get(BASE_URL + "/logout");
+        driver.get(BASE_URL + "/rolls/tester/");
+        assertNotNull(driver.findElement(By.linkText("Sign In")));
+    }
 }

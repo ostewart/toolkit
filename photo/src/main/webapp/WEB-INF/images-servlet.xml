@@ -54,10 +54,7 @@
   <bean id="handlerMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
     <property name="mappings">
       <props>
-        <prop key="/images/**">imageController</prop>
         <prop key="/import">imageImportController</prop>
-        <prop key="/mf/**">imageManifestationController</prop>
-        <prop key="/logout">logoutController</prop>
         <prop key="/changePermission">imageAccessController</prop>
         <prop key="/grantAccess">accessGrantController</prop>
         <prop key="/testing/**">imageEditController</prop>
@@ -119,18 +116,6 @@
               class="com.trailmagic.image.ImageValidator"/>
       </list>
     </property>
-  </bean>
-
-  <bean id="logoutController"
-        class="com.trailmagic.image.ui.LogoutController">
-  </bean>
-
-  <bean id="imageController"
-        class="com.trailmagic.image.ui.ImageController">
-    <property name="supportedMethods" value="GET"/>
-    <property name="requireSession" value="false"/>
-    <property name="cacheSeconds" value="-1"/>
-    <property name="controllerPath" value="/images"/>
   </bean>
 
   <bean id="imageImportController"

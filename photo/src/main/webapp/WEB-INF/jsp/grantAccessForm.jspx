@@ -64,7 +64,7 @@ frames: List of ImageFrames for this group
               <a href="/photo/logout">Sign Out</a>
           </authz:authorize>
           <authz:authorize ifNotGranted="ROLE_USER">
-            <a href="/photo/login">Sign in</a>
+            <a href="/photo/login">Sign In</a>
           </authz:authorize>
         </div>
       </div>
