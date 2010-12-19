@@ -62,4 +62,8 @@ public class ControllerWiringIntegrationTest {
         WebElement header = driver.findElement(By.className("displayName"));
         assertEquals("Uploads", header.getText());
     }
+
+    @Test
+    public void testRollsRedirectsToDirectoryUrl() {
+    }
 }

@@ -18,8 +18,21 @@ import com.trailmagic.image.ImageGroup;
 import com.trailmagic.image.ImageGroupRepository;
 import com.trailmagic.user.User;
 import com.trailmagic.user.UserRepository;
-import com.trailmagic.web.util.ImageRequestInfo;
 import com.trailmagic.web.util.WebRequestTools;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -27,105 +40,69 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.Controller;
-
-/**
- * to add a new group type, simply add a new mapping to this controller as
- * "/<type-name>s/**" in the handlerMapping in images-servlet.xml
- **/
-public class ImageGroupDispatcherController implements Controller {
+@Controller
+public class ImageGroupDispatcherController {
     private static final String LIST_VIEW = "imageGroupList";
     private static final String USERS_VIEW = "imageGroupUsers";
 
     private static Logger log =
-        LoggerFactory.getLogger(ImageGroupDispatcherController.class);
+            LoggerFactory.getLogger(ImageGroupDispatcherController.class);
 
     private ImageGroupRepository imageGroupRepository;
-    private ImageDisplayController imageDisplayController;
-    private ImageGroupDisplayController imageGroupDisplayController;
     private UserRepository userRepository;
     private WebRequestTools webRequestTools;
 
-    public ImageGroupDispatcherController(ImageGroupDisplayController imageGroupDisplayController,
-                                          ImageGroupRepository imageGroupRepository,
-                                          ImageDisplayController imageDisplayController,
+    @Autowired
+    public ImageGroupDispatcherController(ImageGroupRepository imageGroupRepository,
                                           UserRepository userRepository,
                                           WebRequestTools webRequestTools) {
         super();
-        this.imageGroupDisplayController = imageGroupDisplayController;
         this.imageGroupRepository = imageGroupRepository;
         this.userRepository = userRepository;
         this.webRequestTools = webRequestTools;
-        this.imageDisplayController = imageDisplayController;
     }
 
-    public ModelAndView handleRequest(HttpServletRequest req,
-                                      HttpServletResponse res)
-        throws Exception {
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.registerCustomEditor(ImageGroup.Type.class, new ImageGroupTypeUrlComponentPropertyEditor());
+    }
 
-        // make sure caches don't get in the way of selective content
-        // to authorized users
-        res.setHeader("Cache-control", "private");
-        // save the request in case someone clicks the sign in link
-        webRequestTools.saveCurrentRequest(req);
-        
-        /*
-         * Model Requirements:
-         * user: currently logged in user
-         * imageGroup: the current ImageGroup
-         * frame: the current ImageFrame
-         * prev: the previous ImageFrame, or null
-         * next: the next ImageFrame, or null
-         *
-         * the url must be based at / within the context, as we're using
-         * the first element as the group type (could get around this with
-         * a skipTokens arg
-         */
+    @RequestMapping("/albums")
+    public ModelAndView handleAlbumsRequest(HttpServletRequest req, HttpServletResponse res) throws Exception {
+        return preHandleListUsers(req, res, ImageGroup.Type.ALBUM);
+    }
 
-        ImageRequestInfo iri = webRequestTools.getImageRequestInfo(req);
-        
-        // redirect if necessary unless we have an image (not a directory url)
-        if (iri.getImageId() == null) {
-            if (WebSupport.handleDirectoryUrlRedirect(req, res)) {
-                // stop processing if we redirected
-                return null;
-            }
-        }
-        Map<String,Object> model = new HashMap<String,Object>();
+    @RequestMapping("/rolls")
+    public ModelAndView handleRollsRequest(HttpServletRequest req, HttpServletResponse res) throws Exception {
+        return preHandleListUsers(req, res, ImageGroup.Type.ROLL);
+    }
+
+    private ModelAndView preHandleListUsers(HttpServletRequest req, HttpServletResponse res, final ImageGroup.Type groupType) throws IOException {
+        if (webRequestTools.preHandlingFails(req, res, true)) return null;
+
+        Map<String, Object> model = initialModel(req, groupType);
+
+
+        return handleListUsers(groupType, model);
+    }
+
+    private Map<String, Object> initialModel(HttpServletRequest req, ImageGroup.Type groupType) {
+        Map<String, Object> model = new HashMap<String, Object>();
         model.put("thisRequestUrl", webRequestTools.getFullRequestUrl(req));
-        
-        model.put("groupType", iri.getImageGroupType());
-
-        
-        // dispatch according to /[groupType]/[screenName]/[imageGroupName]/[imageId]
-        if (iri.getScreenName() == null) {
-            return handleListUsers(iri.getImageGroupType(), model);   
-        }
-
-        if (iri.getImageGroupName() == null) {
-            return handleGroupList(iri.getImageGroupType(), iri.getScreenName(), model);
-        }
-
-        // got user and group args: show one group
-        if (iri.getImageId() == null) {
-//            return handleDisplayGroup(model, iri.getImageGroupType(),
-//                                      iri.getScreenName(), iri.getImageGroupName());
-            return imageGroupDisplayController.handleDisplayGroup(req, new ModelMap(model));
-        }
-        
-//        return handleDisplayFrame(iri.getImageGroupName(), iri.getImageId(),
-//                                  model, isEditMode(req), req.getServletPath());
-        return imageDisplayController.handleRequest(req, res);
+        model.put("groupType", groupType);
+        return model;
     }
-    
+
+    @RequestMapping("/{groupType}/{screenName}")
+    public ModelAndView handleGroupList(HttpServletRequest request, HttpServletResponse response,
+                                        @PathVariable("groupType") ImageGroup.Type groupType,
+                                        @PathVariable("screenName") String screenName) throws IOException {
+        if (webRequestTools.preHandlingFails(request, response, true)) return null;
+
+        return handleGroupList(groupType, screenName, initialModel(request, groupType));
+    }
+
     private ModelAndView handleListUsers(ImageGroup.Type groupType,
                                          Map<String, Object> model) {
         model.put("owners", imageGroupRepository.getOwnersByType(groupType));
@@ -136,26 +113,26 @@ public class ImageGroupDispatcherController implements Controller {
                                          String ownerName,
                                          Map<String, Object> model) {
         List<ImageGroup> imageGroups =
-            imageGroupRepository.getByOwnerScreenNameAndType(ownerName,
-                                                             groupType);
+                imageGroupRepository.getByOwnerScreenNameAndType(ownerName,
+                                                                 groupType);
 
         List<ImageGroup> filteredGroups = new ArrayList<ImageGroup>();
 
         // show a preview image
-        Map<ImageGroup,Image> previewImages =
-            new HashMap<ImageGroup,Image>();
-        Map<ImageGroup,Integer> numImages =
-            new HashMap<ImageGroup,Integer>();
+        Map<ImageGroup, Image> previewImages =
+                new HashMap<ImageGroup, Image>();
+        Map<ImageGroup, Integer> numImages =
+                new HashMap<ImageGroup, Integer>();
         for (ImageGroup group : imageGroups) {
             try {
                 filteredGroups.add(group);
                 previewImages.put(group, group.getPreviewImage());
                 numImages.put(group,
                               imageGroupRepository
-                              .getPublicFrameCount(group));
+                                      .getPublicFrameCount(group));
             } catch (AccessDeniedException e) {
                 log.debug("Access Denied: not including group in "
-                            + "collection: " + group);
+                          + "collection: " + group);
             }
         }
 
@@ -164,7 +141,7 @@ public class ImageGroupDispatcherController implements Controller {
 
         User owner = userRepository.getByScreenName(ownerName);
         model.put("owner", owner);
-        
+
         model.put("groupType", groupType);
         model.put("numImages", numImages);
         model.put("imageGroups", filteredGroups);
@@ -189,7 +166,7 @@ public class ImageGroupDispatcherController implements Controller {
             }
 
             return g2.getUploadDate()
-                .compareTo(g1.getUploadDate());
+                    .compareTo(g1.getUploadDate());
         }
     }
 }

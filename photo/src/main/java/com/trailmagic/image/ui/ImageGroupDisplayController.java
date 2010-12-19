@@ -8,19 +8,24 @@ import com.trailmagic.image.NoSuchImageGroupException;
 import com.trailmagic.image.security.ImageSecurityService;
 import com.trailmagic.user.User;
 import com.trailmagic.user.UserRepository;
-import com.trailmagic.web.util.ImageRequestInfo;
-import com.trailmagic.web.util.MalformedUrlException;
 import com.trailmagic.web.util.WebRequestTools;
-import java.util.SortedSet;
-import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
 
-@Service
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.SortedSet;
+
+@Controller
 public class ImageGroupDisplayController {
     private UserRepository userRepository;
     private ImageGroupRepository imageGroupRepository;
@@ -43,18 +48,25 @@ public class ImageGroupDisplayController {
         this.webRequestTools = webRequestTools;
     }
 
-    public ModelAndView handleDisplayGroup(HttpServletRequest request, ModelMap model)
-            throws NoSuchImageGroupException, MalformedUrlException {
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.registerCustomEditor(ImageGroup.Type.class, new ImageGroupTypeUrlComponentPropertyEditor());
+    }
 
-        ImageRequestInfo iri = webRequestTools.getImageRequestInfo(request);
-        User owner = userRepository.getByScreenName(iri.getScreenName());
-        ImageGroup group =
-            imageGroupRepository.getByOwnerNameAndTypeWithFrames(owner,
-                                                                 iri.getImageGroupName(),
-                                                                 iri.getImageGroupType());
+    @RequestMapping("/{groupType}/{screenName}/{groupName}")
+    public ModelAndView handleDisplayGroup(HttpServletRequest request, HttpServletResponse response,
+                                           @PathVariable("groupType") ImageGroup.Type groupType,
+                                           @PathVariable("screenName") String screenName,
+                                           @PathVariable("groupName") String groupName,
+                                           ModelMap model)
+            throws NoSuchImageGroupException, IOException {
+
+        if (webRequestTools.preHandlingFails(request, response, true)) return null;
+
+        User owner = userRepository.getByScreenName(screenName);
+        ImageGroup group = imageGroupRepository.getByOwnerNameAndTypeWithFrames(owner, groupName, groupType);
         if (group == null) {
-            throw new ImageGroupNotFoundException(iri.getImageGroupType().getDisplayString()
-                                                  + " not found: " + iri.getImageGroupName());
+            throw new ImageGroupNotFoundException(groupType.getDisplayString() + " not found: " + groupName);
         }
         model.addAttribute("imageGroup", group);
         model.addAttribute("imageGroupIsPublic", imageSecurityService.isPublic(group));

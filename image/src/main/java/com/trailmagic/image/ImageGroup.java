@@ -70,7 +70,7 @@ public class ImageGroup implements Owned, AccessControlled {
                     return type;
                 }
             }
-            throw new IllegalArgumentException("Invalid type string");
+            throw new IllegalArgumentException("Invalid type string: " + typeString);
         }
     }
 

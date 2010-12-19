@@ -9,13 +9,20 @@ import com.trailmagic.image.security.ImageSecurityService;
 import com.trailmagic.web.util.ImageRequestInfo;
 import com.trailmagic.web.util.MalformedUrlException;
 import com.trailmagic.web.util.WebRequestTools;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
-import org.springframework.validation.BindException;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.ServletRequestBindingException;
-import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.ServletRequestUtils;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.SimpleFormController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,12 +33,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-public class ImageDisplayController extends SimpleFormController {
+@Controller
+public class ImageDisplayController {
     private ImageRepository imageRepository;
     private ImageGroupRepository imageGroupRepository;
     private ImageSecurityService imageSecurityService;
     private WebRequestTools webRequestTools;
 
+    @Autowired
     public ImageDisplayController(ImageRepository imageRepository,
                                   ImageGroupRepository imageGroupRepository,
                                   ImageSecurityService imageSecurityService,
@@ -43,16 +52,15 @@ public class ImageDisplayController extends SimpleFormController {
         this.webRequestTools = webRequestTools;
     }
 
-    @Override
-    protected void initBinder(HttpServletRequest request, ServletRequestDataBinder binder) throws Exception {
-        super.initBinder(request, binder);
-
+    @InitBinder
+    protected void initBinder(WebDataBinder binder) throws Exception {
         binder.registerCustomEditor(Date.class, "captureDate",
                                     new CustomDateEditor(SimpleDateFormat.getDateInstance(DateFormat.SHORT), true));
+        binder.registerCustomEditor(ImageGroup.Type.class, new ImageGroupTypeUrlComponentPropertyEditor());
     }
 
-    @Override
-    protected Object formBackingObject(HttpServletRequest request) throws Exception {
+    @ModelAttribute("image")
+    public Image formBackingObject(HttpServletRequest request) throws Exception {
         ImageRequestInfo iri = webRequestTools.getImageRequestInfo(request);
         Image image = imageRepository.getById(iri.getImageId());
         if (image == null) {
@@ -66,37 +74,46 @@ public class ImageDisplayController extends SimpleFormController {
         return "edit".equals(mode);
     }
 
-    @Override
-    protected ModelAndView showForm(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    BindException errors) throws Exception {
+    @RequestMapping("/{groupType}/{screenName}/{groupName}/{imageId}")
+    public ModelAndView showForm(HttpServletRequest request,
+                                 HttpServletResponse response,
+                                 @ModelAttribute("image") Image image, BindingResult errors,
+                                 @PathVariable("groupType") ImageGroup.Type groupType,
+                                 @PathVariable("groupName") String groupName,
+                                 @PathVariable("imageId") Long imageId) throws Exception {
+        if (webRequestTools.preHandlingFails(request, response, false)) return null;
+
         @SuppressWarnings("unchecked")
         Map<String, Object> model = errors.getModel();
         model.put("isEditView", errors.hasErrors() || isEditMode(request));
-        return setupModel(request, model);
+        return setupModel(groupName, groupType, imageId, model);
     }
 
-    @Override
+    @RequestMapping(value = "/{groupType}/{screenName}/{groupName}/{imageId}", method = RequestMethod.POST)
     protected ModelAndView onSubmit(HttpServletRequest request,
                                     HttpServletResponse response,
-                                    Object command, BindException errors) throws Exception {
+                                    @ModelAttribute("image") Image image, BindingResult errors,
+                                    @PathVariable("groupType") ImageGroup.Type groupType,
+                                    @PathVariable("groupName") String groupName,
+                                    @PathVariable("imageId") Long imageId,
+                                    ModelMap model) throws Exception {
+        if (webRequestTools.preHandlingFails(request, response, false)) return null;
 
-        Image image = (Image) command;
 
-        imageRepository.save(image);
-
-        @SuppressWarnings("unchecked")
-        Map<String, Object> model = errors.getModel();
-        model.put("isEditView", false);
-        return setupModel(request, model);
+        if (errors.hasErrors()) {
+            model.put("isEditView", true);
+            return setupModel(groupName, groupType, imageId, model);
+        } else {
+            imageRepository.save(image);
+            return new ModelAndView("redirect:" + imageId);
+        }
     }
 
 
-    private ModelAndView setupModel(HttpServletRequest request, Map<String, Object> model) throws MalformedUrlException {
-        ImageRequestInfo iri = webRequestTools.getImageRequestInfo(request);
-        ImageFrame frame = imageGroupRepository.getImageFrameByGroupNameTypeAndImageId(iri.getImageGroupName(),
-                                                                                       iri.getImageGroupType(),
-                                                                                       iri.getImageId());
+    private ModelAndView setupModel(String groupName, ImageGroup.Type groupType, long imageId, Map<String, Object> model) throws MalformedUrlException {
+        ImageFrame frame = imageGroupRepository.getImageFrameByGroupNameTypeAndImageId(groupName,
+                                                                                       groupType,
+                                                                                       imageId);
         model.put("frame", frame);
         model.put("image", frame.getImage());
         model.put("group", frame.getImageGroup());
@@ -107,7 +124,7 @@ public class ImageDisplayController extends SimpleFormController {
 
 
         // got user, group, and frame number: show that frame
-        return new ModelAndView(getFormView(), model);
+        return new ModelAndView("imageDisplay", model);
     }
 
     private List<ImageGroup> findGroupsContainingImage(ImageFrame frame) {

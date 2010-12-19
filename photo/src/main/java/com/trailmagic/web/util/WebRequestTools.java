@@ -1,17 +1,17 @@
 package com.trailmagic.web.util;
 
 import com.trailmagic.image.ImageGroup;
+import com.trailmagic.image.ui.WebSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.RequestCache;
-import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UrlPathHelper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.StringTokenizer;
 
 @Service
@@ -27,9 +27,12 @@ public class WebRequestTools {
         requestCache.saveRequest(request, null);
     }
 
-    public SavedRequest getSavedRequest(HttpServletRequest request, HttpServletResponse response) {
-        return requestCache.getRequest(request, response);
+    public boolean preHandlingFails(HttpServletRequest req, HttpServletResponse res, boolean isDirectory) throws IOException {
+        res.setHeader("Cache-control", "private");
+        saveCurrentRequest(req);
+        return isDirectory && WebSupport.handleDirectoryUrlRedirect(req, res);
     }
+
 
     /**
      * Returns a <code>String</code> containing the full request URL of the
