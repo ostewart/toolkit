@@ -15,67 +15,44 @@ package com.trailmagic.image.ui;
 
 import com.trailmagic.image.HeavyImageManifestation;
 import com.trailmagic.image.ImageManifestationRepository;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.StringTokenizer;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractController;
-import org.springframework.web.util.UrlPathHelper;
 
-public class ImageManifestationController extends AbstractController {
-    private String controllerPath;
+import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
+
+@Controller
+public class ImageManifestationController {
     private ImageManifestationRepository imageManifestationRepository;
 
-    private static Logger log =
-        LoggerFactory.getLogger(ImageManifestationController.class);
+    private static Logger log = LoggerFactory.getLogger(ImageManifestationController.class);
 
+    @Autowired
     public ImageManifestationController(ImageManifestationRepository imageManifestationRepository) {
-        super();
         this.imageManifestationRepository = imageManifestationRepository;
     }
 
-    public String getControllerPath() {
-        return controllerPath;
-    }
+    @RequestMapping("/mf/by-id/{imageId}")
+    public ModelAndView imageById(HttpServletResponse res, @PathVariable("imageId") Long imageId) throws Exception {
+        Map<String, Object> model = new HashMap<String, Object>();
 
-    public void setControllerPath(String path) {
-        controllerPath = path;
-    }
+        HeavyImageManifestation mf = imageManifestationRepository.getHeavyById(imageId);
 
-    public ModelAndView handleRequestInternal(HttpServletRequest req,
-                                              HttpServletResponse res)
-        throws Exception {
+        java.io.InputStream dataStream = mf.getData().getBinaryStream();
+        res.setContentLength((int) mf.getData().length());
 
-        UrlPathHelper pathHelper = new UrlPathHelper();
-        String myPath = pathHelper.getLookupPathForRequest(req);
-        log.debug("Controller Path: " + controllerPath);
-        myPath = myPath.substring(controllerPath.length());
-        StringTokenizer pathTokens = new StringTokenizer(myPath, "/");
-
-        Map<String,Object> model = new HashMap<String,Object>();
-
-        String method = pathTokens.nextToken();
-
-        if ( method.equals("by-id") ) {
-            HeavyImageManifestation mf =
-                imageManifestationRepository.getHeavyById(Long.parseLong(pathTokens.nextToken()));
-
-            java.io.InputStream dataStream = mf.getData().getBinaryStream();
-            res.setContentLength((int) mf.getData().length());
-
-            log.debug("Passing manifestation data stream to view (type: " + dataStream.getClass() + ")");
-            model.put(InputStreamView.STREAM_KEY, dataStream);
-            model.put(InputStreamView.CONTENT_TYPE_KEY, mf.getFormat());
-            if (mf.getName() != null) {
-                model.put(InputStreamView.CONTENT_DISPOSITION_KEY, "inline; filename=" + mf.getName() + ";");
-            }
-            return new ModelAndView(new InputStreamView(), model);
+        log.debug("Passing manifestation data stream to view (type: " + dataStream.getClass() + ")");
+        model.put(InputStreamView.STREAM_KEY, dataStream);
+        model.put(InputStreamView.CONTENT_TYPE_KEY, mf.getFormat());
+        if (mf.getName() != null) {
+            model.put(InputStreamView.CONTENT_DISPOSITION_KEY, "inline; filename=" + mf.getName() + ";");
         }
-
-        return null;
+        return new ModelAndView(new InputStreamView(), model);
     }
 }
