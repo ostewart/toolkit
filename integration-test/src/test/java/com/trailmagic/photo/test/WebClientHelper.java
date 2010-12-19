@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.net.URISyntaxException;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.util.HashMap;
@@ -36,6 +37,8 @@ public class WebClientHelper {
     private WebserviceClient webserviceClient;
     private String baseUrl;
     private static final Logger log = LoggerFactory.getLogger(WebClientHelper.class);
+    public static final String TEST_IMAGE_FILENAME = "test-image.jpg";
+
 
     public WebClientHelper(String baseUrl) {
         this.baseUrl = baseUrl;
@@ -88,6 +91,16 @@ public class WebClientHelper {
         assertTrue("Redirects to uploads roll URL (actual: " + response.getFinalUrl() + ")", response.getFinalUrl().startsWith(baseUrl + "/rolls/tester/uploads/"));
 
         return webserviceClient.get(response.getFinalUrl(), new OriginalImageLinkEntityContentProcessor());
+    }
+
+    public String uploadTestImage() {
+        File imageFile = null;
+        try {
+            imageFile = new File(ClassLoader.getSystemResource(TEST_IMAGE_FILENAME).toURI());
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Couldn't open test image", e);
+        }
+        return uploadImage(imageFile);
     }
 
     public WebserviceClient getWebserviceClient() {

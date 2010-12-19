@@ -1,6 +1,7 @@
 package com.trailmagic.photo;
 
 import com.trailmagic.photo.test.WebClientHelper;
+import com.trailmagic.photo.test.WebDriverHelper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -9,20 +10,18 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
-import java.io.File;
-import java.net.URISyntaxException;
+import static com.trailmagic.photo.test.WebConstants.BASE_URL;
+import static com.trailmagic.photo.test.WebConstants.UPLOADS_URL;
 
 public class MoveImagesToNewRollAcceptanceTest {
-    public static final String TEST_IMAGE_FILENAME = "test-image.jpg";
-    public static final String BASE_URL = System.getProperty("testing.baseUrl", "http://localhost:8080/photo");
-    public static final String SECURE_BASE_URL = System.getProperty("testing.secureBaseUrl", "https://localhost:8443/photo");
-    public static final String UPLOADS_URL = BASE_URL + "/rolls/tester/uploads/";
     private WebClientHelper client;
     private WebDriver driver;
+    private WebDriverHelper driverHelper;
 
     @Before
     public void setUp() {
         driver = new FirefoxDriver("WebDriver");
+        driverHelper = new WebDriverHelper(driver);
         client = new WebClientHelper(BASE_URL);
     }
 
@@ -34,7 +33,7 @@ public class MoveImagesToNewRollAcceptanceTest {
     @Test
     public void testCanMoveImages() throws Exception {
         client.login();
-        uploadSomeImages();
+        client.uploadTestImage();
         final WebElement createRollLink = getUploadsInDisplayStateAndFindCreateLink();
         getUploadsInCreateNewRollState(createRollLink);
         selectImagesAndSubmit();
@@ -54,21 +53,12 @@ public class MoveImagesToNewRollAcceptanceTest {
     }
 
     private WebElement getUploadsInDisplayStateAndFindCreateLink() {
-        driver.get(UPLOADS_URL);
-        
-        driver.get(SECURE_BASE_URL + "/login");
-        driver.findElement(By.id("username")).sendKeys("tester");
-        final WebElement passwordElement = driver.findElement(By.id("password"));
-        passwordElement.sendKeys("password");
-        passwordElement.submit();
+        driverHelper.login();
 
         driver.get(UPLOADS_URL);
 
         return driver.findElement(By.xpath("//a[@rel='createRoll']"));
     }
 
-    private void uploadSomeImages() throws URISyntaxException {
-        File imageFile = new File(ClassLoader.getSystemResource(TEST_IMAGE_FILENAME).toURI());
-        final String originalUrl = client.uploadImage(imageFile);
-    }
+
 }
