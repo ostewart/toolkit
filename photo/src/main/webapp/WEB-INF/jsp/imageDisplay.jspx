@@ -61,27 +61,9 @@
   </head>
   
   <body id="image">
-    <div id="globalHeader">
-      <div class="breadcrumbs">
-&amp;nbsp;
-<!--        trailmagic : testing : some : places-->
-      </div>
-      
-      <div class="userAuth">
-        <authz:authorize ifAllGranted="ROLE_USER">
-          <authz:authentication property="principal.username"/> |
-          <a href="${pageContext.request.contextPath}/logout">Sign Out</a>
-        </authz:authorize>
-        <authz:authorize ifNotGranted="ROLE_USER">
-          <a href="${pageContext.request.contextPath}/login">Sign In</a>
-        </authz:authorize>
-      </div>
-    </div>
-    
+    <jsp:include page="header.jspx"/>
+
     <div id="header">
-        <div id="sitename">
-          <h1>trailmagic.com</h1>
-        </div>
         <div class="imageGroup">
           <span class="groupData">
             <span class="displayName"><tm:imageGroupLink imageGroup="${frame.imageGroup}">${fn:escapeXml(frame.imageGroup.displayName)}</tm:imageGroupLink></span>

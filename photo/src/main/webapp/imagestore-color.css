@@ -44,12 +44,11 @@
 }
 
 #header {
-// background-color: #d3d3d3;
  background-color: white;
  color: black;
 }
 
-#header #sitename {
+#globalHeader #sitename {
   background-color: #00149f;
 }
 
@@ -113,7 +112,6 @@
 
 .imageGroup a.bigLink:hover {
   border-color: blue;
-//  background-color: #a9a9a9;
   background-color: #759fe3;
 /*  opacity: 0.75; */
 }
