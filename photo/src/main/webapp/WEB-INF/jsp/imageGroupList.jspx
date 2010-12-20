@@ -65,10 +65,10 @@ owner: the current albums' owner
         <div class="userAuth">
           <authz:authorize ifAllGranted="ROLE_USER">
             <authz:authentication property="principal.username"/> |
-              <a href="/photo/logout">Sign Out</a>
+              <a href="${pageContext.request.contextPath}/logout">Sign Out</a>
           </authz:authorize>
           <authz:authorize ifNotGranted="ROLE_USER">
-            <a href="/photo/login">Sign In</a>
+            <a href="${pageContext.request.contextPath}/login">Sign In</a>
           </authz:authorize>
         </div>
       </div>

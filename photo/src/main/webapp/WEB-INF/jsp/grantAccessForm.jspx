@@ -61,10 +61,10 @@ frames: List of ImageFrames for this group
         <div class="userAuth">
           <authz:authorize ifAllGranted="ROLE_USER">
             <authz:authentication property="principal.username"/> |
-              <a href="/photo/logout">Sign Out</a>
+              <a href="${pageContext.request.contextPath}/logout">Sign Out</a>
           </authz:authorize>
           <authz:authorize ifNotGranted="ROLE_USER">
-            <a href="/photo/login">Sign In</a>
+            <a href="${pageContext.request.contextPath}/login">Sign In</a>
           </authz:authorize>
         </div>
       </div>
@@ -120,14 +120,14 @@ frames: List of ImageFrames for this group
     </div>
 
     <authz:accesscontrollist domainObject="${frame.image}" hasPermission="16">
-      <form method="post">
+      <form method="post" action="">
         <select name="action">
           <option value="grant">Grant Access</option>
           <option value="makePublic">Make Public</option>
         </select>
         <label for="recipient">Grant photos to user:</label>
-        <input name="recipient" type="text"/>
-        <label for="mask">Mask:</label>
+        <input id="recipient" name="recipient" type="text"/>
+        <label id="mask" for="mask">Mask:</label>
         <input name="mask" type="text"/>
         <table class="thumbnailList">
           <c:forEach var="frame" items="${frames}">

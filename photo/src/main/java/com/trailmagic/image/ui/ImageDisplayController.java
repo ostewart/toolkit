@@ -6,7 +6,6 @@ import com.trailmagic.image.ImageGroup;
 import com.trailmagic.image.ImageGroupRepository;
 import com.trailmagic.image.ImageRepository;
 import com.trailmagic.image.security.ImageSecurityService;
-import com.trailmagic.web.util.ImageRequestInfo;
 import com.trailmagic.web.util.MalformedUrlException;
 import com.trailmagic.web.util.WebRequestTools;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
+@RequestMapping("/{groupType}/{screenName}/{groupName}/{imageId}")
 public class ImageDisplayController {
     private ImageRepository imageRepository;
     private ImageGroupRepository imageGroupRepository;
@@ -60,9 +60,9 @@ public class ImageDisplayController {
     }
 
     @ModelAttribute("image")
-    public Image formBackingObject(HttpServletRequest request) throws Exception {
-        ImageRequestInfo iri = webRequestTools.getImageRequestInfo(request);
-        Image image = imageRepository.getById(iri.getImageId());
+    public Image formBackingObject(HttpServletRequest request, @PathVariable("imageId") Long imageId) throws Exception {
+        webRequestTools.saveCurrentRequest(request);
+        Image image = imageRepository.getById(imageId);
         if (image == null) {
             throw new Exception("no such image");
         }
@@ -74,7 +74,7 @@ public class ImageDisplayController {
         return "edit".equals(mode);
     }
 
-    @RequestMapping("/{groupType}/{screenName}/{groupName}/{imageId}")
+    @RequestMapping(method = RequestMethod.GET)
     public ModelAndView showForm(HttpServletRequest request,
                                  HttpServletResponse response,
                                  @ModelAttribute("image") Image image, BindingResult errors,
@@ -86,10 +86,12 @@ public class ImageDisplayController {
         @SuppressWarnings("unchecked")
         Map<String, Object> model = errors.getModel();
         model.put("isEditView", errors.hasErrors() || isEditMode(request));
+        model.put("thisRequestUrl", webRequestTools.getFullRequestUrl(request));
+
         return setupModel(groupName, groupType, imageId, model);
     }
 
-    @RequestMapping(value = "/{groupType}/{screenName}/{groupName}/{imageId}", method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST)
     protected ModelAndView onSubmit(HttpServletRequest request,
                                     HttpServletResponse response,
                                     @ModelAttribute("image") Image image, BindingResult errors,
