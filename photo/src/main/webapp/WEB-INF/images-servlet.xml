@@ -51,16 +51,6 @@
     </property>
   </bean>
 
-  <bean id="handlerMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
-    <property name="mappings">
-      <props>
-        <prop key="/grantAccess">accessGrantController</prop>
-        <prop key="/testing/**">imageEditController</prop>
-        <prop key="/edit-image-metadata">imageMetadataEditController</prop>
-      </props>
-    </property>
-  </bean>
-
   <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"/>
   <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter"/>
   <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"/>
@@ -101,52 +91,6 @@
         class="org.springframework.web.servlet.mvc.ServletForwardingController">
     <property name="servletName" value="fileServlet"/>
   </bean>
-
-  <bean id="imageEditController"
-        class="com.trailmagic.image.ui.ImageEditController">
-    <constructor-arg ref="imageRepository"/>
-    <property name="commandClass" value="com.trailmagic.image.Image"/>
-    <property name="commandName" value="image"/>
-    <property name="formView" value="imageDisplay"/>
-    <property name="validators">
-      <list>
-        <bean id="imageValidator"
-              class="com.trailmagic.image.ImageValidator"/>
-      </list>
-    </property>
-  </bean>
-
-  <bean id="accessGrantController"
-        class="com.trailmagic.image.ui.GrantAccessController">
-    <property name="commandName" value="grantAccessBean"/>
-    <property name="commandClass" value="com.trailmagic.image.ui.GrantAccessBean"/>
-    <property name="formView" value="grantAccessForm"/>
-    <property name="successView" value="grantAccessSuccess"/>
-    <property name="imageRepository" ref="imageRepository"/>
-    <property name="imageGroupRepository" ref="imageGroupRepository"/>
-    <property name="imageSecurityService" ref="imageSecurityService"/>
-    <property name="userFactory" ref="userFactory"/>
-  </bean>
-
-  <bean id="imageGroupAddForm"
-        class="com.trailmagic.image.ui.ImageGroupAddForm">
-    <property name="commandName" value="imageGroup"/>
-    <property name="commandClass" value="com.trailmagic.image.ImageGroup"/>
-    <property name="formView" value="imageGroupAdd"/>
-    <property name="successView" value="imageGroupAddSuccess"/>
-    <property name="validateOnBinding" value="false"/>
-    <property name="sessionFactory" ref="sessionFactory"/>
-    <property name="userFactory" ref="userFactory"/>
-  </bean>
-
-  <bean id="imageMetadataEditController" class="com.trailmagic.image.ui.ImageMetadataEditController">
-    <constructor-arg ref="imageRepository"/>
-    <property name="commandName" value="image"/>
-    <property name="commandClass" value="com.trailmagic.image.Image"/>
-    <property name="formView" value="imageDisplay"/>
-    <property name="successView" value="imageDetails"/>
-  </bean>
-
 
   <bean id="requestCache" class="org.springframework.security.web.savedrequest.HttpSessionRequestCache"/>
 </beans>

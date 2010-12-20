@@ -3,20 +3,14 @@
           xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0"
           xmlns:c="http://java.sun.com/jsp/jstl/core"
           xmlns:fmt="http://java.sun.com/jsp/jstl/fmt"
-          xmlns:tm="http://trailmagic.com/taglibs/image"
-          xmlns:fn="http://java.sun.com/jsp/jstl/functions"
-          xmlns:authz="http://www.springframework.org/security/tags"
           xmlns:form="http://www.springframework.org/tags/form">
 
-<!--    <c:url var="formActionUrl" value="/edit-image-metadata">-->
-<!--        <c:param name="redirectUri" value="${requestUri}"/>-->
-<!--    </c:url>-->
     <c:url var="formActionUrl" value="">
     </c:url>
 
       <form:form commandName="image" method="post" action="${formActionUrl}">
         <fieldset>
-          <form:errors path="*"></form:errors>
+          <form:errors path="*"/>
           <input type="hidden" name="imageId" value="${image.id}"/>
     <div class="imageDetails edit">
           <form:label path="name"><fmt:message key="imageMetadataEdit.name"/></form:label>
