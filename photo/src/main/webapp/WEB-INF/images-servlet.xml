@@ -1,18 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
- Copyright (c) 2006, 2007 Oliver Stewart.  All Rights Reserved.
-
- This file is free software; you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation; either version 2, or (at your option)
- any later version.
-
- This file is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
--->
-
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
@@ -22,7 +8,6 @@
            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
            http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
 
-  <bean id="portResolver" class="org.springframework.security.web.PortResolverImpl"/>
 
   <context:component-scan base-package="com.trailmagic.web"/>
   <context:component-scan base-package="com.trailmagic.image.ui"/>
@@ -51,10 +36,6 @@
     </property>
   </bean>
 
-  <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"/>
-  <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter"/>
-  <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"/>
-
   <bean id="exceptionHandler"
         class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
     <property name="exceptionMappings">
@@ -75,21 +56,8 @@
     <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
   </bean>
 
-  <bean id="urlPathHelper"
-        class="org.springframework.web.util.UrlPathHelper">
-  </bean>
-
-  <bean id="multipartResolver"
-        class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-
-    <!-- one of the properties available; the maximum file size in bytes -->
+  <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
     <property name="maxUploadSize" value="10000000"/>
-  </bean>
-
-
-  <bean id="fileController"
-        class="org.springframework.web.servlet.mvc.ServletForwardingController">
-    <property name="servletName" value="fileServlet"/>
   </bean>
 
   <bean id="requestCache" class="org.springframework.security.web.savedrequest.HttpSessionRequestCache"/>
