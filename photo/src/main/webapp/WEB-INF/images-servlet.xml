@@ -54,7 +54,6 @@
   <bean id="handlerMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
     <property name="mappings">
       <props>
-        <prop key="/import">imageImportController</prop>
         <prop key="/changePermission">imageAccessController</prop>
         <prop key="/grantAccess">accessGrantController</prop>
         <prop key="/testing/**">imageEditController</prop>
@@ -116,15 +115,6 @@
               class="com.trailmagic.image.ImageValidator"/>
       </list>
     </property>
-  </bean>
-
-  <bean id="imageImportController"
-        class="com.trailmagic.image.ui.ImageImportController" p:validateOnBinding="false">
-    <constructor-arg ref="imagesParser"/>
-    <property name="commandName" value="imageImportBean"/>
-    <property name="commandClass" value="com.trailmagic.image.ui.ImageImportBean"/>
-    <property name="formView" value="imageImportForm"/>
-    <property name="successView" value="imageImportSuccess"/>
   </bean>
 
   <bean id="imageAccessController" class="com.trailmagic.image.ui.ImageAccessController">
