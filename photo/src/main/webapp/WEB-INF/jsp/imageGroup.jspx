@@ -166,9 +166,8 @@ frames: List of ImageFrames for this group
                     </c:choose>
                 </jsp:body>
             </jsp:element>
+            <a rel="createRoll" href="?newRoll=true">Create Roll From Images</a>
         </authz:accesscontrollist>
-
-        <a rel="createRoll" href="?newRoll=true">Create Roll From Images</a>
 
     </div>
 

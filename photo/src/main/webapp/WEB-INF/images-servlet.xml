@@ -15,8 +15,8 @@
 
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:p="http://www.springframework.org/schema/p"
-       xmlns:context="http://www.springframework.org/schema/context" xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
        xsi:schemaLocation="
            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
@@ -54,7 +54,6 @@
   <bean id="handlerMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
     <property name="mappings">
       <props>
-        <prop key="/changePermission">imageAccessController</prop>
         <prop key="/grantAccess">accessGrantController</prop>
         <prop key="/testing/**">imageEditController</prop>
         <prop key="/edit-image-metadata">imageMetadataEditController</prop>
@@ -115,17 +114,6 @@
               class="com.trailmagic.image.ImageValidator"/>
       </list>
     </property>
-  </bean>
-
-  <bean id="imageAccessController" class="com.trailmagic.image.ui.ImageAccessController">
-    <constructor-arg ref="requestCache"/>
-    <property name="commandName" value="imageAccessBean"/>
-    <property name="commandClass" value="com.trailmagic.image.ui.ImageAccessBean"/>
-    <property name="formView" value="imageAccessForm"/>
-    <property name="successView" value="imageAccessSuccess"/>
-    <property name="imageRepository" ref="imageRepository"/>
-    <property name="imageGroupRepository" ref="imageGroupRepository"/>
-    <property name="imageSecurityService" ref="imageSecurityService"/>
   </bean>
 
   <bean id="accessGrantController"

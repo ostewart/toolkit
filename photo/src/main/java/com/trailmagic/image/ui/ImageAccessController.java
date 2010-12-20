@@ -18,87 +18,94 @@ import com.trailmagic.image.ImageGroup;
 import com.trailmagic.image.ImageGroupRepository;
 import com.trailmagic.image.ImageRepository;
 import com.trailmagic.image.security.ImageSecurityService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.web.savedrequest.RequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
-import org.springframework.validation.BindException;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.SimpleFormController;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
-public class ImageAccessController extends SimpleFormController {
+@Controller
+@RequestMapping("/changePermission")
+public class ImageAccessController {
     private ImageSecurityService imageSecurityService;
     private ImageRepository imageRepository;
     private ImageGroupRepository imageGroupRepository;
     private RequestCache requestCache;
 
-    private static final String MAKE_PUBLIC_ACTION = "makePublic";
-    private static final String MAKE_PRIVATE_ACTION = "makePrivate";
-    private static final String MAKE_FRAMES_PUBLIC_ACTION = "makeImagesPublic";
-    private static final String MAKE_FRAMES_PRIVATE_ACTION = "makeImagesPrivate";
-    private static final String IMAGE_TARGET = "image";
-    private static final String IMAGE_GROUP_TARGET = "imageGroup";
-
-    public ImageAccessController(RequestCache requestCache) {
+    @Autowired
+    public ImageAccessController(RequestCache requestCache, ImageSecurityService imageSecurityService,
+                                 ImageRepository imageRepository, ImageGroupRepository imageGroupRepository) {
         this.requestCache = requestCache;
-    }
-
-    public void setImageSecurityService(ImageSecurityService imageSecurityService) {
         this.imageSecurityService = imageSecurityService;
-    }
-
-    public void setImageRepository(ImageRepository repository) {
-        this.imageRepository = repository;
-    }
-
-    public void setImageGroupRepository(ImageGroupRepository imageGroupRepository) {
+        this.imageRepository = imageRepository;
         this.imageGroupRepository = imageGroupRepository;
     }
 
-    protected ModelAndView onSubmit(HttpServletRequest req,
-                                    HttpServletResponse res,
-                                    Object command,
-                                    BindException errors) throws Exception {
-        ImageAccessBean bean = (ImageAccessBean) command;
+    @RequestMapping(method = RequestMethod.POST, params = {"target=image", "action=makePublic"})
+    public String makeImagePublic(@RequestParam("id") Long imageId,
+                                HttpServletRequest request, HttpServletResponse response) throws IOException {
+        Image target = imageRepository.getById(imageId);
+        imageSecurityService.makePublic(target);
 
-        if (bean == null) {
-            throw new Exception("null command");
-        }
+        return redirectForSuccess(request, response);
+    }
 
-        if (IMAGE_TARGET.equals(bean.getTarget())) {
-            Image target = imageRepository.getById(bean.getId());
+    @RequestMapping(method = RequestMethod.POST, params = {"target=image", "action=makePrivate"})
+    public String makeImagePrivate(@RequestParam("id") Long imageId,
+                                 HttpServletRequest request, HttpServletResponse response) throws IOException {
+        imageSecurityService.makePrivate(imageRepository.getById(imageId));
 
-            if (MAKE_PUBLIC_ACTION.equals(bean.getAction())) {
-                imageSecurityService.makePublic(target);
-            } else if (MAKE_PRIVATE_ACTION.equals(bean.getAction())) {
-                imageSecurityService.makePrivate(target);
-            } else {
-                throw new Exception("Invalid action");
-            }
-        } else if (IMAGE_GROUP_TARGET.equals(bean.getTarget())) {
-            ImageGroup target = imageGroupRepository.getByIdWithFrames(bean.getId());
+        return redirectForSuccess(request, response);
+    }
 
-            if (MAKE_PUBLIC_ACTION.equals(bean.getAction())) {
-                imageSecurityService.makePublic(target);
-            } else if (MAKE_PRIVATE_ACTION.equals(bean.getAction())) {
-                imageSecurityService.makePrivate(target);
-            } else if (MAKE_FRAMES_PUBLIC_ACTION.equals(bean.getAction())) {
-                imageSecurityService.makeImagesPublic(target);
-            } else if (MAKE_FRAMES_PRIVATE_ACTION.equals(bean.getAction())) {
-                imageSecurityService.makeImagesPrivate(target);
-            } else {
-                throw new Exception("invalid action");
-            }
-        }
+    @RequestMapping(method = RequestMethod.POST, params = {"target=imageGroup", "action=makePublic"})
+    public String makeImageGroupPublic(@RequestParam("id") Long imageGroupId,
+                                     HttpServletRequest request, HttpServletResponse response) throws IOException {
+        ImageGroup target = imageGroupRepository.getByIdWithFrames(imageGroupId);
+        imageSecurityService.makePublic(target);
 
-        // if all goes well, redirect back to the last page
-        final SavedRequest savedRequest = requestCache.getRequest(req, res);
+        return redirectForSuccess(request, response);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, params = {"target=imageGroup", "action=makePrivate"})
+    public String makeImageGroupPrivate(@RequestParam("id") Long imageGroupId,
+                                      HttpServletRequest request, HttpServletResponse response) throws IOException {
+        ImageGroup target = imageGroupRepository.getByIdWithFrames(imageGroupId);
+        imageSecurityService.makePrivate(target);
+
+        return redirectForSuccess(request, response);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, params = {"target=imageGroup", "action=makeImagesPublic"})
+    public String makeImageGroupImagesPublic(@RequestParam("id") Long imageGroupId,
+                                           HttpServletRequest request, HttpServletResponse response) throws IOException {
+        ImageGroup target = imageGroupRepository.getByIdWithFrames(imageGroupId);
+        imageSecurityService.makeImagesPublic(target);
+
+        return redirectForSuccess(request, response);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, params = {"target=imageGroup", "action=makeImagesPrivate"})
+    public String makeImageGroupImagesPrivate(@RequestParam("id") Long imageGroupId,
+                                            HttpServletRequest request, HttpServletResponse response) throws IOException {
+        ImageGroup target = imageGroupRepository.getByIdWithFrames(imageGroupId);
+        imageSecurityService.makeImagesPrivate(target);
+
+        return redirectForSuccess(request, response);
+    }
+
+    private String redirectForSuccess(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        final SavedRequest savedRequest = requestCache.getRequest(request, response);
         if (savedRequest != null) {
-            res.sendRedirect(savedRequest.getRedirectUrl());
+            response.sendRedirect(savedRequest.getRedirectUrl());
             return null;
-        } else {
-            return super.onSubmit(req, res, command, errors);
         }
+        return "redirect:";
     }
 }
