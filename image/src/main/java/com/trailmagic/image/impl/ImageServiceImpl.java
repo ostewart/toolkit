@@ -85,7 +85,7 @@ public class ImageServiceImpl implements ImageService {
         imageMetadata.setShortName("");
         imageMetadata.setDisplayName("");
         imageMetadata.setCreator(fullNameFromUser());
-        imageMetadata.setCopyright("Copyright " + Calendar.getInstance().get(Calendar.YEAR));
+        imageMetadata.setCopyright("Copyright " + timeSource.calendar().get(Calendar.YEAR));
         return imageMetadata;
     }
 
