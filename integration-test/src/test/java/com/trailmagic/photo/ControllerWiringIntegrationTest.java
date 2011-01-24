@@ -16,14 +16,12 @@ import static org.junit.Assert.assertNotNull;
 
 public class ControllerWiringIntegrationTest {
     private WebDriver driver;
-    private WebClientHelper client;
-    private WebDriverHelper driverHelper;
 
     @Before
     public void setUp() {
         driver = new FirefoxDriver("WebDriver");
-        client = new WebClientHelper(BASE_URL);
-        driverHelper = new WebDriverHelper(driver);
+        WebClientHelper client = new WebClientHelper(BASE_URL);
+        WebDriverHelper driverHelper = new WebDriverHelper(driver);
 
         client.login();
         client.uploadTestImage();

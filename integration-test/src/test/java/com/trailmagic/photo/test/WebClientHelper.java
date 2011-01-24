@@ -2,7 +2,6 @@ package com.trailmagic.photo.test;
 
 import com.trailmagic.webclient.WebResponse;
 import com.trailmagic.webclient.WebserviceClient;
-import com.trailmagic.webclient.XPathEntityContentProcessor;
 import com.trailmagic.webclient.http.EntityContentProcessor;
 import com.trailmagic.webclient.http.HttpFactory;
 import org.apache.http.conn.scheme.PlainSocketFactory;
@@ -12,9 +11,6 @@ import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.params.BasicHttpParams;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.xpath.XPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,17 +86,17 @@ public class WebClientHelper {
         assertTrue("Response is a redirect", response.isRedirected());
         assertTrue("Redirects to uploads roll URL (actual: " + response.getFinalUrl() + ")", response.getFinalUrl().startsWith(baseUrl + "/rolls/tester/uploads/"));
 
-        return webserviceClient.get(response.getFinalUrl(), new OriginalImageLinkEntityContentProcessor());
+        webserviceClient.get(response.getFinalUrl(), new NoOpEntityContentProcessor());
+        return response.getFinalUrl();
     }
 
     public String uploadTestImage() {
-        File imageFile = null;
         try {
-            imageFile = new File(ClassLoader.getSystemResource(TEST_IMAGE_FILENAME).toURI());
+            File imageFile = new File(ClassLoader.getSystemResource(TEST_IMAGE_FILENAME).toURI());
+            return uploadImage(imageFile);
         } catch (URISyntaxException e) {
             throw new RuntimeException("Couldn't open test image", e);
         }
-        return uploadImage(imageFile);
     }
 
     public WebserviceClient getWebserviceClient() {
@@ -113,16 +109,4 @@ public class WebClientHelper {
             return null;
         }
     }
-
-    private static class OriginalImageLinkEntityContentProcessor extends XPathEntityContentProcessor<String> {
-        @Override
-        public String processWithDocument(Document document) throws Exception {
-            XPath xPath = XPath.newInstance("//html:a[contains(text(),'orig')]");
-            xPath.addNamespace("html", "http://www.w3.org/1999/xhtml");
-
-            final Element aElement = (Element) xPath.selectSingleNode(document);
-            return aElement.getAttribute("href").getValue();
-        }
-    }
-
 }
