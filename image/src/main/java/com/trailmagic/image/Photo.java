@@ -26,6 +26,10 @@ public class Photo extends Image {
     private Date captureDate;
     private ImageGroup roll;
 
+    public Photo(User owner) {
+        super(owner);
+    }
+
     public Photo() {
         super();
     }
