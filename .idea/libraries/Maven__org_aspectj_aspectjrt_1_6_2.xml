@@ -1,0 +1,17 @@
+<component name="libraryTable">
+  <library name="Maven: org.aspectj:aspectjrt:1.6.2">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/aspectj/aspectjrt/1.6.2/aspectjrt-1.6.2.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/aspectj/aspectjrt/1.6.2/aspectjrt-1.6.2-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/aspectj/aspectjrt/1.6.2/aspectjrt-1.6.2-sources.jar!/" />
+      <root url="jar://$USER_HOME$/Downloads/aspectj-1.6.2-src.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../aspectj/aspectjtools1.6.2-src.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../aspectj/aspectjweaver1.6.2-src.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../aspectj/aspectjrt1.6.2-src.jar!/" />
+    </SOURCES>
+  </library>
+</component>
