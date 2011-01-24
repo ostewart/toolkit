@@ -47,6 +47,11 @@ public class MoveImagesToNewRollAcceptanceTest {
         driver.findElement(By.id("submitCreateRoll")).submit();
 
         verifyCorrectImagesAppearOnNewRollPage();
+        verifyMovedImagesNoLongerAppearOnUploadsPage();
+    }
+
+    private void verifyMovedImagesNoLongerAppearOnUploadsPage() {
+
     }
 
     private void enterRollName(String rollName) {
