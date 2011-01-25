@@ -76,8 +76,8 @@ public class MoveImagesToNewRollAcceptanceTest {
         } catch (MalformedURLException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
-        WebElement imageCheckbox = driver.findElement(By.xpath("//a[@href='" + path + "']"));
-        imageCheckbox.click();
+//        WebElement imageCheckbox = driver.findElement(By.xpath("//a[@href='" + path + "']"));
+//        imageCheckbox.click();
     }
 
     private void getUploadsInCreateNewRollState(WebElement createRollLink) {

@@ -1,16 +1,10 @@
 package com.trailmagic.image.ui;
 
-import com.trailmagic.image.ImageFrame;
-import com.trailmagic.image.ImageGroup;
-import com.trailmagic.image.ImageGroupNotFoundException;
-import com.trailmagic.image.ImageGroupRepository;
-import com.trailmagic.image.NoSuchImageGroupException;
+import com.trailmagic.image.*;
 import com.trailmagic.image.security.ImageSecurityService;
 import com.trailmagic.user.User;
 import com.trailmagic.user.UserRepository;
 import com.trailmagic.web.util.WebRequestTools;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -31,10 +25,6 @@ public class ImageGroupDisplayController {
     private ImageGroupRepository imageGroupRepository;
     private ImageSecurityService imageSecurityService;
     private WebRequestTools webRequestTools;
-
-    private static final String IMG_GROUP_VIEW = "imageGroup";
-    private static Logger log =
-        LoggerFactory.getLogger(ImageGroupDisplayController.class);
 
     @Autowired
     public ImageGroupDisplayController(ImageGroupRepository imageGroupRepository,
@@ -72,9 +62,12 @@ public class ImageGroupDisplayController {
         model.addAttribute("imageGroupIsPublic", imageSecurityService.isPublic(group));
 
         SortedSet<ImageFrame> frames = group.getFrames();
-        log.debug("Frames contains " + frames.size() + " items.");
         model.addAttribute("frames", frames);
 
-        return new ModelAndView(IMG_GROUP_VIEW, model);
+        if (request.getParameter("createRoll") != null) {
+            return new ModelAndView("newGroup");
+        }
+
+        return new ModelAndView("imageGroup", model);
     }
 }
