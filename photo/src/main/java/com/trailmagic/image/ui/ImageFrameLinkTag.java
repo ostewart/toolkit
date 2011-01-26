@@ -13,14 +13,11 @@
  */
 package com.trailmagic.image.ui;
 
-import javax.servlet.jsp.tagext.TagSupport;
-import javax.servlet.jsp.JspException;
-import java.io.IOException;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
-import javax.servlet.http.HttpServletRequest;
+import com.trailmagic.image.ImageFrame;
 
-import com.trailmagic.image.*;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.TagSupport;
+import java.io.IOException;
 
 public class ImageFrameLinkTag extends TagSupport {
     private ImageFrame frame;
@@ -34,7 +31,7 @@ public class ImageFrameLinkTag extends TagSupport {
             html.append("<a ");
             html.append(formatAttribute("href", imageFrameUrl()));
             if (id != null) {
-                html.append(formatAttribute("id", id));                
+                html.append(formatAttribute("id", id));
             }
             html.append(">");
 
@@ -46,15 +43,7 @@ public class ImageFrameLinkTag extends TagSupport {
     }
 
     private String imageFrameUrl() {
-        WebApplicationContext ctx =
-            WebApplicationContextUtils
-            .getRequiredWebApplicationContext(pageContext
-                                              .getServletContext());
-        LinkHelper helper =
-            (LinkHelper)ctx.getBean("linkHelper");
-        helper.setRequest((HttpServletRequest)pageContext.getRequest());
-
-        return helper.getImageGroupFrameUrl(frame);
+        return JspFunctions.frameUri(pageContext, frame);
     }
 
     private String formatAttribute(String name, String value) {

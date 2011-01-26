@@ -20,72 +20,51 @@ import com.trailmagic.user.User;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 public class LinkHelper {
-    private HttpServletRequest m_request;
-    private String m_albumServletPath;
-    /*
-    public LinkHelper(HttpServletRequest req) {
-        m_request = req;
-    }
-    */
     public LinkHelper() {
     }
 
-    public void setAlbumServletPath(String path) {
-        // XXX: trailing slash?
-        m_albumServletPath = path;
+    public String getImageGroupFrameUrl(HttpServletRequest request, ImageFrame frame) {
+        return getImageGroupsRootUrl(request, frame.getImageGroup().getType()) +
+                frame.getImage().getOwner().getScreenName() + "/" +
+                frame.getImageGroup().getName() + "/" + frame.getImage().getId();
     }
 
-    public void setRequest(HttpServletRequest req) {
-        m_request = req;
+    public String getImageGroupFrameUrl(HttpServletRequest request, ImageGroup imageGroup, Long imageId) {
+        return getImageGroupsRootUrl(request, imageGroup.getType()) +
+                imageGroup.getOwner().getScreenName() + "/" +
+                imageGroup.getName() + "/" + imageId;
     }
 
-    public String getImageGroupFrameUrl(ImageFrame frame) {
-        return getImageGroupsRootUrl(frame.getImageGroup().getType()) +
-            frame.getImage().getOwner().getScreenName() + "/" +
-            frame.getImageGroup().getName() + "/" + frame.getImage().getId();
+    public String getImageGroupUrl(HttpServletRequest request, ImageGroup imageGroup) {
+        return getImageGroupsRootUrl(request, imageGroup.getType()) +
+                imageGroup.getOwner().getScreenName() + "/" +
+                imageGroup.getName() + "/";
     }
 
-    public String getImageGroupFrameUrl(ImageGroup imageGroup, Long imageId) {
-        return getImageGroupsRootUrl(imageGroup.getType()) +
-            imageGroup.getOwner().getScreenName() + "/" +
-            imageGroup.getName() + "/" + imageId;
+    public String getImageGroupsUrl(HttpServletRequest request, ImageGroup.Type groupType, User owner) {
+        return getImageGroupsRootUrl(request, groupType) +
+                owner.getScreenName() + "/";
     }
 
-    public String getImageGroupUrl(ImageGroup imageGroup) {
-        return getImageGroupsRootUrl(imageGroup.getType()) +
-            imageGroup.getOwner().getScreenName() + "/" +
-            imageGroup.getName() + "/";
+    public String getImageGroupsRootUrl(HttpServletRequest request, ImageGroup.Type type) {
+        String prettyType;
+        switch (type) {
+            case ROLL:
+                prettyType = "roll";
+                break;
+            case ALBUM:
+                prettyType = "album";
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
+        return request.getContextPath() + "/" + prettyType + "s/";
     }
 
-    public String getImageGroupsUrl(ImageGroup.Type groupType, User owner) {
-        return getImageGroupsRootUrl(groupType) +
-            owner.getScreenName() + "/";
-    }
-
-    public String getAlbumsRootUrl() {
-        return m_request.getContextPath() + m_albumServletPath;
-    }
-
-    public String getImageGroupsRootUrl(ImageGroup.Type type) {
-    	String prettyType;
-    	switch (type) {
-    	case ROLL:
-    		prettyType = "roll";
-    		break;
-    	case ALBUM:
-    		prettyType = "album";
-    		break;
-    	default:
-    		throw new IllegalArgumentException();
-    	}
-        return m_request.getContextPath() + "/" + prettyType + "s/";
-    }
-
-    public String getImageMFUrl(ImageManifestation imf) {
-        return m_request.getContextPath() + "/mf/by-id/" + 
-            imf.getId();
+    public String getImageMFUrl(HttpServletRequest request, ImageManifestation imf) {
+        return request.getContextPath() + "/mf/by-id/" +
+                imf.getId();
     }
 
 }

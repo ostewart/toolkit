@@ -15,7 +15,7 @@ public class JavascriptTest {
 
     @Test
     public void runJavascriptTestHarness() {
-        driver = new FirefoxDriver();
+        driver = new FirefoxDriver("WebDriver");
         driver.get("http://localhost:8081/photo/test-runner.html");
 
 

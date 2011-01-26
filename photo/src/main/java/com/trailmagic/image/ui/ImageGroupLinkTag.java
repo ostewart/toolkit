@@ -84,24 +84,18 @@ public class ImageGroupLinkTag extends TagSupport {
             html.append("href=\"");
 
             //XXX: yeek?
-            WebApplicationContext ctx =
-                WebApplicationContextUtils
-                .getRequiredWebApplicationContext(pageContext
-                                                  .getServletContext());
-            LinkHelper helper =
-                (LinkHelper)ctx.getBean("linkHelper");
-            // XXX: check for null bean
-            // XXX: evil cast?
-            helper.setRequest((HttpServletRequest)pageContext.getRequest());
+            WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(pageContext.getServletContext());
+            LinkHelper helper = ctx.getBean(LinkHelper.class);
 
+            HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
             if ( m_image != null ) {
-                html.append(helper.getImageGroupFrameUrl(m_imageGroup, m_image));
+                html.append(helper.getImageGroupFrameUrl(request, m_imageGroup, m_image));
             } else if ( m_imageGroup != null ) {
-                html.append(helper.getImageGroupUrl(m_imageGroup));
+                html.append(helper.getImageGroupUrl(request, m_imageGroup));
             } else if ( m_owner != null ) {
-                html.append(helper.getImageGroupsUrl(m_groupType, m_owner));
+                html.append(helper.getImageGroupsUrl(request, m_groupType, m_owner));
             } else {
-                html.append(helper.getImageGroupsRootUrl(m_groupType));
+                html.append(helper.getImageGroupsRootUrl(request, m_groupType));
             }
             html.append("\">");
             pageContext.getOut().write(html.toString());

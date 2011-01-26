@@ -1,19 +1,20 @@
 package com.trailmagic.image.ui;
 
-import com.trailmagic.image.ImageFrame;
-import com.trailmagic.image.ImageGroup;
-import com.trailmagic.image.ImageGroupRepository;
-import com.trailmagic.image.Photo;
+import com.trailmagic.image.*;
 import com.trailmagic.image.security.ImageSecurityService;
 import com.trailmagic.user.User;
 import com.trailmagic.user.UserRepository;
 import com.trailmagic.web.util.WebRequestTools;
+import org.aspectj.lang.Aspects;
+import org.aspectj.lang.NoAspectBoundException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.access.intercept.aspectj.AspectJMethodSecurityInterceptor;
+import org.springframework.security.access.method.MapBasedMethodSecurityMetadataSource;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter;
 
@@ -39,9 +40,20 @@ public class ImageGroupDisplayControllerTest {
 
     @Before
     public void setUp() throws Exception {
+        disableSecurityInterceptor();
         MockitoAnnotations.initMocks(this);
         handlerAdapter = new AnnotationMethodHandlerAdapter();
         controller = new ImageGroupDisplayController(imageGroupRepository, imageSecurityService, userRepository, webRequestTools);
+    }
+
+    private void disableSecurityInterceptor() {
+        try {
+            final AspectJMethodSecurityInterceptor interceptor = new AspectJMethodSecurityInterceptor();
+            interceptor.setSecurityMetadataSource(new MapBasedMethodSecurityMetadataSource());
+            Aspects.aspectOf(ImageSecurityAspect.class).setSecurityInterceptor(interceptor);
+        } catch (NoAspectBoundException e) {
+            // AspectJ isn't on
+        }
     }
 
     @Test

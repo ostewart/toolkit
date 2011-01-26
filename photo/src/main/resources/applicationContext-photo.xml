@@ -18,11 +18,5 @@
 
 
 <beans>
-  <!-- moved from applicationContext-imagestore.xml -->
-  <bean id="linkHelper"
-    class="com.trailmagic.image.ui.LinkHelper">
-    <property name="albumServletPath">
-      <value>/albums/</value>
-    </property>
-  </bean>
+  <bean id="linkHelper" class="com.trailmagic.image.ui.LinkHelper"/>
 </beans>

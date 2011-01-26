@@ -14,20 +14,21 @@
 -->
 
 <taglib xmlns="http://java.sun.com/xml/ns/j2ee"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"
-  version="2.0">
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"
+        version="2.0">
 
   <description>trailmagic.com Image Manipulation/Display Tags</description>
   <tlib-version>1.2</tlib-version>
   <short-name>image</short-name>
   <uri>http://trailmagic.com/taglibs/image</uri>
-  
+
   <tag>
     <description>Display an image by substituting an IMG tag</description>
     <name>image</name>
     <tag-class>com.trailmagic.image.ui.ImageTag</tag-class>
-    <body-content>empty</body-content> <!-- change to alt -->
+    <body-content>empty</body-content>
+    <!-- change to alt -->
     <attribute>
       <name>image</name>
       <required>true</required>
@@ -105,4 +106,11 @@
 
   </tag>
 
+  <function>
+    <description>Output the display URL of an ImageFrame</description>
+    <name>frameUri</name>
+    <function-class>com.trailmagic.image.ui.JspFunctions</function-class>
+    <function-signature>java.lang.String frameUri(javax.servlet.jsp.PageContext, com.trailmagic.image.ImageFrame)</function-signature>
+    <example>${tm:frameUri(frame)}</example>
+  </function>
 </taglib>

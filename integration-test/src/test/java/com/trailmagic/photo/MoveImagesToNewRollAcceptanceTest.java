@@ -69,15 +69,17 @@ public class MoveImagesToNewRollAcceptanceTest {
 
 
     private void selectImage(String imageLink) {
-        String path = null;
+        String path = getPathFromUrl(imageLink);
+        WebElement imageCheckbox = driver.findElement(By.xpath("//li[@id='" + path + "']/input"));
+        imageCheckbox.click();
+    }
+
+    private String getPathFromUrl(String imageLink) {
         try {
-            URL url = new URL(imageLink);
-            path = url.getPath();
+            return new URL(imageLink).getPath();
         } catch (MalformedURLException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            throw new RuntimeException("Couldn't extract path from URL", e);
         }
-//        WebElement imageCheckbox = driver.findElement(By.xpath("//a[@href='" + path + "']"));
-//        imageCheckbox.click();
     }
 
     private void getUploadsInCreateNewRollState(WebElement createRollLink) {

@@ -98,12 +98,8 @@ public class ImageTag extends TagSupport {
                                                       .getServletContext());
                 LinkHelper helper =
                     (LinkHelper)ctx.getBean("linkHelper");
-                // XXX: check for null bean
-                // XXX: evil cast?
-                helper.setRequest((HttpServletRequest)
-                                  pageContext.getRequest());
 
-                html.append(helper.getImageMFUrl(mf));
+                html.append(helper.getImageMFUrl((HttpServletRequest) pageContext.getRequest(), mf));
                 html.append("\" height=\"");
                 html.append(mf.getHeight());
                 html.append("\" width=\"");

@@ -48,8 +48,8 @@
         <ul class="thumbnailList">
 
             <c:forEach var="frame" items="${frames}">
-                <li>
-                    <input type="checkbox">
+                <li id="${tm:frameUri(pageContext, frame)}">
+                    <input type="checkbox" id="image_${frame.image.id}">
                         <tm:image image="${frame.image}" sizeLabel="thumbnail"/>
                     </input>
                 </li>
