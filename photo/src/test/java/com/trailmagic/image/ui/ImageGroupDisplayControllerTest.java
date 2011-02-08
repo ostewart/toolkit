@@ -8,6 +8,7 @@ import com.trailmagic.web.util.WebRequestTools;
 import org.aspectj.lang.Aspects;
 import org.aspectj.lang.NoAspectBoundException;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -37,13 +38,14 @@ public class ImageGroupDisplayControllerTest {
     @Mock private ImageSecurityService imageSecurityService;
     @Mock private UserRepository userRepository;
     @Mock private WebRequestTools webRequestTools;
+    @Mock private ImageService imageService;
 
     @Before
     public void setUp() throws Exception {
         disableSecurityInterceptor();
         MockitoAnnotations.initMocks(this);
         handlerAdapter = new AnnotationMethodHandlerAdapter();
-        controller = new ImageGroupDisplayController(imageGroupRepository, imageSecurityService, userRepository, webRequestTools);
+        controller = new ImageGroupDisplayController(imageGroupRepository, imageSecurityService, userRepository, webRequestTools, imageService);
     }
 
     private void disableSecurityInterceptor() {
@@ -58,8 +60,8 @@ public class ImageGroupDisplayControllerTest {
 
     @Test
     public void testPlainGetDisplaysGroup() throws Exception {
-        User tester = new User(SCREEN_NAME);
-        ImageGroup imageGroup = new ImageGroup(GROUP_NAME, tester, ImageGroup.Type.ROLL);
+        User tester = testUser();
+        ImageGroup imageGroup = testImageGroup(tester);
 
         ModelAndView modelAndView = setupAndMockRequest(tester, imageGroup, new HashMap<String, String>());
 
@@ -76,10 +78,14 @@ public class ImageGroupDisplayControllerTest {
         assertEquals(false, model.get(IMAGE_GROUP_IS_PUBLIC_KEY));
     }
 
+    private User testUser() {
+        return new User(SCREEN_NAME);
+    }
+
     @Test
     public void testGetWithCreateRollParamDisplaysCreateRoll() throws Exception {
-        User tester = new User(SCREEN_NAME);
-        ImageGroup imageGroup = new ImageGroup(GROUP_NAME, tester, ImageGroup.Type.ROLL);
+        User tester = testUser();
+        ImageGroup imageGroup = testImageGroup(tester);
 
         HashMap<String, String> paramMap = new HashMap<String, String>();
         paramMap.put("createRoll", "true");
@@ -98,19 +104,47 @@ public class ImageGroupDisplayControllerTest {
         assertEquals(false, model.get(IMAGE_GROUP_IS_PUBLIC_KEY));
     }
 
+    private ImageGroup testImageGroup(User tester) {
+        return new ImageGroup(GROUP_NAME, tester, ImageGroup.Type.ROLL);
+    }
+
     private ModelAndView setupAndMockRequest(User tester, ImageGroup imageGroup, Map<String,String> paramMap) throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/rolls/tester/test-roll");
+        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/rolls/tester/" + GROUP_NAME);
         for (String param : paramMap.keySet()) {
             request.addParameter(param, paramMap.get(param));
         }
         MockHttpServletResponse response = new MockHttpServletResponse();
 
-        imageGroup.addFrame(new ImageFrame(new Photo()));
+        setupUserAndGroupMocks(tester, imageGroup);
 
         when(webRequestTools.preHandlingFails(request, response, false)).thenReturn(false);
-        when(userRepository.getByScreenName(SCREEN_NAME)).thenReturn(tester);
-        when(imageGroupRepository.getByOwnerNameAndTypeWithFrames(tester, GROUP_NAME, ImageGroup.Type.ROLL)).thenReturn(imageGroup);
 
         return handlerAdapter.handle(request, response, controller);
+    }
+
+    private void setupUserAndGroupMocks(User tester, ImageGroup imageGroup) {
+        imageGroup.addFrame(new ImageFrame(new Photo()));
+        when(userRepository.getByScreenName(SCREEN_NAME)).thenReturn(tester);
+        when(imageGroupRepository.getByOwnerNameAndTypeWithFrames(tester, GROUP_NAME, ImageGroup.Type.ROLL)).thenReturn(imageGroup);
+    }
+
+    @Test
+    @Ignore
+    public void testPostWithNewRollCreatesRollAndRedirectsToIt() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest("POST", "/rolls/tester/" + GROUP_NAME);
+
+        request.addParameter("rollName", "new roll");
+        request.addParameter("selectedFrames", "1234");
+        request.addParameter("selectedFrames", "4567");
+        request.setContent("rollName=new roll&selectedFrames=1234&selectedFrames=4567".getBytes());
+        request.setContentType("application/x-www-form-urlencoded");
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        User tester = testUser();
+        setupUserAndGroupMocks(tester, testImageGroup(tester));
+
+        ModelAndView modelAndView = handlerAdapter.handle(request, response, controller);
+
+        assertEquals("redirect:/rolls/tester/new-roll", modelAndView.getViewName());
     }
 }

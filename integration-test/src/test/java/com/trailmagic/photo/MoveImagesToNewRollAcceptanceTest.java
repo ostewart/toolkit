@@ -16,6 +16,8 @@ import java.net.URL;
 
 import static com.trailmagic.photo.test.WebConstants.BASE_URL;
 import static com.trailmagic.photo.test.WebConstants.UPLOADS_URL;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class MoveImagesToNewRollAcceptanceTest {
     private WebClientHelper client;
@@ -35,7 +37,6 @@ public class MoveImagesToNewRollAcceptanceTest {
     }
 
     @Test
-    @Ignore
     public void testCanMoveImages() throws Exception {
         client.login();
         String imageLink = client.uploadTestImage();
@@ -46,7 +47,7 @@ public class MoveImagesToNewRollAcceptanceTest {
         enterRollName("Test Roll");
         driver.findElement(By.id("submitCreateRoll")).submit();
 
-        verifyCorrectImagesAppearOnNewRollPage();
+        verifyCorrectImagesAppearOnNewRollPage(imageLink);
         verifyMovedImagesNoLongerAppearOnUploadsPage();
     }
 
@@ -63,8 +64,10 @@ public class MoveImagesToNewRollAcceptanceTest {
         return driver.findElement(By.xpath("//a[@rel='createRoll']"));
     }
 
-    private void verifyCorrectImagesAppearOnNewRollPage() {
-
+    private void verifyCorrectImagesAppearOnNewRollPage(String imageLink) {
+        assertFalse(driver.getCurrentUrl().contains("createRoll"));
+        assertTrue(driver.getCurrentUrl().contains("test-roll"));
+        driver.findElement(By.xpath("//a[href='" + imageLink.replace("uploads", "test-roll") + "']"));
     }
 
 

@@ -18,6 +18,7 @@ import com.trailmagic.user.User;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.IOException;
+import java.util.Set;
 
 public interface ImageService {
     public Photo createDefaultImage(String fileName) throws IllegalStateException, IOException;
@@ -34,4 +35,6 @@ public interface ImageService {
     public ImageGroup findOrCreateDefaultRollForUser(User currentUser);
 
     public void createManifestations(Photo photo, InputStream imageDataInputStream) throws IOException;
+
+    void createRollWithFrames(String rollName, Set<Long> selectedFrameIds);
 }

@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Set;
 
 @Service("imageService")
 public class ImageServiceImpl implements ImageService {
@@ -110,6 +111,12 @@ public class ImageServiceImpl implements ImageService {
     public void createManifestations(Photo photo, InputStream imageDataInputStream) throws IOException {
         imageResizeClient.createOriginalManifestation(photo, imageDataInputStream);
         imageResizeClient.createResizedManifestations(photo, SecurityContextHolder.getContext());
+    }
+
+    @Override
+    public void createRollWithFrames(String rollName, Set<Long> selectedFrameIds) {
+
+        
     }
 
     @Transactional(readOnly = false)

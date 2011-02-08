@@ -9,14 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.SortedSet;
 
 @Controller
@@ -25,17 +25,19 @@ public class ImageGroupDisplayController {
     private ImageGroupRepository imageGroupRepository;
     private ImageSecurityService imageSecurityService;
     private WebRequestTools webRequestTools;
+    private ImageService imageService;
 
     @Autowired
     public ImageGroupDisplayController(ImageGroupRepository imageGroupRepository,
                                        ImageSecurityService imageSecurityService,
                                        UserRepository userRepository,
-                                       WebRequestTools webRequestTools) {
+                                       WebRequestTools webRequestTools, ImageService imageService) {
         super();
         this.imageGroupRepository = imageGroupRepository;
         this.imageSecurityService = imageSecurityService;
         this.userRepository = userRepository;
         this.webRequestTools = webRequestTools;
+        this.imageService = imageService;
     }
 
     @InitBinder
@@ -43,7 +45,7 @@ public class ImageGroupDisplayController {
         binder.registerCustomEditor(ImageGroup.Type.class, new ImageGroupTypeUrlComponentPropertyEditor());
     }
 
-    @RequestMapping("/{groupType}/{screenName}/{groupName}")
+    @RequestMapping(value="/{groupType}/{screenName}/{groupName}", method = RequestMethod.GET)
     public ModelAndView handleDisplayGroup(HttpServletRequest request, HttpServletResponse response,
                                            @PathVariable("groupType") ImageGroup.Type groupType,
                                            @PathVariable("screenName") String screenName,
@@ -69,5 +71,13 @@ public class ImageGroupDisplayController {
         }
 
         return new ModelAndView("imageGroup", model);
+    }
+
+    @RequestMapping(value="/{groupType}/{screenName}/{groupName}", method = RequestMethod.POST)
+    public ModelAndView handleCreateNewGroupWithImages(@PathVariable("screenName") String screenName,
+                                                       @RequestParam("rollName") String rollName,
+                                                       @RequestParam("selectedFrames") HashSet<Long> selectedFrameIds) {
+        imageService.createRollWithFrames(rollName, selectedFrameIds);
+        return new ModelAndView("redirect:/rolls/" + screenName + "/" + rollName);
     }
 }
