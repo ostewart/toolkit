@@ -140,6 +140,8 @@
             </element>
             <element id="library" level="project" name="Maven: org.apache.commons:commons-exec:1.0.1" />
             <element id="library" level="project" name="Maven: commons-io:commons-io:1.4" />
+            <element id="library" level="project" name="Maven: org.scala-lang:scala-library:2.8.1" />
+            <element id="library" level="project" name="Maven: org.scalaj:scalaj-collection_2.8.0:1.0" />
             <element id="library" level="project" name="Maven: net.sf.ehcache:ehcache-terracotta:1.8.0" />
             <element id="library" level="project" name="Maven: javassist:javassist:3.8.0.GA" />
             <element id="library" level="project" name="Maven: cglib:cglib:2.2" />
@@ -240,9 +242,11 @@
   </component>
   <component name="FacetAutodetectingManager">
     <autodetection-disabled>
-      <facet-type id="web">
+      <facet-type id="scala">
         <modules>
+          <module name="image" />
           <module name="photo" />
+          <module name="resizer" />
         </modules>
       </facet-type>
       <facet-type id="Spring">
@@ -252,6 +256,11 @@
               <file url="file://$PROJECT_DIR$/test-data/src/main/resources/applicationContext-test-data.xml" />
             </files>
           </module>
+        </modules>
+      </facet-type>
+      <facet-type id="web">
+        <modules>
+          <module name="photo" />
         </modules>
       </facet-type>
     </autodetection-disabled>
@@ -462,6 +471,7 @@
     <dictionary name="oliver">
       <words>
         <w>resized</w>
+        <w>resizer</w>
         <w>springframework</w>
         <w>trailmagic</w>
       </words>
@@ -1064,6 +1074,36 @@
       </JAVADOC>
       <SOURCES>
         <root url="jar://$MAVEN_REPOSITORY$/org/mortbay/jetty/servlet-api/2.5-20081211/servlet-api-2.5-20081211-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.scala-lang:scala-compiler-bundle:WrappedArray(2.8.1)">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/scala-lang/scala-compiler/2.8.1/scala-compiler-2.8.1.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/scala-lang/scala-library/2.8.1/scala-library-2.8.1.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="Maven: org.scala-lang:scala-library:2.8.1">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/scala-lang/scala-library/2.8.1/scala-library-2.8.1.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/scala-lang/scala-library/2.8.1/scala-library-2.8.1-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/scala-lang/scala-library/2.8.1/scala-library-2.8.1-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.scalaj:scalaj-collection_2.8.0:1.0">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/scalaj/scalaj-collection_2.8.0/1.0/scalaj-collection_2.8.0-1.0.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/scalaj/scalaj-collection_2.8.0/1.0/scalaj-collection_2.8.0-1.0-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/scalaj/scalaj-collection_2.8.0/1.0/scalaj-collection_2.8.0-1.0-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: org.seleniumhq.webdriver:webdriver-common:0.9.7376">

@@ -147,7 +147,7 @@
           <container>
             <containerId>tomcat6x</containerId>
             <zipUrlInstaller>
-              <url>http://apache.imghat.com//tomcat/tomcat-6/v6.0.29/bin/apache-tomcat-6.0.29.zip</url>
+              <url>http://apache.mirrors.tds.net/tomcat/tomcat-6/v6.0.32/bin/apache-tomcat-6.0.32.zip</url>
               <installDir>${java.io.tmpdir}/cargoinstalls</installDir>
             </zipUrlInstaller>
           </container>

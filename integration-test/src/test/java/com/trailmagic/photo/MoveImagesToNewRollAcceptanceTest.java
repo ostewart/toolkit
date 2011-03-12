@@ -37,6 +37,7 @@ public class MoveImagesToNewRollAcceptanceTest {
     }
 
     @Test
+    @Ignore
     public void testCanMoveImages() throws Exception {
         client.login();
         String imageLink = client.uploadTestImage();

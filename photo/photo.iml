@@ -9,10 +9,6 @@
         <webroots>
           <root url="file://$MODULE_DIR$/src/main/webapp" relative="/" />
         </webroots>
-        <sourceRoots>
-          <root url="file://$MODULE_DIR$/src/main/java" />
-          <root url="file://$MODULE_DIR$/src/main/resources" />
-        </sourceRoots>
       </configuration>
     </facet>
     <facet type="Spring" name="Spring">
@@ -28,6 +24,13 @@
           <file>file://$MODULE_DIR$/src/main/webapp/WEB-INF/images-servlet.xml</file>
           <file>file://$MODULE_DIR$/src/main/webapp/WEB-INF/applicationContext-security.xml</file>
         </fileset>
+      </configuration>
+    </facet>
+    <facet type="scala" name="Scala">
+      <configuration>
+        <option name="compilerLibraryLevel" value="Project" />
+        <option name="compilerLibraryName" value="Maven: org.scala-lang:scala-compiler-bundle:WrappedArray(2.8.1)" />
+        <option name="vmOptions" value="" />
       </configuration>
     </facet>
   </component>
@@ -83,6 +86,8 @@
     <orderEntry type="module" module-name="resizer" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-exec:1.0.1" level="project" />
     <orderEntry type="library" name="Maven: commons-io:commons-io:1.4" level="project" />
+    <orderEntry type="library" name="Maven: org.scala-lang:scala-library:2.8.1" level="project" />
+    <orderEntry type="library" name="Maven: org.scalaj:scalaj-collection_2.8.0:1.0" level="project" />
     <orderEntry type="library" name="Maven: net.sf.ehcache:ehcache-terracotta:1.8.0" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: javassist:javassist:3.8.0.GA" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: cglib:cglib:2.2" level="project" />
