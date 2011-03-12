@@ -1,6 +1,11 @@
 package com.trailmagic.image.ui;
 
-import com.trailmagic.image.*;
+import com.trailmagic.image.ImageFrame;
+import com.trailmagic.image.ImageGroup;
+import com.trailmagic.image.ImageGroupNotFoundException;
+import com.trailmagic.image.ImageGroupRepository;
+import com.trailmagic.image.ImageService;
+import com.trailmagic.image.NoSuchImageGroupException;
 import com.trailmagic.image.security.ImageSecurityService;
 import com.trailmagic.user.User;
 import com.trailmagic.user.UserRepository;
@@ -9,14 +14,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import scala.collection.JavaConversions;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.SortedSet;
 
 @Controller
@@ -77,7 +86,7 @@ public class ImageGroupDisplayController {
     public ModelAndView handleCreateNewGroupWithImages(@PathVariable("screenName") String screenName,
                                                        @RequestParam("rollName") String rollName,
                                                        @RequestParam("selectedFrames") HashSet<Long> selectedFrameIds) {
-        imageService.createRollWithFrames(rollName, selectedFrameIds);
+        imageService.createRollWithFrames(rollName, new JavaConversions.JSetWrapper<Long>(selectedFrameIds));
         return new ModelAndView("redirect:/rolls/" + screenName + "/" + rollName);
     }
 }

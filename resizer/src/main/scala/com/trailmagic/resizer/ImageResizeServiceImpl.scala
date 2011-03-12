@@ -9,7 +9,7 @@ import scalaj.collection.Imports._
 
 @Service
 class ImageResizeServiceImpl @Autowired()(imageResizer: ImageResizer) extends ImageResizeService {
-  override def scheduleResize(srcInputStream: InputStream): java.util.List[ImageFileInfo] = {
+  def scheduleResize(srcInputStream: InputStream): java.util.List[ImageFileInfo] = {
     withTempFile(writeFile(srcInputStream)) {
       scheduleResize(_)
     }
@@ -56,8 +56,8 @@ class ImageResizeServiceImpl @Autowired()(imageResizer: ImageResizer) extends Im
   }
 
   private def resizeAndIdentify(srcFile: File, srcFileInfo: ImageFileInfo, size: Int): ImageFileInfo = {
-    var file: File = imageResizer.resizeImage(srcFile, srcFileInfo, size)
-    var info: ImageFileInfo = imageResizer.identify(file)
+    val file = imageResizer.resizeImage(srcFile, srcFileInfo, size)
+    val info = imageResizer.identify(file)
     info.setFile(file)
     return info
   }
