@@ -32,7 +32,7 @@ public class ImageDisplayControllerTest {
 
     @Test
     public void testFormBackingObjectReturnsImage() throws Exception {
-        final Photo photo = new Photo(new User("tester"));
+        final Photo photo = new Photo("test", new User("tester"));
         photo.setId(IMAGE_ID);
         when(imageRepository.getById(IMAGE_ID)).thenReturn(photo);
 

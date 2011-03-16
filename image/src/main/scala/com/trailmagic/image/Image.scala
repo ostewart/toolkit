@@ -67,6 +67,19 @@ class Image extends Owned with AccessControlled {
     setNumber(image.getNumber)
   }
 
+  def copyFrom(that: Image) {
+    this.id = that.id
+    this.name = that.name
+    this.displayName = that.displayName
+    this.caption = that.caption
+    this.copyright = that.copyright
+    this.creator = that.creator
+    this.manifestations = that.manifestations
+    this.owner = that.owner
+    this.imageCD = that.imageCD
+    this.number = that.number
+  }
+
   def addManifestation(im: ImageManifestation): Unit = {
     manifestations.add(im)
     im.setImage(this)
