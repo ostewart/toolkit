@@ -1,10 +1,10 @@
 package com.trailmagic.web.util;
 
-import com.trailmagic.image.ImageGroup;
+import com.trailmagic.image.ImageGroupType;
 
 public class ImageRequestInfo {
     private String screenName;
-    private ImageGroup.Type imageGroupType;
+    private ImageGroupType imageGroupType;
     private String imageGroupName;
     private Long imageId;
     
@@ -26,10 +26,10 @@ public class ImageRequestInfo {
     public void setImageId(Long imageId) {
         this.imageId = imageId;
     }
-    public ImageGroup.Type getImageGroupType() {
+    public ImageGroupType getImageGroupType() {
         return imageGroupType;
     }
-    public void setImageGroupType(ImageGroup.Type imageGroupType) {
+    public void setImageGroupType(ImageGroupType imageGroupType) {
         this.imageGroupType = imageGroupType;
     }
 }

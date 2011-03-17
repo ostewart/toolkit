@@ -1,6 +1,7 @@
 package com.trailmagic.web.util;
 
 import com.trailmagic.image.ImageGroup;
+import com.trailmagic.image.ImageGroupType;
 import com.trailmagic.image.ui.WebSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -72,7 +73,7 @@ public class WebRequestTools {
         // depluralize
         groupTypeString = groupTypeString.substring(0, groupTypeString.length() - 1);
         try {
-            iri.setImageGroupType(ImageGroup.Type.fromString(groupTypeString));
+            iri.setImageGroupType(ImageGroupType.fromString(groupTypeString));
         } catch (IllegalArgumentException e) {
             throw new MalformedUrlException("invalid group type: " + groupTypeString, e);
         }

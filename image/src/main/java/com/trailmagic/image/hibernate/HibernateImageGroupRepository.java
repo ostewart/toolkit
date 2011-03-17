@@ -13,13 +13,8 @@
  */
 package com.trailmagic.image.hibernate;
 
-import com.trailmagic.image.Image;
-import com.trailmagic.image.ImageFrame;
-import com.trailmagic.image.ImageGroup;
-import com.trailmagic.image.ImageGroup.Type;
-import com.trailmagic.image.ImageGroupRepository;
-import com.trailmagic.image.NoSuchImageFrameException;
-import com.trailmagic.image.NoSuchImageGroupException;
+import com.trailmagic.image.*;
+import com.trailmagic.image.ImageGroupType;
 import com.trailmagic.user.User;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -81,7 +76,7 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
         }
     }
 
-    public ImageFrame getImageFrameByGroupNameTypeAndImageId(String groupName, Type groupType, long imageId)
+    public ImageFrame getImageFrameByGroupNameTypeAndImageId(String groupName, ImageGroupType groupType, long imageId)
             throws NoSuchImageFrameException {
         List results = hibernateTemplate.findByNamedQueryAndNamedParam(IMGFRAME_BY_GROUP_NAME_TYPE_AND_IMAGE_ID_QRY,
                                                                        new String[]{"groupName", "groupType", "imageId"},
@@ -98,7 +93,7 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
         }
     }
 
-    public List<User> getOwnersByType(Type groupType) {
+    public List<User> getOwnersByType(ImageGroupType groupType) {
         try {
             Session session = SessionFactoryUtils.getSession(sessionFactory, false);
             Query qry = session.getNamedQuery(GROUP_OWNERS_QRY);
@@ -110,7 +105,7 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
         }
     }
 
-    public List<ImageGroup> getByOwnerScreenNameAndType(String screenName, Type groupType) {
+    public List<ImageGroup> getByOwnerScreenNameAndType(String screenName, ImageGroupType groupType) {
         try {
             Session session = SessionFactoryUtils.getSession(sessionFactory, false);
             Query qry = session.getNamedQuery(GROUPS_BY_OWNER_NAME_QRY);
@@ -123,7 +118,7 @@ public class HibernateImageGroupRepository implements ImageGroupRepository {
         }
     }
 
-    public ImageGroup getByOwnerNameAndTypeWithFrames(User owner, String groupName, Type groupType) {
+    public ImageGroup getByOwnerNameAndTypeWithFrames(User owner, String groupName, ImageGroupType groupType) {
         try {
             Session session = SessionFactoryUtils.getSession(sessionFactory, false);
             Query qry = session.getNamedQuery(GROUP_BY_OWNER_NAME_TYPE_QRY);

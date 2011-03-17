@@ -166,7 +166,7 @@ public class ImageInitializerImplTest {
     }
 
     private ImageGroup makeImageGroup(User owner) {
-        return new ImageGroup("test", owner, ImageGroup.Type.ROLL);
+        return new ImageGroup("test", owner, ImageGroupType.ROLL);
     }
 
 }

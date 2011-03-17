@@ -15,6 +15,7 @@ package com.trailmagic.image.ui;
 
 import com.trailmagic.image.ImageFrame;
 import com.trailmagic.image.ImageGroup;
+import com.trailmagic.image.ImageGroupType;
 import com.trailmagic.image.ImageManifestation;
 import com.trailmagic.user.User;
 
@@ -42,12 +43,12 @@ public class LinkHelper {
                 imageGroup.getName() + "/";
     }
 
-    public String getImageGroupsUrl(HttpServletRequest request, ImageGroup.Type groupType, User owner) {
+    public String getImageGroupsUrl(HttpServletRequest request, ImageGroupType groupType, User owner) {
         return getImageGroupsRootUrl(request, groupType) +
                 owner.getScreenName() + "/";
     }
 
-    public String getImageGroupsRootUrl(HttpServletRequest request, ImageGroup.Type type) {
+    public String getImageGroupsRootUrl(HttpServletRequest request, ImageGroupType type) {
         String prettyType;
         switch (type) {
             case ROLL:

@@ -13,11 +13,7 @@
  */
 package com.trailmagic.image.util;
 
-import com.trailmagic.image.Image;
-import com.trailmagic.image.ImageRepository;
-import com.trailmagic.image.ImageFrame;
-import com.trailmagic.image.ImageGroup;
-import com.trailmagic.image.ImageGroupRepository;
+import com.trailmagic.image.*;
 import com.trailmagic.user.UserRepository;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -83,7 +79,7 @@ public class MakeAlbum implements ApplicationContextAware {
                 throw new IllegalArgumentException("Invalid roll name");
             }
 
-            ImageGroup album = new ImageGroup(albumName, roll.getOwner(), ImageGroup.Type.ALBUM);
+            ImageGroup album = new ImageGroup(albumName, roll.getOwner(), ImageGroupType.ALBUM);
             album.setDisplayName(roll.getDisplayName());
             album.setDescription(roll.getDescription());
             album.setSupergroup(roll.getSupergroup());

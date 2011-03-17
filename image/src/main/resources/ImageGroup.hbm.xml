@@ -55,7 +55,7 @@
       not-null="true"/>
     </property>
 
-    <property name="type" type="com.trailmagic.image.hibernate.TypeUserType">
+    <property name="type" type="com.trailmagic.image.hibernate.ImageGroupTypeUserType">
       <column name="type" sql-type="varchar(100)" not-null="true"
         unique-key="image_groups_name_owner_type"
 	check="in ('roll', 'album')"/>

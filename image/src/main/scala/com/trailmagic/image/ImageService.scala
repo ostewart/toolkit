@@ -22,7 +22,7 @@ trait ImageService {
   def makeImageGroupAndImagesPublic(group: ImageGroup)
 
   @throws(classOf[NoSuchImageException])
-  def makeImageGroupAndImagesPublic(ownerName: String, groupType: ImageGroup.Type, imageGroupName: String)
+  def makeImageGroupAndImagesPublic(ownerName: String, groupType: ImageGroupType, imageGroupName: String)
 
   @throws(classOf[NoSuchImageGroupException])
   def setImageGroupPreview(imageGroupId: Long, imageId: Long)

@@ -7,9 +7,9 @@ import static org.junit.Assert.assertEquals;
 public class ImageGroupTest {
     @Test
     public void testTypeFromString() {
-        assertEquals(ImageGroup.Type.ROLL, ImageGroup.Type.fromString("roll"));
-        assertEquals(ImageGroup.Type.ROLL, ImageGroup.Type.fromString("Roll"));
-        assertEquals(ImageGroup.Type.ALBUM, ImageGroup.Type.fromString("Album"));
-        assertEquals(ImageGroup.Type.ALBUM, ImageGroup.Type.fromString("album"));
+        assertEquals(ImageGroupType.ROLL, ImageGroupType.fromString("roll"));
+        assertEquals(ImageGroupType.ROLL, ImageGroupType.fromString("Roll"));
+        assertEquals(ImageGroupType.ALBUM, ImageGroupType.fromString("Album"));
+        assertEquals(ImageGroupType.ALBUM, ImageGroupType.fromString("album"));
     }
 }

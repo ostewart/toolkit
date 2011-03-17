@@ -16,13 +16,7 @@ package com.trailmagic.image.util;
 //import com.sun.org.apache.xml.internal.resolver.Catalog;
 //import com.sun.org.apache.xml.internal.resolver.CatalogManager;
 //import com.sun.org.apache.xml.internal.resolver.tools.CatalogResolver;
-import com.trailmagic.image.HeavyImageManifestation;
-import com.trailmagic.image.Image;
-import com.trailmagic.image.ImageFrame;
-import com.trailmagic.image.ImageGroup;
-import com.trailmagic.image.ImageGroupRepository;
-import com.trailmagic.image.ImageService;
-import com.trailmagic.image.Photo;
+import com.trailmagic.image.*;
 import com.trailmagic.image.impl.ImageInitializer;
 import com.trailmagic.user.UserRepository;
 
@@ -193,7 +187,7 @@ public class ImagesParserImpl extends DefaultHandler implements ImagesParser {
     }
 
     public void startRoll() {
-        m_roll = new ImageGroup("", null, ImageGroup.Type.ROLL);
+        m_roll = new ImageGroup("", null, ImageGroupType.ROLL);
         m_roll.setSupergroup(null);
         m_roll.setUploadDate(new Date());
         m_inRoll = true;

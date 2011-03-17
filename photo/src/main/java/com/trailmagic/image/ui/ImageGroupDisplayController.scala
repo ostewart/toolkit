@@ -1,9 +1,5 @@
 package com.trailmagic.image.ui
 
-import com.trailmagic.image.ImageGroup
-import com.trailmagic.image.ImageGroupNotFoundException
-import com.trailmagic.image.ImageGroupRepository
-import com.trailmagic.image.ImageService
 import com.trailmagic.image.security.ImageSecurityService
 import com.trailmagic.user.User
 import com.trailmagic.user.UserRepository
@@ -22,6 +18,7 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 import java.util.HashSet
 import scala.collection.JavaConversions._
+import com.trailmagic.image._
 
 @Controller
 class ImageGroupDisplayController @Autowired()(private val imageGroupRepository: ImageGroupRepository,
@@ -31,12 +28,12 @@ class ImageGroupDisplayController @Autowired()(private val imageGroupRepository:
                                                private val imageService: ImageService) {
   @InitBinder
   def initBinder(binder: WebDataBinder): Unit = {
-    binder.registerCustomEditor(classOf[ImageGroup.Type], new ImageGroupTypeUrlComponentPropertyEditor)
+    binder.registerCustomEditor(classOf[ImageGroupType], new ImageGroupTypeUrlComponentPropertyEditor)
   }
 
   @RequestMapping(value = Array("/{groupType}/{screenName}/{groupName}"), method = Array(RequestMethod.GET))
   def handleDisplayGroup(request: HttpServletRequest, response: HttpServletResponse,
-                         @PathVariable("groupType") groupType: ImageGroup.Type,
+                         @PathVariable("groupType") groupType: ImageGroupType,
                          @PathVariable("screenName") screenName: String,
                          @PathVariable("groupName") groupName: String,
                          model: ModelMap): ModelAndView = {

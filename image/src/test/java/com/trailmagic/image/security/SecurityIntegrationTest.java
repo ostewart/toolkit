@@ -1,10 +1,6 @@
 package com.trailmagic.image.security;
 
-import com.trailmagic.image.HeavyImageManifestation;
-import com.trailmagic.image.ImageFrame;
-import com.trailmagic.image.ImageGroup;
-import com.trailmagic.image.ImageService;
-import com.trailmagic.image.Photo;
+import com.trailmagic.image.*;
 import com.trailmagic.image.impl.ImageInitializer;
 import com.trailmagic.user.User;
 import com.trailmagic.user.UserRepository;
@@ -195,7 +191,7 @@ public class SecurityIntegrationTest {
     }
 
     private ImageGroup makeRoll() {
-        ImageGroup group = new ImageGroup("testGroup", testUser, ImageGroup.Type.ROLL);
+        ImageGroup group = new ImageGroup("testGroup", testUser, ImageGroupType.ROLL);
         group.setDisplayName("test group");
         group.setUploadDate(new Date());
         imageInitializer.saveNewImageGroup(group);

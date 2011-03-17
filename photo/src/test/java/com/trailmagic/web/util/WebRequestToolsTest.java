@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import com.trailmagic.image.ImageGroup;
+import com.trailmagic.image.ImageGroupType;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -34,7 +35,7 @@ public class WebRequestToolsTest {
         MockHttpServletRequest request = new MockHttpServletRequest("GET", "/photo/rolls/");
         request.setContextPath("/photo");
         ImageRequestInfo iri = webRequestTools.getImageRequestInfo(request);
-        assertEquals(ImageGroup.Type.ROLL, iri.getImageGroupType());
+        assertEquals(ImageGroupType.ROLL, iri.getImageGroupType());
         assertNull(iri.getScreenName());
         assertNull(iri.getImageGroupName());
         assertNull(iri.getImageId());
@@ -45,7 +46,7 @@ public class WebRequestToolsTest {
         MockHttpServletRequest request = new MockHttpServletRequest("GET", "/photo/albums/");
         request.setContextPath("/photo");
         ImageRequestInfo iri = webRequestTools.getImageRequestInfo(request);
-        assertEquals(ImageGroup.Type.ALBUM, iri.getImageGroupType());
+        assertEquals(ImageGroupType.ALBUM, iri.getImageGroupType());
         assertNull(iri.getImageGroupName());
         assertNull(iri.getScreenName());
         assertNull(iri.getImageId());
@@ -55,7 +56,7 @@ public class WebRequestToolsTest {
         MockHttpServletRequest request = new MockHttpServletRequest("GET", "/photo/rolls/oliver/");
         request.setContextPath("/photo");
         ImageRequestInfo iri = webRequestTools.getImageRequestInfo(request);
-        assertEquals(ImageGroup.Type.ROLL, iri.getImageGroupType());
+        assertEquals(ImageGroupType.ROLL, iri.getImageGroupType());
         assertEquals("oliver", iri.getScreenName());
         assertNull(iri.getImageGroupName());
         assertNull(iri.getImageId());
@@ -65,7 +66,7 @@ public class WebRequestToolsTest {
         MockHttpServletRequest request = new MockHttpServletRequest("GET", "/photo/rolls/oliver/monkeys/");
         request.setContextPath("/photo");
         ImageRequestInfo iri = webRequestTools.getImageRequestInfo(request);
-        assertEquals(ImageGroup.Type.ROLL, iri.getImageGroupType());
+        assertEquals(ImageGroupType.ROLL, iri.getImageGroupType());
         assertEquals("oliver", iri.getScreenName());
         assertEquals("monkeys", iri.getImageGroupName());
         assertNull(iri.getImageId());
@@ -75,7 +76,7 @@ public class WebRequestToolsTest {
         MockHttpServletRequest request = new MockHttpServletRequest("GET", "/photo/rolls/oliver/monkeys/666");
         request.setContextPath("/photo");
         ImageRequestInfo iri = webRequestTools.getImageRequestInfo(request);
-        assertEquals(ImageGroup.Type.ROLL, iri.getImageGroupType());
+        assertEquals(ImageGroupType.ROLL, iri.getImageGroupType());
         assertEquals("oliver", iri.getScreenName());
         assertEquals("monkeys", iri.getImageGroupName());
         assertEquals(new Long(666L), iri.getImageId());
@@ -85,7 +86,7 @@ public class WebRequestToolsTest {
         MockHttpServletRequest request = new MockHttpServletRequest("GET", "/photo/rolls//");
         request.setContextPath("/photo");
         ImageRequestInfo iri = webRequestTools.getImageRequestInfo(request);
-        assertEquals(ImageGroup.Type.ROLL, iri.getImageGroupType());
+        assertEquals(ImageGroupType.ROLL, iri.getImageGroupType());
         assertNull(iri.getImageGroupName());
         assertNull(iri.getScreenName());
         assertNull(iri.getImageId());

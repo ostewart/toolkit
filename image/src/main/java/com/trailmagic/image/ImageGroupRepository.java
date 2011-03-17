@@ -13,19 +13,18 @@
  */
 package com.trailmagic.image;
 
-import com.trailmagic.image.ImageGroup.Type;
 import com.trailmagic.user.User;
 
 import java.util.List;
 
 public interface ImageGroupRepository {
     public ImageGroup getRollByOwnerAndName(User owner, String rollName);
-    public ImageFrame getImageFrameByGroupNameTypeAndImageId(String groupName, Type groupType, long imageId)
+    public ImageFrame getImageFrameByGroupNameTypeAndImageId(String groupName, ImageGroupType groupType, long imageId)
             throws NoSuchImageFrameException;
 
-    public List<User> getOwnersByType(Type groupType);
-    public List<ImageGroup> getByOwnerScreenNameAndType(String screenName, Type groupType);
-    public ImageGroup getByOwnerNameAndTypeWithFrames(User owner, String groupName, Type groupType)
+    public List<User> getOwnersByType(ImageGroupType groupType);
+    public List<ImageGroup> getByOwnerScreenNameAndType(String screenName, ImageGroupType groupType);
+    public ImageGroup getByOwnerNameAndTypeWithFrames(User owner, String groupName, ImageGroupType groupType)
             throws NoSuchImageGroupException;
     public List<ImageGroup> getByImage(Image image);
     public ImageGroup getRollForImage(Image image);

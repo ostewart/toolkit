@@ -1,7 +1,6 @@
 package com.trailmagic.image.impl
 
 import com.trailmagic.image._
-import com.trailmagic.image.ImageGroup.Type
 import com.trailmagic.image.security.ImageSecurityService
 import com.trailmagic.user.User
 import com.trailmagic.user.UserRepository
@@ -62,7 +61,7 @@ class ImageServiceImpl @Autowired()(imageGroupRepository: ImageGroupRepository, 
   }
 
   private def fullNameFromUser: String = {
-    var user: User = securityUtil.getCurrentUser
+    val user: User = securityUtil.getCurrentUser
     return user.getFirstName + " " + user.getLastName
   }
 
@@ -114,7 +113,7 @@ class ImageServiceImpl @Autowired()(imageGroupRepository: ImageGroupRepository, 
   def findOrCreateDefaultRollForUser(currentUser: User): ImageGroup = {
     var defaultRoll: ImageGroup = imageGroupRepository.getRollByOwnerAndName(currentUser, ImageGroup.DEFAULT_ROLL_NAME)
     if (defaultRoll == null) {
-      defaultRoll = new ImageGroup(ImageGroup.DEFAULT_ROLL_NAME, currentUser, Type.ROLL)
+      defaultRoll = new ImageGroup(ImageGroup.DEFAULT_ROLL_NAME, currentUser, ImageGroupType.ROLL)
       defaultRoll.setSupergroup(null)
       defaultRoll.setUploadDate(timeSource.today)
       defaultRoll.setDisplayName("Uploads")
@@ -133,7 +132,7 @@ class ImageServiceImpl @Autowired()(imageGroupRepository: ImageGroupRepository, 
   @Transactional(readOnly = false)
   @Secured(Array("ROLE_USER"))
   def addImageToGroup(image: Image, group: ImageGroup, position: Int): ImageFrame = {
-    var frame: ImageFrame = new ImageFrame(image)
+    val frame: ImageFrame = new ImageFrame(image)
     frame.setPosition(position)
     frame.setImageGroup(group)
     group.addFrame(frame)
@@ -153,8 +152,8 @@ class ImageServiceImpl @Autowired()(imageGroupRepository: ImageGroupRepository, 
   }
 
   @Transactional(readOnly = false)
-  def makeImageGroupAndImagesPublic(ownerName: String, `type` : ImageGroup.Type, imageGroupName: String) {
-    var owner: User = userRepository.getByScreenName(ownerName)
+  def makeImageGroupAndImagesPublic(ownerName: String, `type` : ImageGroupType, imageGroupName: String) {
+    val owner: User = userRepository.getByScreenName(ownerName)
     var group: ImageGroup = imageGroupRepository.getByOwnerNameAndTypeWithFrames(owner, imageGroupName, `type`)
     if (group == null) {
       log.error("No " + `type` + " found with name " + imageGroupName + " owned by " + owner)
@@ -165,8 +164,8 @@ class ImageServiceImpl @Autowired()(imageGroupRepository: ImageGroupRepository, 
   @Transactional(readOnly = false)
   @Secured(Array("ROLE_USER"))
   def setImageGroupPreview(imageGroupId: Long, imageId: Long): Unit = {
-    var imageGroup: ImageGroup = imageGroupRepository.loadById(imageGroupId)
-    var image: Image = imageRepository.loadById(imageId)
+    val imageGroup: ImageGroup = imageGroupRepository.loadById(imageGroupId)
+    val image: Image = imageRepository.loadById(imageId)
     imageGroup.setPreviewImage(image)
     imageGroupRepository.saveGroup(imageGroup)
   }

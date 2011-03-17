@@ -105,7 +105,7 @@ public class ImageGroupDisplayControllerTest {
     }
 
     private ImageGroup testImageGroup(User tester) {
-        return new ImageGroup(GROUP_NAME, tester, ImageGroup.Type.ROLL);
+        return new ImageGroup(GROUP_NAME, tester, ImageGroupType.ROLL);
     }
 
     private ModelAndView setupAndMockRequest(User tester, ImageGroup imageGroup, Map<String,String> paramMap) throws Exception {
@@ -125,7 +125,7 @@ public class ImageGroupDisplayControllerTest {
     private void setupUserAndGroupMocks(User tester, ImageGroup imageGroup) {
         imageGroup.addFrame(new ImageFrame(new Photo()));
         when(userRepository.getByScreenName(SCREEN_NAME)).thenReturn(tester);
-        when(imageGroupRepository.getByOwnerNameAndTypeWithFrames(tester, GROUP_NAME, ImageGroup.Type.ROLL)).thenReturn(imageGroup);
+        when(imageGroupRepository.getByOwnerNameAndTypeWithFrames(tester, GROUP_NAME, ImageGroupType.ROLL)).thenReturn(imageGroup);
     }
 
     @Test

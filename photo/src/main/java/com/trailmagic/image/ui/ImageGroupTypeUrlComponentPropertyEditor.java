@@ -1,6 +1,6 @@
 package com.trailmagic.image.ui;
 
-import com.trailmagic.image.ImageGroup;
+import com.trailmagic.image.ImageGroupType;
 
 import java.beans.PropertyEditorSupport;
 
@@ -16,6 +16,6 @@ public class ImageGroupTypeUrlComponentPropertyEditor extends PropertyEditorSupp
         if (s.endsWith("s")) {
             s = s.substring(0, s.length() - 1);
         }
-        setValue(ImageGroup.Type.fromString(s));
+        setValue(ImageGroupType.fromString(s));
     }
 }

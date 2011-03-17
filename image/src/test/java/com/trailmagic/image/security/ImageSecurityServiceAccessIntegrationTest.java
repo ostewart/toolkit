@@ -1,10 +1,6 @@
 package com.trailmagic.image.security;
 
-import com.trailmagic.image.Image;
-import com.trailmagic.image.ImageGroup;
-import com.trailmagic.image.ImageGroupRepository;
-import com.trailmagic.image.ImageRepository;
-import com.trailmagic.image.Photo;
+import com.trailmagic.image.*;
 import com.trailmagic.image.impl.ImageInitializer;
 import com.trailmagic.image.security.test.DataCreator;
 import com.trailmagic.user.User;
@@ -43,7 +39,7 @@ public class ImageSecurityServiceAccessIntegrationTest {
     @Test(expected = AccessDeniedException.class)
     public void testAddOwnerAclToImageGroupFailsWithoutUser() throws IOException {
         dataCreator.authenticateAnonymousUser();
-        securityService.addOwnerAcl(new ImageGroup("name", new User("owner"), ImageGroup.Type.ROLL));
+        securityService.addOwnerAcl(new ImageGroup("name", new User("owner"), ImageGroupType.ROLL));
     }
 
     @Test(expected = AccessDeniedException.class)

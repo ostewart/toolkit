@@ -1,10 +1,6 @@
 package com.trailmagic.image.ui;
 
-import com.trailmagic.image.Image;
-import com.trailmagic.image.ImageFrame;
-import com.trailmagic.image.ImageGroup;
-import com.trailmagic.image.ImageGroupRepository;
-import com.trailmagic.image.ImageRepository;
+import com.trailmagic.image.*;
 import com.trailmagic.image.security.ImageSecurityService;
 import com.trailmagic.web.util.MalformedUrlException;
 import com.trailmagic.web.util.WebRequestTools;
@@ -56,7 +52,7 @@ public class ImageDisplayController {
     protected void initBinder(WebDataBinder binder) throws Exception {
         binder.registerCustomEditor(Date.class, "captureDate",
                                     new CustomDateEditor(SimpleDateFormat.getDateInstance(DateFormat.SHORT), true));
-        binder.registerCustomEditor(ImageGroup.Type.class, new ImageGroupTypeUrlComponentPropertyEditor());
+        binder.registerCustomEditor(ImageGroupType.class, new ImageGroupTypeUrlComponentPropertyEditor());
     }
 
     @ModelAttribute("image")
@@ -78,7 +74,7 @@ public class ImageDisplayController {
     public ModelAndView showForm(HttpServletRequest request,
                                  HttpServletResponse response,
                                  @ModelAttribute("image") Image image, BindingResult errors,
-                                 @PathVariable("groupType") ImageGroup.Type groupType,
+                                 @PathVariable("groupType") ImageGroupType groupType,
                                  @PathVariable("groupName") String groupName,
                                  @PathVariable("imageId") Long imageId) throws Exception {
         if (webRequestTools.preHandlingFails(request, response, false)) return null;
@@ -95,7 +91,7 @@ public class ImageDisplayController {
     protected ModelAndView onSubmit(HttpServletRequest request,
                                     HttpServletResponse response,
                                     @ModelAttribute("image") Image image, BindingResult errors,
-                                    @PathVariable("groupType") ImageGroup.Type groupType,
+                                    @PathVariable("groupType") ImageGroupType groupType,
                                     @PathVariable("groupName") String groupName,
                                     @PathVariable("imageId") Long imageId,
                                     ModelMap model) throws Exception {
@@ -112,7 +108,7 @@ public class ImageDisplayController {
     }
 
 
-    private ModelAndView setupModel(String groupName, ImageGroup.Type groupType, long imageId, Map<String, Object> model) throws MalformedUrlException {
+    private ModelAndView setupModel(String groupName, ImageGroupType groupType, long imageId, Map<String, Object> model) throws MalformedUrlException {
         ImageFrame frame = imageGroupRepository.getImageFrameByGroupNameTypeAndImageId(groupName,
                                                                                        groupType,
                                                                                        imageId);

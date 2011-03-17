@@ -1,15 +1,16 @@
 package com.trailmagic.image.hibernate;
 
-import com.trailmagic.image.ImageGroup;
 import java.io.Serializable;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+
+import com.trailmagic.image.ImageGroupType;
 import org.hibernate.HibernateException;
 import org.hibernate.usertype.UserType;
 
-public class TypeUserType implements UserType {
+public class ImageGroupTypeUserType implements UserType {
     private static final int[] SQL_TYPES = {Types.VARCHAR};
 
     public int[] sqlTypes() {
@@ -46,9 +47,9 @@ public class TypeUserType implements UserType {
 
     public Object nullSafeGet(ResultSet resultSet, String[] names, Object owner) throws HibernateException, SQLException {
         String name = resultSet.getString(names[0]);
-        ImageGroup.Type result = null;
+        ImageGroupType result = null;
         if (!resultSet.wasNull()) {
-            result = ImageGroup.Type.fromString(name);
+            result = ImageGroupType.fromString(name);
         }
         return result;
     }
@@ -66,6 +67,6 @@ public class TypeUserType implements UserType {
     }
 
     public Class returnedClass() {
-        return ImageGroup.Type.class;
+        return ImageGroupType.class;
     }
 }

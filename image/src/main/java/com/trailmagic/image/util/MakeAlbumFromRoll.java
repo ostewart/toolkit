@@ -6,6 +6,7 @@ package com.trailmagic.image.util;
 import com.trailmagic.image.ImageFrame;
 import com.trailmagic.image.ImageGroup;
 import com.trailmagic.image.ImageGroupRepository;
+import com.trailmagic.image.ImageGroupType;
 import com.trailmagic.user.UserRepository;
 
 import java.util.Iterator;
@@ -61,7 +62,7 @@ public class MakeAlbumFromRoll implements ApplicationContextAware {
                 gf.getRollByOwnerAndName(uf.getByScreenName(userName),
                                          rollName);
 
-            ImageGroup album = new ImageGroup(albumName, roll.getOwner(), ImageGroup.Type.ALBUM);
+            ImageGroup album = new ImageGroup(albumName, roll.getOwner(), ImageGroupType.ALBUM);
             album.setDisplayName(roll.getDisplayName());
             album.setDescription(roll.getDescription());
             album.setSupergroup(roll.getSupergroup());

@@ -59,7 +59,7 @@ public class ImageFrameTest {
     }
 
     private ImageGroup newImageGroup() {
-        return new ImageGroup("test", new User("tester"), ImageGroup.Type.ROLL);
+        return new ImageGroup("test", new User("tester"), ImageGroupType.ROLL);
     }
 
     private ImageFrame index(int index, SortedSet<ImageFrame> frames) {

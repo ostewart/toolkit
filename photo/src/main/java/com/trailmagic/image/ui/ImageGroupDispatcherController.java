@@ -16,6 +16,7 @@ package com.trailmagic.image.ui;
 import com.trailmagic.image.Image;
 import com.trailmagic.image.ImageGroup;
 import com.trailmagic.image.ImageGroupRepository;
+import com.trailmagic.image.ImageGroupType;
 import com.trailmagic.user.User;
 import com.trailmagic.user.UserRepository;
 import com.trailmagic.web.util.WebRequestTools;
@@ -65,20 +66,20 @@ public class ImageGroupDispatcherController {
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
-        binder.registerCustomEditor(ImageGroup.Type.class, new ImageGroupTypeUrlComponentPropertyEditor());
+        binder.registerCustomEditor(ImageGroupType.class, new ImageGroupTypeUrlComponentPropertyEditor());
     }
 
     @RequestMapping("/albums")
     public ModelAndView handleAlbumsRequest(HttpServletRequest req, HttpServletResponse res) throws Exception {
-        return preHandleListUsers(req, res, ImageGroup.Type.ALBUM);
+        return preHandleListUsers(req, res, ImageGroupType.ALBUM);
     }
 
     @RequestMapping("/rolls")
     public ModelAndView handleRollsRequest(HttpServletRequest req, HttpServletResponse res) throws Exception {
-        return preHandleListUsers(req, res, ImageGroup.Type.ROLL);
+        return preHandleListUsers(req, res, ImageGroupType.ROLL);
     }
 
-    private ModelAndView preHandleListUsers(HttpServletRequest req, HttpServletResponse res, final ImageGroup.Type groupType) throws IOException {
+    private ModelAndView preHandleListUsers(HttpServletRequest req, HttpServletResponse res, final ImageGroupType groupType) throws IOException {
         if (webRequestTools.preHandlingFails(req, res, true)) return null;
 
         Map<String, Object> model = initialModel(req, groupType);
@@ -87,7 +88,7 @@ public class ImageGroupDispatcherController {
         return handleListUsers(groupType, model);
     }
 
-    private Map<String, Object> initialModel(HttpServletRequest req, ImageGroup.Type groupType) {
+    private Map<String, Object> initialModel(HttpServletRequest req, ImageGroupType groupType) {
         Map<String, Object> model = new HashMap<String, Object>();
         model.put("thisRequestUrl", webRequestTools.getFullRequestUrl(req));
         model.put("groupType", groupType);
@@ -96,20 +97,20 @@ public class ImageGroupDispatcherController {
 
     @RequestMapping("/{groupType}/{screenName}")
     public ModelAndView handleGroupList(HttpServletRequest request, HttpServletResponse response,
-                                        @PathVariable("groupType") ImageGroup.Type groupType,
+                                        @PathVariable("groupType") ImageGroupType groupType,
                                         @PathVariable("screenName") String screenName) throws IOException {
         if (webRequestTools.preHandlingFails(request, response, true)) return null;
 
         return handleGroupList(groupType, screenName, initialModel(request, groupType));
     }
 
-    private ModelAndView handleListUsers(ImageGroup.Type groupType,
+    private ModelAndView handleListUsers(ImageGroupType groupType,
                                          Map<String, Object> model) {
         model.put("owners", imageGroupRepository.getOwnersByType(groupType));
         return new ModelAndView(USERS_VIEW, model);
     }
 
-    private ModelAndView handleGroupList(ImageGroup.Type groupType,
+    private ModelAndView handleGroupList(ImageGroupType groupType,
                                          String ownerName,
                                          Map<String, Object> model) {
         List<ImageGroup> imageGroups =

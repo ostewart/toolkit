@@ -1,6 +1,7 @@
 package com.trailmagic.image.security.test;
 
 import com.trailmagic.image.ImageGroup;
+import com.trailmagic.image.ImageGroupType;
 import com.trailmagic.image.Photo;
 import com.trailmagic.image.impl.ImageInitializer;
 import com.trailmagic.user.NoSuchUserException;
@@ -43,7 +44,7 @@ public class DataCreator {
     }
 
     public ImageGroup makeRoll(User owner, boolean saved) {
-        ImageGroup group = new ImageGroup("testGroup", owner, ImageGroup.Type.ROLL);
+        ImageGroup group = new ImageGroup("testGroup", owner, ImageGroupType.ROLL);
         group.setDisplayName("test group");
         group.setUploadDate(new Date());
         if (saved) {
