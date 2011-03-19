@@ -20,26 +20,26 @@ class SecurityUtilTest {
     SecurityContextHolder.getContext.setAuthentication(auth)
   }
 
-  @Test
-  def testNullAuthenticationProducesNone {
+  @Test(expected = classOf[IllegalStateException])
+  def testNullAuthenticationThrowsException {
     setupAuthentication(null)
 
-    assertEquals(None, securityUtil.getCurrentUser)
+    securityUtil.getCurrentUser
   }
 
-  @Test
-  def testNullPrincipalProducesNone {
+  @Test(expected = classOf[IllegalStateException])
+  def testNullPrincipalThrowsException {
     setupAuthentication(new TestingAuthenticationToken(null, null))
 
-    assertEquals(None, securityUtil.getCurrentUser)
+    securityUtil.getCurrentUser
   }
 
   @Test
   def testUserDetailsPrincipalProducesUser {
-    val user = new User()
+    val user = new User("tester")
     setupAuthentication(new TestingAuthenticationToken(new ToolkitUserDetails(user), None))
 
-    assertEquals(Some(user), securityUtil.getCurrentUser)
+    assertEquals(user, securityUtil.getCurrentUser)
   }
 
   @Test(expected=classOf[ClassCastException])

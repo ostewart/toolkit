@@ -61,7 +61,7 @@ class ImageServiceImpl @Autowired()(imageGroupRepository: ImageGroupRepository, 
   }
 
   private def fullNameFromUser: String = {
-    val user = securityUtil.getCurrentUser.get
+    val user = securityUtil.getCurrentUser
 
     user.getFirstName + " " + user.getLastName
   }
@@ -83,7 +83,7 @@ class ImageServiceImpl @Autowired()(imageGroupRepository: ImageGroupRepository, 
     photo.setDisplayName(imageData.getDisplayName)
     photo.setCopyright(imageData.getCopyright)
     photo.setCreator(imageData.getCreator)
-    val currentUser: User = securityUtil.getCurrentUser.get
+    val currentUser: User = securityUtil.getCurrentUser
     photo.setOwner(currentUser)
     photo.setRoll(findNamedOrDefaultRoll(imageData.getRollName, currentUser))
     imageInitializer.saveNewImage(photo)

@@ -8,14 +8,14 @@ import org.springframework.stereotype.Service
 
 @Service("securityUtil")
 class SecurityUtil {
-  def getCurrentUser: Option[User] = {
+  def getCurrentUser: User = {
     val authentication: Authentication = SecurityContextHolder.getContext.getAuthentication
 
     authentication match {
-      case null => None
+      case null => throw new IllegalStateException("Must have a signed-in user–no Authentication present")
       case _ => authentication.getPrincipal.asInstanceOf[ToolkitUserDetails] match {
-        case null => None
-        case userDetails => Some(userDetails.getRealUser)
+        case null => throw new IllegalStateException("Must have a signed-in user–no principal present")
+        case userDetails => userDetails.getRealUser
       }
     }
   }

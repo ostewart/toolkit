@@ -54,7 +54,7 @@ public class ImageInitializerImplTest {
     }
 
     private void withAuthenticatedUser() {
-        when(securityUtil.getCurrentUser()).thenReturn(new Some(testUser));
+        when(securityUtil.getCurrentUser()).thenReturn(testUser);
     }
 
     @Test
@@ -77,14 +77,14 @@ public class ImageInitializerImplTest {
 
     @Test(expected = IllegalStateException.class)
     public void testCantCreateImageWithoutUser() {
-        when(securityUtil.getCurrentUser()).thenReturn(Option.<User>empty());
-        
+        when(securityUtil.getCurrentUser()).thenThrow(new IllegalStateException());
+
         imageInitializer.saveNewImage(makePhoto("test", null));
     }
 
     @Test(expected = IllegalStateException.class)
     public void testCantCreateImageGroupWithoutUser() {
-        when(securityUtil.getCurrentUser()).thenReturn(Option.<User>empty());
+        when(securityUtil.getCurrentUser()).thenThrow(new IllegalStateException());
 
         imageInitializer.saveNewImageGroup(makeImageGroup(null));
     }

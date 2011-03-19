@@ -61,7 +61,7 @@ import com.trailmagic.image.impl.ImageServiceImplTest._
     var calendar: Calendar = Calendar.getInstance
     calendar.set(TEST_YEAR, Calendar.FEBRUARY, 28)
     when(timeSource.calendar).thenReturn(calendar)
-    when(securityUtil.getCurrentUser).thenReturn(Some(testUser))
+    when(securityUtil.getCurrentUser).thenReturn(testUser)
     imageService = new ImageServiceImpl(imageGroupRepository, imageRepository, imageSecurityService, userRepository, securityUtil, imageInitializer, timeSource, imageResizeClient)
   }
 
