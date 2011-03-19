@@ -78,7 +78,7 @@ public class WebSupport {
             }
 
             // if tmpMF's area is closer to the target size...
-            if (Math.abs(size - (tmpMF.getArea())) < Math.abs(size - (closest.getArea()))) {
+            if (Math.abs(size - (tmpMF.area())) < Math.abs(size - (closest.area()))) {
                 closest = tmpMF;
             }
         }

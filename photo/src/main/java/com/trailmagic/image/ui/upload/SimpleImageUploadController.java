@@ -31,7 +31,7 @@ public class SimpleImageUploadController {
     @RequestMapping
     public ModelAndView showForm() {
         final HashMap<String, Object> model = new HashMap<String, Object>();
-        final ImageGroup imageGroup = imageService.findOrCreateDefaultRollForUser(securityUtil.getCurrentUser());
+        final ImageGroup imageGroup = imageService.findOrCreateDefaultRollForUser(securityUtil.getCurrentUser().get());
         model.put("imageGroup", imageGroup);
         model.put("nextFramePosition", imageGroup.nextFramePosition());
         return new ModelAndView("groupUpload", model);
@@ -52,6 +52,6 @@ public class SimpleImageUploadController {
 
 
         res.setStatus(303);
-        res.addHeader("Location", res.encodeRedirectURL(req.getContextPath() + "/rolls/" + securityUtil.getCurrentUser().getScreenName() + "/uploads/" + image.getId()));
+        res.addHeader("Location", res.encodeRedirectURL(req.getContextPath() + "/rolls/" + securityUtil.getCurrentUser().get().getScreenName() + "/uploads/" + image.getId()));
     }
 }

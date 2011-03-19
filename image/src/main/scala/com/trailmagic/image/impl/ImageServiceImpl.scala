@@ -16,9 +16,8 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.io.InputStream
 import java.util.Calendar
-import scala.collection.JavaConversions._
 import scala.collection.mutable.Set
-
+import scala.collection.JavaConverters._
 
 object ImageServiceImpl {
   private var log: Logger = LoggerFactory.getLogger(classOf[ImageServiceImpl])
@@ -30,6 +29,7 @@ class ImageServiceImpl @Autowired()(imageGroupRepository: ImageGroupRepository, 
                                     securityUtil: SecurityUtil, imageInitializer: ImageInitializer,
                                     timeSource: TimeSource, imageResizeClient: ImageResizeClient) extends ImageService {
   implicit def javaToScalaInt(d: java.lang.Integer) = d.intValue
+
   implicit def javaToScalaLong(d: java.lang.Long) = d.longValue
 
   private def log = ImageServiceImpl.log
@@ -61,8 +61,9 @@ class ImageServiceImpl @Autowired()(imageGroupRepository: ImageGroupRepository, 
   }
 
   private def fullNameFromUser: String = {
-    val user: User = securityUtil.getCurrentUser
-    return user.getFirstName + " " + user.getLastName
+    val user = securityUtil.getCurrentUser.get
+
+    user.getFirstName + " " + user.getLastName
   }
 
   @Secured(Array("ROLE_USER"))
@@ -82,7 +83,7 @@ class ImageServiceImpl @Autowired()(imageGroupRepository: ImageGroupRepository, 
     photo.setDisplayName(imageData.getDisplayName)
     photo.setCopyright(imageData.getCopyright)
     photo.setCreator(imageData.getCreator)
-    val currentUser: User = securityUtil.getCurrentUser
+    val currentUser: User = securityUtil.getCurrentUser.get
     photo.setOwner(currentUser)
     photo.setRoll(findNamedOrDefaultRoll(imageData.getRollName, currentUser))
     imageInitializer.saveNewImage(photo)
@@ -144,7 +145,7 @@ class ImageServiceImpl @Autowired()(imageGroupRepository: ImageGroupRepository, 
   def makeImageGroupAndImagesPublic(group: ImageGroup) {
     imageSecurityService.makePublic(group)
     log.info("Added public permission for group: " + group.getName)
-    group.getFrames.foreach(frame => {
+    group.getFrames.asScala.foreach(frame => {
       val image: Image = frame.getImage
       imageSecurityService.makePublic(image)
       log.info("Added public permission for image: " + image.getDisplayName)

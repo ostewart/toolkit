@@ -168,7 +168,7 @@ public class ImageTag extends TagSupport {
     }
 
     private String getLabel(ImageManifestation mf) {
-        int area = mf.getArea();
+        int area = mf.area();
         int distance = Integer.MAX_VALUE;
         int newDistance;
         String label = "small";

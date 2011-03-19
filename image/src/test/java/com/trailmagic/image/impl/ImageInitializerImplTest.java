@@ -12,6 +12,9 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import scala.None;
+import scala.Option;
+import scala.Some;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -44,10 +47,14 @@ public class ImageInitializerImplTest {
 
     @Test
     public void testSaveNewImage() throws Exception {
-        when(securityUtil.getCurrentUser()).thenReturn(testUser);
+        withAuthenticatedUser();
         Image image = makePhoto("test", testUser);
         imageInitializer.saveNewImage(image);
         Mockito.verify(imageSecurityService).addOwnerAcl(image);
+    }
+
+    private void withAuthenticatedUser() {
+        when(securityUtil.getCurrentUser()).thenReturn(new Some(testUser));
     }
 
     @Test
@@ -59,7 +66,7 @@ public class ImageInitializerImplTest {
     public void testSaveNewImageOverridesOwner() {
         Photo newPhoto = makePhoto("test", null);
 
-        when(securityUtil.getCurrentUser()).thenReturn(testUser);
+        withAuthenticatedUser();
 
         imageInitializer.saveNewImage(newPhoto);
 
@@ -70,14 +77,14 @@ public class ImageInitializerImplTest {
 
     @Test(expected = IllegalStateException.class)
     public void testCantCreateImageWithoutUser() {
-        when(securityUtil.getCurrentUser()).thenReturn(null);
+        when(securityUtil.getCurrentUser()).thenReturn(Option.<User>empty());
         
         imageInitializer.saveNewImage(makePhoto("test", null));
     }
 
     @Test(expected = IllegalStateException.class)
     public void testCantCreateImageGroupWithoutUser() {
-        when(securityUtil.getCurrentUser()).thenReturn(null);
+        when(securityUtil.getCurrentUser()).thenReturn(Option.<User>empty());
 
         imageInitializer.saveNewImageGroup(makeImageGroup(null));
     }
@@ -90,6 +97,7 @@ public class ImageInitializerImplTest {
     @Test
     public void testSaveNewImageGroup() {
         ImageGroup group = makeImageGroup(testUser);
+        withAuthenticatedUser();
 
         imageInitializer.saveNewImageGroup(group);
 
@@ -103,6 +111,7 @@ public class ImageInitializerImplTest {
         Photo expectedPreviewImage = makePhoto("test", testUser);
         group.addFrame(makeFrame(expectedPreviewImage, 1));
         group.addFrame(makeFrame(makePhoto("test", testUser), 2));
+        withAuthenticatedUser();
 
         imageInitializer.saveNewImageGroup(group);
 
@@ -115,6 +124,7 @@ public class ImageInitializerImplTest {
     @Test
     public void testSaveNewImageGroupSetsPreviewImageWithNoFrames() {
         ImageGroup group = makeImageGroup(testUser);
+        withAuthenticatedUser();
 
         imageInitializer.saveNewImageGroup(group);
 
@@ -153,10 +163,23 @@ public class ImageInitializerImplTest {
     }
 
     @Test
-    public void testSaveNewImageGroupOverridesOwner() {
+    public void testSaveNewImageGroupSetsOwner() {
         ImageGroup group = makeImageGroup(null);
 
-        when(securityUtil.getCurrentUser()).thenReturn(testUser);
+        withAuthenticatedUser();
+
+        imageInitializer.saveNewImageGroup(group);
+
+        Assert.assertEquals(testUser, group.getOwner());
+        Mockito.verify(imageGroupRepository).saveNewGroup(group);
+        Mockito.verify(imageSecurityService).addOwnerAcl(group);
+    }
+
+    @Test
+    public void testSaveNewImageGroupAlwaysOverridesOwner() {
+        ImageGroup group = makeImageGroup(new User("someone else"));
+
+        withAuthenticatedUser();
 
         imageInitializer.saveNewImageGroup(group);
 
