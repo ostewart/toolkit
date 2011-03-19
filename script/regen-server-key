@@ -1,0 +1,21 @@
+#!/bin/sh
+
+server_keystore=integration-test/src/main/resources/server.keystore
+
+keytool -keystore $server_keystore -storepass password -delete -alias tomcat
+keytool -keystore $server_keystore -storepass password -genkey -alias tomcat -keyalg RSA -validity 365 -dname "CN=localhost, OU=localhost, O=localhost, L=New York, ST=NY, C=US" -keypass password
+
+if [ $? -eq 0 ]; then
+    echo "Tomcat key successfully generated in $server_keystore"
+else
+    echo "Error creating key in $server_keystore"
+    exit 1
+fi
+
+cert_file=`mktemp certificate-export`
+client_keystore=integration-test/src/test/resources/client.truststore
+
+keytool -keystore $server_keystore -storepass password -exportcert -alias tomcat -file "$cert_file"
+keytool -keystore $client_keystore -storepass password -importcert -trustcacerts -file "$cert_file"
+
+rm "$cert_file"
