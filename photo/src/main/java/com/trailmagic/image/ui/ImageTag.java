@@ -26,7 +26,6 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 import javax.servlet.jsp.el.ExpressionEvaluator;
 import javax.servlet.jsp.el.VariableResolver;
 */
-import com.trailmagic.user.*;
 import com.trailmagic.image.*;
 
 public class ImageTag extends TagSupport {
@@ -61,7 +60,12 @@ public class ImageTag extends TagSupport {
             String size = req.getParameter(SIZE_ATTR);
             String originalp = req.getParameter("original");
             if (size != null) {
-                mf = WebSupport.getMFBySize(m_image, Integer.parseInt(size), Boolean.parseBoolean(originalp));
+                boolean original = Boolean.parseBoolean(originalp);
+                if (original) {
+                    mf = m_image.originalManifestation();
+                } else {
+                    mf = m_image.manifestationClosestTo(Integer.parseInt(size));
+                }
             } else {
                 // get label by precedence: req param, tag spec, sess attr
                 String label = req.getParameter(LABEL_ATTR);
@@ -72,11 +76,9 @@ public class ImageTag extends TagSupport {
                     label = (String)session.getAttribute(DEFAULT_LABEL_ATTR);
                 }
                 if (label != null) {
-                    mf = WebSupport.getMFByLabel(m_image, label);
+                    mf = m_image.manifestationByLabel(label);
                 } else {
-                    mf = WebSupport.getDefaultMF((User)pageContext
-                                                 .findAttribute(USER_ATTR),
-                                                 m_image);
+                    mf = WebSupport.getDefaultMF(m_image);
                 }
             }
 

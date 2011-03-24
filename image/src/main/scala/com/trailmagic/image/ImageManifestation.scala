@@ -8,15 +8,18 @@ import reflect.BeanProperty
  * This class maps the metadata of the manifestation, while its subclass,
  * the <code>HeavyImageManifestation</code> also maps the data.
  */
-class ImageManifestation extends Comparable[ImageManifestation] with Owned {
+class ImageManifestation(img: Image = null,
+                          @BeanProperty var width: Int = 0,
+                          @BeanProperty var height: Int = 0,
+                          @BeanProperty var original: Boolean = false) extends Owned with Ordered[ImageManifestation] {
   @BeanProperty var id: Long = 0L
-  @IdentityProxy
-  @BeanProperty var image: Image = null
-  @BeanProperty var height: Int = 0
-  @BeanProperty var width: Int = 0
+  @IdentityProxy @BeanProperty var image = img
   @BeanProperty var format: String = null
-  @BeanProperty var original: Boolean = false
   @BeanProperty var name: String = null
+
+  def this() = {
+    this(null, 0, 0, false)
+  }
 
   def getOwner = image.owner
 
@@ -24,13 +27,6 @@ class ImageManifestation extends Comparable[ImageManifestation] with Owned {
   def getArea = area
 
   def isOriginal = original
-
-  def compareTo(other: ImageManifestation): Int = {
-    this.area - other.area match {
-      case 0 => (this.getId - other.getId).intValue
-      case difference => difference
-    }
-  }
 
   override def equals(obj: Any): Boolean = {
     if (!(obj.isInstanceOf[ImageManifestation])) {
@@ -45,6 +41,13 @@ class ImageManifestation extends Comparable[ImageManifestation] with Owned {
   }
 
   override def toString: String = {
-    return getClass + "(id=" + id + "; name=" + name + "; height=" + height + "; width=" + width + "; format=" + format + "; original=" + original
+    return getClass + "(id=" + id + "; name=" + name + "; width=" + width + "; height=" + height + "; format=" + format + "; original=" + original
+  }
+
+  def compare(that: ImageManifestation) = {
+    this.area - that.area match {
+      case 0 => (this.getId - that.getId).intValue
+      case difference => difference
+    }
   }
 }

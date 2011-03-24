@@ -20,10 +20,11 @@ import java.util.SortedSet
 import java.util.TreeSet
 import reflect.BeanProperty
 import java.lang.Integer
+import scala.collection.JavaConverters.asScalaSetConverter
 
 class Image extends Owned with AccessControlled {
   @BeanProperty
-  var id:  Long = 0L
+  var id: Long = 0L
   @BeanProperty
   var name: String = null
   @BeanProperty
@@ -85,6 +86,41 @@ class Image extends Owned with AccessControlled {
     im.setImage(this)
   }
 
+  def labelToArea(label: String): Int = {
+    label match {
+      case "thumbnail" => 192 * 128
+      case "small" => 384 * 256
+      case "medium" => 768 * 512
+      case "large" => 1536 * 1024
+      case "huge" => 3072 * 2048
+      case _ => throw new IllegalArgumentException("Unsupported label: " + label)
+    }
+  }
+
+  def manifestationByLabel(label: String): ImageManifestation = {
+    manifestationClosestTo(labelToArea(label))
+  }
+
+  def manifestationClosestTo(width: Int, height: Int): ImageManifestation = {
+    manifestationClosestTo(width * height)
+  }
+
+  def manifestationClosestTo(area: Int): ImageManifestation = {
+    if (manifestations.isEmpty) return null;
+    (manifestations.first /: manifestations.asScala.filterNot(_.original)) {
+      (best, mf) =>
+        if ((mf.area - area).abs < (best.area - area).abs) mf
+        else best
+    }
+  }
+
+  def originalManifestation: ImageManifestation = {
+    // return null until ImageTag can be refactored
+    manifestations.asScala.find(_.original) match {
+      case Some(mf) => mf
+      case None => null
+    }
+  }
 
   override def equals(obj: Any): Boolean = {
     if (!(obj.isInstanceOf[Image])) {
