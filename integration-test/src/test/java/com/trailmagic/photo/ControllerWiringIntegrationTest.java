@@ -19,7 +19,7 @@ public class ControllerWiringIntegrationTest {
 
     @Before
     public void setUp() {
-        driver = new FirefoxDriver("WebDriver");
+        driver = new FirefoxDriver();
         WebClientHelper client = new WebClientHelper(BASE_URL);
         WebDriverHelper driverHelper = new WebDriverHelper(driver);
 

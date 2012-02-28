@@ -3,7 +3,6 @@ package com.trailmagic.photo;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.RenderedWebElement;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -15,7 +14,7 @@ public class JavascriptTest {
 
     @Test
     public void runJavascriptTestHarness() {
-        driver = new FirefoxDriver("WebDriver");
+        driver = new FirefoxDriver();
         driver.get("http://localhost:8081/photo/test-runner.html");
 
 
@@ -34,7 +33,7 @@ public class JavascriptTest {
         while (System.currentTimeMillis() < beginTime + 10 * 1000) {
             try {
                 WebElement finished = driver.findElement(By.className("finished-at"));
-                if (finished != null && ((RenderedWebElement) finished).isDisplayed()) {
+                if (finished != null && finished.isDisplayed()) {
                     return;
                 }
             } catch (NoSuchElementException e) {

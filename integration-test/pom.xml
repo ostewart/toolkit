@@ -26,8 +26,8 @@
     </dependency>
 
     <dependency>
-      <groupId>org.seleniumhq.webdriver</groupId>
-      <artifactId>webdriver-firefox</artifactId>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-firefox-driver</artifactId>
     </dependency>
     <dependency>
       <groupId>com.trailmagic</groupId>
@@ -108,7 +108,7 @@
                 </property>
                 <property>
                   <name>testing.secureBaseUrl</name>
-                  <value>https://localhost:8443/photo</value>
+                  <value>https://localhost:8444/photo</value>
                 </property>
                 <property>
                   <name>testing.hostPortUrl</name>
@@ -146,16 +146,19 @@
         <configuration>
           <wait>false</wait>
           <container>
-            <containerId>tomcat6x</containerId>
+            <containerId>tomcat7x</containerId>
             <zipUrlInstaller>
-              <url>http://apache.mirrors.tds.net/tomcat/tomcat-6/v6.0.32/bin/apache-tomcat-6.0.32.zip</url>
+              <url>http://mirror.cc.columbia.edu/pub/software/apache/tomcat/tomcat-7/v7.0.26/bin/apache-tomcat-7.0.26.zip</url>.
+              <url>http://mirrors.ibiblio.org/apache/tomcat/tomcat-7/v7.0.26/bin/apache-tomcat-7.0.26.zip</url>.
               <installDir>${java.io.tmpdir}/cargoinstalls</installDir>
             </zipUrlInstaller>
           </container>
           <configuration>
-            <home>${project.build.directory}/tomcat6x</home>
+            <home>${project.build.directory}/tomcat7x</home>
             <properties>
               <cargo.servlet.port>8081</cargo.servlet.port>
+              <cargo.servlet.securePort>8444</cargo.servlet.securePort>
+              <cargo.tomcat.ajp.port>8010</cargo.tomcat.ajp.port>
               <cargo.jvmargs>
                 -javaagent:${settings.localRepository}/org/aspectj/aspectjweaver/1.6.10/aspectjweaver-1.6.10.jar
               </cargo.jvmargs>

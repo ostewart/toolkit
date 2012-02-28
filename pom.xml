@@ -97,8 +97,8 @@
     <module>common</module>
     <module>db</module>
     <module>user</module>
-    <module>image</module>
-    <module>resizer</module>
+      <module>resizer</module>
+      <module>image</module>
     <module>photo</module>
     <module>integration-test</module>
   </modules>
@@ -364,9 +364,14 @@
         <version>1.9.5</version>
       </dependency>
       <dependency>
-        <groupId>org.seleniumhq.webdriver</groupId>
-        <artifactId>webdriver-firefox</artifactId>
-        <version>0.9.7376</version>
+        <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-firefox-driver</artifactId>
+        <version>2.5.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-support</artifactId>
+        <version>2.5.0</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

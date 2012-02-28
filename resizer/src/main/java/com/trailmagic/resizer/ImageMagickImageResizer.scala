@@ -14,7 +14,7 @@ class ImageMagickImageResizer @Autowired() (private val executor: CommandExcecut
     try {
       val destFile: File = File.createTempFile("image-resizer-output", ".jpg")
       executor.exec("convert -quality 80 -resize", geometryString(imageInfo, shortestDimensionLength), srcFile.getAbsolutePath, destFile.getAbsolutePath)
-      return destFile
+      destFile
     } catch {
       case e: IOException => {
         throw new ResizeFailedException(e)
@@ -30,7 +30,7 @@ class ImageMagickImageResizer @Autowired() (private val executor: CommandExcecut
   def writeToTempFile(imageInputStream: InputStream): File = {
     val file: File = File.createTempFile("image-resizer-input", ".jpg")
     IOUtils.copy(imageInputStream, new FileOutputStream(file))
-    return file
+    file
   }
 
   def identify(file: File): ImageFileInfo = {

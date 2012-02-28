@@ -1,30 +1,32 @@
 <Server port="@cargo.rmi.port@" shutdown="SHUTDOWN" debug="@catalina.logging.level@">
 
+  <Listener className="org.apache.catalina.security.SecurityListener" />
   <!--APR library loader. Documentation at /docs/apr.html -->
   <Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on" />
   <!--Initialize Jasper prior to webapps are loaded. Documentation at /docs/jasper-howto.html -->
   <Listener className="org.apache.catalina.core.JasperListener" />
   <!-- JMX Support for the Tomcat server. Documentation at /docs/non-existent.html -->
-  <Listener className="org.apache.catalina.mbeans.ServerLifecycleListener" />
+  <Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener" />
   <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener" />
+  <Listener className="org.apache.catalina.core.ThreadLocalLeakPreventionListener" />
 
   <Service name="Catalina" debug="@catalina.logging.level@">
 
-    <Connector port="@cargo.servlet.port@" protocol="HTTP/1.1" 
-               connectionTimeout="20000" 
-               redirectPort="8443" 
+    <Connector port="@cargo.servlet.port@" protocol="HTTP/1.1"
+               connectionTimeout="20000"
+               redirectPort="@cargo.servlet.securePort@"
                scheme="@cargo.protocol@"
                secure="@catalina.secure@"
                debug="@catalina.logging.level@"
                emptySessionPath="@catalina.connector.emptySessionPath@"
                URIEncoding="@catalina.servlet.uriencoding@" />
-      <Connector port="8443" protocol="HTTP/1.1" SSLEnabled="true"
+      <Connector port="@cargo.servlet.securePort@" protocol="HTTP/1.1" SSLEnabled="true"
                  maxThreads="150" scheme="https" secure="true" keystorePass="password"
                  keystoreFile="conf/server.keystore"
                  clientAuth="false" sslProtocol="TLS" />
 
     <!-- Define an AJP 1.3 Connector on port @cargo.tomcat.ajp.port@ -->
-    <Connector port="@cargo.tomcat.ajp.port@" protocol="AJP/1.3" redirectPort="8443" />
+    <Connector port="@cargo.tomcat.ajp.port@" protocol="AJP/1.3" redirectPort="@cargo.servlet.securePort@" />
 
     <Engine name="Catalina" defaultHost="@cargo.hostname@"
          debug="@catalina.logging.level@">
@@ -39,9 +41,9 @@
             xmlValidation="false" xmlNamespaceAware="false"
             debug="@catalina.logging.level@">
 
-            @tomcat.webapps@        
+            @tomcat.webapps@
 
-        <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"  
+        <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
                prefix="@cargo.hostname@_access_log." suffix=".txt" pattern="common" resolveHosts="false"/>
 
       </Host>

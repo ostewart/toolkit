@@ -26,7 +26,7 @@
             Image Name: ${fn:escapeXml(image.name)}<br/>
           </c:if>
       <!-- Photo properties -->
-      <c:if test="${image.class.name eq 'com.trailmagic.image.Photo'}">
+      <c:if test="${image['class'].name eq 'com.trailmagic.image.Photo'}">
         <div class="photoProperties">
           <c:if test="${!empty image.notes}">
             Image Notes: ${fn:escapeXml(image.notes)}<br/>

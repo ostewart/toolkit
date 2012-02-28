@@ -6,7 +6,7 @@
         <File>/srv/trailmagic.com/logs/photo.log</File>
         <layout class="ch.qos.logback.classic.PatternLayout">
             <!--<Pattern>%d [%t] %-5p %c %x - %m%n</Pattern>-->
-            <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern>
+            <Pattern>%d [%thread] %-5level %logger{36} - %msg%n</Pattern>
         </layout>
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
             <maxIndex>5</maxIndex>

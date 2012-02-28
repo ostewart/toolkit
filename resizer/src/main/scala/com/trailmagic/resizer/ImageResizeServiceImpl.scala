@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
-import scalaj.collection.Imports._
+import scala.collection.JavaConverters._
 
 @Service
 class ImageResizeServiceImpl @Autowired()(imageResizer: ImageResizer) extends ImageResizeService {
@@ -19,7 +19,7 @@ class ImageResizeServiceImpl @Autowired()(imageResizer: ImageResizer) extends Im
     try {
       block(file)
     } finally {
-      file.delete;
+      file.delete
     }
   }
 
@@ -41,12 +41,12 @@ class ImageResizeServiceImpl @Autowired()(imageResizer: ImageResizer) extends Im
   }
 
   def identify(srcFile: File): ImageFileInfo = {
-    return imageResizer.identify(srcFile)
+    imageResizer.identify(srcFile)
   }
 
   def writeFile(srcInputStream: InputStream): File = {
     try {
-      return imageResizer.writeToTempFile(srcInputStream)
+      imageResizer.writeToTempFile(srcInputStream)
     }
     catch {
       case e: IOException => {
@@ -59,7 +59,7 @@ class ImageResizeServiceImpl @Autowired()(imageResizer: ImageResizer) extends Im
     val file = imageResizer.resizeImage(srcFile, srcFileInfo, size)
     val info = imageResizer.identify(file)
     info.setFile(file)
-    return info
+    info
   }
 }
 

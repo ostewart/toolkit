@@ -71,7 +71,7 @@ public class WebClientHelper {
         paramMap.put("j_username", "tester");
         paramMap.put("j_password", "password");
         webserviceClient.get(baseUrl + "/rolls/", new NoOpEntityContentProcessor());
-        final WebResponse response = webserviceClient.post("https://localhost:8443/photo/j_spring_security_check", paramMap);
+        final WebResponse response = webserviceClient.post(WebConstants.SECURE_BASE_URL + "/j_spring_security_check", paramMap);
 
         assertEquals(302, response.getStatusCode());
         assertFalse(response.isRedirected());

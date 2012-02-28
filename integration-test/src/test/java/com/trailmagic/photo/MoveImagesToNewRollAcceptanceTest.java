@@ -26,7 +26,7 @@ public class MoveImagesToNewRollAcceptanceTest {
 
     @Before
     public void setUp() {
-        driver = new FirefoxDriver("WebDriver");
+        driver = new FirefoxDriver();
         driverHelper = new WebDriverHelper(driver);
         client = new WebClientHelper(BASE_URL);
     }

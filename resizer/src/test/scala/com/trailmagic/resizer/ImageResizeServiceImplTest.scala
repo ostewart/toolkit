@@ -3,15 +3,14 @@ package com.trailmagic.resizer
 import org.junit.Assert._
 import org.mockito.Mockito.{mock, times, verify, when}
 import org.junit.{Test, Before}
-import scalaj.collection.Imports._
 import java.io.{InputStream, ByteArrayInputStream, File}
 import org.mockito.Matchers.{isA, anyInt}
 import org.mockito.{Matchers, Mockito, MockitoAnnotations, Mock}
+import scala.collection.JavaConverters._
 
 class ImageResizeServiceImplTest {
-  @Mock
-  private var imageResizer: ImageResizer = _
-  private var imageResizeService: ImageResizeService = _
+  @Mock var imageResizer: ImageResizer = _
+  var imageResizeService: ImageResizeService = _
 
   @Before
   def setUp() {
@@ -20,18 +19,18 @@ class ImageResizeServiceImplTest {
   }
 
   @Test
-  def testScheduleResize {
+  def testScheduleResize() {
     val srcFileInfo = new ImageFileInfo(2050, 3066, "image/jpeg")
     mockIdentifyToReturnSrcFileInfoAndSizes(srcFileInfo, 128, 256, 512, 1024, 2048)
     val srcFile = mockResizerToWriteAndResize
 
 
-    val files = imageResizeService.scheduleResize(new ByteArrayInputStream(Array[Byte]()))
+    val files = imageResizeService.scheduleResize(new ByteArrayInputStream(Array[Byte]())).asScala
 
     assertResizeCalledWithSizes(srcFileInfo, 128, 256, 512, 1024, 2048)
 
     assertEquals(5, files.size)
-    files.foreach((file => assertNotNull(file.getFile())))
+    files.foreach((file => assertNotNull(file.getFile)))
     verify(srcFile).delete()
   }
 
@@ -40,7 +39,7 @@ class ImageResizeServiceImplTest {
     val resultFile = mock(classOf[File])
     when(imageResizer.writeToTempFile(isA(classOf[InputStream]))).thenReturn(srcFile)
     when(imageResizer.resizeImage(isA(classOf[File]), isA(classOf[ImageFileInfo]), anyInt())).thenReturn(resultFile)
-    return srcFile
+    srcFile
   }
 
   private def mockIdentifyToReturnSrcFileInfoAndSizes(srcFileInfo: ImageFileInfo, sizes: Int*) {
@@ -53,32 +52,32 @@ class ImageResizeServiceImplTest {
 
 
   @Test
-  def testOnlyCreatesSmallerSizeImages {
+  def testOnlyCreatesSmallerSizeImages() {
     val srcFileInfo = new ImageFileInfo(200, 400, "image/jpeg")
     mockIdentifyToReturnSrcFileInfoAndSizes(srcFileInfo, 128)
     val srcFile = mockResizerToWriteAndResize
 
-    val files = imageResizeService.scheduleResize(new ByteArrayInputStream(Array[Byte]()))
+    val files = imageResizeService.scheduleResize(new ByteArrayInputStream(Array[Byte]())).asScala
 
     assertResizeCalledWithSizes(srcFileInfo, 128)
 
-    assertEquals(1, files.size())
-    files.foreach((file) => assertNotNull(file.getFile()))
+    assertEquals(1, files.size)
+    files.foreach((file) => assertNotNull(file.getFile))
     verify(srcFile).delete()
   }
 
   @Test
-  def testOnlyCreatesEqualAndSmallerSizeImages {
+  def testOnlyCreatesEqualAndSmallerSizeImages() {
     val srcFileInfo = new ImageFileInfo(256, 400, "image/jpeg")
     mockIdentifyToReturnSrcFileInfoAndSizes(srcFileInfo, 128, 256)
     val srcFile = mockResizerToWriteAndResize
 
-    val files = imageResizeService.scheduleResize(new ByteArrayInputStream(Array[Byte]()))
+    val files = imageResizeService.scheduleResize(new ByteArrayInputStream(Array[Byte]())).asScala
 
     assertResizeCalledWithSizes(srcFileInfo, 128, 256)
 
-    assertEquals(2, files.size())
-    files.foreach((file) => assertNotNull(file.getFile()))
+    assertEquals(2, files.size)
+    files.foreach((file) => assertNotNull(file.getFile))
     verify(srcFile).delete()
   }
 
