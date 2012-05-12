@@ -26,18 +26,10 @@ class ImageResizeServiceImpl @Autowired()(imageResizer: ImageResizer) extends Im
   def scheduleResize(srcFile: File): java.util.List[ImageFileInfo] = {
     val srcFileInfo: ImageFileInfo = imageResizer.identify(srcFile)
     val resultInfoList = List[ImageFileInfo]()
+    val sizes = List(128, 256, 512, 1024, 2048)
 
-
-    (List[ImageFileInfo]() /: List(128, 256, 512, 1024, 2048)) {
-      (infoList, size) =>
-        if (size <= srcFileInfo.getWidth) resizeAndIdentify(srcFile, srcFileInfo, size) :: infoList
-        else infoList
-    }.asJava
-
-    //    for {
-    //      size <- List(128, 256, 512, 1024, 2048)
-    //      if (size <= srcFileInfo.getWidth)
-    //    } yield resultInfoList += resizeAndIdentify(srcFile, srcFileInfo, size)
+    val newManifestations = sizes filter (_ <= srcFileInfo.getWidth) map (resizeAndIdentify(srcFile, srcFileInfo, _))
+    newManifestations.asJava
   }
 
   def identify(srcFile: File): ImageFileInfo = {

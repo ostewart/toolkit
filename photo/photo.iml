@@ -24,8 +24,6 @@
           <file>file://$MODULE_DIR$/src/main/webapp/WEB-INF/images-servlet.xml</file>
           <file>file://$MODULE_DIR$/src/main/webapp/WEB-INF/applicationContext-security.xml</file>
         </fileset>
-        <fileset id="web: application context" profiles="" autodetected="true" />
-        <fileset id="web: images servlet context" profiles="" autodetected="true" />
       </configuration>
     </facet>
     <facet type="scala" name="Scala">
@@ -89,7 +87,7 @@
     <orderEntry type="module" module-name="db" />
     <orderEntry type="library" name="Maven: com.h2database:h2:1.2.130" level="project" />
     <orderEntry type="module" module-name="resizer" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-exec:1.0.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-exec:1.1" level="project" />
     <orderEntry type="library" name="Maven: commons-io:commons-io:1.4" level="project" />
     <orderEntry type="library" name="Maven: org.scala-lang:scala-library:2.8.1" level="project" />
     <orderEntry type="library" name="Maven: net.sf.ehcache:ehcache-terracotta:1.8.0" level="project" />
