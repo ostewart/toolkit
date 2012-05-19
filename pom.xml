@@ -74,6 +74,9 @@
             -javaagent:${settings.localRepository}/org/aspectj/aspectjweaver/1.6.10/aspectjweaver-1.6.10.jar
           </argLine>
           <!--  -javaagent:${settings.localRepository}/org/terracotta/hibernate/terracotta-hibernate-agent/1.1.0/terracotta-hibernate-agent-1.1.0.jar -->
+          <systemProperties>
+            <photo.configDir>${project.parent.basedir}/integration-test/conf</photo.configDir>
+          </systemProperties>
         </configuration>
       </plugin>
 

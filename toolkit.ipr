@@ -301,6 +301,20 @@
     <option name="USE_PROJECT_PROFILE" value="true" />
     <version value="1.0" />
   </component>
+  <component name="JavaScriptLibraryMappings">
+    <excludedPredefinedLibrary name="AJAX" />
+    <excludedPredefinedLibrary name="DHTML" />
+    <excludedPredefinedLibrary name="DOM Core" />
+    <excludedPredefinedLibrary name="DOM Events" />
+    <excludedPredefinedLibrary name="DOM Traversal And Range" />
+    <excludedPredefinedLibrary name="DOM XPath" />
+    <excludedPredefinedLibrary name="EcmaScript" />
+    <excludedPredefinedLibrary name="EcmaScript Additional" />
+    <excludedPredefinedLibrary name="EcmaScript L5" />
+    <excludedPredefinedLibrary name="EcmaScript for XML" />
+    <excludedPredefinedLibrary name="HTML 5" />
+    <excludedPredefinedLibrary name="WebGL" />
+  </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_STRING" value="-target 1.6" />
   </component>

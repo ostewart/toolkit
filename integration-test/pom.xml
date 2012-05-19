@@ -51,7 +51,7 @@
             </goals>
             <configuration>
               <files>
-                <file>../common/src/main/resources/jdbc.properties</file>
+                <file>conf/jdbc.properties</file>
               </files>
             </configuration>
           </execution>
@@ -152,6 +152,9 @@
               <url>http://mirrors.ibiblio.org/apache/tomcat/tomcat-7/v7.0.26/bin/apache-tomcat-7.0.26.zip</url>.
               <installDir>${java.io.tmpdir}/cargoinstalls</installDir>
             </zipUrlInstaller>
+            <systemProperties>
+              <photo.configDir>${project.basedir}/conf</photo.configDir>
+            </systemProperties>
           </container>
           <configuration>
             <home>${project.build.directory}/tomcat7x</home>
