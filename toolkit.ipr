@@ -246,6 +246,9 @@
     <file type="Spring" url="file://$PROJECT_DIR$/test-data/src/main/resources/applicationContext-test-data.xml" />
     <file type="web" url="file://$PROJECT_DIR$/photo" />
   </component>
+  <component name="GradleSettings">
+    <option name="gradleHome" value="/usr/local/Cellar/gradle/1.0-milestone-8a/libexec/bin" />
+  </component>
   <component name="HighlightingAdvisor">
     <option name="SUGGEST_TYPE_AWARE_HIGHLIGHTING" value="false" />
     <option name="TYPE_AWARE_HIGHLIGHTING_ENABLED" value="true" />

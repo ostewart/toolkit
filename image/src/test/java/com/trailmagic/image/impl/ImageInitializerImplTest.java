@@ -12,9 +12,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import scala.None;
-import scala.Option;
-import scala.Some;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;

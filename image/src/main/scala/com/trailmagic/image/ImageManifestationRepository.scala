@@ -11,13 +11,12 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package com.trailmagic.image;
+package com.trailmagic.image
 
-public interface ImageManifestationRepository {
-    public ImageManifestation getById(long id);
-    public HeavyImageManifestation getHeavyById(long id);
-    public void saveNewImageManifestation(HeavyImageManifestation imageManifestation);
-    public void cleanFromSession(ImageManifestation imageManifestation);
-    public HeavyImageManifestation findOriginalHeavyForImage(long imageId);
+trait ImageManifestationRepository {
+  def getById(id: Long): ImageManifestation
+  def getHeavyById(id: Long): HeavyImageManifestation
+  def saveNewImageManifestation(imageManifestation: HeavyImageManifestation)
+  def cleanFromSession(imageManifestation: ImageManifestation)
+  def findOriginalHeavyForImage(imageId: Long): HeavyImageManifestation
 }
-

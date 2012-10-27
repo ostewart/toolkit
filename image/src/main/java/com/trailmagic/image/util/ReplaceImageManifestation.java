@@ -13,13 +13,7 @@
  */
 package com.trailmagic.image.util;
 
-import com.trailmagic.image.HeavyImageManifestation;
-import com.trailmagic.image.Image;
-import com.trailmagic.image.ImageFrame;
-import com.trailmagic.image.ImageGroup;
-import com.trailmagic.image.ImageGroupRepository;
-import com.trailmagic.image.ImageManifestation;
-import com.trailmagic.image.ImageManifestationRepository;
+import com.trailmagic.image.*;
 import com.trailmagic.user.User;
 import com.trailmagic.user.UserRepository;
 

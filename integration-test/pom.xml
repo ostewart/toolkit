@@ -148,8 +148,8 @@
           <container>
             <containerId>tomcat7x</containerId>
             <zipUrlInstaller>
-              <url>http://mirror.cc.columbia.edu/pub/software/apache/tomcat/tomcat-7/v7.0.26/bin/apache-tomcat-7.0.26.zip</url>.
-              <url>http://mirrors.ibiblio.org/apache/tomcat/tomcat-7/v7.0.26/bin/apache-tomcat-7.0.26.zip</url>.
+              <url>http://mirror.cc.columbia.edu/pub/software/apache/tomcat/tomcat-7/v7.0.32/bin/apache-tomcat-7.0.32.zip</url>
+              <url>http://mirrors.ibiblio.org/apache/tomcat/tomcat-7/v7.0.32/bin/apache-tomcat-7.0.32.zip</url>
               <installDir>${java.io.tmpdir}/cargoinstalls</installDir>
             </zipUrlInstaller>
             <systemProperties>
