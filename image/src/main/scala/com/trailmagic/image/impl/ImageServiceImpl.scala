@@ -16,11 +16,11 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.io.InputStream
 import java.util.Calendar
-import scala.collection.mutable.Set
 import scala.collection.JavaConverters._
+import collection.mutable
 
 object ImageServiceImpl {
-  private var log: Logger = LoggerFactory.getLogger(classOf[ImageServiceImpl])
+  private val log: Logger = LoggerFactory.getLogger(classOf[ImageServiceImpl])
 }
 
 @Service("imageService")
@@ -28,18 +28,14 @@ class ImageServiceImpl @Autowired()(imageGroupRepository: ImageGroupRepository, 
                                     imageSecurityService: ImageSecurityService, userRepository: UserRepository,
                                     securityUtil: SecurityUtil, imageInitializer: ImageInitializer,
                                     timeSource: TimeSource, imageResizeClient: ImageResizeClient) extends ImageService {
-  implicit def javaToScalaInt(d: java.lang.Integer) = d.intValue
-
-  implicit def javaToScalaLong(d: java.lang.Long) = d.longValue
-
-  private def log = ImageServiceImpl.log
+  import ImageServiceImpl.log
 
   @Transactional(readOnly = false)
   @Secured(Array("ROLE_USER"))
   def createDefaultImage(fileName: String): Photo = {
     val imageMetadata: ImageMetadata = createDefaultMetadata
     imageMetadata.setShortName(fileName)
-    return createImage(imageMetadata)
+    createImage(imageMetadata)
   }
 
   private def createDefaultMetadata: ImageMetadata = {
@@ -48,7 +44,7 @@ class ImageServiceImpl @Autowired()(imageGroupRepository: ImageGroupRepository, 
     imageMetadata.setDisplayName("")
     imageMetadata.setCreator(fullNameFromUser)
     imageMetadata.setCopyright("Copyright " + timeSource.calendar.get(Calendar.YEAR))
-    return imageMetadata
+    imageMetadata
   }
 
   @Transactional(readOnly = false)
@@ -57,7 +53,7 @@ class ImageServiceImpl @Autowired()(imageGroupRepository: ImageGroupRepository, 
     val imageMetadata: ImageMetadata = createDefaultMetadata
     imageMetadata.setPosition(position)
     imageMetadata.setShortName(fileName)
-    return createImage(imageMetadata)
+    createImage(imageMetadata)
   }
 
   private def fullNameFromUser: String = {
@@ -72,7 +68,7 @@ class ImageServiceImpl @Autowired()(imageGroupRepository: ImageGroupRepository, 
     imageResizeClient.createResizedManifestations(photo, SecurityContextHolder.getContext)
   }
 
-  def createRollWithFrames(rollName: String, selectedFrameIds: Set[Long]) = {}
+  def createRollWithFrames(rollName: String, selectedFrameIds: mutable.Set[Long]) {}
 
   @Transactional(readOnly = false)
   @Secured(Array("ROLE_USER"))
@@ -93,20 +89,20 @@ class ImageServiceImpl @Autowired()(imageGroupRepository: ImageGroupRepository, 
     else {
       addImageToGroup(photo, photo.getRoll, position = imageData.getPosition)
     }
-    return photo
+    photo
   }
 
   @Transactional(readOnly = false)
   def findNamedOrDefaultRoll(rollName: String, owner: User): ImageGroup = {
     if (StringUtils.isBlank(rollName)) {
-      return findOrCreateDefaultRollForUser(owner)
+      findOrCreateDefaultRollForUser(owner)
     }
     else {
-      var roll: ImageGroup = imageGroupRepository.getRollByOwnerAndName(owner, rollName)
+      val roll: ImageGroup = imageGroupRepository.getRollByOwnerAndName(owner, rollName)
       if (roll == null) {
         throw new ImageGroupNotFoundException("Roll not found: " + rollName)
       }
-      return roll
+      roll
     }
   }
 
@@ -121,13 +117,13 @@ class ImageServiceImpl @Autowired()(imageGroupRepository: ImageGroupRepository, 
       defaultRoll.setDescription("Uploaded Images")
       imageInitializer.saveNewImageGroup(defaultRoll)
     }
-    return defaultRoll
+    defaultRoll
   }
 
   @Transactional(readOnly = false)
   @Secured(Array("ROLE_USER"))
   def addImageToGroup(image: Image, group: ImageGroup): ImageFrame = {
-    return addImageToGroup(image, group, group.nextFramePosition)
+    addImageToGroup(image, group, group.nextFramePosition)
   }
 
   @Transactional(readOnly = false)
@@ -138,7 +134,7 @@ class ImageServiceImpl @Autowired()(imageGroupRepository: ImageGroupRepository, 
     frame.setImageGroup(group)
     group.addFrame(frame)
     imageGroupRepository.saveGroup(group)
-    return frame
+    frame
   }
 
   @Transactional(readOnly = false)
@@ -155,7 +151,7 @@ class ImageServiceImpl @Autowired()(imageGroupRepository: ImageGroupRepository, 
   @Transactional(readOnly = false)
   def makeImageGroupAndImagesPublic(ownerName: String, `type` : ImageGroupType, imageGroupName: String) {
     val owner: User = userRepository.getByScreenName(ownerName)
-    var group: ImageGroup = imageGroupRepository.getByOwnerNameAndTypeWithFrames(owner, imageGroupName, `type`)
+    val group: ImageGroup = imageGroupRepository.getByOwnerNameAndTypeWithFrames(owner, imageGroupName, `type`)
     if (group == null) {
       log.error("No " + `type` + " found with name " + imageGroupName + " owned by " + owner)
     }
@@ -164,7 +160,7 @@ class ImageServiceImpl @Autowired()(imageGroupRepository: ImageGroupRepository, 
 
   @Transactional(readOnly = false)
   @Secured(Array("ROLE_USER"))
-  def setImageGroupPreview(imageGroupId: Long, imageId: Long): Unit = {
+  def setImageGroupPreview(imageGroupId: Long, imageId: Long) {
     val imageGroup: ImageGroup = imageGroupRepository.loadById(imageGroupId)
     val image: Image = imageRepository.loadById(imageId)
     imageGroup.setPreviewImage(image)

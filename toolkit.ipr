@@ -140,7 +140,7 @@
             </element>
             <element id="library" level="project" name="Maven: org.apache.commons:commons-exec:1.1" />
             <element id="library" level="project" name="Maven: commons-io:commons-io:1.4" />
-            <element id="library" level="project" name="Maven: org.scala-lang:scala-library:2.8.1" />
+            <element id="library" level="project" name="Maven: org.scala-lang:scala-library:2.9.2" />
             <element id="library" level="project" name="Maven: net.sf.ehcache:ehcache-terracotta:1.8.0" />
             <element id="library" level="project" name="Maven: javassist:javassist:3.8.0.GA" />
             <element id="library" level="project" name="Maven: cglib:cglib:2.2" />
@@ -1164,6 +1164,14 @@
       <JAVADOC />
       <SOURCES />
     </library>
+    <library name="Maven: org.scala-lang:scala-compiler-bundle:2.9.2">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/scala-lang/scala-compiler/2.9.2/scala-compiler-2.9.2.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/scala-lang/scala-library/2.9.2/scala-library-2.9.2.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
     <library name="Maven: org.scala-lang:scala-compiler-bundle:WrappedArray(2.8.1)">
       <CLASSES>
         <root url="jar://$MAVEN_REPOSITORY$/org/scala-lang/scala-compiler/2.8.1/scala-compiler-2.8.1.jar!/" />
@@ -1172,15 +1180,15 @@
       <JAVADOC />
       <SOURCES />
     </library>
-    <library name="Maven: org.scala-lang:scala-library:2.8.1">
+    <library name="Maven: org.scala-lang:scala-library:2.9.2">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/scala-lang/scala-library/2.8.1/scala-library-2.8.1.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/scala-lang/scala-library/2.9.2/scala-library-2.9.2.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/org/scala-lang/scala-library/2.8.1/scala-library-2.8.1-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/scala-lang/scala-library/2.9.2/scala-library-2.9.2-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/scala-lang/scala-library/2.8.1/scala-library-2.8.1-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/scala-lang/scala-library/2.9.2/scala-library-2.9.2-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: org.seleniumhq.selenium:selenium-api:2.20.0">
