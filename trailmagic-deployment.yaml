@@ -16,7 +16,7 @@ spec:
         name: trailmagic
     spec:
       containers:
-      - image: us.gcr.io/horsecodes/trailmagic-web:b485ba5a12a1ae5f03dd9a35ac3384ace35454b8
+      - image: us.gcr.io/horsecodes/trailmagic-web:9219dad6a087d82cdbe9f7e9ce0da702936e985f
         name: trailmagic
         resources:
           requests:

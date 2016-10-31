@@ -46,7 +46,7 @@
     <orderEntry type="module" module-name="common" />
     <orderEntry type="library" name="Maven: commons-dbcp:commons-dbcp:1.2.2" level="project" />
     <orderEntry type="library" name="Maven: commons-pool:commons-pool:1.3" level="project" />
-    <orderEntry type="library" name="Maven: mysql:mysql-connector-java:5.1.5" level="project" />
+    <orderEntry type="library" name="Maven: mysql:mysql-connector-java:5.1.40" level="project" />
     <orderEntry type="module" module-name="db" />
     <orderEntry type="module" module-name="resizer" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-exec:1.1" level="project" />
