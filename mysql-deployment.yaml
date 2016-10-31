@@ -1,0 +1,33 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: trailmagic-mysql
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: trailmagic-mysql
+        name: trailmagic-mysql
+    spec:
+      containers:
+        - resources:
+            limits:
+              cpu: 0.5
+          image: mysql:5.6
+          name: mysql
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: tmpass
+          ports:
+            - containerPort: 3306
+              name: mysql
+          volumeMounts:
+              # This name must match the volumes.name below.
+            - name: trailmagic-mysql
+              mountPath: /var/lib/mysql
+      volumes:
+        - name: trailmagic-mysql
+          gcePersistentDisk:
+            pdName: trailmagic-mysql
+            fsType: ext4

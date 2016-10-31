@@ -1,0 +1,28 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: trailmagic
+spec:
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: trailmagic
+    spec:
+      containers:
+      - image: us.gcr.io/horsecodes/trailmagic-web:4a04ca3007b1a8ee37580f4ee1c6634559342e9c-1
+        name: trailmagic
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        # livenessProbe:
+        #   httpGet:
+        #     path: /
+        #     port: 80
+        #   initialDelaySeconds: 30
+        #   timeoutSeconds: 45
