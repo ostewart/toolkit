@@ -13,10 +13,16 @@ spec:
     metadata:
       labels:
         app: trailmagic
+        name: trailmagic
     spec:
       containers:
-      - image: us.gcr.io/horsecodes/trailmagic-web:4a04ca3007b1a8ee37580f4ee1c6634559342e9c-1
+      - image: us.gcr.io/horsecodes/trailmagic-web:4a04ca3007b1a8ee37580f4ee1c6634559342e9c-2
         name: trailmagic
+        resources:
+          requests:
+            cpu: 0.25
+          limits:
+            memory: 512Mi
         ports:
         - containerPort: 80
           protocol: TCP

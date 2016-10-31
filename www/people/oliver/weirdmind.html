@@ -1,0 +1,24 @@
+<body bgcolor=#ffffff>
+Press &lt;RETURN&gt; when prompted for "SSH Server/Alias". Then 
+enter your user name and password when prompted. 
+<p>
+
+After you log in, you can run X-windows applications directly
+
+<APPLET code=mindbright/application/MindTerm.class
+ ARCHIVE="weirdmind.jar"
+ width=750
+ height=450>
+ <param name="server" value="trailmagic.com"> <! default host to connect to -- should be your web server>
+ <param name="x11fwd" value="true">  <! weirdx doesn't do much good without X11 forwarding enabled>
+ <param name="compression value="6"> <! use jzlib compression>
+ <param name="socketlink.allowhost1" value="trailmagic.com">
+ <param name="socketlink.allowhost2" value="66.92.72.224">
+ <param name="socketlink.allowhost3" value="localhost">
+ <param name="socketlink.allowhost4" value="127.0.0.1">
+<!-- <param name="properties_url"
+value="http://www.tam.cornell.edu/Computer/remoteaccess/weirdmind/props">
+      -->
+ You must enable java in your web browser
+</applet>
+</body>
