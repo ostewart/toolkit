@@ -113,7 +113,7 @@
                resourceName="UserDatabase"/>
       </Realm>
 
-      <Host name="trailmagic.com"  appBase="webapps"
+      <Host name="trailmagic.com"  appBase="/srv/trailmagic.com/webapps"
             unpackWARs="true" autoDeploy="true"
             xmlValidation="false" xmlNamespaceAware="false">
         <Alias>axon.trailmagic.com</Alias>
