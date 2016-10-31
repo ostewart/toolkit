@@ -81,7 +81,7 @@
          This connector uses the JSSE configuration, when using APR, the 
          connector should be using the OpenSSL style configuration
          described in the APR documentation -->
-    <Connector port="8443" protocol="HTTP/1.1" SSLEnabled="true"
+    <Connector port="8443" protocol="org.apache.coyote.http11.Http11NioProtocol" SSLEnabled="true"
                maxThreads="150" scheme="https" secure="true"
                clientAuth="false" sslProtocol="TLS"  compression="on"
 	        compressableMimeType="text/html,text/xml,text/plain,text/javascript,text/css,application/x-javascript"
