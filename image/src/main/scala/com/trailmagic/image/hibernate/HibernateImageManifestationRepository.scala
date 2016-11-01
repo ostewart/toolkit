@@ -34,7 +34,9 @@ class HibernateImageManifestationRepository @Autowired() (hibernateTemplate: Hib
   }
 
   def getHeavyById(id: Long): HeavyImageManifestation = {
-    hibernateTemplate.get(classOf[HeavyImageManifestation], id)
+    val result = hibernateTemplate.get(classOf[HeavyImageManifestation], id)
+    result.getData.getBinaryStream // try to force loading within the transaction boundary
+    result
   }
 
   @Transactional(readOnly = false)
