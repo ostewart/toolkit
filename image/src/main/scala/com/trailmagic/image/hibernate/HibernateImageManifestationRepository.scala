@@ -13,15 +13,13 @@
  */
 package com.trailmagic.image.hibernate
 
-import com.trailmagic.image.HeavyImageManifestation
-import com.trailmagic.image.ImageManifestation
-import com.trailmagic.image.ImageManifestationRepository
+import com.trailmagic.image.{HeavyImageManifestation, ImageManifestation, ImageManifestationRepository, StreamWrapper}
 import org.apache.commons.logging.LogFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.orm.hibernate3.HibernateTemplate
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
-import java.util.List
+
 import scala.collection.JavaConverters._
 
 @Transactional(readOnly = true)
@@ -34,8 +32,16 @@ class HibernateImageManifestationRepository @Autowired() (hibernateTemplate: Hib
   }
 
   def getHeavyById(id: Long): HeavyImageManifestation = {
+    hibernateTemplate.get(classOf[HeavyImageManifestation], id)
+  }
+
+
+  override def streamHeavyById(id: Long, stream: StreamWrapper) = {
     val result = hibernateTemplate.get(classOf[HeavyImageManifestation], id)
-    result.getData.getBinaryStream // try to force loading within the transaction boundary
+    stream.stream(result.getData.length().asInstanceOf[Int],
+                  result.format,
+                  result.name,
+                  result.getData.getBinaryStream)
     result
   }
 
@@ -55,6 +61,6 @@ class HibernateImageManifestationRepository @Autowired() (hibernateTemplate: Hib
 
   def findOriginalHeavyForImage(imageId: Long): HeavyImageManifestation = {
     val results = hibernateTemplate.findByNamedQueryAndNamedParam("originalHeavyManifestationForImageId", "imageId", imageId).asScala
-    results.headOption.map(_.asInstanceOf[HeavyImageManifestation]).getOrElse(null)
+    results.headOption.map(_.asInstanceOf[HeavyImageManifestation]).orNull
   }
 }

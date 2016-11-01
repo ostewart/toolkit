@@ -13,9 +13,17 @@
  */
 package com.trailmagic.image
 
+import java.io.InputStream
+
+trait StreamWrapper {
+  @throws(classOf[Exception])
+  def stream(length: Int, contentType: String, name: String, in: InputStream)
+}
+
 trait ImageManifestationRepository {
   def getById(id: Long): ImageManifestation
   def getHeavyById(id: Long): HeavyImageManifestation
+  def streamHeavyById(id: Long, stream: StreamWrapper): HeavyImageManifestation
   def saveNewImageManifestation(imageManifestation: HeavyImageManifestation)
   def cleanFromSession(imageManifestation: ImageManifestation)
   def findOriginalHeavyForImage(imageId: Long): HeavyImageManifestation
