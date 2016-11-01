@@ -20,43 +20,55 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.Map;
 
 @Controller
 public class ImageManifestationController {
+    private final TransactionTemplate transactionTemplate;
     private ImageManifestationRepository imageManifestationRepository;
 
     private static Logger log = LoggerFactory.getLogger(ImageManifestationController.class);
 
     @Autowired
-    public ImageManifestationController(ImageManifestationRepository imageManifestationRepository) {
+    public ImageManifestationController(ImageManifestationRepository imageManifestationRepository,
+                                        PlatformTransactionManager transactionManager) {
         this.imageManifestationRepository = imageManifestationRepository;
+        this.transactionTemplate = new TransactionTemplate(transactionManager);
     }
 
     @RequestMapping("/mf/by-id/{imageId}")
     @Transactional(readOnly = true)
-    public ModelAndView imageById(HttpServletResponse res, @PathVariable("imageId") Long imageId) throws Exception {
-        Map<String, Object> model = new HashMap<String, Object>();
+    public ModelAndView imageById(final HttpServletResponse res, @PathVariable("imageId") final Long imageId) throws Exception {
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                try {
+                    HeavyImageManifestation mf = imageManifestationRepository.getHeavyById(imageId);
 
-        HeavyImageManifestation mf = imageManifestationRepository.getHeavyById(imageId);
+                    java.io.InputStream dataStream = mf.getData().getBinaryStream();
+                    res.setContentLength((int) mf.getData().length());
+                    res.setContentType(mf.getFormat());
+                    if (mf.getName() != null) {
+                        res.setHeader("Content-Disposition", "inline; filename=" + mf.getName() + ";");
+                    }
 
-        java.io.InputStream dataStream = mf.getData().getBinaryStream();
-        res.setContentLength((int) mf.getData().length());
-        res.setContentType(mf.getFormat());
-        if (mf.getName() != null) {
-            res.setHeader("Content-Disposition", "inline; filename=" + mf.getName() + ";");
-        }
-
-        OutputStream out = res.getOutputStream();
-        IOUtils.copy(dataStream, out);
+                    OutputStream out = res.getOutputStream();
+                    IOUtils.copy(dataStream, out);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
 
         return null;
     }
