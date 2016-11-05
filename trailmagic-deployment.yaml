@@ -14,10 +14,11 @@ spec:
       labels:
         app: trailmagic
         name: trailmagic
+      name: trailmagic-pod
     spec:
       containers:
-      - image: us.gcr.io/horsecodes/trailmagic-web:97b1d9ad8edaf3dc1dc446aa41f091ffc3849269
-        name: trailmagic
+      - name: trailmagic
+        image: us.gcr.io/horsecodes/trailmagic-web:501f0b38bfe3bc94e0e18ded1282b9374b9e9da0
         resources:
           requests:
             cpu: 0.25
@@ -26,6 +27,22 @@ spec:
         ports:
         - containerPort: 80
           protocol: TCP
+        volumeMounts:
+        - name: access-logs
+          mountPath: /srv/trailmagic.com/logs
+      - name: sidecar-log-collector
+        image: us.gcr.io/horsecodes/trailmagic-logging-sidecar:501f0b38bfe3bc94e0e18ded1282b9374b9e9da0
+        resources:
+          limits:
+            cpu: 100m
+            memory: 200Mi
+        volumeMounts:
+        - name: access-logs
+          readOnly: true
+          mountPath: /mnt/log
+      volumes:
+      - name: access-logs
+        emptyDir: {}
         # livenessProbe:
         #   httpGet:
         #     path: /

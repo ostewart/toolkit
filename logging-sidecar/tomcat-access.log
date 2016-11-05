@@ -1,0 +1,8 @@
+<source>
+  type tail
+  format none
+  path /mnt/log/access%Y-%m-%d.log
+  pos_file /etc/google-fluentd/tomcat.pos
+  read_from_head true
+  tag file.access_log
+</source>
