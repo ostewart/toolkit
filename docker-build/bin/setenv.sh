@@ -1,1 +1,1 @@
-JAVA_OPTS="-Dpinful.configDir=/srv/pinful.com/conf -Dphoto.configDir=/srv/trailmagic.com/conf -javaagent:/srv/trailmagic.com/lib/aspectjweaver-1.6.10.jar -Xms384m -Xmx784m -server -XX:MaxPermSize=128m"
+JAVA_OPTS="-Dphoto.configDir=/srv/trailmagic.com/conf -javaagent:/srv/trailmagic.com/lib/aspectjweaver-1.6.10.jar -server -XX:MaxPermSize=128m"
