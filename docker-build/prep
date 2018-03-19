@@ -5,6 +5,6 @@ revision=$(git rev-parse --verify HEAD)
 
 docker build -t trailmagic/web:$revision .
 docker tag trailmagic/web:$revision us.gcr.io/horsecodes/trailmagic-web:$revision
-gcloud docker push us.gcr.io/horsecodes/trailmagic-web:$revision
+gcloud docker -- push us.gcr.io/horsecodes/trailmagic-web:$revision
 
 echo $revision
