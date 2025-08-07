@@ -18,10 +18,10 @@ spec:
     spec:
       containers:
       - name: trailmagic
-        image: us.gcr.io/horsecodes/trailmagic-web:501f0b38bfe3bc94e0e18ded1282b9374b9e9da0
+        image: us.gcr.io/horsecodes/trailmagic-web:ebb32a0b5f0258091d94522038f44119f6301b9f
         resources:
           requests:
-            cpu: 0.25
+            cpu: 10m
           limits:
             memory: 512Mi
         ports:
